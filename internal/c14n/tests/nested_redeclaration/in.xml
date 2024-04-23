@@ -1,0 +1,5 @@
+<root>
+  <foo xmlns:a="http://example.com">
+    <bar xmlns:a="http://example.com" a:y="z" />
+  </foo>
+</root>
