@@ -14,7 +14,7 @@ func TestPath(t *testing.T) {
 	in, err := os.ReadFile(fmt.Sprintf("../testdata/assertion-okta.xml"))
 	assert.NoError(t, err)
 
-	doc, err := uxml.Parse(string(in))
+	doc, err := uxml.Parse(in)
 	assert.NoError(t, err)
 
 	assertion, _ := onlyPath(path{

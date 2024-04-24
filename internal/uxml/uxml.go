@@ -37,8 +37,8 @@ func (n Name) Space() (string, bool) {
 	return "", false
 }
 
-func Parse(s string) (*Document, error) {
-	parseDoc, err := parser.ParseString("", s)
+func Parse(b []byte) (*Document, error) {
+	parseDoc, err := parser.ParseBytes("", b)
 	if err != nil {
 		return nil, err
 	}

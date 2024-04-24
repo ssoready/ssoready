@@ -21,9 +21,9 @@ var (
 	ErrBadDigest      = fmt.Errorf("dsig: digest mismatch in saml assertion")
 )
 
-func Verify(cert *x509.Certificate, data string) error {
+func Verify(cert *x509.Certificate, data []byte) error {
 	var res samlres.SAMLResponse
-	if err := xml.Unmarshal([]byte(data), &res); err != nil {
+	if err := xml.Unmarshal(data, &res); err != nil {
 		return err
 	}
 
@@ -70,12 +70,13 @@ func Verify(cert *x509.Certificate, data string) error {
 	return nil
 }
 
-func responseDigestData(res samlres.SAMLResponse, data string) ([]byte, error) {
+func responseDigestData(res samlres.SAMLResponse, data []byte) ([]byte, error) {
 	doc, err := uxml.Parse(data)
 	if err != nil {
 		return nil, err
 	}
 
+	// todo hoist here, and get rid of onlyPath?
 	assertion, _ := onlyPath(path{
 		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
 		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
@@ -96,7 +97,7 @@ func responseDigestData(res samlres.SAMLResponse, data string) ([]byte, error) {
 	return c14n.Canonicalize(nosig, inclusiveNamespaces)
 }
 
-func responseSignatureData(data string) ([]byte, error) {
+func responseSignatureData(data []byte) ([]byte, error) {
 	doc, err := uxml.Parse(data)
 	if err != nil {
 		return nil, err
