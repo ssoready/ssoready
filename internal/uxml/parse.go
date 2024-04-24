@@ -3,9 +3,11 @@ package uxml
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/alecthomas/participle/v2"
 	"github.com/alecthomas/participle/v2/lexer"
+	"github.com/ssoready/ssoready/internal/uxml/stack"
 )
 
 var parser = participle.MustBuild[doc](
@@ -87,8 +89,9 @@ type text struct {
 func (text) node() {}
 
 func convertDocument(d doc) (*Document, error) {
+	var s stack.Stack
 	for _, n := range d.Nodes {
-		node, err := convertNode(n)
+		node, err := convertNode(s, n)
 		if err != nil {
 			return nil, err
 		}
@@ -100,10 +103,10 @@ func convertDocument(d doc) (*Document, error) {
 	return nil, fmt.Errorf("doc has no element nodes")
 }
 
-func convertNode(n node) (*Node, error) {
+func convertNode(s stack.Stack, n node) (*Node, error) {
 	switch n := n.(type) {
 	case elem:
-		elem, err := convertElement(n)
+		elem, err := convertElement(s, n)
 		if err != nil {
 			return nil, err
 		}
@@ -119,10 +122,31 @@ func convertNode(n node) (*Node, error) {
 	}
 }
 
-func convertElement(e elem) (*Element, error) {
-	elem := Element{Name: e.Name}
+func convertElement(s stack.Stack, e elem) (*Element, error) {
+	// process namespaces first
+	names := map[string]string{}
 	for _, a := range e.Attrs {
-		attr, err := convertAttr(a)
+		var name Name
+		name.Qual, name.Local = splitName(a.Name)
+
+		val, err := convertAttrValue(a.Value)
+		if err != nil {
+			return nil, err
+		}
+
+		if space, ok := name.Space(); ok {
+			names[space] = val
+		}
+	}
+	s.Push(names)
+	defer s.Pop()
+
+	var elem Element
+	elem.Name.Qual, elem.Name.Local = splitName(e.Name)
+	elem.Name.URI, _ = s.Get(elem.Name.Qual)
+
+	for _, a := range e.Attrs {
+		attr, err := convertAttr(s, a)
 		if err != nil {
 			return nil, err
 		}
@@ -133,22 +157,33 @@ func convertElement(e elem) (*Element, error) {
 		// no-op
 	case elemTailChildren:
 		for _, c := range t.Children {
-			node, err := convertNode(c)
+			node, err := convertNode(s, c)
 			if err != nil {
 				return nil, err
 			}
 			elem.Children = append(elem.Children, *node)
 		}
 	}
+
 	return &elem, nil
 }
 
-func convertAttr(a attr) (*Attr, error) {
-	s, err := decodeEntities(a.Value[1 : len(a.Value)-1])
+func convertAttr(s stack.Stack, a attr) (*Attr, error) {
+	var name Name
+	name.Qual, name.Local = splitName(a.Name)
+	if _, ok := name.Space(); !ok {
+		name.URI, _ = s.Get(name.Qual)
+	}
+
+	val, err := convertAttrValue(a.Value)
 	if err != nil {
 		return nil, err
 	}
-	return &Attr{Name: a.Name, Value: s}, nil
+	return &Attr{Name: name, Value: val}, nil
+}
+
+func convertAttrValue(s string) (string, error) {
+	return decodeEntities(s[1 : len(s)-1])
 }
 
 func convertText(t text) (*string, error) {
@@ -223,4 +258,12 @@ func decodeSingleEntity(s string) (string, error) {
 	}
 
 	return string(rune(n)), nil
+}
+
+func splitName(s string) (string, string) {
+	i := strings.IndexByte(s, ':')
+	if i == -1 {
+		return "", s
+	}
+	return s[:i], s[i+1:]
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/ssoready/ssoready/internal/sortattr"
 	"github.com/ssoready/ssoready/internal/uxml"
-	"github.com/ssoready/ssoready/internal/uxml/stack"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,21 +20,21 @@ func TestSortAttr(t *testing.T) {
 		testCase{
 			In: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns",
+					Name:  uxml.Name{Local: "xmlns"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 			},
 			Out: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns",
+					Name:  uxml.Name{Local: "xmlns"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 			},
@@ -43,21 +42,21 @@ func TestSortAttr(t *testing.T) {
 		testCase{
 			In: []uxml.Attr{
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 				uxml.Attr{
-					Name:  "xmlns",
+					Name:  uxml.Name{Local: "xmlns"},
 					Value: "https://example.com",
 				},
 			},
 			Out: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns",
+					Name:  uxml.Name{Local: "xmlns"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 			},
@@ -65,21 +64,21 @@ func TestSortAttr(t *testing.T) {
 		testCase{
 			In: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns:foo",
+					Name:  uxml.Name{Qual: "xmlns", Local: "foo"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 			},
 			Out: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns:foo",
+					Name:  uxml.Name{Qual: "xmlns", Local: "foo"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 			},
@@ -87,21 +86,21 @@ func TestSortAttr(t *testing.T) {
 		testCase{
 			In: []uxml.Attr{
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 				uxml.Attr{
-					Name:  "xmlns:foo",
+					Name:  uxml.Name{Qual: "xmlns", Local: "foo"},
 					Value: "https://example.com",
 				},
 			},
 			Out: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns:foo",
+					Name:  uxml.Name{Qual: "xmlns", Local: "foo"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "foo:bar",
+					Name:  uxml.Name{Qual: "foo", Local: "bar"},
 					Value: "baz",
 				},
 			},
@@ -109,21 +108,21 @@ func TestSortAttr(t *testing.T) {
 		testCase{
 			In: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns:foo",
+					Name:  uxml.Name{Qual: "xmlns", Local: "foo"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "xmlns:bar",
+					Name:  uxml.Name{Qual: "xmlns", Local: "bar"},
 					Value: "https://example.com",
 				},
 			},
 			Out: []uxml.Attr{
 				uxml.Attr{
-					Name:  "xmlns:bar",
+					Name:  uxml.Name{Qual: "xmlns", Local: "bar"},
 					Value: "https://example.com",
 				},
 				uxml.Attr{
-					Name:  "xmlns:foo",
+					Name:  uxml.Name{Qual: "xmlns", Local: "foo"},
 					Value: "https://example.com",
 				},
 			},
@@ -131,53 +130,46 @@ func TestSortAttr(t *testing.T) {
 		testCase{
 			In: []uxml.Attr{
 				uxml.Attr{
-					Name:  "a:attr",
+					Name:  uxml.Name{Qual: "a", Local: "attr", URI: "http://www.w3.org"},
 					Value: "out",
 				},
 				uxml.Attr{
-					Name:  "b:attr",
+					Name:  uxml.Name{Qual: "b", Local: "attr", URI: "http://www.ietf.org"},
 					Value: "sorted",
 				},
 				uxml.Attr{
-					Name:  "attr2",
+					Name:  uxml.Name{Local: "attr2", URI: "http://www.example.com"},
 					Value: "all",
 				},
 				uxml.Attr{
-					Name:  "attr",
+					Name:  uxml.Name{Local: "attr", URI: "http://www.example.com"},
 					Value: "I'm",
 				},
 			},
 			Out: []uxml.Attr{
 				uxml.Attr{
-					Name:  "attr",
+					Name:  uxml.Name{Local: "attr", URI: "http://www.example.com"},
 					Value: "I'm",
 				},
 				uxml.Attr{
-					Name:  "attr2",
+					Name:  uxml.Name{Local: "attr2", URI: "http://www.example.com"},
 					Value: "all",
 				},
 				uxml.Attr{
-					Name:  "b:attr",
+					Name:  uxml.Name{Qual: "b", Local: "attr", URI: "http://www.ietf.org"},
 					Value: "sorted",
 				},
 				uxml.Attr{
-					Name:  "a:attr",
+					Name:  uxml.Name{Qual: "a", Local: "attr", URI: "http://www.w3.org"},
 					Value: "out",
 				},
 			},
 		},
 	}
 
-	var s stack.Stack
-	s.Push(map[string]string{
-		"":  "http://example.com",
-		"a": "http://www.w3.org",
-		"b": "http://www.ietf.org",
-	})
-
 	for i, tt := range testCases {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			attrs := sortattr.SortAttr{Attrs: tt.In, Stack: &s}
+			attrs := sortattr.SortAttr{Attrs: tt.In}
 			sort.Sort(attrs)
 			assert.Equal(t, tt.Out, attrs.Attrs)
 		})

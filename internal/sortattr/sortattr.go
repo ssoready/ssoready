@@ -3,15 +3,11 @@ package sortattr
 // todo this might be better named "sortattrname"
 
 import (
-	"strings"
-
 	"github.com/ssoready/ssoready/internal/uxml"
-	"github.com/ssoready/ssoready/internal/uxml/stack"
 )
 
 // SortAttr can sort attributes in compliance with the c14n specification.
 type SortAttr struct {
-	Stack *stack.Stack
 	Attrs []uxml.Attr
 }
 
@@ -41,31 +37,31 @@ func (s SortAttr) Less(i, j int) bool {
 	// "An element's namespace nodes are sorted lexicographically by local name
 	// (the default namespace node, if one exists, has no local name and is
 	// therefore lexicographically least)."
-	//
+
+	spaceI, isSpaceI := s.Attrs[i].Name.Space()
+	spaceJ, isSpaceJ := s.Attrs[j].Name.Space()
+
 	// It follows that the very first node is the default namespace node. Let's
 	// handle those first:
-	if s.Attrs[i].Name == "xmlns" {
+	if isSpaceI && !isSpaceJ {
 		return true
 	}
-	if s.Attrs[j].Name == "xmlns" {
+	if !isSpaceI && isSpaceJ {
 		return false
 	}
 
-	qualI, localI := splitName(s.Attrs[i].Name)
-	qualJ, localJ := splitName(s.Attrs[j].Name)
-
 	// Namespace nodes go first. If one is a namespace node and the other isn't,
 	// then it goes first.
-	if qualI == "xmlns" && qualJ != "xmlns" {
+	if isSpaceI && !isSpaceJ {
 		return true
 	}
-	if qualI != "xmlns" && qualJ == "xmlns" {
+	if !isSpaceI && isSpaceJ {
 		return false
 	}
 
 	// Break ties between two namespace nodes by their local name.
-	if qualI == "xmlns" && qualJ == "xmlns" {
-		return localI < localJ
+	if isSpaceI && isSpaceJ {
+		return spaceI < spaceJ
 	}
 
 	// Finally:
@@ -74,19 +70,8 @@ func (s SortAttr) Less(i, j int) bool {
 	// URI as the primary key and local name as the secondary key (an empty
 	// namespace URI is lexicographically least)."
 
-	spaceI, _ := s.Stack.Get(qualI)
-	spaceJ, _ := s.Stack.Get(qualJ)
-	if spaceI != spaceJ {
-		return spaceI < spaceJ
+	if s.Attrs[i].Name.URI != s.Attrs[j].Name.URI {
+		return s.Attrs[i].Name.URI < s.Attrs[j].Name.URI
 	}
-
-	return localI < localJ
-}
-
-func splitName(s string) (string, string) {
-	i := strings.IndexByte(s, ':')
-	if i == -1 {
-		return "", s
-	}
-	return s[:i], s[i+1:]
+	return s.Attrs[i].Name.Local < s.Attrs[j].Name.Local
 }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/ssoready/ssoready/internal/sortattr"
 	"github.com/ssoready/ssoready/internal/uxml"
@@ -36,27 +35,22 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 
 	names := map[string]string{} // names declared by this element
 	for _, a := range n.Element.Attrs {
-		if name, ok := getNamespace(a); ok {
-			names[name] = a.Value
-		}
-	}
-
-	// todo inclusive namespaces here
-	visiblyUsedNames := map[string]struct{}{} // names visibly used by this element
-
-	{
-		qual, _ := splitName(n.Element.Name)
-		visiblyUsedNames[qual] = struct{}{}
-	}
-
-	for _, a := range n.Element.Attrs {
-		if _, ok := getNamespace(a); !ok {
-			qual, _ := splitName(a.Name)
-			visiblyUsedNames[qual] = struct{}{}
+		if space, ok := a.Name.Space(); ok {
+			names[space] = a.Value
 		}
 	}
 
 	knownNames.Push(names)
+
+	// todo inclusive namespaces here
+	visiblyUsedNames := map[string]struct{}{} // names visibly used by this element
+
+	visiblyUsedNames[n.Element.Name.Qual] = struct{}{}
+	for _, a := range n.Element.Attrs {
+		if _, ok := a.Name.Space(); !ok {
+			visiblyUsedNames[a.Name.Qual] = struct{}{}
+		}
+	}
 
 	namesToRender := map[string]struct{}{}
 	for name, uri := range knownNames.GetAll() {
@@ -86,7 +80,7 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 
 	// first, add all non-namespace attrs to attrsToRender
 	for _, a := range n.Element.Attrs {
-		if _, ok := getNamespace(a); !ok {
+		if _, ok := a.Name.Space(); !ok {
 			attrsToRender = append(attrsToRender, a)
 		}
 	}
@@ -98,12 +92,17 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 
 		if name == "" {
 			attrsToRender = append(attrsToRender, uxml.Attr{
-				Name:  "xmlns",
+				Name: uxml.Name{
+					Local: "xmlns",
+				},
 				Value: uri,
 			})
 		} else {
 			attrsToRender = append(attrsToRender, uxml.Attr{
-				Name:  fmt.Sprintf("xmlns:%s", name),
+				Name: uxml.Name{
+					Qual:  "xmlns",
+					Local: name,
+				},
 				Value: uri,
 			})
 		}
@@ -111,13 +110,22 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 
 	renderedNames.Push(renderedNameValues)
 
-	sortAttr := sortattr.SortAttr{Attrs: attrsToRender, Stack: &knownNames}
+	sortAttr := sortattr.SortAttr{Attrs: attrsToRender}
 	sort.Sort(sortAttr)
 
-	_, _ = fmt.Fprintf(buf, "<%s", n.Element.Name)
+	if n.Element.Name.Qual == "" {
+		_, _ = fmt.Fprintf(buf, "<%s", n.Element.Name.Local)
+	} else {
+		_, _ = fmt.Fprintf(buf, "<%s:%s", n.Element.Name.Qual, n.Element.Name.Local)
+	}
 
 	for _, a := range sortAttr.Attrs {
-		_, _ = fmt.Fprintf(buf, " %s=\"", a.Name)
+		if a.Name.Qual == "" {
+			_, _ = fmt.Fprintf(buf, " %s=\"", a.Name.Local)
+		} else {
+			_, _ = fmt.Fprintf(buf, " %s:%s=\"", a.Name.Qual, a.Name.Local)
+		}
+
 		val := []byte(a.Value)
 		val = bytes.ReplaceAll(val, amp, escAmp)
 		val = bytes.ReplaceAll(val, lt, escLt)
@@ -134,33 +142,14 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 		canonicalize(buf, knownNames, renderedNames, c, inclusiveNamespaces)
 	}
 
-	_, _ = fmt.Fprintf(buf, "</%s", n.Element.Name)
-	_, _ = fmt.Fprint(buf, ">")
+	if n.Element.Name.Qual == "" {
+		_, _ = fmt.Fprintf(buf, "</%s>", n.Element.Name.Local)
+	} else {
+		_, _ = fmt.Fprintf(buf, "</%s:%s>", n.Element.Name.Qual, n.Element.Name.Local)
+	}
 
 	knownNames.Pop()
 	renderedNames.Pop()
-}
-
-// getNamespace gets the namespace declared by this attribute, and whether it's
-// a namespace-declaring attribute.
-func getNamespace(attr uxml.Attr) (string, bool) {
-	if attr.Name == "xmlns" {
-		return "", true
-	}
-
-	qual, local := splitName(attr.Name)
-	if qual == "xmlns" {
-		return local, true
-	}
-	return "", false
-}
-
-func splitName(s string) (string, string) {
-	i := strings.IndexByte(s, ':')
-	if i == -1 {
-		return "", s
-	}
-	return s[:i], s[i+1:]
 }
 
 var (

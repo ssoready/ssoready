@@ -11,14 +11,30 @@ type Node struct {
 }
 
 type Element struct {
-	Name     string
+	Name     Name
 	Attrs    []Attr
 	Children []Node
 }
 
 type Attr struct {
-	Name  string
+	Name  Name
 	Value string
+}
+
+type Name struct {
+	URI   string
+	Qual  string
+	Local string
+}
+
+func (n Name) Space() (string, bool) {
+	if n.Qual == "" && n.Local == "xmlns" {
+		return "", true
+	}
+	if n.Qual == "xmlns" {
+		return n.Local, true
+	}
+	return "", false
 }
 
 func Parse(s string) (*Document, error) {
