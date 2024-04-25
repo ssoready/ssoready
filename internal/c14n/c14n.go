@@ -42,8 +42,12 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 
 	knownNames.Push(names)
 
-	// todo inclusive namespaces here
 	visiblyUsedNames := map[string]struct{}{} // names visibly used by this element
+
+	// inclusiveNamespaces are always visibly used
+	for _, s := range inclusiveNamespaces {
+		visiblyUsedNames[s] = struct{}{}
+	}
 
 	visiblyUsedNames[n.Element.Name.Qual] = struct{}{}
 	for _, a := range n.Element.Attrs {
