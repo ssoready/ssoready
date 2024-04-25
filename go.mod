@@ -4,6 +4,7 @@ go 1.21.4
 
 require (
 	github.com/alecthomas/participle/v2 v2.1.1
+	github.com/gorilla/mux v1.8.1
 	github.com/stretchr/testify v1.9.0
 )
 
