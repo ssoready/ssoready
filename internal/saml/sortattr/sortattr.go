@@ -3,7 +3,7 @@ package sortattr
 // todo this might be better named "sortattrname"
 
 import (
-	"github.com/ssoready/ssoready/internal/uxml"
+	"github.com/ssoready/ssoready/internal/saml/uxml"
 )
 
 // SortAttr can sort attributes in compliance with the c14n specification.

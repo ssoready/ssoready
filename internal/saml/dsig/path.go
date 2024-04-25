@@ -1,8 +1,8 @@
 package dsig
 
 import (
-	"github.com/ssoready/ssoready/internal/uxml"
-	"github.com/ssoready/ssoready/internal/uxml/stack"
+	"github.com/ssoready/ssoready/internal/saml/uxml"
+	"github.com/ssoready/ssoready/internal/saml/uxml/stack"
 )
 
 type path []segment

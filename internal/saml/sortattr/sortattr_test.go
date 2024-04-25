@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/ssoready/ssoready/internal/sortattr"
-	"github.com/ssoready/ssoready/internal/uxml"
+	"github.com/ssoready/ssoready/internal/saml/sortattr"
+	"github.com/ssoready/ssoready/internal/saml/uxml"
 	"github.com/stretchr/testify/assert"
 )
 

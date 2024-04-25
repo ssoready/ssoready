@@ -3,7 +3,7 @@ package stack_test
 import (
 	"testing"
 
-	"github.com/ssoready/ssoready/internal/uxml/stack"
+	"github.com/ssoready/ssoready/internal/saml/uxml/stack"
 	"github.com/stretchr/testify/assert"
 )
 
