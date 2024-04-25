@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/ssoready/ssoready/internal/c14n"
-	"github.com/ssoready/ssoready/internal/samlres"
+	"github.com/ssoready/ssoready/internal/samltypes"
 	"github.com/ssoready/ssoready/internal/uxml"
 )
 
@@ -22,7 +22,7 @@ var (
 )
 
 func Verify(cert *x509.Certificate, data []byte) error {
-	var res samlres.SAMLResponse
+	var res samltypes.Response
 	if err := xml.Unmarshal(data, &res); err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func Verify(cert *x509.Certificate, data []byte) error {
 	return nil
 }
 
-func responseDigestData(res samlres.SAMLResponse, data []byte) ([]byte, error) {
+func responseDigestData(res samltypes.Response, data []byte) ([]byte, error) {
 	doc, err := uxml.Parse(data)
 	if err != nil {
 		return nil, err

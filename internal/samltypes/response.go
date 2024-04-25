@@ -1,11 +1,11 @@
-package samlres
+package samltypes
 
 import (
 	"encoding/xml"
 	"time"
 )
 
-type SAMLResponse struct {
+type Response struct {
 	XMLName   xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:protocol Response"`
 	Assertion struct {
 		XMLName   xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion Assertion"`

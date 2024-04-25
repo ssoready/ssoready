@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/ssoready/ssoready/internal/dsig"
-	"github.com/ssoready/ssoready/internal/samlres"
+	"github.com/ssoready/ssoready/internal/samltypes"
 )
 
 type ValidateRequest struct {
@@ -36,7 +36,7 @@ func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 		return nil, fmt.Errorf("parse saml response: %w", err)
 	}
 
-	var res samlres.SAMLResponse
+	var res samltypes.Response
 	if err := xml.Unmarshal(data, &res); err != nil {
 		return nil, fmt.Errorf("unmarshal saml response: %w", err)
 	}
