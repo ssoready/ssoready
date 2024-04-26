@@ -1,0 +1,43 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "queries.sql"
+    schema: "schema.sql"
+    gen:
+      go:
+        sql_package: "pgx/v5"
+        package: "queries"
+        out: "../internal/store/queries"
+        overrides:
+          - db_type: "pg_catalog.varchar"
+            nullable: true
+            go_type:
+              type: "*string"
+          - db_type: "pg_catalog.timestamptz"
+            nullable: false
+            go_type:
+              type: "time.Time"
+          - db_type: "pg_catalog.timestamptz"
+            nullable: true
+            go_type:
+              type: "*time.Time"
+          - db_type: "uuid"
+            nullable: false
+            go_type:
+              type: "string"
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              type: "*string"
+          - db_type: "pg_catalog.bool"
+            nullable: true
+            go_type:
+              type: "*bool"
+          - db_type: "pg_catalog.float8"
+            nullable: true
+            go_type:
+              type: "*float64"
+          - db_type: "pg_catalog.int4"
+            nullable: true
+            go_type:
+              type: "*int32"

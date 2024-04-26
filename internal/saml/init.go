@@ -33,7 +33,7 @@ func Init(req *InitRequest) (*InitResponse, error) {
 
 	query := redirectURL.Query()
 	query.Set("SAMLRequest", base64.URLEncoding.EncodeToString(samlReqData))
-	query.Set("RelayState", req.RelayState)
+	query.Set("RelayState", req.RelayState) // todo sign this to prevent tampering
 	redirectURL.RawQuery = query.Encode()
 
 	return &InitResponse{URL: redirectURL.String()}, nil
