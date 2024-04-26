@@ -1,0 +1,20 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/ssoready/ssoready/internal/gen
+    except:
+      - buf.build/googleapis/googleapis
+plugins:
+  - plugin: buf.build/protocolbuffers/go
+    out: internal/gen
+    opt: paths=source_relative
+  - plugin: buf.build/grpc/go
+    out: internal/gen
+    opt: paths=source_relative
+  - plugin: buf.build/grpc-ecosystem/gateway
+    out: internal/gen
+    opt: paths=source_relative
+  - plugin: buf.build/connectrpc/go:v1.12.0
+    out: internal/gen
+    opt: paths=source_relative

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package ssoready.v1;
+
+import "google/api/annotations.proto";
+
+service SSOReadyService {
+  rpc RedeemSAMLAccessToken(RedeemSAMLAccessTokenRequest) returns (RedeemSAMLAccessTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/saml/redeem",
+      body: "*"
+    };
+  };
+}
+
+message RedeemSAMLAccessTokenRequest {
+  string access_token = 1;
+}
+
+message RedeemSAMLAccessTokenResponse {
+  string subject_idp_id = 1;
+  map<string, string> subject_idp_attributes = 2;
+}
