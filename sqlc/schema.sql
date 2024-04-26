@@ -60,6 +60,21 @@ CREATE TABLE public.saml_connections (
 ALTER TABLE public.saml_connections OWNER TO postgres;
 
 --
+-- Name: saml_sessions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.saml_sessions (
+    id uuid NOT NULL,
+    saml_connection_id uuid NOT NULL,
+    secret_access_token uuid,
+    subject_id character varying,
+    subject_idp_attributes jsonb
+);
+
+
+ALTER TABLE public.saml_sessions OWNER TO postgres;
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -96,6 +111,14 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
+-- Name: saml_sessions saml_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_sessions
+    ADD CONSTRAINT saml_sessions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -117,6 +140,14 @@ ALTER TABLE ONLY public.organizations
 
 ALTER TABLE ONLY public.saml_connections
     ADD CONSTRAINT saml_connections_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
+
+
+--
+-- Name: saml_sessions saml_sessions_saml_connection_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_sessions
+    ADD CONSTRAINT saml_sessions_saml_connection_id_fkey FOREIGN KEY (saml_connection_id) REFERENCES public.saml_connections(id);
 
 
 --

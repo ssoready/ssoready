@@ -9,8 +9,69 @@ import (
 	"context"
 )
 
+const createSAMLSession = `-- name: CreateSAMLSession :one
+insert into saml_sessions (id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes)
+values ($1, $2, $3, $4, $5)
+returning id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes
+`
+
+type CreateSAMLSessionParams struct {
+	ID                   string
+	SamlConnectionID     string
+	SecretAccessToken    *string
+	SubjectID            *string
+	SubjectIdpAttributes []byte
+}
+
+func (q *Queries) CreateSAMLSession(ctx context.Context, arg CreateSAMLSessionParams) (SamlSession, error) {
+	row := q.db.QueryRow(ctx, createSAMLSession,
+		arg.ID,
+		arg.SamlConnectionID,
+		arg.SecretAccessToken,
+		arg.SubjectID,
+		arg.SubjectIdpAttributes,
+	)
+	var i SamlSession
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.SecretAccessToken,
+		&i.SubjectID,
+		&i.SubjectIdpAttributes,
+	)
+	return i, err
+}
+
+const getEnvironmentByID = `-- name: GetEnvironmentByID :one
+select id, redirect_url
+from environments
+where id = $1
+`
+
+func (q *Queries) GetEnvironmentByID(ctx context.Context, id string) (Environment, error) {
+	row := q.db.QueryRow(ctx, getEnvironmentByID, id)
+	var i Environment
+	err := row.Scan(&i.ID, &i.RedirectUrl)
+	return i, err
+}
+
+const getOrganizationByID = `-- name: GetOrganizationByID :one
+select id, environment_id
+from organizations
+where id = $1
+`
+
+func (q *Queries) GetOrganizationByID(ctx context.Context, id string) (Organization, error) {
+	row := q.db.QueryRow(ctx, getOrganizationByID, id)
+	var i Organization
+	err := row.Scan(&i.ID, &i.EnvironmentID)
+	return i, err
+}
+
 const getSAMLConnectionByID = `-- name: GetSAMLConnectionByID :one
-select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id from saml_connections where id = $1
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id
+from saml_connections
+where id = $1
 `
 
 func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id string) (SamlConnection, error) {

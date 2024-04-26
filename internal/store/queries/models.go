@@ -24,6 +24,14 @@ type SamlConnection struct {
 	IdpEntityID        *string
 }
 
+type SamlSession struct {
+	ID                   string
+	SamlConnectionID     string
+	SecretAccessToken    *string
+	SubjectID            *string
+	SubjectIdpAttributes []byte
+}
+
 type SchemaMigration struct {
 	Version int64
 	Dirty   bool

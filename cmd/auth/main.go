@@ -6,12 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ssoready/ssoready/internal/saml"
 	"github.com/ssoready/ssoready/internal/store"
+	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
 func main() {
@@ -50,6 +52,16 @@ func main() {
 			panic(err)
 		}
 
+		getOrgRes, err := store_.GetOrganizationByID(ctx, &store.GetOrganizationByIDRequest{ID: getSamlConnRes.SAMLConnection.OrganizationID})
+		if err != nil {
+			panic(err)
+		}
+
+		getEnvRes, err := store_.GetEnvironmentByID(ctx, &store.GetEnvironmentByIDRequest{ID: getOrgRes.Organization.EnvironmentID})
+		if err != nil {
+			panic(err)
+		}
+
 		if err := r.ParseForm(); err != nil {
 			panic(err)
 		}
@@ -70,9 +82,32 @@ func main() {
 			panic(err)
 		}
 
-		if err := json.NewEncoder(w).Encode(validateRes); err != nil {
+		idpAttributes, err := json.Marshal(validateRes.SubjectAttributes)
+		if err != nil {
 			panic(err)
 		}
+
+		createSAMLSessRes, err := store_.CreateSAMLSession(ctx, &store.CreateSAMLSessionRequest{
+			SAMLSession: queries.SamlSession{
+				SamlConnectionID:     getSamlConnRes.SAMLConnection.ID,
+				SubjectID:            &validateRes.SubjectID,
+				SubjectIdpAttributes: idpAttributes,
+			},
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		redirectURL, err := url.Parse(*getEnvRes.Environment.RedirectUrl)
+		if err != nil {
+			panic(err)
+		}
+
+		redirectQuery := url.Values{}
+		redirectQuery.Set("access_token", *createSAMLSessRes.SAMLSession.SecretAccessToken)
+		redirectURL.RawQuery = redirectQuery.Encode()
+
+		http.Redirect(w, r, redirectURL.String(), http.StatusSeeOther)
 	}).Methods("POST")
 
 	if err := http.ListenAndServe("localhost:8080", r); err != nil {
