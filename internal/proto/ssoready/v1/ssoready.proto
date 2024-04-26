@@ -13,6 +13,24 @@ service SSOReadyService {
   };
 }
 
+message Environment {
+  string id = 1;
+  string redirect_url = 2;
+}
+
+message Organization {
+  string id = 1;
+  string environment_id = 2;
+}
+
+message SAMLConnection {
+  string id = 1;
+  string organization_id = 2;
+  string idp_redirect_url = 3;
+  bytes idp_x509_certificate = 4;
+  string idp_entity_id = 5;
+}
+
 message RedeemSAMLAccessTokenRequest {
   string access_token = 1;
 }

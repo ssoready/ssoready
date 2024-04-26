@@ -22,7 +22,7 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 				return nil, connect.NewError(connect.CodeUnauthenticated, nil)
 			}
 
-			apiKey, err := s.GetAPIKeyBySecretValue(ctx, &store.GetAPIKeyBySecretValueRequest{SecretValue: secretValue})
+			apiKey, err := s.GetAPIKeyBySecretToken(ctx, &store.GetAPIKeyBySecretTokenRequest{Token: secretValue})
 			if err != nil {
 				return nil, err
 			}

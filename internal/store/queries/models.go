@@ -4,41 +4,43 @@
 
 package queries
 
-import ()
+import (
+	"github.com/google/uuid"
+)
 
 type ApiKey struct {
-	ID                string
-	AppOrganizationID string
+	ID                uuid.UUID
+	AppOrganizationID uuid.UUID
 	SecretValue       string
 }
 
 type AppOrganization struct {
-	ID string
+	ID uuid.UUID
 }
 
 type Environment struct {
-	ID                string
+	ID                uuid.UUID
 	RedirectUrl       *string
-	AppOrganizationID string
+	AppOrganizationID uuid.UUID
 }
 
 type Organization struct {
-	ID            string
-	EnvironmentID string
+	ID            uuid.UUID
+	EnvironmentID uuid.UUID
 }
 
 type SamlConnection struct {
-	ID                 string
-	OrganizationID     string
+	ID                 uuid.UUID
+	OrganizationID     uuid.UUID
 	IdpRedirectUrl     *string
 	IdpX509Certificate []byte
 	IdpEntityID        *string
 }
 
 type SamlSession struct {
-	ID                   string
-	SamlConnectionID     string
-	SecretAccessToken    *string
+	ID                   uuid.UUID
+	SamlConnectionID     uuid.UUID
+	SecretAccessToken    *uuid.UUID
 	SubjectID            *string
 	SubjectIdpAttributes []byte
 }

@@ -7,6 +7,8 @@ package queries
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createSAMLSession = `-- name: CreateSAMLSession :one
@@ -16,9 +18,9 @@ returning id, saml_connection_id, secret_access_token, subject_id, subject_idp_a
 `
 
 type CreateSAMLSessionParams struct {
-	ID                   string
-	SamlConnectionID     string
-	SecretAccessToken    *string
+	ID                   uuid.UUID
+	SamlConnectionID     uuid.UUID
+	SecretAccessToken    *uuid.UUID
 	SubjectID            *string
 	SubjectIdpAttributes []byte
 }
@@ -61,7 +63,7 @@ from environments
 where id = $1
 `
 
-func (q *Queries) GetEnvironmentByID(ctx context.Context, id string) (Environment, error) {
+func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environment, error) {
 	row := q.db.QueryRow(ctx, getEnvironmentByID, id)
 	var i Environment
 	err := row.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID)
@@ -74,7 +76,7 @@ from organizations
 where id = $1
 `
 
-func (q *Queries) GetOrganizationByID(ctx context.Context, id string) (Organization, error) {
+func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organization, error) {
 	row := q.db.QueryRow(ctx, getOrganizationByID, id)
 	var i Organization
 	err := row.Scan(&i.ID, &i.EnvironmentID)
@@ -92,18 +94,18 @@ where environments.app_organization_id = $1
 `
 
 type GetSAMLAccessTokenDataParams struct {
-	AppOrganizationID string
-	SecretAccessToken *string
+	AppOrganizationID uuid.UUID
+	SecretAccessToken *uuid.UUID
 }
 
 type GetSAMLAccessTokenDataRow struct {
-	ID                   string
-	SamlConnectionID     string
-	SecretAccessToken    *string
+	ID                   uuid.UUID
+	SamlConnectionID     uuid.UUID
+	SecretAccessToken    *uuid.UUID
 	SubjectID            *string
 	SubjectIdpAttributes []byte
-	OrganizationID       string
-	EnvironmentID        string
+	OrganizationID       uuid.UUID
+	EnvironmentID        uuid.UUID
 }
 
 func (q *Queries) GetSAMLAccessTokenData(ctx context.Context, arg GetSAMLAccessTokenDataParams) (GetSAMLAccessTokenDataRow, error) {
@@ -127,7 +129,7 @@ from saml_connections
 where id = $1
 `
 
-func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id string) (SamlConnection, error) {
+func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (SamlConnection, error) {
 	row := q.db.QueryRow(ctx, getSAMLConnectionByID, id)
 	var i SamlConnection
 	err := row.Scan(
