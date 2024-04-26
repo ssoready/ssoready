@@ -21,12 +21,37 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: api_keys; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.api_keys (
+    id uuid NOT NULL,
+    app_organization_id uuid NOT NULL,
+    secret_value character varying NOT NULL
+);
+
+
+ALTER TABLE public.api_keys OWNER TO postgres;
+
+--
+-- Name: app_organizations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.app_organizations (
+    id uuid NOT NULL
+);
+
+
+ALTER TABLE public.app_organizations OWNER TO postgres;
+
+--
 -- Name: environments; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.environments (
     id uuid NOT NULL,
-    redirect_url character varying
+    redirect_url character varying,
+    app_organization_id uuid NOT NULL
 );
 
 
@@ -87,6 +112,22 @@ CREATE TABLE public.schema_migrations (
 ALTER TABLE public.schema_migrations OWNER TO postgres;
 
 --
+-- Name: api_keys api_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.api_keys
+    ADD CONSTRAINT api_keys_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_organizations app_organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_organizations
+    ADD CONSTRAINT app_organizations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: environments environments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -124,6 +165,22 @@ ALTER TABLE ONLY public.saml_sessions
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: api_keys api_keys_app_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.api_keys
+    ADD CONSTRAINT api_keys_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
+
+
+--
+-- Name: environments environments_app_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.environments
+    ADD CONSTRAINT environments_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
 
 
 --

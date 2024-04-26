@@ -42,8 +42,21 @@ func (q *Queries) CreateSAMLSession(ctx context.Context, arg CreateSAMLSessionPa
 	return i, err
 }
 
+const getAPIKeyBySecretValue = `-- name: GetAPIKeyBySecretValue :one
+select id, app_organization_id, secret_value
+from api_keys
+where secret_value = $1
+`
+
+func (q *Queries) GetAPIKeyBySecretValue(ctx context.Context, secretValue string) (ApiKey, error) {
+	row := q.db.QueryRow(ctx, getAPIKeyBySecretValue, secretValue)
+	var i ApiKey
+	err := row.Scan(&i.ID, &i.AppOrganizationID, &i.SecretValue)
+	return i, err
+}
+
 const getEnvironmentByID = `-- name: GetEnvironmentByID :one
-select id, redirect_url
+select id, redirect_url, app_organization_id
 from environments
 where id = $1
 `
@@ -51,7 +64,7 @@ where id = $1
 func (q *Queries) GetEnvironmentByID(ctx context.Context, id string) (Environment, error) {
 	row := q.db.QueryRow(ctx, getEnvironmentByID, id)
 	var i Environment
-	err := row.Scan(&i.ID, &i.RedirectUrl)
+	err := row.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID)
 	return i, err
 }
 
@@ -83,6 +96,34 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id string) (SamlCon
 		&i.IdpRedirectUrl,
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
+	)
+	return i, err
+}
+
+const getSAMLSessionBySecretAccessToken = `-- name: GetSAMLSessionBySecretAccessToken :one
+select saml_sessions.id, saml_sessions.saml_connection_id, saml_sessions.secret_access_token, saml_sessions.subject_id, saml_sessions.subject_idp_attributes
+from saml_sessions
+         join saml_connections on saml_sessions.saml_connection_id = saml_connections.id
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_sessions.secret_access_token = $2
+`
+
+type GetSAMLSessionBySecretAccessTokenParams struct {
+	AppOrganizationID string
+	SecretAccessToken *string
+}
+
+func (q *Queries) GetSAMLSessionBySecretAccessToken(ctx context.Context, arg GetSAMLSessionBySecretAccessTokenParams) (SamlSession, error) {
+	row := q.db.QueryRow(ctx, getSAMLSessionBySecretAccessToken, arg.AppOrganizationID, arg.SecretAccessToken)
+	var i SamlSession
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.SecretAccessToken,
+		&i.SubjectID,
+		&i.SubjectIdpAttributes,
 	)
 	return i, err
 }

@@ -6,9 +6,20 @@ package queries
 
 import ()
 
+type ApiKey struct {
+	ID                string
+	AppOrganizationID string
+	SecretValue       string
+}
+
+type AppOrganization struct {
+	ID string
+}
+
 type Environment struct {
-	ID          string
-	RedirectUrl *string
+	ID                string
+	RedirectUrl       *string
+	AppOrganizationID string
 }
 
 type Organization struct {
