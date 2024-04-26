@@ -81,6 +81,46 @@ func (q *Queries) GetOrganizationByID(ctx context.Context, id string) (Organizat
 	return i, err
 }
 
+const getSAMLAccessTokenData = `-- name: GetSAMLAccessTokenData :one
+select saml_sessions.id, saml_sessions.saml_connection_id, saml_sessions.secret_access_token, saml_sessions.subject_id, saml_sessions.subject_idp_attributes, organizations.id as organization_id, environments.id as environment_id
+from saml_sessions
+         join saml_connections on saml_sessions.saml_connection_id = saml_connections.id
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_sessions.secret_access_token = $2
+`
+
+type GetSAMLAccessTokenDataParams struct {
+	AppOrganizationID string
+	SecretAccessToken *string
+}
+
+type GetSAMLAccessTokenDataRow struct {
+	ID                   string
+	SamlConnectionID     string
+	SecretAccessToken    *string
+	SubjectID            *string
+	SubjectIdpAttributes []byte
+	OrganizationID       string
+	EnvironmentID        string
+}
+
+func (q *Queries) GetSAMLAccessTokenData(ctx context.Context, arg GetSAMLAccessTokenDataParams) (GetSAMLAccessTokenDataRow, error) {
+	row := q.db.QueryRow(ctx, getSAMLAccessTokenData, arg.AppOrganizationID, arg.SecretAccessToken)
+	var i GetSAMLAccessTokenDataRow
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.SecretAccessToken,
+		&i.SubjectID,
+		&i.SubjectIdpAttributes,
+		&i.OrganizationID,
+		&i.EnvironmentID,
+	)
+	return i, err
+}
+
 const getSAMLConnectionByID = `-- name: GetSAMLConnectionByID :one
 select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id
 from saml_connections
@@ -96,34 +136,6 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id string) (SamlCon
 		&i.IdpRedirectUrl,
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
-	)
-	return i, err
-}
-
-const getSAMLSessionBySecretAccessToken = `-- name: GetSAMLSessionBySecretAccessToken :one
-select saml_sessions.id, saml_sessions.saml_connection_id, saml_sessions.secret_access_token, saml_sessions.subject_id, saml_sessions.subject_idp_attributes
-from saml_sessions
-         join saml_connections on saml_sessions.saml_connection_id = saml_connections.id
-         join organizations on saml_connections.organization_id = organizations.id
-         join environments on organizations.environment_id = environments.id
-where environments.app_organization_id = $1
-  and saml_sessions.secret_access_token = $2
-`
-
-type GetSAMLSessionBySecretAccessTokenParams struct {
-	AppOrganizationID string
-	SecretAccessToken *string
-}
-
-func (q *Queries) GetSAMLSessionBySecretAccessToken(ctx context.Context, arg GetSAMLSessionBySecretAccessTokenParams) (SamlSession, error) {
-	row := q.db.QueryRow(ctx, getSAMLSessionBySecretAccessToken, arg.AppOrganizationID, arg.SecretAccessToken)
-	var i SamlSession
-	err := row.Scan(
-		&i.ID,
-		&i.SamlConnectionID,
-		&i.SecretAccessToken,
-		&i.SubjectID,
-		&i.SubjectIdpAttributes,
 	)
 	return i, err
 }

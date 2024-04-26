@@ -23,8 +23,8 @@ select *
 from api_keys
 where secret_value = $1;
 
--- name: GetSAMLSessionBySecretAccessToken :one
-select saml_sessions.*
+-- name: GetSAMLAccessTokenData :one
+select saml_sessions.*, organizations.id as organization_id, environments.id as environment_id
 from saml_sessions
          join saml_connections on saml_sessions.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id

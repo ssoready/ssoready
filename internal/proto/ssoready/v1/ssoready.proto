@@ -20,4 +20,6 @@ message RedeemSAMLAccessTokenRequest {
 message RedeemSAMLAccessTokenResponse {
   string subject_idp_id = 1;
   map<string, string> subject_idp_attributes = 2;
+  string organization_id = 3;
+  string environment_id = 4;
 }
