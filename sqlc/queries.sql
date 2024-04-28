@@ -31,3 +31,34 @@ from saml_sessions
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_sessions.secret_access_token = $2;
+
+-- name: GetAppUserByEmail :one
+select *
+from app_users
+where email = $1;
+
+-- name: GetAppOrganizationByGoogleHostedDomain :one
+select *
+from app_organizations
+where google_hosted_domain = $1;
+
+-- name: CreateAppOrganization :one
+insert into app_organizations (id, google_hosted_domain)
+values ($1, $2)
+returning *;
+
+-- name: CreateAppUser :one
+insert into app_users (id, app_organization_id, display_name, email)
+values ($1, $2, $3, $4)
+returning *;
+
+-- name: CreateAppSession :one
+insert into app_sessions (id, app_user_id, create_time, expire_time, token)
+values ($1, $2, $3, $4, $5)
+returning *;
+
+-- name: GetAppSessionByToken :one
+select app_sessions.app_user_id, app_users.app_organization_id
+from app_sessions
+         join app_users on app_sessions.app_user_id = app_users.id
+where token = $1;

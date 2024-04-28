@@ -11,6 +11,14 @@ service SSOReadyService {
       body: "*"
     };
   };
+
+  rpc SignIn(SignInRequest) returns (SignInResponse);
+}
+
+message AppUser {
+  string id = 1;
+  string display_name = 2;
+  string email = 3;
 }
 
 message Environment {
@@ -40,4 +48,12 @@ message RedeemSAMLAccessTokenResponse {
   map<string, string> subject_idp_attributes = 2;
   string organization_id = 3;
   string environment_id = 4;
+}
+
+message SignInRequest {
+  string google_credential = 1;
+}
+
+message SignInResponse {
+  string session_token = 1;
 }

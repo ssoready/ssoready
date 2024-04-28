@@ -5,6 +5,8 @@
 package queries
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -15,7 +17,23 @@ type ApiKey struct {
 }
 
 type AppOrganization struct {
-	ID uuid.UUID
+	ID                 uuid.UUID
+	GoogleHostedDomain *string
+}
+
+type AppSession struct {
+	ID         uuid.UUID
+	AppUserID  uuid.UUID
+	CreateTime time.Time
+	ExpireTime time.Time
+	Token      string
+}
+
+type AppUser struct {
+	ID                uuid.UUID
+	AppOrganizationID uuid.UUID
+	DisplayName       string
+	Email             *string
 }
 
 type Environment struct {

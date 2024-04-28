@@ -36,11 +36,14 @@ const (
 	// SSOReadyServiceRedeemSAMLAccessTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's RedeemSAMLAccessToken RPC.
 	SSOReadyServiceRedeemSAMLAccessTokenProcedure = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessToken"
+	// SSOReadyServiceSignInProcedure is the fully-qualified name of the SSOReadyService's SignIn RPC.
+	SSOReadyServiceSignInProcedure = "/ssoready.v1.SSOReadyService/SignIn"
 )
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceClient interface {
 	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
+	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 }
 
 // NewSSOReadyServiceClient constructs a client for the ssoready.v1.SSOReadyService service. By
@@ -58,12 +61,18 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceRedeemSAMLAccessTokenProcedure,
 			opts...,
 		),
+		signIn: connect.NewClient[v1.SignInRequest, v1.SignInResponse](
+			httpClient,
+			baseURL+SSOReadyServiceSignInProcedure,
+			opts...,
+		),
 	}
 }
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
 	redeemSAMLAccessToken *connect.Client[v1.RedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessTokenResponse]
+	signIn                *connect.Client[v1.SignInRequest, v1.SignInResponse]
 }
 
 // RedeemSAMLAccessToken calls ssoready.v1.SSOReadyService.RedeemSAMLAccessToken.
@@ -71,9 +80,15 @@ func (c *sSOReadyServiceClient) RedeemSAMLAccessToken(ctx context.Context, req *
 	return c.redeemSAMLAccessToken.CallUnary(ctx, req)
 }
 
+// SignIn calls ssoready.v1.SSOReadyService.SignIn.
+func (c *sSOReadyServiceClient) SignIn(ctx context.Context, req *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {
+	return c.signIn.CallUnary(ctx, req)
+}
+
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
 	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
+	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 }
 
 // NewSSOReadyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -87,10 +102,17 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.RedeemSAMLAccessToken,
 		opts...,
 	)
+	sSOReadyServiceSignInHandler := connect.NewUnaryHandler(
+		SSOReadyServiceSignInProcedure,
+		svc.SignIn,
+		opts...,
+	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SSOReadyServiceRedeemSAMLAccessTokenProcedure:
 			sSOReadyServiceRedeemSAMLAccessTokenHandler.ServeHTTP(w, r)
+		case SSOReadyServiceSignInProcedure:
+			sSOReadyServiceSignInHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -102,4 +124,8 @@ type UnimplementedSSOReadyServiceHandler struct{}
 
 func (UnimplementedSSOReadyServiceHandler) RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemSAMLAccessToken is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.SignIn is not implemented"))
 }

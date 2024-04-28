@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	SSOReadyService_RedeemSAMLAccessToken_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessToken"
+	SSOReadyService_SignIn_FullMethodName                = "/ssoready.v1.SSOReadyService/SignIn"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SSOReadyServiceClient interface {
 	RedeemSAMLAccessToken(ctx context.Context, in *RedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessTokenResponse, error)
+	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -46,11 +48,21 @@ func (c *sSOReadyServiceClient) RedeemSAMLAccessToken(ctx context.Context, in *R
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_SignIn_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
 type SSOReadyServiceServer interface {
 	RedeemSAMLAccessToken(context.Context, *RedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessTokenResponse, error)
+	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedSSOReadyServiceServer struct {
 
 func (UnimplementedSSOReadyServiceServer) RedeemSAMLAccessToken(context.Context, *RedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RedeemSAMLAccessToken not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -92,6 +107,24 @@ func _SSOReadyService_RedeemSAMLAccessToken_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).SignIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_SignIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).SignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RedeemSAMLAccessToken",
 			Handler:    _SSOReadyService_RedeemSAMLAccessToken_Handler,
+		},
+		{
+			MethodName: "SignIn",
+			Handler:    _SSOReadyService_SignIn_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

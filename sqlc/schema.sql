@@ -38,11 +38,41 @@ ALTER TABLE public.api_keys OWNER TO postgres;
 --
 
 CREATE TABLE public.app_organizations (
-    id uuid NOT NULL
+    id uuid NOT NULL,
+    google_hosted_domain character varying
 );
 
 
 ALTER TABLE public.app_organizations OWNER TO postgres;
+
+--
+-- Name: app_sessions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.app_sessions (
+    id uuid NOT NULL,
+    app_user_id uuid NOT NULL,
+    create_time timestamp with time zone NOT NULL,
+    expire_time timestamp with time zone NOT NULL,
+    token character varying NOT NULL
+);
+
+
+ALTER TABLE public.app_sessions OWNER TO postgres;
+
+--
+-- Name: app_users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.app_users (
+    id uuid NOT NULL,
+    app_organization_id uuid NOT NULL,
+    display_name character varying NOT NULL,
+    email character varying
+);
+
+
+ALTER TABLE public.app_users OWNER TO postgres;
 
 --
 -- Name: environments; Type: TABLE; Schema: public; Owner: postgres
@@ -120,11 +150,51 @@ ALTER TABLE ONLY public.api_keys
 
 
 --
+-- Name: app_organizations app_organizations_google_hosted_domain_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_organizations
+    ADD CONSTRAINT app_organizations_google_hosted_domain_key UNIQUE (google_hosted_domain);
+
+
+--
 -- Name: app_organizations app_organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.app_organizations
     ADD CONSTRAINT app_organizations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_sessions app_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_sessions
+    ADD CONSTRAINT app_sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_sessions app_sessions_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_sessions
+    ADD CONSTRAINT app_sessions_token_key UNIQUE (token);
+
+
+--
+-- Name: app_users app_users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_users
+    ADD CONSTRAINT app_users_email_key UNIQUE (email);
+
+
+--
+-- Name: app_users app_users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_users
+    ADD CONSTRAINT app_users_pkey PRIMARY KEY (id);
 
 
 --
@@ -173,6 +243,22 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.api_keys
     ADD CONSTRAINT api_keys_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
+
+
+--
+-- Name: app_sessions app_sessions_app_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_sessions
+    ADD CONSTRAINT app_sessions_app_user_id_fkey FOREIGN KEY (app_user_id) REFERENCES public.app_users(id);
+
+
+--
+-- Name: app_users app_users_app_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_users
+    ADD CONSTRAINT app_users_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
 
 
 --

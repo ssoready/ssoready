@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"connectrpc.com/connect"
@@ -10,6 +11,7 @@ import (
 	"github.com/ssoready/ssoready/internal/apiservice"
 	"github.com/ssoready/ssoready/internal/appauth/appauthinterceptor"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
+	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
@@ -21,20 +23,29 @@ func main() {
 
 	store_ := store.New(db)
 
-	service := vanguard.NewService(
-		ssoreadyv1connect.NewSSOReadyServiceHandler(
-			&apiservice.Service{
-				Store: store_,
+	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
+		&apiservice.Service{
+			Store: store_,
+			GoogleClient: &google.Client{
+				HTTPClient:          http.DefaultClient,
+				GoogleOAuthClientID: "171906208332-m8dg2p6av2f0aa7lliaj6oo0grct57p1.apps.googleusercontent.com",
 			},
-			connect.WithInterceptors(appauthinterceptor.New(store_)),
-		),
+		},
+		connect.WithInterceptors(appauthinterceptor.New(store_)),
 	)
+
+	service := vanguard.NewService(connectPath, connectHandler)
 	transcoder, err := vanguard.NewTranscoder([]*vanguard.Service{service})
 	if err != nil {
 		panic(err)
 	}
 
+	connectMux := http.NewServeMux()
+	fmt.Println(connectPath, connectHandler)
+	connectMux.Handle(connectPath, connectHandler)
+
 	mux := http.NewServeMux()
+	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))
 	mux.Handle("/", transcoder)
 	if err := http.ListenAndServe("localhost:8081", mux); err != nil {
 		panic(err)

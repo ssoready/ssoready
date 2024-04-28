@@ -22,12 +22,23 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 				return nil, connect.NewError(connect.CodeUnauthenticated, nil)
 			}
 
-			apiKey, err := s.GetAPIKeyBySecretToken(ctx, &store.GetAPIKeyBySecretTokenRequest{Token: secretValue})
-			if err != nil {
-				return nil, err
+			if strings.HasPrefix(secretValue, "sk_") {
+				// it's an api key
+				apiKey, err := s.GetAPIKeyBySecretToken(ctx, &store.GetAPIKeyBySecretTokenRequest{Token: secretValue})
+				if err != nil {
+					return nil, err
+				}
+
+				ctx = appauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.ID)
+			} else {
+				session, err := s.GetAppSession(ctx, &store.GetAppSessionRequest{SessionToken: secretValue})
+				if err != nil {
+					return nil, err
+				}
+
+				ctx = appauth.WithAppUserID(ctx, session.AppOrganizationID, session.AppUserID)
 			}
 
-			ctx = appauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.ID)
 			return next(ctx, req)
 		}
 	}

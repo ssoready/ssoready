@@ -7,9 +7,91 @@ package queries
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
+
+const createAppOrganization = `-- name: CreateAppOrganization :one
+insert into app_organizations (id, google_hosted_domain)
+values ($1, $2)
+returning id, google_hosted_domain
+`
+
+type CreateAppOrganizationParams struct {
+	ID                 uuid.UUID
+	GoogleHostedDomain *string
+}
+
+func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrganizationParams) (AppOrganization, error) {
+	row := q.db.QueryRow(ctx, createAppOrganization, arg.ID, arg.GoogleHostedDomain)
+	var i AppOrganization
+	err := row.Scan(&i.ID, &i.GoogleHostedDomain)
+	return i, err
+}
+
+const createAppSession = `-- name: CreateAppSession :one
+insert into app_sessions (id, app_user_id, create_time, expire_time, token)
+values ($1, $2, $3, $4, $5)
+returning id, app_user_id, create_time, expire_time, token
+`
+
+type CreateAppSessionParams struct {
+	ID         uuid.UUID
+	AppUserID  uuid.UUID
+	CreateTime time.Time
+	ExpireTime time.Time
+	Token      string
+}
+
+func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionParams) (AppSession, error) {
+	row := q.db.QueryRow(ctx, createAppSession,
+		arg.ID,
+		arg.AppUserID,
+		arg.CreateTime,
+		arg.ExpireTime,
+		arg.Token,
+	)
+	var i AppSession
+	err := row.Scan(
+		&i.ID,
+		&i.AppUserID,
+		&i.CreateTime,
+		&i.ExpireTime,
+		&i.Token,
+	)
+	return i, err
+}
+
+const createAppUser = `-- name: CreateAppUser :one
+insert into app_users (id, app_organization_id, display_name, email)
+values ($1, $2, $3, $4)
+returning id, app_organization_id, display_name, email
+`
+
+type CreateAppUserParams struct {
+	ID                uuid.UUID
+	AppOrganizationID uuid.UUID
+	DisplayName       string
+	Email             *string
+}
+
+func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (AppUser, error) {
+	row := q.db.QueryRow(ctx, createAppUser,
+		arg.ID,
+		arg.AppOrganizationID,
+		arg.DisplayName,
+		arg.Email,
+	)
+	var i AppUser
+	err := row.Scan(
+		&i.ID,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.Email,
+	)
+	return i, err
+}
 
 const createSAMLSession = `-- name: CreateSAMLSession :one
 insert into saml_sessions (id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes)
@@ -54,6 +136,56 @@ func (q *Queries) GetAPIKeyBySecretValue(ctx context.Context, secretValue string
 	row := q.db.QueryRow(ctx, getAPIKeyBySecretValue, secretValue)
 	var i ApiKey
 	err := row.Scan(&i.ID, &i.AppOrganizationID, &i.SecretValue)
+	return i, err
+}
+
+const getAppOrganizationByGoogleHostedDomain = `-- name: GetAppOrganizationByGoogleHostedDomain :one
+select id, google_hosted_domain
+from app_organizations
+where google_hosted_domain = $1
+`
+
+func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, googleHostedDomain *string) (AppOrganization, error) {
+	row := q.db.QueryRow(ctx, getAppOrganizationByGoogleHostedDomain, googleHostedDomain)
+	var i AppOrganization
+	err := row.Scan(&i.ID, &i.GoogleHostedDomain)
+	return i, err
+}
+
+const getAppSessionByToken = `-- name: GetAppSessionByToken :one
+select app_sessions.app_user_id, app_users.app_organization_id
+from app_sessions
+         join app_users on app_sessions.app_user_id = app_users.id
+where token = $1
+`
+
+type GetAppSessionByTokenRow struct {
+	AppUserID         uuid.UUID
+	AppOrganizationID uuid.UUID
+}
+
+func (q *Queries) GetAppSessionByToken(ctx context.Context, token string) (GetAppSessionByTokenRow, error) {
+	row := q.db.QueryRow(ctx, getAppSessionByToken, token)
+	var i GetAppSessionByTokenRow
+	err := row.Scan(&i.AppUserID, &i.AppOrganizationID)
+	return i, err
+}
+
+const getAppUserByEmail = `-- name: GetAppUserByEmail :one
+select id, app_organization_id, display_name, email
+from app_users
+where email = $1
+`
+
+func (q *Queries) GetAppUserByEmail(ctx context.Context, email *string) (AppUser, error) {
+	row := q.db.QueryRow(ctx, getAppUserByEmail, email)
+	var i AppUser
+	err := row.Scan(
+		&i.ID,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.Email,
+	)
 	return i, err
 }
 
