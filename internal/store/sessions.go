@@ -15,6 +15,7 @@ import (
 
 type GetAppSessionRequest struct {
 	SessionToken string
+	Now          time.Time
 }
 
 type GetAppSessionResponse struct {
@@ -23,7 +24,10 @@ type GetAppSessionResponse struct {
 }
 
 func (s *Store) GetAppSession(ctx context.Context, req *GetAppSessionRequest) (*GetAppSessionResponse, error) {
-	appSession, err := s.q.GetAppSessionByToken(ctx, req.SessionToken)
+	appSession, err := s.q.GetAppSessionByToken(ctx, queries.GetAppSessionByTokenParams{
+		Token:      req.SessionToken,
+		ExpireTime: req.Now,
+	})
 	if err != nil {
 		return nil, err
 	}

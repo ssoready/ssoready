@@ -61,4 +61,5 @@ returning *;
 select app_sessions.app_user_id, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
-where token = $1;
+where token = $1
+  and expire_time < $2;

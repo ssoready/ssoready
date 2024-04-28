@@ -3,6 +3,7 @@ package appauthinterceptor
 import (
 	"context"
 	"strings"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/ssoready/ssoready/internal/appauth"
@@ -31,7 +32,7 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 
 				ctx = appauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.ID)
 			} else {
-				session, err := s.GetAppSession(ctx, &store.GetAppSessionRequest{SessionToken: secretValue})
+				session, err := s.GetAppSession(ctx, &store.GetAppSessionRequest{SessionToken: secretValue, Now: time.Now()})
 				if err != nil {
 					return nil, err
 				}
