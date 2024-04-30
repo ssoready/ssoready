@@ -8,6 +8,9 @@ import { createConnectTransport } from "@connectrpc/connect-web";
 import { getSessionToken } from "./auth";
 import { LoginGate } from "./components/LoginGate";
 import { HomePage } from "./pages/HomePage";
+import { Page } from "@/components/Page";
+import { ViewEnvironmentPage } from "@/pages/ViewEnvironmentPage";
+import { ViewOrganizationPage } from "@/pages/ViewOrganizationPage";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +33,17 @@ export function App() {
             <Route path="/login" element={<LoginPage />} />
 
             <Route path="/" element={<LoginGate />}>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<Page />}>
+                <Route path="/" element={<HomePage />} />
+                <Route
+                  path="/environments/:environmentId"
+                  element={<ViewEnvironmentPage />}
+                />
+                <Route
+                  path="/environments/:environmentId/organizations/:organizationId"
+                  element={<ViewOrganizationPage />}
+                />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>
