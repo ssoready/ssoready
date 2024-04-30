@@ -219,6 +219,25 @@ func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) 
 	return i, err
 }
 
+const getEnvironment = `-- name: GetEnvironment :one
+select id, redirect_url, app_organization_id
+from environments
+where app_organization_id = $1
+  and id = $2
+`
+
+type GetEnvironmentParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetEnvironment(ctx context.Context, arg GetEnvironmentParams) (Environment, error) {
+	row := q.db.QueryRow(ctx, getEnvironment, arg.AppOrganizationID, arg.ID)
+	var i Environment
+	err := row.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID)
+	return i, err
+}
+
 const getEnvironmentByID = `-- name: GetEnvironmentByID :one
 select id, redirect_url, app_organization_id
 from environments
@@ -229,6 +248,26 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 	row := q.db.QueryRow(ctx, getEnvironmentByID, id)
 	var i Environment
 	err := row.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID)
+	return i, err
+}
+
+const getOrganization = `-- name: GetOrganization :one
+select organizations.id, organizations.environment_id
+from organizations
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and organizations.id = $2
+`
+
+type GetOrganizationParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetOrganization(ctx context.Context, arg GetOrganizationParams) (Organization, error) {
+	row := q.db.QueryRow(ctx, getOrganization, arg.AppOrganizationID, arg.ID)
+	var i Organization
+	err := row.Scan(&i.ID, &i.EnvironmentID)
 	return i, err
 }
 
@@ -329,6 +368,82 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 	for rows.Next() {
 		var i Environment
 		if err := rows.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listOrganizations = `-- name: ListOrganizations :many
+select id, environment_id
+from organizations
+where environment_id = $1
+  and id > $2
+order by id
+limit $3
+`
+
+type ListOrganizationsParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+	Limit         int32
+}
+
+func (q *Queries) ListOrganizations(ctx context.Context, arg ListOrganizationsParams) ([]Organization, error) {
+	rows, err := q.db.Query(ctx, listOrganizations, arg.EnvironmentID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Organization
+	for rows.Next() {
+		var i Organization
+		if err := rows.Scan(&i.ID, &i.EnvironmentID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSAMLConnections = `-- name: ListSAMLConnections :many
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id
+from saml_connections
+where organization_id = $1
+  and id > $2
+order by id
+limit $3
+`
+
+type ListSAMLConnectionsParams struct {
+	OrganizationID uuid.UUID
+	ID             uuid.UUID
+	Limit          int32
+}
+
+func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectionsParams) ([]SamlConnection, error) {
+	rows, err := q.db.Query(ctx, listSAMLConnections, arg.OrganizationID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SamlConnection
+	for rows.Next() {
+		var i SamlConnection
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrganizationID,
+			&i.IdpRedirectUrl,
+			&i.IdpX509Certificate,
+			&i.IdpEntityID,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

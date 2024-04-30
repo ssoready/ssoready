@@ -77,3 +77,32 @@ where app_organization_id = $1
   and id > $2
 order by id
 limit $3;
+
+-- name: GetEnvironment :one
+select *
+from environments
+where app_organization_id = $1
+  and id = $2;
+
+-- name: ListOrganizations :many
+select *
+from organizations
+where environment_id = $1
+  and id > $2
+order by id
+limit $3;
+
+-- name: GetOrganization :one
+select organizations.*
+from organizations
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and organizations.id = $2;
+
+-- name: ListSAMLConnections :many
+select *
+from saml_connections
+where organization_id = $1
+  and id > $2
+order by id
+limit $3;

@@ -23,6 +23,8 @@ const (
 	SSOReadyService_SignIn_FullMethodName                = "/ssoready.v1.SSOReadyService/SignIn"
 	SSOReadyService_Whoami_FullMethodName                = "/ssoready.v1.SSOReadyService/Whoami"
 	SSOReadyService_ListEnvironments_FullMethodName      = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_ListOrganizations_FullMethodName     = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_ListSAMLConnections_FullMethodName   = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -33,6 +35,8 @@ type SSOReadyServiceClient interface {
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
+	ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error)
+	ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -79,6 +83,24 @@ func (c *sSOReadyServiceClient) ListEnvironments(ctx context.Context, in *ListEn
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error) {
+	out := new(ListOrganizationsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListOrganizations_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error) {
+	out := new(ListSAMLConnectionsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLConnections_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -87,6 +109,8 @@ type SSOReadyServiceServer interface {
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
+	ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error)
+	ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -105,6 +129,12 @@ func (UnimplementedSSOReadyServiceServer) Whoami(context.Context, *WhoamiRequest
 }
 func (UnimplementedSSOReadyServiceServer) ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEnvironments not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListOrganizations not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLConnections not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -191,6 +221,42 @@ func _SSOReadyService_ListEnvironments_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_ListOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrganizationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListOrganizations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListOrganizations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListOrganizations(ctx, req.(*ListOrganizationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_ListSAMLConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSAMLConnectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListSAMLConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListSAMLConnections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListSAMLConnections(ctx, req.(*ListSAMLConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +279,14 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListEnvironments",
 			Handler:    _SSOReadyService_ListEnvironments_Handler,
+		},
+		{
+			MethodName: "ListOrganizations",
+			Handler:    _SSOReadyService_ListOrganizations_Handler,
+		},
+		{
+			MethodName: "ListSAMLConnections",
+			Handler:    _SSOReadyService_ListSAMLConnections_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -43,6 +43,12 @@ const (
 	// SSOReadyServiceListEnvironmentsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListEnvironments RPC.
 	SSOReadyServiceListEnvironmentsProcedure = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	// SSOReadyServiceListOrganizationsProcedure is the fully-qualified name of the SSOReadyService's
+	// ListOrganizations RPC.
+	SSOReadyServiceListOrganizationsProcedure = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	// SSOReadyServiceListSAMLConnectionsProcedure is the fully-qualified name of the SSOReadyService's
+	// ListSAMLConnections RPC.
+	SSOReadyServiceListSAMLConnectionsProcedure = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
 )
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
@@ -51,6 +57,8 @@ type SSOReadyServiceClient interface {
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
+	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
+	ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error)
 }
 
 // NewSSOReadyServiceClient constructs a client for the ssoready.v1.SSOReadyService service. By
@@ -83,6 +91,16 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceListEnvironmentsProcedure,
 			opts...,
 		),
+		listOrganizations: connect.NewClient[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListOrganizationsProcedure,
+			opts...,
+		),
+		listSAMLConnections: connect.NewClient[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListSAMLConnectionsProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -92,6 +110,8 @@ type sSOReadyServiceClient struct {
 	signIn                *connect.Client[v1.SignInRequest, v1.SignInResponse]
 	whoami                *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
 	listEnvironments      *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
+	listOrganizations     *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
+	listSAMLConnections   *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
 }
 
 // RedeemSAMLAccessToken calls ssoready.v1.SSOReadyService.RedeemSAMLAccessToken.
@@ -114,12 +134,24 @@ func (c *sSOReadyServiceClient) ListEnvironments(ctx context.Context, req *conne
 	return c.listEnvironments.CallUnary(ctx, req)
 }
 
+// ListOrganizations calls ssoready.v1.SSOReadyService.ListOrganizations.
+func (c *sSOReadyServiceClient) ListOrganizations(ctx context.Context, req *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error) {
+	return c.listOrganizations.CallUnary(ctx, req)
+}
+
+// ListSAMLConnections calls ssoready.v1.SSOReadyService.ListSAMLConnections.
+func (c *sSOReadyServiceClient) ListSAMLConnections(ctx context.Context, req *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error) {
+	return c.listSAMLConnections.CallUnary(ctx, req)
+}
+
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
 	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
+	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
+	ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error)
 }
 
 // NewSSOReadyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -148,6 +180,16 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.ListEnvironments,
 		opts...,
 	)
+	sSOReadyServiceListOrganizationsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListOrganizationsProcedure,
+		svc.ListOrganizations,
+		opts...,
+	)
+	sSOReadyServiceListSAMLConnectionsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListSAMLConnectionsProcedure,
+		svc.ListSAMLConnections,
+		opts...,
+	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SSOReadyServiceRedeemSAMLAccessTokenProcedure:
@@ -158,6 +200,10 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceWhoamiHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListEnvironmentsProcedure:
 			sSOReadyServiceListEnvironmentsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListOrganizationsProcedure:
+			sSOReadyServiceListOrganizationsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListSAMLConnectionsProcedure:
+			sSOReadyServiceListSAMLConnectionsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -181,4 +227,12 @@ func (UnimplementedSSOReadyServiceHandler) Whoami(context.Context, *connect.Requ
 
 func (UnimplementedSSOReadyServiceHandler) ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListEnvironments is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListOrganizations is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSAMLConnections is not implemented"))
 }

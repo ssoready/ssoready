@@ -16,6 +16,10 @@ service SSOReadyService {
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
 
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
+
+  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
+
+  rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
 }
 
 message AppUser {
@@ -76,5 +80,25 @@ message ListEnvironmentsRequest {
 
 message ListEnvironmentsResponse {
   repeated Environment environments = 1;
+  string next_page_token = 2;
+}
+
+message ListOrganizationsRequest {
+  string environment_id = 1;
+  string page_token = 2;
+}
+
+message ListOrganizationsResponse {
+  repeated Organization organizations = 1;
+  string next_page_token = 2;
+}
+
+message ListSAMLConnectionsRequest {
+  string organization_id = 1;
+  string page_token = 2;
+}
+
+message ListSAMLConnectionsResponse {
+  repeated SAMLConnection saml_connections = 1;
   string next_page_token = 2;
 }
