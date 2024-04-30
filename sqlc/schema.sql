@@ -94,7 +94,8 @@ ALTER TABLE public.environments OWNER TO postgres;
 
 CREATE TABLE public.organizations (
     id uuid NOT NULL,
-    environment_id uuid NOT NULL
+    environment_id uuid NOT NULL,
+    external_id character varying
 );
 
 
@@ -204,6 +205,14 @@ ALTER TABLE ONLY public.app_users
 
 ALTER TABLE ONLY public.environments
     ADD CONSTRAINT environments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: organizations organizations_environment_id_external_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.organizations
+    ADD CONSTRAINT organizations_environment_id_external_id_key UNIQUE (environment_id, external_id);
 
 
 --

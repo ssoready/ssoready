@@ -50,6 +50,7 @@ func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrgan
 		orgs = append(orgs, &ssoreadyv1.Organization{
 			Id:            idformat.Organization.Format(qOrg.ID),
 			EnvironmentId: idformat.Environment.Format(qOrg.EnvironmentID),
+			ExternalId:    derefOrEmpty(qOrg.ExternalID),
 		})
 	}
 

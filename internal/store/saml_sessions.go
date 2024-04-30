@@ -40,9 +40,10 @@ func (s *Store) RedeemSAMLAccessToken(ctx context.Context, req *ssoreadyv1.Redee
 	}
 
 	return &ssoreadyv1.RedeemSAMLAccessTokenResponse{
-		SubjectIdpId:         *samlAccessTokenData.SubjectID,
-		SubjectIdpAttributes: attrs,
-		OrganizationId:       idformat.Organization.Format(samlAccessTokenData.OrganizationID),
-		EnvironmentId:        idformat.Environment.Format(samlAccessTokenData.EnvironmentID),
+		SubjectIdpId:           *samlAccessTokenData.SubjectID,
+		SubjectIdpAttributes:   attrs,
+		OrganizationId:         idformat.Organization.Format(samlAccessTokenData.OrganizationID),
+		OrganizationExternalId: derefOrEmpty(samlAccessTokenData.ExternalID),
+		EnvironmentId:          idformat.Environment.Format(samlAccessTokenData.EnvironmentID),
 	}, nil
 }

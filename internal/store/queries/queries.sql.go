@@ -262,7 +262,7 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 }
 
 const getOrganization = `-- name: GetOrganization :one
-select organizations.id, organizations.environment_id
+select organizations.id, organizations.environment_id, organizations.external_id
 from organizations
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
@@ -277,12 +277,12 @@ type GetOrganizationParams struct {
 func (q *Queries) GetOrganization(ctx context.Context, arg GetOrganizationParams) (Organization, error) {
 	row := q.db.QueryRow(ctx, getOrganization, arg.AppOrganizationID, arg.ID)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID)
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
 	return i, err
 }
 
 const getOrganizationByID = `-- name: GetOrganizationByID :one
-select id, environment_id
+select id, environment_id, external_id
 from organizations
 where id = $1
 `
@@ -290,12 +290,15 @@ where id = $1
 func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organization, error) {
 	row := q.db.QueryRow(ctx, getOrganizationByID, id)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID)
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
 	return i, err
 }
 
 const getSAMLAccessTokenData = `-- name: GetSAMLAccessTokenData :one
-select saml_sessions.id, saml_sessions.saml_connection_id, saml_sessions.secret_access_token, saml_sessions.subject_id, saml_sessions.subject_idp_attributes, organizations.id as organization_id, environments.id as environment_id
+select saml_sessions.id, saml_sessions.saml_connection_id, saml_sessions.secret_access_token, saml_sessions.subject_id, saml_sessions.subject_idp_attributes,
+       organizations.id as organization_id,
+       organizations.external_id,
+       environments.id  as environment_id
 from saml_sessions
          join saml_connections on saml_sessions.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
@@ -316,6 +319,7 @@ type GetSAMLAccessTokenDataRow struct {
 	SubjectID            *string
 	SubjectIdpAttributes []byte
 	OrganizationID       uuid.UUID
+	ExternalID           *string
 	EnvironmentID        uuid.UUID
 }
 
@@ -329,6 +333,7 @@ func (q *Queries) GetSAMLAccessTokenData(ctx context.Context, arg GetSAMLAccessT
 		&i.SubjectID,
 		&i.SubjectIdpAttributes,
 		&i.OrganizationID,
+		&i.ExternalID,
 		&i.EnvironmentID,
 	)
 	return i, err
@@ -394,7 +399,7 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 }
 
 const listOrganizations = `-- name: ListOrganizations :many
-select id, environment_id
+select id, environment_id, external_id
 from organizations
 where environment_id = $1
   and id > $2
@@ -417,7 +422,7 @@ func (q *Queries) ListOrganizations(ctx context.Context, arg ListOrganizationsPa
 	var items []Organization
 	for rows.Next() {
 		var i Organization
-		if err := rows.Scan(&i.ID, &i.EnvironmentID); err != nil {
+		if err := rows.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

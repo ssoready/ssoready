@@ -37,6 +37,7 @@ message Environment {
 message Organization {
   string id = 1;
   string environment_id = 2;
+  string external_id = 3;
 }
 
 message SAMLConnection {
@@ -55,6 +56,7 @@ message RedeemSAMLAccessTokenResponse {
   string subject_idp_id = 1;
   map<string, string> subject_idp_attributes = 2;
   string organization_id = 3;
+  string organization_external_id = 5;
   string environment_id = 4;
 }
 

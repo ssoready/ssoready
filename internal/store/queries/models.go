@@ -46,6 +46,7 @@ type Environment struct {
 type Organization struct {
 	ID            uuid.UUID
 	EnvironmentID uuid.UUID
+	ExternalID    *string
 }
 
 type SamlConnection struct {

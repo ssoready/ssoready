@@ -118,6 +118,11 @@ export class Organization extends Message<Organization> {
    */
   environmentId = "";
 
+  /**
+   * @generated from field: string external_id = 3;
+   */
+  externalId = "";
+
   constructor(data?: PartialMessage<Organization>) {
     super();
     proto3.util.initPartial(data, this);
@@ -128,6 +133,7 @@ export class Organization extends Message<Organization> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Organization {
@@ -265,6 +271,11 @@ export class RedeemSAMLAccessTokenResponse extends Message<RedeemSAMLAccessToken
   organizationId = "";
 
   /**
+   * @generated from field: string organization_external_id = 5;
+   */
+  organizationExternalId = "";
+
+  /**
    * @generated from field: string environment_id = 4;
    */
   environmentId = "";
@@ -280,6 +291,7 @@ export class RedeemSAMLAccessTokenResponse extends Message<RedeemSAMLAccessToken
     { no: 1, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
     { no: 3, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
