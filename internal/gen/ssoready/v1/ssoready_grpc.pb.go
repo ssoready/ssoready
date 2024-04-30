@@ -22,6 +22,7 @@ const (
 	SSOReadyService_RedeemSAMLAccessToken_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessToken"
 	SSOReadyService_SignIn_FullMethodName                = "/ssoready.v1.SSOReadyService/SignIn"
 	SSOReadyService_Whoami_FullMethodName                = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_ListEnvironments_FullMethodName      = "/ssoready.v1.SSOReadyService/ListEnvironments"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -31,6 +32,7 @@ type SSOReadyServiceClient interface {
 	RedeemSAMLAccessToken(ctx context.Context, in *RedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessTokenResponse, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
+	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -68,6 +70,15 @@ func (c *sSOReadyServiceClient) Whoami(ctx context.Context, in *WhoamiRequest, o
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error) {
+	out := new(ListEnvironmentsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListEnvironments_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type SSOReadyServiceServer interface {
 	RedeemSAMLAccessToken(context.Context, *RedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessTokenResponse, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
+	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedSSOReadyServiceServer) SignIn(context.Context, *SignInRequest
 }
 func (UnimplementedSSOReadyServiceServer) Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Whoami not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEnvironments not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -158,6 +173,24 @@ func _SSOReadyService_Whoami_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_ListEnvironments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEnvironmentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListEnvironments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListEnvironments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListEnvironments(ctx, req.(*ListEnvironmentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Whoami",
 			Handler:    _SSOReadyService_Whoami_Handler,
+		},
+		{
+			MethodName: "ListEnvironments",
+			Handler:    _SSOReadyService_ListEnvironments_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

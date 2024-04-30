@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { MethodKind } from "@bufbuild/protobuf";
-import { RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { ListEnvironmentsRequest, ListEnvironmentsResponse, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessToken
@@ -43,6 +43,20 @@ export const whoami = {
   kind: MethodKind.Unary,
   I: WhoamiRequest,
   O: WhoamiResponse,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.ListEnvironments
+ */
+export const listEnvironments = {
+  localName: "listEnvironments",
+  name: "ListEnvironments",
+  kind: MethodKind.Unary,
+  I: ListEnvironmentsRequest,
+  O: ListEnvironmentsResponse,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }

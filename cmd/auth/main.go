@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/saml"
 	"github.com/ssoready/ssoready/internal/store"
 )
@@ -20,7 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	store_ := store.New(db)
+	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}) // todo populate from env
 
 	r := mux.NewRouter()
 	r.HandleFunc("/saml/{saml_conn_id}/init", func(w http.ResponseWriter, r *http.Request) {

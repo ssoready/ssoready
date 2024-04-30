@@ -12,6 +12,7 @@ import (
 	"github.com/ssoready/ssoready/internal/appauth/appauthinterceptor"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
+	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
@@ -21,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	store_ := store.New(db)
+	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}) // todo populate from env
 
 	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
 		&apiservice.Service{

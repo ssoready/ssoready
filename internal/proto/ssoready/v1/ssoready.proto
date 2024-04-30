@@ -14,6 +14,8 @@ service SSOReadyService {
 
   rpc SignIn(SignInRequest) returns (SignInResponse);
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
+
+  rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
 }
 
 message AppUser {
@@ -66,4 +68,13 @@ message WhoamiResponse {
   string app_user_id = 1;
   string display_name = 2;
   string email = 3;
+}
+
+message ListEnvironmentsRequest {
+  string page_token = 1;
+}
+
+message ListEnvironmentsResponse {
+  repeated Environment environments = 1;
+  string next_page_token = 2;
 }

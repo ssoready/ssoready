@@ -448,3 +448,83 @@ export class WhoamiResponse extends Message<WhoamiResponse> {
   }
 }
 
+/**
+ * @generated from message ssoready.v1.ListEnvironmentsRequest
+ */
+export class ListEnvironmentsRequest extends Message<ListEnvironmentsRequest> {
+  /**
+   * @generated from field: string page_token = 1;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListEnvironmentsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListEnvironmentsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEnvironmentsRequest {
+    return new ListEnvironmentsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEnvironmentsRequest {
+    return new ListEnvironmentsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEnvironmentsRequest {
+    return new ListEnvironmentsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListEnvironmentsRequest | PlainMessage<ListEnvironmentsRequest> | undefined, b: ListEnvironmentsRequest | PlainMessage<ListEnvironmentsRequest> | undefined): boolean {
+    return proto3.util.equals(ListEnvironmentsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListEnvironmentsResponse
+ */
+export class ListEnvironmentsResponse extends Message<ListEnvironmentsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.Environment environments = 1;
+   */
+  environments: Environment[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListEnvironmentsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListEnvironmentsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environments", kind: "message", T: Environment, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEnvironmentsResponse {
+    return new ListEnvironmentsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEnvironmentsResponse {
+    return new ListEnvironmentsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEnvironmentsResponse {
+    return new ListEnvironmentsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListEnvironmentsResponse | PlainMessage<ListEnvironmentsResponse> | undefined, b: ListEnvironmentsResponse | PlainMessage<ListEnvironmentsResponse> | undefined): boolean {
+    return proto3.util.equals(ListEnvironmentsResponse, a, b);
+  }
+}
+

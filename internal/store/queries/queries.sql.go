@@ -303,3 +303,38 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 	)
 	return i, err
 }
+
+const listEnvironments = `-- name: ListEnvironments :many
+select id, redirect_url, app_organization_id
+from environments
+where app_organization_id = $1
+  and id > $2
+order by id
+limit $3
+`
+
+type ListEnvironmentsParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+	Limit             int32
+}
+
+func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsParams) ([]Environment, error) {
+	rows, err := q.db.Query(ctx, listEnvironments, arg.AppOrganizationID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Environment
+	for rows.Next() {
+		var i Environment
+		if err := rows.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

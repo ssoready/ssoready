@@ -69,3 +69,11 @@ from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token = $1
   and expire_time > $2;
+
+-- name: ListEnvironments :many
+select *
+from environments
+where app_organization_id = $1
+  and id > $2
+order by id
+limit $3;

@@ -6,16 +6,18 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
 type Store struct {
-	db *pgxpool.Pool
-	q  *queries.Queries
+	db          *pgxpool.Pool
+	q           *queries.Queries
+	pageEncoder pagetoken.Encoder
 }
 
-func New(db *pgxpool.Pool) *Store {
-	return &Store{db: db, q: queries.New(db)}
+func New(db *pgxpool.Pool, pageEncoder pagetoken.Encoder) *Store {
+	return &Store{db: db, q: queries.New(db), pageEncoder: pageEncoder}
 }
 
 func (s *Store) tx(ctx context.Context) (tx pgx.Tx, q *queries.Queries, commit func() error, rollback func() error, err error) {
@@ -27,4 +29,11 @@ func (s *Store) tx(ctx context.Context) (tx pgx.Tx, q *queries.Queries, commit f
 	commit = func() error { return tx.Commit(ctx) }
 	rollback = func() error { return tx.Rollback(ctx) }
 	return tx, queries.New(tx), commit, rollback, nil
+}
+
+func derefOrEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

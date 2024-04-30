@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { ListEnvironmentsRequest, ListEnvironmentsResponse, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,15 @@ export const SSOReadyService = {
       name: "Whoami",
       I: WhoamiRequest,
       O: WhoamiResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.ListEnvironments
+     */
+    listEnvironments: {
+      name: "ListEnvironments",
+      I: ListEnvironmentsRequest,
+      O: ListEnvironmentsResponse,
       kind: MethodKind.Unary,
     },
   }
