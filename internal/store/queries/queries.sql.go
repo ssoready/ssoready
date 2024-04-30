@@ -220,7 +220,7 @@ func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) 
 }
 
 const getEnvironment = `-- name: GetEnvironment :one
-select id, redirect_url, app_organization_id
+select id, redirect_url, app_organization_id, display_name
 from environments
 where app_organization_id = $1
   and id = $2
@@ -234,12 +234,17 @@ type GetEnvironmentParams struct {
 func (q *Queries) GetEnvironment(ctx context.Context, arg GetEnvironmentParams) (Environment, error) {
 	row := q.db.QueryRow(ctx, getEnvironment, arg.AppOrganizationID, arg.ID)
 	var i Environment
-	err := row.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID)
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
 const getEnvironmentByID = `-- name: GetEnvironmentByID :one
-select id, redirect_url, app_organization_id
+select id, redirect_url, app_organization_id, display_name
 from environments
 where id = $1
 `
@@ -247,7 +252,12 @@ where id = $1
 func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environment, error) {
 	row := q.db.QueryRow(ctx, getEnvironmentByID, id)
 	var i Environment
-	err := row.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID)
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
@@ -344,7 +354,7 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 }
 
 const listEnvironments = `-- name: ListEnvironments :many
-select id, redirect_url, app_organization_id
+select id, redirect_url, app_organization_id, display_name
 from environments
 where app_organization_id = $1
   and id > $2
@@ -367,7 +377,12 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 	var items []Environment
 	for rows.Next() {
 		var i Environment
-		if err := rows.Scan(&i.ID, &i.RedirectUrl, &i.AppOrganizationID); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.RedirectUrl,
+			&i.AppOrganizationID,
+			&i.DisplayName,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

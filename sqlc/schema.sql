@@ -81,7 +81,8 @@ ALTER TABLE public.app_users OWNER TO postgres;
 CREATE TABLE public.environments (
     id uuid NOT NULL,
     redirect_url character varying,
-    app_organization_id uuid NOT NULL
+    app_organization_id uuid NOT NULL,
+    display_name character varying
 );
 
 

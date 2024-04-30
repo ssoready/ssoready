@@ -31,6 +31,7 @@ message AppUser {
 message Environment {
   string id = 1;
   string redirect_url = 2;
+  string display_name = 3;
 }
 
 message Organization {

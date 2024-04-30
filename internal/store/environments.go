@@ -30,6 +30,7 @@ func (s *Store) ListEnvironments(ctx context.Context, req *ssoreadyv1.ListEnviro
 	for _, qEnv := range qEnvs {
 		envs = append(envs, &ssoreadyv1.Environment{
 			Id:          idformat.Environment.Format(qEnv.ID),
+			DisplayName: derefOrEmpty(qEnv.DisplayName),
 			RedirectUrl: derefOrEmpty(qEnv.RedirectUrl),
 		})
 	}

@@ -40,6 +40,7 @@ type Environment struct {
 	ID                uuid.UUID
 	RedirectUrl       *string
 	AppOrganizationID uuid.UUID
+	DisplayName       *string
 }
 
 type Organization struct {
