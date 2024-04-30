@@ -13,6 +13,7 @@ service SSOReadyService {
   };
 
   rpc SignIn(SignInRequest) returns (SignInResponse);
+  rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
 }
 
 message AppUser {
@@ -56,4 +57,13 @@ message SignInRequest {
 
 message SignInResponse {
   string session_token = 1;
+}
+
+message WhoamiRequest {
+}
+
+message WhoamiResponse {
+  string app_user_id = 1;
+  string display_name = 2;
+  string email = 3;
 }

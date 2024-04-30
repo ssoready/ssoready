@@ -1,7 +1,12 @@
 import React from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { useMutation } from "@connectrpc/connect-query";
+import { signIn } from "../gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import { setSessionToken } from "../auth";
 
 export function LoginPage() {
+  const signInMutation = useMutation(signIn);
+
   return (
     <GoogleOAuthProvider
       clientId={
@@ -9,9 +14,12 @@ export function LoginPage() {
       }
     >
       <GoogleLogin
-        onSuccess={(credentialResponse) =>
-          console.log(credentialResponse.credential)
-        }
+        onSuccess={async (credentialResponse) => {
+          const { sessionToken } = await signInMutation.mutateAsync({
+            googleCredential: credentialResponse.credential,
+          });
+          setSessionToken(sessionToken);
+        }}
       />
     </GoogleOAuthProvider>
   );

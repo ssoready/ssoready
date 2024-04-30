@@ -157,7 +157,7 @@ select app_sessions.app_user_id, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token = $1
-  and expire_time < $2
+  and expire_time > $2
 `
 
 type GetAppSessionByTokenParams struct {
@@ -185,6 +185,30 @@ where email = $1
 
 func (q *Queries) GetAppUserByEmail(ctx context.Context, email *string) (AppUser, error) {
 	row := q.db.QueryRow(ctx, getAppUserByEmail, email)
+	var i AppUser
+	err := row.Scan(
+		&i.ID,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.Email,
+	)
+	return i, err
+}
+
+const getAppUserByID = `-- name: GetAppUserByID :one
+select id, app_organization_id, display_name, email
+from app_users
+where app_organization_id = $1
+  and id = $2
+`
+
+type GetAppUserByIDParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) (AppUser, error) {
+	row := q.db.QueryRow(ctx, getAppUserByID, arg.AppOrganizationID, arg.ID)
 	var i AppUser
 	err := row.Scan(
 		&i.ID,

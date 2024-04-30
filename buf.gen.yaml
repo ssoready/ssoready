@@ -18,3 +18,14 @@ plugins:
   - plugin: buf.build/connectrpc/go:v1.12.0
     out: internal/gen
     opt: paths=source_relative
+  - plugin: es
+    out: app/src/gen
+    opt:
+      - target=ts
+  - plugin: connect-es
+    out: app/src/gen
+    opt:
+      - target=ts
+  - name: connect-query
+    out: app/src/gen
+    opt: target=ts

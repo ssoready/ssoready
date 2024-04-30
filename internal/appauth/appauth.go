@@ -31,3 +31,7 @@ func WithAppUserID(ctx context.Context, orgID uuid.UUID, appUserID string) conte
 func OrgID(ctx context.Context) uuid.UUID {
 	return ctx.Value(ctxKey{}).(ctxValue).OrgID
 }
+
+func AppUserID(ctx context.Context) string {
+	return ctx.Value(ctxKey{}).(ctxValue).AppUserID
+}

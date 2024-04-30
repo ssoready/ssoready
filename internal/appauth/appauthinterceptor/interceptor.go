@@ -2,6 +2,7 @@ package appauthinterceptor
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -13,6 +14,10 @@ import (
 func New(s *store.Store) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+			if req.Spec().Procedure == "/ssoready.v1.SSOReadyService/SignIn" {
+				return next(ctx, req)
+			}
+
 			authorization := req.Header().Get("Authorization")
 			if authorization == "" {
 				return nil, connect.NewError(connect.CodeUnauthenticated, nil)
@@ -34,7 +39,7 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 			} else {
 				session, err := s.GetAppSession(ctx, &store.GetAppSessionRequest{SessionToken: secretValue, Now: time.Now()})
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("appauthinterceptor: store: get app session: %w", err)
 				}
 
 				ctx = appauth.WithAppUserID(ctx, session.AppOrganizationID, session.AppUserID)

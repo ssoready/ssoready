@@ -5,4 +5,4 @@ queries:
 
 .PHONY: proto
 proto:
-	buf generate internal/proto
+	npx buf generate internal/proto

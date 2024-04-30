@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"connectrpc.com/connect"
 	"connectrpc.com/vanguard"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/cors"
 	"github.com/ssoready/ssoready/internal/apiservice"
 	"github.com/ssoready/ssoready/internal/appauth/appauthinterceptor"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
@@ -41,8 +41,7 @@ func main() {
 	}
 
 	connectMux := http.NewServeMux()
-	fmt.Println(connectPath, connectHandler)
-	connectMux.Handle(connectPath, connectHandler)
+	connectMux.Handle(connectPath, cors.AllowAll().Handler(connectHandler))
 
 	mux := http.NewServeMux()
 	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))

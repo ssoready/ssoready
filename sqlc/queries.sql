@@ -37,6 +37,12 @@ select *
 from app_users
 where email = $1;
 
+-- name: GetAppUserByID :one
+select *
+from app_users
+where app_organization_id = $1
+  and id = $2;
+
 -- name: GetAppOrganizationByGoogleHostedDomain :one
 select *
 from app_organizations
@@ -62,4 +68,4 @@ select app_sessions.app_user_id, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token = $1
-  and expire_time < $2;
+  and expire_time > $2;
