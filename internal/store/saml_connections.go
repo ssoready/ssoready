@@ -103,21 +103,24 @@ func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLCo
 		return nil, err
 	}
 
-	cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
-	if err != nil {
-		panic(err)
-	}
+	var certPEM string
+	if len(qSAMLConn.IdpX509Certificate) != 0 {
+		cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
+		if err != nil {
+			panic(err)
+		}
 
-	certPEM := pem.EncodeToMemory(&pem.Block{
-		Type:  "CERTIFICATE",
-		Bytes: cert.Raw,
-	})
+		certPEM = string(pem.EncodeToMemory(&pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: cert.Raw,
+		}))
+	}
 
 	return &ssoreadyv1.SAMLConnection{
 		Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
 		OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
 		IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
-		IdpX509Certificate: string(certPEM),
+		IdpX509Certificate: certPEM,
 		IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
 	}, nil
 }

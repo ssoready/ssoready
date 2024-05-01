@@ -40,10 +40,10 @@ export function ViewSAMLConnectionPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Identity Provider Certificate</CardTitle>
+          <CardTitle>Identity Provider X.509 Certificate</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="bg-black p-6 rounded-md text-white">
+          <div className="bg-black p-6 rounded-md text-white text-sm">
             <pre>
               <code>{samlConnection?.idpX509Certificate}</code>
             </pre>
