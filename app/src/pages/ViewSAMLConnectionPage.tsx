@@ -57,20 +57,24 @@ export function ViewSAMLConnectionPage() {
             <div>{samlConnection?.idpRedirectUrl}</div>
           </div>
           <div className="flex justify-between">
-            <div>Identity Provider x509 Certificate</div>
-            <div>{samlConnection?.idpX509Certificate}</div>
+            <div>Service Provider Entity ID</div>
+            <div>{samlConnection?.spEntityId}</div>
+          </div>
+          <div className="flex justify-between">
+            <div>Service Provider ACS URL</div>
+            <div>{samlConnection?.spAcsUrl}</div>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Identity Provider X.509 Certificate</CardTitle>
+          <CardTitle>Identity Provider Certificate</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="bg-black p-6 rounded-md text-white text-sm">
             <pre>
-              <code>{samlConnection?.idpX509Certificate}</code>
+              <code>{samlConnection?.idpCertificate}</code>
             </pre>
           </div>
         </CardContent>

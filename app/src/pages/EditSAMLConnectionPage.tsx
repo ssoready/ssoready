@@ -101,7 +101,7 @@ function UpdateSAMLConnectionForm({
     defaultValues: {
       idpEntityId: samlConnection.idpEntityId,
       idpRedirectUrl: samlConnection.idpRedirectUrl,
-      idpCertificate: samlConnection.idpX509Certificate,
+      idpCertificate: samlConnection.idpCertificate,
     },
   });
 
@@ -113,7 +113,7 @@ function UpdateSAMLConnectionForm({
           id: samlConnection.id,
           idpEntityId: data.idpEntityId,
           idpRedirectUrl: data.idpRedirectUrl,
-          idpX509Certificate: data.idpCertificate,
+          idpCertificate: data.idpCertificate,
         },
       });
     },

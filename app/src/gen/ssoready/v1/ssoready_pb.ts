@@ -179,14 +179,24 @@ export class SAMLConnection extends Message<SAMLConnection> {
   idpRedirectUrl = "";
 
   /**
-   * @generated from field: string idp_x509_certificate = 4;
+   * @generated from field: string idp_certificate = 4;
    */
-  idpX509Certificate = "";
+  idpCertificate = "";
 
   /**
    * @generated from field: string idp_entity_id = 5;
    */
   idpEntityId = "";
+
+  /**
+   * @generated from field: string sp_entity_id = 6;
+   */
+  spEntityId = "";
+
+  /**
+   * @generated from field: string sp_acs_url = 7;
+   */
+  spAcsUrl = "";
 
   constructor(data?: PartialMessage<SAMLConnection>) {
     super();
@@ -199,8 +209,10 @@ export class SAMLConnection extends Message<SAMLConnection> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "idp_x509_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "idp_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "sp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "sp_acs_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLConnection {

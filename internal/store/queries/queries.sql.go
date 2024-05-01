@@ -142,18 +142,19 @@ func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (A
 }
 
 const createSAMLConnection = `-- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id)
-values ($1, $2)
+insert into saml_connections (id, organization_id, sp_entity_id)
+values ($1, $2, $3)
 returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
 `
 
 type CreateSAMLConnectionParams struct {
 	ID             uuid.UUID
 	OrganizationID uuid.UUID
+	SpEntityID     *string
 }
 
 func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnectionParams) (SamlConnection, error) {
-	row := q.db.QueryRow(ctx, createSAMLConnection, arg.ID, arg.OrganizationID)
+	row := q.db.QueryRow(ctx, createSAMLConnection, arg.ID, arg.OrganizationID, arg.SpEntityID)
 	var i SamlConnection
 	err := row.Scan(
 		&i.ID,
@@ -293,7 +294,7 @@ func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) 
 }
 
 const getEnvironment = `-- name: GetEnvironment :one
-select id, redirect_url, app_organization_id, display_name, auth_domain
+select id, redirect_url, app_organization_id, display_name, auth_url
 from environments
 where app_organization_id = $1
   and id = $2
@@ -312,13 +313,13 @@ func (q *Queries) GetEnvironment(ctx context.Context, arg GetEnvironmentParams) 
 		&i.RedirectUrl,
 		&i.AppOrganizationID,
 		&i.DisplayName,
-		&i.AuthDomain,
+		&i.AuthUrl,
 	)
 	return i, err
 }
 
 const getEnvironmentByID = `-- name: GetEnvironmentByID :one
-select id, redirect_url, app_organization_id, display_name, auth_domain
+select id, redirect_url, app_organization_id, display_name, auth_url
 from environments
 where id = $1
 `
@@ -331,7 +332,7 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 		&i.RedirectUrl,
 		&i.AppOrganizationID,
 		&i.DisplayName,
-		&i.AuthDomain,
+		&i.AuthUrl,
 	)
 	return i, err
 }
@@ -463,7 +464,7 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 }
 
 const listEnvironments = `-- name: ListEnvironments :many
-select id, redirect_url, app_organization_id, display_name, auth_domain
+select id, redirect_url, app_organization_id, display_name, auth_url
 from environments
 where app_organization_id = $1
   and id > $2
@@ -491,7 +492,7 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 			&i.RedirectUrl,
 			&i.AppOrganizationID,
 			&i.DisplayName,
-			&i.AuthDomain,
+			&i.AuthUrl,
 		); err != nil {
 			return nil, err
 		}

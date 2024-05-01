@@ -41,7 +41,7 @@ type Environment struct {
 	RedirectUrl       *string
 	AppOrganizationID uuid.UUID
 	DisplayName       *string
-	AuthDomain        *string
+	AuthUrl           *string
 }
 
 type Organization struct {

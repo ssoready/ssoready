@@ -83,7 +83,7 @@ CREATE TABLE public.environments (
     redirect_url character varying,
     app_organization_id uuid NOT NULL,
     display_name character varying,
-    auth_domain character varying
+    auth_url character varying
 );
 
 

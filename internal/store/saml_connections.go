@@ -50,26 +50,7 @@ func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAM
 
 	var samlConns []*ssoreadyv1.SAMLConnection
 	for _, qSAMLConn := range qSAMLConns {
-		var certPEM string
-		if len(qSAMLConn.IdpX509Certificate) != 0 {
-			cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
-			if err != nil {
-				panic(err)
-			}
-
-			certPEM = string(pem.EncodeToMemory(&pem.Block{
-				Type:  "CERTIFICATE",
-				Bytes: cert.Raw,
-			}))
-		}
-
-		samlConns = append(samlConns, &ssoreadyv1.SAMLConnection{
-			Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
-			OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
-			IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
-			IdpX509Certificate: certPEM,
-			IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
-		})
+		samlConns = append(samlConns, parseSAMLConnection(qSAMLConn))
 	}
 
 	var nextPageToken string
@@ -104,26 +85,7 @@ func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLCo
 		return nil, err
 	}
 
-	var certPEM string
-	if len(qSAMLConn.IdpX509Certificate) != 0 {
-		cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
-		if err != nil {
-			panic(err)
-		}
-
-		certPEM = string(pem.EncodeToMemory(&pem.Block{
-			Type:  "CERTIFICATE",
-			Bytes: cert.Raw,
-		}))
-	}
-
-	return &ssoreadyv1.SAMLConnection{
-		Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
-		OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
-		IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
-		IdpX509Certificate: certPEM,
-		IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
-	}, nil
+	return parseSAMLConnection(qSAMLConn), nil
 }
 
 func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.CreateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
@@ -139,16 +101,33 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 	}
 
 	// idor check
-	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
+	org, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
 		AppOrganizationID: appauth.OrgID(ctx),
 		ID:                orgID,
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, err
 	}
 
+	env, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                org.EnvironmentID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	authURL := s.defaultAuthURL
+	if env.AuthUrl != nil {
+		authURL = *env.AuthUrl
+	}
+
+	id := uuid.New()
+	entityID := fmt.Sprintf("%s/saml/%s", authURL, idformat.SAMLConnection.Format(id))
 	qSAMLConn, err := q.CreateSAMLConnection(ctx, queries.CreateSAMLConnectionParams{
-		ID:             uuid.New(),
+		ID:             id,
 		OrganizationID: orgID,
+		SpEntityID:     &entityID,
 	})
 	if err != nil {
 		return nil, err
@@ -158,10 +137,7 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return &ssoreadyv1.SAMLConnection{
-		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
-		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
-	}, nil
+	return parseSAMLConnection(qSAMLConn), nil
 }
 
 func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.UpdateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
@@ -185,8 +161,8 @@ func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.Update
 	}
 
 	var idpCert []byte
-	if req.SamlConnection.IdpX509Certificate != "" {
-		blk, _ := pem.Decode([]byte(req.SamlConnection.IdpX509Certificate))
+	if req.SamlConnection.IdpCertificate != "" {
+		blk, _ := pem.Decode([]byte(req.SamlConnection.IdpCertificate))
 		if blk == nil || blk.Type != "CERTIFICATE" {
 			return nil, fmt.Errorf("idp certificate must be a PEM-encoded CERTIFICATE block")
 		}
@@ -210,6 +186,10 @@ func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.Update
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
+	return parseSAMLConnection(qSAMLConn), nil
+}
+
+func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConnection {
 	var certPEM string
 	if len(qSAMLConn.IdpX509Certificate) != 0 {
 		cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
@@ -223,11 +203,19 @@ func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.Update
 		}))
 	}
 
+	// todo make sp entity id not null so that this if goes away
+	var acsURL string
+	if qSAMLConn.SpEntityID != nil {
+		acsURL = fmt.Sprintf("%s/acs", *qSAMLConn.SpEntityID)
+	}
+
 	return &ssoreadyv1.SAMLConnection{
-		Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
-		OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
-		IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
-		IdpX509Certificate: certPEM,
-		IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
-	}, nil
+		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
+		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
+		IdpRedirectUrl: derefOrEmpty(qSAMLConn.IdpRedirectUrl),
+		IdpCertificate: certPEM,
+		IdpEntityId:    derefOrEmpty(qSAMLConn.IdpEntityID),
+		SpEntityId:     derefOrEmpty(qSAMLConn.SpEntityID),
+		SpAcsUrl:       acsURL,
+	}
 }
