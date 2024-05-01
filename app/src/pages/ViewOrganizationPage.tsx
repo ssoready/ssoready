@@ -45,7 +45,7 @@ export function ViewOrganizationPage() {
     });
 
     navigate(
-      `/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnection.id}`,
+      `/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnection.id}/edit`,
     );
   }, [organizationId]);
 

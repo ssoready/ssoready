@@ -872,3 +872,40 @@ export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionReq
   }
 }
 
+/**
+ * @generated from message ssoready.v1.UpdateSAMLConnectionRequest
+ */
+export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionRequest> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<UpdateSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined, b: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateSAMLConnectionRequest, a, b);
+  }
+}
+

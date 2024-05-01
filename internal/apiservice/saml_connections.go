@@ -34,3 +34,12 @@ func (s *Service) CreateSAMLConnection(ctx context.Context, req *connect.Request
 
 	return connect.NewResponse(res), nil
 }
+
+func (s *Service) UpdateSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.UpdateSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
+	res, err := s.Store.UpdateSAMLConnection(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}

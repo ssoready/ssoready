@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/appauth"
@@ -126,7 +127,7 @@ func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLCo
 }
 
 func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.CreateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
-	_, q, _, rollback, err := s.tx(ctx)
+	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -153,8 +154,80 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 		return nil, err
 	}
 
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
 	return &ssoreadyv1.SAMLConnection{
 		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
 		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
+	}, nil
+}
+
+func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.UpdateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	id, err := idformat.SAMLConnection.Parse(req.SamlConnection.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse saml connection id: %w", err)
+	}
+
+	// idor check
+	if _, err = q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                id,
+	}); err != nil {
+		return nil, fmt.Errorf("get saml connection: %w", err)
+	}
+
+	var idpCert []byte
+	if req.SamlConnection.IdpX509Certificate != "" {
+		blk, _ := pem.Decode([]byte(req.SamlConnection.IdpX509Certificate))
+		if blk == nil || blk.Type != "CERTIFICATE" {
+			return nil, fmt.Errorf("idp certificate must be a PEM-encoded CERTIFICATE block")
+		}
+		if _, err := x509.ParseCertificate(blk.Bytes); err != nil {
+			return nil, fmt.Errorf("parse idp certificate: %w", err)
+		}
+		idpCert = blk.Bytes
+	}
+
+	qSAMLConn, err := q.UpdateSAMLConnection(ctx, queries.UpdateSAMLConnectionParams{
+		ID:                 id,
+		IdpEntityID:        &req.SamlConnection.IdpEntityId,
+		IdpRedirectUrl:     &req.SamlConnection.IdpRedirectUrl,
+		IdpX509Certificate: idpCert,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("update saml connection: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	var certPEM string
+	if len(qSAMLConn.IdpX509Certificate) != 0 {
+		cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
+		if err != nil {
+			panic(err)
+		}
+
+		certPEM = string(pem.EncodeToMemory(&pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: cert.Raw,
+		}))
+	}
+
+	return &ssoreadyv1.SAMLConnection{
+		Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
+		OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
+		IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
+		IdpX509Certificate: certPEM,
+		IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
 	}, nil
 }

@@ -605,3 +605,38 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 	}
 	return items, nil
 }
+
+const updateSAMLConnection = `-- name: UpdateSAMLConnection :one
+update saml_connections
+set idp_entity_id        = $1,
+    idp_redirect_url     = $2,
+    idp_x509_certificate = $3
+where id = $4
+returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
+`
+
+type UpdateSAMLConnectionParams struct {
+	IdpEntityID        *string
+	IdpRedirectUrl     *string
+	IdpX509Certificate []byte
+	ID                 uuid.UUID
+}
+
+func (q *Queries) UpdateSAMLConnection(ctx context.Context, arg UpdateSAMLConnectionParams) (SamlConnection, error) {
+	row := q.db.QueryRow(ctx, updateSAMLConnection,
+		arg.IdpEntityID,
+		arg.IdpRedirectUrl,
+		arg.IdpX509Certificate,
+		arg.ID,
+	)
+	var i SamlConnection
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+		&i.IdpEntityID,
+		&i.SpEntityID,
+	)
+	return i, err
+}

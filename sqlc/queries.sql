@@ -142,3 +142,11 @@ where environments.app_organization_id = $1
 insert into saml_connections (id, organization_id)
 values ($1, $2)
 returning *;
+
+-- name: UpdateSAMLConnection :one
+update saml_connections
+set idp_entity_id        = $1,
+    idp_redirect_url     = $2,
+    idp_x509_certificate = $3
+where id = $4
+returning *;
