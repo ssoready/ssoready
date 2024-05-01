@@ -398,6 +398,32 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 	return items, nil
 }
 
+const listOrganizationDomains = `-- name: ListOrganizationDomains :many
+select id, organization_id, domain
+from organization_domains
+where organization_id = any ($1::uuid[])
+`
+
+func (q *Queries) ListOrganizationDomains(ctx context.Context, dollar_1 []uuid.UUID) ([]OrganizationDomain, error) {
+	rows, err := q.db.Query(ctx, listOrganizationDomains, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []OrganizationDomain
+	for rows.Next() {
+		var i OrganizationDomain
+		if err := rows.Scan(&i.ID, &i.OrganizationID, &i.Domain); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listOrganizations = `-- name: ListOrganizations :many
 select id, environment_id, external_id
 from organizations

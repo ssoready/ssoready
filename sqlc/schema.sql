@@ -89,6 +89,19 @@ CREATE TABLE public.environments (
 ALTER TABLE public.environments OWNER TO postgres;
 
 --
+-- Name: organization_domains; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.organization_domains (
+    id uuid NOT NULL,
+    organization_id uuid NOT NULL,
+    domain character varying NOT NULL
+);
+
+
+ALTER TABLE public.organization_domains OWNER TO postgres;
+
+--
 -- Name: organizations; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -208,6 +221,14 @@ ALTER TABLE ONLY public.environments
 
 
 --
+-- Name: organization_domains organization_domains_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.organization_domains
+    ADD CONSTRAINT organization_domains_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: organizations organizations_environment_id_external_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -277,6 +298,14 @@ ALTER TABLE ONLY public.app_users
 
 ALTER TABLE ONLY public.environments
     ADD CONSTRAINT environments_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
+
+
+--
+-- Name: organization_domains organization_domains_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.organization_domains
+    ADD CONSTRAINT organization_domains_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
 
 
 --

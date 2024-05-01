@@ -123,6 +123,11 @@ export class Organization extends Message<Organization> {
    */
   externalId = "";
 
+  /**
+   * @generated from field: repeated string domains = 4;
+   */
+  domains: string[] = [];
+
   constructor(data?: PartialMessage<Organization>) {
     super();
     proto3.util.initPartial(data, this);
@@ -134,6 +139,7 @@ export class Organization extends Message<Organization> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "domains", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Organization {

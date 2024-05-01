@@ -102,6 +102,11 @@ from organizations
 where environments.app_organization_id = $1
   and organizations.id = $2;
 
+-- name: ListOrganizationDomains :many
+select *
+from organization_domains
+where organization_id = any ($1::uuid[]);
+
 -- name: ListSAMLConnections :many
 select *
 from saml_connections

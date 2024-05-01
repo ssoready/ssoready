@@ -38,6 +38,7 @@ message Organization {
   string id = 1;
   string environment_id = 2;
   string external_id = 3;
+  repeated string domains = 4;
 }
 
 message SAMLConnection {

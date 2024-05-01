@@ -49,6 +49,12 @@ type Organization struct {
 	ExternalID    *string
 }
 
+type OrganizationDomain struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+	Domain         string
+}
+
 type SamlConnection struct {
 	ID                 uuid.UUID
 	OrganizationID     uuid.UUID

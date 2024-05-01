@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"sort"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/appauth"
@@ -45,12 +46,31 @@ func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrgan
 		return nil, err
 	}
 
+	var qOrgIDs []uuid.UUID
+	for _, qOrg := range qOrgs {
+		qOrgIDs = append(qOrgIDs, qOrg.ID)
+	}
+
+	qOrgDomains, err := q.ListOrganizationDomains(ctx, qOrgIDs)
+	if err != nil {
+		return nil, err
+	}
+
 	var orgs []*ssoreadyv1.Organization
 	for _, qOrg := range qOrgs {
+		var domains []string
+		for _, qOrgDomain := range qOrgDomains {
+			if qOrgDomain.OrganizationID == qOrg.ID {
+				domains = append(domains, qOrgDomain.Domain)
+			}
+		}
+		sort.Strings(domains)
+
 		orgs = append(orgs, &ssoreadyv1.Organization{
 			Id:            idformat.Organization.Format(qOrg.ID),
 			EnvironmentId: idformat.Environment.Format(qOrg.EnvironmentID),
 			ExternalId:    derefOrEmpty(qOrg.ExternalID),
+			Domains:       domains,
 		})
 	}
 
