@@ -28,6 +28,7 @@ const (
 	SSOReadyService_GetOrganization_FullMethodName       = "/ssoready.v1.SSOReadyService/GetOrganization"
 	SSOReadyService_ListSAMLConnections_FullMethodName   = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
 	SSOReadyService_GetSAMLConnection_FullMethodName     = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName  = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -43,6 +44,7 @@ type SSOReadyServiceClient interface {
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
 	ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error)
 	GetSAMLConnection(ctx context.Context, in *GetSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
+	CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -134,6 +136,15 @@ func (c *sSOReadyServiceClient) GetSAMLConnection(ctx context.Context, in *GetSA
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error) {
+	out := new(SAMLConnection)
+	err := c.cc.Invoke(ctx, SSOReadyService_CreateSAMLConnection_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -147,6 +158,7 @@ type SSOReadyServiceServer interface {
 	GetOrganization(context.Context, *GetOrganizationRequest) (*Organization, error)
 	ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error)
 	GetSAMLConnection(context.Context, *GetSAMLConnectionRequest) (*SAMLConnection, error)
+	CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*SAMLConnection, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -180,6 +192,9 @@ func (UnimplementedSSOReadyServiceServer) ListSAMLConnections(context.Context, *
 }
 func (UnimplementedSSOReadyServiceServer) GetSAMLConnection(context.Context, *GetSAMLConnectionRequest) (*SAMLConnection, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSAMLConnection not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*SAMLConnection, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSAMLConnection not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -356,6 +371,24 @@ func _SSOReadyService_GetSAMLConnection_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_CreateSAMLConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSAMLConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).CreateSAMLConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_CreateSAMLConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).CreateSAMLConnection(ctx, req.(*CreateSAMLConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -398,6 +431,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSAMLConnection",
 			Handler:    _SSOReadyService_GetSAMLConnection_Handler,
+		},
+		{
+			MethodName: "CreateSAMLConnection",
+			Handler:    _SSOReadyService_CreateSAMLConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

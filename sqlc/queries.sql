@@ -137,3 +137,8 @@ from saml_connections
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_connections.id = $2;
+
+-- name: CreateSAMLConnection :one
+insert into saml_connections (id, organization_id)
+values ($1, $2)
+returning *;

@@ -141,6 +141,31 @@ func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (A
 	return i, err
 }
 
+const createSAMLConnection = `-- name: CreateSAMLConnection :one
+insert into saml_connections (id, organization_id)
+values ($1, $2)
+returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
+`
+
+type CreateSAMLConnectionParams struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+}
+
+func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnectionParams) (SamlConnection, error) {
+	row := q.db.QueryRow(ctx, createSAMLConnection, arg.ID, arg.OrganizationID)
+	var i SamlConnection
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+		&i.IdpEntityID,
+		&i.SpEntityID,
+	)
+	return i, err
+}
+
 const createSAMLSession = `-- name: CreateSAMLSession :one
 insert into saml_sessions (id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes)
 values ($1, $2, $3, $4, $5)

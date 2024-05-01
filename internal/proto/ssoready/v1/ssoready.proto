@@ -23,6 +23,7 @@ service SSOReadyService {
 
   rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
   rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (SAMLConnection);
+  rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (SAMLConnection);
 }
 
 message AppUser {
@@ -120,4 +121,8 @@ message ListSAMLConnectionsResponse {
 
 message GetSAMLConnectionRequest {
   string id = 1;
+}
+
+message CreateSAMLConnectionRequest {
+  SAMLConnection saml_connection = 1;
 }

@@ -835,3 +835,40 @@ export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> 
   }
 }
 
+/**
+ * @generated from message ssoready.v1.CreateSAMLConnectionRequest
+ */
+export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionRequest> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<CreateSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined, b: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(CreateSAMLConnectionRequest, a, b);
+  }
+}
+

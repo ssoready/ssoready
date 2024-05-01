@@ -124,3 +124,37 @@ func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLCo
 		IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
 	}, nil
 }
+
+func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.CreateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	orgID, err := idformat.Organization.Parse(req.SamlConnection.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	// idor check
+	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                orgID,
+	}); err != nil {
+		return nil, err
+	}
+
+	qSAMLConn, err := q.CreateSAMLConnection(ctx, queries.CreateSAMLConnectionParams{
+		ID:             uuid.New(),
+		OrganizationID: orgID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &ssoreadyv1.SAMLConnection{
+		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
+		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
+	}, nil
+}

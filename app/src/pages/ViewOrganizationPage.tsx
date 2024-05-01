@@ -1,7 +1,8 @@
-import React from "react";
-import { useParams } from "react-router";
-import { useQuery } from "@connectrpc/connect-query";
+import React, { useCallback, useMemo } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useMutation, useQuery } from "@connectrpc/connect-query";
 import {
+  createSAMLConnection,
   getOrganization,
   listSAMLConnections,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -22,15 +23,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 
 export function ViewOrganizationPage() {
-  const { organizationId } = useParams();
+  const { environmentId, organizationId } = useParams();
   const { data: organization } = useQuery(getOrganization, {
     id: organizationId,
   });
   const { data: listSAMLConnectionsRes } = useQuery(listSAMLConnections, {
     organizationId,
   });
+
+  const navigate = useNavigate();
+  const createSAMLConnectionMutation = useMutation(createSAMLConnection);
+  const handleCreateSAMLConnection = useCallback(async () => {
+    const samlConnection = await createSAMLConnectionMutation.mutateAsync({
+      samlConnection: {
+        organizationId,
+      },
+    });
+
+    navigate(
+      `/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnection.id}`,
+    );
+  }, [organizationId]);
 
   return (
     <>
@@ -56,10 +73,27 @@ export function ViewOrganizationPage() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>SAML Connections</CardTitle>
-          <CardDescription>
-            SAML Connections within this organization.
-          </CardDescription>
+          <div className="flex justify-between">
+            <div>
+              <CardTitle>SAML Connections</CardTitle>
+              <CardDescription>
+                SAML Connections within this organization.
+              </CardDescription>
+            </div>
+
+            <div>
+              <Button
+                size="sm"
+                className="h-8 gap-1"
+                onClick={handleCreateSAMLConnection}
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Add SAML Connection
+                </span>
+              </Button>
+            </div>
+          </div>
         </CardHeader>
 
         <CardContent>
