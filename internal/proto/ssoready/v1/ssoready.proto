@@ -19,6 +19,7 @@ service SSOReadyService {
   rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
 
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
+  rpc GetOrganization(GetOrganizationRequest) returns (Organization);
 
   rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
 }
@@ -100,6 +101,10 @@ message ListOrganizationsRequest {
 message ListOrganizationsResponse {
   repeated Organization organizations = 1;
   string next_page_token = 2;
+}
+
+message GetOrganizationRequest {
+  string id = 1;
 }
 
 message ListSAMLConnectionsRequest {

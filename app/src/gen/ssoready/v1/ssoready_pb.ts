@@ -676,6 +676,43 @@ export class ListOrganizationsResponse extends Message<ListOrganizationsResponse
 }
 
 /**
+ * @generated from message ssoready.v1.GetOrganizationRequest
+ */
+export class GetOrganizationRequest extends Message<GetOrganizationRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOrganizationRequest {
+    return new GetOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
+    return new GetOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
+    return new GetOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined, b: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(GetOrganizationRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListSAMLConnectionsRequest
  */
 export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsRequest> {
