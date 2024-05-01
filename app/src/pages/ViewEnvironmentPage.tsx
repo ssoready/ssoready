@@ -1,7 +1,10 @@
 import React from "react";
 import { useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
-import { listOrganizations } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import {
+  getEnvironment,
+  listOrganizations,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
   CardContent,
@@ -18,9 +21,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
+  const { data: environment } = useQuery(getEnvironment, {
+    id: environmentId,
+  });
   const { data: listOrgsRes } = useQuery(listOrganizations, {
     environmentId,
   });
@@ -28,12 +35,16 @@ export function ViewEnvironmentPage() {
   return (
     <>
       <Card>
-        <CardHeader>{environmentId}</CardHeader>
+        <CardHeader>{environment?.displayName}</CardHeader>
         <CardContent>
           <div className="font-semibold">Environment Details</div>
           <div className="flex justify-between">
+            <div>ID</div>
+            <div>{environment?.id}</div>
+          </div>
+          <div className="flex justify-between">
             <div>Redirect URL</div>
-            <div>...</div>
+            <div>{environment?.redirectUrl}</div>
           </div>
         </CardContent>
       </Card>
@@ -50,6 +61,8 @@ export function ViewEnvironmentPage() {
           <Table>
             <TableHeader>
               <TableHead>Organization ID</TableHead>
+              <TableHead>External ID</TableHead>
+              <TableHead>Domains</TableHead>
             </TableHeader>
             <TableBody>
               {listOrgsRes?.organizations?.map((org) => (
@@ -60,6 +73,12 @@ export function ViewEnvironmentPage() {
                     >
                       {org.id}
                     </Link>
+                  </TableCell>
+                  <TableCell>{org.externalId}</TableCell>
+                  <TableCell>
+                    {org.domains.map((domain, i) => (
+                      <Badge key={i}>{domain}</Badge>
+                    ))}
                   </TableCell>
                 </TableRow>
               ))}

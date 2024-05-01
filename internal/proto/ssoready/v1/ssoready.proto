@@ -16,6 +16,7 @@ service SSOReadyService {
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
 
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
+  rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
 
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
 
@@ -85,6 +86,10 @@ message ListEnvironmentsRequest {
 message ListEnvironmentsResponse {
   repeated Environment environments = 1;
   string next_page_token = 2;
+}
+
+message GetEnvironmentRequest {
+  string id = 1;
 }
 
 message ListOrganizationsRequest {

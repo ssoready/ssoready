@@ -46,3 +46,24 @@ func (s *Store) ListEnvironments(ctx context.Context, req *ssoreadyv1.ListEnviro
 		NextPageToken: nextPageToken,
 	}, nil
 }
+
+func (s *Store) GetEnvironment(ctx context.Context, req *ssoreadyv1.GetEnvironmentRequest) (*ssoreadyv1.Environment, error) {
+	id, err := idformat.Environment.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	qEnv, err := s.q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                id,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &ssoreadyv1.Environment{
+		Id:          idformat.Environment.Format(qEnv.ID),
+		DisplayName: derefOrEmpty(qEnv.DisplayName),
+		RedirectUrl: derefOrEmpty(qEnv.RedirectUrl),
+	}, nil
+}

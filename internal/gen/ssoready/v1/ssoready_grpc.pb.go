@@ -23,6 +23,7 @@ const (
 	SSOReadyService_SignIn_FullMethodName                = "/ssoready.v1.SSOReadyService/SignIn"
 	SSOReadyService_Whoami_FullMethodName                = "/ssoready.v1.SSOReadyService/Whoami"
 	SSOReadyService_ListEnvironments_FullMethodName      = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName        = "/ssoready.v1.SSOReadyService/GetEnvironment"
 	SSOReadyService_ListOrganizations_FullMethodName     = "/ssoready.v1.SSOReadyService/ListOrganizations"
 	SSOReadyService_ListSAMLConnections_FullMethodName   = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
 )
@@ -35,6 +36,7 @@ type SSOReadyServiceClient interface {
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
+	GetEnvironment(ctx context.Context, in *GetEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error)
 	ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error)
 }
@@ -83,6 +85,15 @@ func (c *sSOReadyServiceClient) ListEnvironments(ctx context.Context, in *ListEn
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) GetEnvironment(ctx context.Context, in *GetEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error) {
+	out := new(Environment)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetEnvironment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error) {
 	out := new(ListOrganizationsResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_ListOrganizations_FullMethodName, in, out, opts...)
@@ -109,6 +120,7 @@ type SSOReadyServiceServer interface {
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
+	GetEnvironment(context.Context, *GetEnvironmentRequest) (*Environment, error)
 	ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error)
 	ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
@@ -129,6 +141,9 @@ func (UnimplementedSSOReadyServiceServer) Whoami(context.Context, *WhoamiRequest
 }
 func (UnimplementedSSOReadyServiceServer) ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEnvironments not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetEnvironment(context.Context, *GetEnvironmentRequest) (*Environment, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEnvironment not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOrganizations not implemented")
@@ -221,6 +236,24 @@ func _SSOReadyService_ListEnvironments_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_GetEnvironment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEnvironmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetEnvironment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetEnvironment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetEnvironment(ctx, req.(*GetEnvironmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_ListOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListOrganizationsRequest)
 	if err := dec(in); err != nil {
@@ -279,6 +312,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListEnvironments",
 			Handler:    _SSOReadyService_ListEnvironments_Handler,
+		},
+		{
+			MethodName: "GetEnvironment",
+			Handler:    _SSOReadyService_GetEnvironment_Handler,
 		},
 		{
 			MethodName: "ListOrganizations",

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { Environment, GetEnvironmentRequest, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -46,6 +46,15 @@ export const SSOReadyService = {
       name: "ListEnvironments",
       I: ListEnvironmentsRequest,
       O: ListEnvironmentsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.GetEnvironment
+     */
+    getEnvironment: {
+      name: "GetEnvironment",
+      I: GetEnvironmentRequest,
+      O: Environment,
       kind: MethodKind.Unary,
     },
     /**

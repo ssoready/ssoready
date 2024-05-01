@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { MethodKind } from "@bufbuild/protobuf";
-import { ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { Environment, GetEnvironmentRequest, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessToken
@@ -57,6 +57,20 @@ export const listEnvironments = {
   kind: MethodKind.Unary,
   I: ListEnvironmentsRequest,
   O: ListEnvironmentsResponse,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.GetEnvironment
+ */
+export const getEnvironment = {
+  localName: "getEnvironment",
+  name: "GetEnvironment",
+  kind: MethodKind.Unary,
+  I: GetEnvironmentRequest,
+  O: Environment,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }
