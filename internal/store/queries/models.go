@@ -41,6 +41,7 @@ type Environment struct {
 	RedirectUrl       *string
 	AppOrganizationID uuid.UUID
 	DisplayName       *string
+	AuthDomain        *string
 }
 
 type Organization struct {
@@ -61,6 +62,7 @@ type SamlConnection struct {
 	IdpRedirectUrl     *string
 	IdpX509Certificate []byte
 	IdpEntityID        *string
+	SpEntityID         *string
 }
 
 type SamlSession struct {

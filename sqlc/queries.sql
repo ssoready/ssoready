@@ -1,3 +1,18 @@
+-- name: AuthGetInitData :one
+select idp_redirect_url, sp_entity_id
+from saml_connections
+where saml_connections.id = $1;
+
+-- name: AuthGetValidateData :one
+select saml_connections.sp_entity_id,
+       saml_connections.idp_entity_id,
+       saml_connections.idp_x509_certificate,
+       environments.redirect_url
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where saml_connections.id = $1;
+
 -- name: GetSAMLConnectionByID :one
 select *
 from saml_connections
@@ -114,3 +129,11 @@ where organization_id = $1
   and id > $2
 order by id
 limit $3;
+
+-- name: GetSAMLConnection :one
+select saml_connections.*
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_connections.id = $2;

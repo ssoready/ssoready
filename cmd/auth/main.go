@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/x509"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -21,20 +20,20 @@ func main() {
 		panic(err)
 	}
 
-	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}) // todo populate from env
+	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}, "localhost:8080") // todo populate from env
 
 	r := mux.NewRouter()
 	r.HandleFunc("/saml/{saml_conn_id}/init", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		samlConnID := mux.Vars(r)["saml_conn_id"]
-		samlConn, err := store_.GetSAMLConnectionByID(ctx, &store.GetSAMLConnectionByIDRequest{ID: samlConnID})
-		if err != nil {
-			panic(err)
-		}
+
+		dataRes, err := store_.AuthGetInitData(ctx, &store.AuthGetInitDataRequest{
+			SAMLConnectionID: samlConnID,
+		})
 
 		initRes, err := saml.Init(&saml.InitRequest{
-			IDPRedirectURL: samlConn.IdpRedirectUrl,
-			SPEntityID:     fmt.Sprintf("http://localhost:8080/saml/%s", samlConn.Id),
+			IDPRedirectURL: dataRes.IDPRedirectURL,
+			SPEntityID:     dataRes.SPEntityID,
 			RelayState:     "this is a relay state",
 		})
 		if err != nil {
@@ -46,28 +45,16 @@ func main() {
 	r.HandleFunc("/saml/{saml_conn_id}/acs", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		samlConnID := mux.Vars(r)["saml_conn_id"]
-		samlConn, err := store_.GetSAMLConnectionByID(ctx, &store.GetSAMLConnectionByIDRequest{ID: samlConnID})
-		if err != nil {
-			panic(err)
-		}
 
-		org, err := store_.GetOrganizationByID(ctx, &store.GetOrganizationByIDRequest{
-			ID: samlConn.OrganizationId,
+		dataRes, err := store_.AuthGetValidateData(ctx, &store.AuthGetValidateDataRequest{
+			SAMLConnectionID: samlConnID,
 		})
-		if err != nil {
-			panic(err)
-		}
-
-		env, err := store_.GetEnvironmentByID(ctx, &store.GetEnvironmentByIDRequest{ID: org.EnvironmentId})
-		if err != nil {
-			panic(err)
-		}
 
 		if err := r.ParseForm(); err != nil {
 			panic(err)
 		}
 
-		cert, err := x509.ParseCertificate(samlConn.IdpX509Certificate)
+		cert, err := x509.ParseCertificate(dataRes.IDPX509Certificate)
 		if err != nil {
 			panic(err)
 		}
@@ -75,8 +62,8 @@ func main() {
 		validateRes, err := saml.Validate(&saml.ValidateRequest{
 			SAMLResponse:   r.FormValue("SAMLResponse"),
 			IDPCertificate: cert,
-			IDPEntityID:    samlConn.IdpEntityId,
-			SPEntityID:     fmt.Sprintf("http://localhost:8080/saml/%s", samlConn.Id),
+			IDPEntityID:    dataRes.IDPEntityID,
+			SPEntityID:     dataRes.SPEntityID,
 			Now:            time.Now(),
 		})
 		if err != nil {
@@ -84,7 +71,7 @@ func main() {
 		}
 
 		createSAMLSessRes, err := store_.CreateSAMLSession(ctx, &store.CreateSAMLSessionRequest{
-			SAMLConnectionID:     samlConn.Id,
+			SAMLConnectionID:     samlConnID,
 			SubjectID:            validateRes.SubjectID,
 			SubjectIDPAttributes: validateRes.SubjectAttributes,
 		})
@@ -92,7 +79,7 @@ func main() {
 			panic(err)
 		}
 
-		redirectURL, err := url.Parse(env.RedirectUrl)
+		redirectURL, err := url.Parse(dataRes.EnvironmentRedirectURL)
 		if err != nil {
 			panic(err)
 		}

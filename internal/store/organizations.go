@@ -98,7 +98,7 @@ func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganiza
 	}
 	defer rollback()
 
-	qOrg, err := s.q.GetOrganization(ctx, queries.GetOrganizationParams{
+	qOrg, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
 		AppOrganizationID: appauth.OrgID(ctx),
 		ID:                id,
 	})

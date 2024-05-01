@@ -11,6 +11,7 @@ import { HomePage } from "./pages/HomePage";
 import { Page } from "@/components/Page";
 import { ViewEnvironmentPage } from "@/pages/ViewEnvironmentPage";
 import { ViewOrganizationPage } from "@/pages/ViewOrganizationPage";
+import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,10 @@ export function App() {
                 <Route
                   path="/environments/:environmentId/organizations/:organizationId"
                   element={<ViewOrganizationPage />}
+                />
+                <Route
+                  path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId"
+                  element={<ViewSAMLConnectionPage />}
                 />
               </Route>
             </Route>

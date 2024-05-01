@@ -11,13 +11,14 @@ import (
 )
 
 type Store struct {
-	db          *pgxpool.Pool
-	q           *queries.Queries
-	pageEncoder pagetoken.Encoder
+	db                *pgxpool.Pool
+	q                 *queries.Queries
+	pageEncoder       pagetoken.Encoder
+	defaultAuthDomain string
 }
 
-func New(db *pgxpool.Pool, pageEncoder pagetoken.Encoder) *Store {
-	return &Store{db: db, q: queries.New(db), pageEncoder: pageEncoder}
+func New(db *pgxpool.Pool, pageEncoder pagetoken.Encoder, defaultAuthDomain string) *Store {
+	return &Store{db: db, q: queries.New(db), pageEncoder: pageEncoder, defaultAuthDomain: defaultAuthDomain}
 }
 
 func (s *Store) tx(ctx context.Context) (tx pgx.Tx, q *queries.Queries, commit func() error, rollback func() error, err error) {

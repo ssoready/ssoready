@@ -16,3 +16,12 @@ func (s *Service) ListSAMLConnections(ctx context.Context, req *connect.Request[
 
 	return connect.NewResponse(res), nil
 }
+
+func (s *Service) GetSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.GetSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
+	res, err := s.Store.GetSAMLConnection(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}

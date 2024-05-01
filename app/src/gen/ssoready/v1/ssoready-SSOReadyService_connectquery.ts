@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { MethodKind } from "@bufbuild/protobuf";
-import { Environment, GetEnvironmentRequest, GetOrganizationRequest, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, Organization, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, Organization, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SAMLConnection, SignInRequest, SignInResponse, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessToken
@@ -113,6 +113,20 @@ export const listSAMLConnections = {
   kind: MethodKind.Unary,
   I: ListSAMLConnectionsRequest,
   O: ListSAMLConnectionsResponse,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLConnection
+ */
+export const getSAMLConnection = {
+  localName: "getSAMLConnection",
+  name: "GetSAMLConnection",
+  kind: MethodKind.Unary,
+  I: GetSAMLConnectionRequest,
+  O: SAMLConnection,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }

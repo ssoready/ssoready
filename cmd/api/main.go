@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}) // todo populate from env
+	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}, "localhost:8080") // todo populate from env
 
 	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
 		&apiservice.Service{

@@ -82,7 +82,8 @@ CREATE TABLE public.environments (
     id uuid NOT NULL,
     redirect_url character varying,
     app_organization_id uuid NOT NULL,
-    display_name character varying
+    display_name character varying,
+    auth_domain character varying
 );
 
 
@@ -123,7 +124,8 @@ CREATE TABLE public.saml_connections (
     organization_id uuid NOT NULL,
     idp_redirect_url character varying,
     idp_x509_certificate bytea,
-    idp_entity_id character varying
+    idp_entity_id character varying,
+    sp_entity_id character varying
 );
 
 

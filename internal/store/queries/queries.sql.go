@@ -12,6 +12,54 @@ import (
 	"github.com/google/uuid"
 )
 
+const authGetInitData = `-- name: AuthGetInitData :one
+select idp_redirect_url, sp_entity_id
+from saml_connections
+where saml_connections.id = $1
+`
+
+type AuthGetInitDataRow struct {
+	IdpRedirectUrl *string
+	SpEntityID     *string
+}
+
+func (q *Queries) AuthGetInitData(ctx context.Context, id uuid.UUID) (AuthGetInitDataRow, error) {
+	row := q.db.QueryRow(ctx, authGetInitData, id)
+	var i AuthGetInitDataRow
+	err := row.Scan(&i.IdpRedirectUrl, &i.SpEntityID)
+	return i, err
+}
+
+const authGetValidateData = `-- name: AuthGetValidateData :one
+select saml_connections.sp_entity_id,
+       saml_connections.idp_entity_id,
+       saml_connections.idp_x509_certificate,
+       environments.redirect_url
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where saml_connections.id = $1
+`
+
+type AuthGetValidateDataRow struct {
+	SpEntityID         *string
+	IdpEntityID        *string
+	IdpX509Certificate []byte
+	RedirectUrl        *string
+}
+
+func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGetValidateDataRow, error) {
+	row := q.db.QueryRow(ctx, authGetValidateData, id)
+	var i AuthGetValidateDataRow
+	err := row.Scan(
+		&i.SpEntityID,
+		&i.IdpEntityID,
+		&i.IdpX509Certificate,
+		&i.RedirectUrl,
+	)
+	return i, err
+}
+
 const createAppOrganization = `-- name: CreateAppOrganization :one
 insert into app_organizations (id, google_hosted_domain)
 values ($1, $2)
@@ -220,7 +268,7 @@ func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) 
 }
 
 const getEnvironment = `-- name: GetEnvironment :one
-select id, redirect_url, app_organization_id, display_name
+select id, redirect_url, app_organization_id, display_name, auth_domain
 from environments
 where app_organization_id = $1
   and id = $2
@@ -239,12 +287,13 @@ func (q *Queries) GetEnvironment(ctx context.Context, arg GetEnvironmentParams) 
 		&i.RedirectUrl,
 		&i.AppOrganizationID,
 		&i.DisplayName,
+		&i.AuthDomain,
 	)
 	return i, err
 }
 
 const getEnvironmentByID = `-- name: GetEnvironmentByID :one
-select id, redirect_url, app_organization_id, display_name
+select id, redirect_url, app_organization_id, display_name, auth_domain
 from environments
 where id = $1
 `
@@ -257,6 +306,7 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 		&i.RedirectUrl,
 		&i.AppOrganizationID,
 		&i.DisplayName,
+		&i.AuthDomain,
 	)
 	return i, err
 }
@@ -339,8 +389,36 @@ func (q *Queries) GetSAMLAccessTokenData(ctx context.Context, arg GetSAMLAccessT
 	return i, err
 }
 
+const getSAMLConnection = `-- name: GetSAMLConnection :one
+select saml_connections.id, saml_connections.organization_id, saml_connections.idp_redirect_url, saml_connections.idp_x509_certificate, saml_connections.idp_entity_id, saml_connections.sp_entity_id
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_connections.id = $2
+`
+
+type GetSAMLConnectionParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetSAMLConnection(ctx context.Context, arg GetSAMLConnectionParams) (SamlConnection, error) {
+	row := q.db.QueryRow(ctx, getSAMLConnection, arg.AppOrganizationID, arg.ID)
+	var i SamlConnection
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+		&i.IdpEntityID,
+		&i.SpEntityID,
+	)
+	return i, err
+}
+
 const getSAMLConnectionByID = `-- name: GetSAMLConnectionByID :one
-select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
 from saml_connections
 where id = $1
 `
@@ -354,12 +432,13 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 		&i.IdpRedirectUrl,
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
+		&i.SpEntityID,
 	)
 	return i, err
 }
 
 const listEnvironments = `-- name: ListEnvironments :many
-select id, redirect_url, app_organization_id, display_name
+select id, redirect_url, app_organization_id, display_name, auth_domain
 from environments
 where app_organization_id = $1
   and id > $2
@@ -387,6 +466,7 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 			&i.RedirectUrl,
 			&i.AppOrganizationID,
 			&i.DisplayName,
+			&i.AuthDomain,
 		); err != nil {
 			return nil, err
 		}
@@ -460,7 +540,7 @@ func (q *Queries) ListOrganizations(ctx context.Context, arg ListOrganizationsPa
 }
 
 const listSAMLConnections = `-- name: ListSAMLConnections :many
-select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
 from saml_connections
 where organization_id = $1
   and id > $2
@@ -489,6 +569,7 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 			&i.IdpRedirectUrl,
 			&i.IdpX509Certificate,
 			&i.IdpEntityID,
+			&i.SpEntityID,
 		); err != nil {
 			return nil, err
 		}

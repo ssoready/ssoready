@@ -179,9 +179,9 @@ export class SAMLConnection extends Message<SAMLConnection> {
   idpRedirectUrl = "";
 
   /**
-   * @generated from field: bytes idp_x509_certificate = 4;
+   * @generated from field: string idp_x509_certificate = 4;
    */
-  idpX509Certificate = new Uint8Array(0);
+  idpX509Certificate = "";
 
   /**
    * @generated from field: string idp_entity_id = 5;
@@ -199,7 +199,7 @@ export class SAMLConnection extends Message<SAMLConnection> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "idp_x509_certificate", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
+    { no: 4, name: "idp_x509_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
@@ -795,6 +795,43 @@ export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResp
 
   static equals(a: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined, b: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined): boolean {
     return proto3.util.equals(ListSAMLConnectionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSAMLConnectionRequest
+ */
+export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLConnectionRequest {
+    return new GetSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
+    return new GetSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
+    return new GetSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined, b: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(GetSAMLConnectionRequest, a, b);
   }
 }
 

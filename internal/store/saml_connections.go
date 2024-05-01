@@ -2,6 +2,8 @@ package store
 
 import (
 	"context"
+	"crypto/x509"
+	"encoding/pem"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/appauth"
@@ -47,11 +49,24 @@ func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAM
 
 	var samlConns []*ssoreadyv1.SAMLConnection
 	for _, qSAMLConn := range qSAMLConns {
+		var certPEM string
+		if len(qSAMLConn.IdpX509Certificate) != 0 {
+			cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
+			if err != nil {
+				panic(err)
+			}
+
+			certPEM = string(pem.EncodeToMemory(&pem.Block{
+				Type:  "CERTIFICATE",
+				Bytes: cert.Raw,
+			}))
+		}
+
 		samlConns = append(samlConns, &ssoreadyv1.SAMLConnection{
 			Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
 			OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
 			IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
-			IdpX509Certificate: qSAMLConn.IdpX509Certificate,
+			IdpX509Certificate: certPEM,
 			IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
 		})
 	}
@@ -65,5 +80,44 @@ func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAM
 	return &ssoreadyv1.ListSAMLConnectionsResponse{
 		SamlConnections: samlConns,
 		NextPageToken:   nextPageToken,
+	}, nil
+}
+
+func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+	id, err := idformat.SAMLConnection.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	qSAMLConn, err := q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                id,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
+	if err != nil {
+		panic(err)
+	}
+
+	certPEM := pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: cert.Raw,
+	})
+
+	return &ssoreadyv1.SAMLConnection{
+		Id:                 idformat.SAMLConnection.Format(qSAMLConn.ID),
+		OrganizationId:     idformat.Organization.Format(qSAMLConn.OrganizationID),
+		IdpRedirectUrl:     derefOrEmpty(qSAMLConn.IdpRedirectUrl),
+		IdpX509Certificate: string(certPEM),
+		IdpEntityId:        derefOrEmpty(qSAMLConn.IdpEntityID),
 	}, nil
 }
