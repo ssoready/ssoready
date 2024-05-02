@@ -72,12 +72,12 @@ from api_keys
 where secret_value = $1;
 
 -- name: GetSAMLAccessCodeData :one
-select saml_login_events.id as saml_login_event_id,
+select saml_login_events.id      as saml_login_event_id,
        saml_login_events.subject_idp_id,
        saml_login_events.subject_idp_attributes,
-       organizations.id as organization_id,
+       organizations.id          as organization_id,
        organizations.external_id as organization_external_id,
-       environments.id  as environment_id
+       environments.id           as environment_id
 from saml_login_events
          join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
@@ -185,3 +185,11 @@ set idp_entity_id        = $1,
     idp_x509_certificate = $3
 where id = $4
 returning *;
+
+-- name: ListSAMLLoginEvents :many
+select *
+from saml_login_events
+where saml_connection_id = $1
+  and id > $2
+order by id
+limit $3;

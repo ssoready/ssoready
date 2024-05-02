@@ -478,12 +478,12 @@ func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organi
 }
 
 const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
-select saml_login_events.id as saml_login_event_id,
+select saml_login_events.id      as saml_login_event_id,
        saml_login_events.subject_idp_id,
        saml_login_events.subject_idp_attributes,
-       organizations.id as organization_id,
+       organizations.id          as organization_id,
        organizations.external_id as organization_external_id,
-       environments.id  as environment_id
+       environments.id           as environment_id
 from saml_login_events
          join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
@@ -722,6 +722,49 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 			&i.IdpX509Certificate,
 			&i.IdpEntityID,
 			&i.SpEntityID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSAMLLoginEvents = `-- name: ListSAMLLoginEvents :many
+select id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
+from saml_login_events
+where saml_connection_id = $1
+  and id > $2
+order by id
+limit $3
+`
+
+type ListSAMLLoginEventsParams struct {
+	SamlConnectionID uuid.UUID
+	ID               uuid.UUID
+	Limit            int32
+}
+
+func (q *Queries) ListSAMLLoginEvents(ctx context.Context, arg ListSAMLLoginEventsParams) ([]SamlLoginEvent, error) {
+	rows, err := q.db.Query(ctx, listSAMLLoginEvents, arg.SamlConnectionID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SamlLoginEvent
+	for rows.Next() {
+		var i SamlLoginEvent
+		if err := rows.Scan(
+			&i.ID,
+			&i.SamlConnectionID,
+			&i.AccessCode,
+			&i.State,
+			&i.ExpireTime,
+			&i.SubjectIdpID,
+			&i.SubjectIdpAttributes,
 		); err != nil {
 			return nil, err
 		}

@@ -233,6 +233,67 @@ export class SAMLConnection extends Message<SAMLConnection> {
 }
 
 /**
+ * @generated from message ssoready.v1.SAMLLoginEvent
+ */
+export class SAMLLoginEvent extends Message<SAMLLoginEvent> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string saml_connection_id = 2;
+   */
+  samlConnectionId = "";
+
+  /**
+   * @generated from field: string state = 3;
+   */
+  state = "";
+
+  /**
+   * @generated from field: string subject_idp_id = 4;
+   */
+  subjectIdpId = "";
+
+  /**
+   * @generated from field: map<string, string> subject_idp_attributes = 5;
+   */
+  subjectIdpAttributes: { [key: string]: string } = {};
+
+  constructor(data?: PartialMessage<SAMLLoginEvent>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SAMLLoginEvent";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLLoginEvent {
+    return new SAMLLoginEvent().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLLoginEvent {
+    return new SAMLLoginEvent().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLLoginEvent {
+    return new SAMLLoginEvent().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SAMLLoginEvent | PlainMessage<SAMLLoginEvent> | undefined, b: SAMLLoginEvent | PlainMessage<SAMLLoginEvent> | undefined): boolean {
+    return proto3.util.equals(SAMLLoginEvent, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.GetSAMLRedirectURLRequest
  */
 export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest> {
@@ -998,6 +1059,92 @@ export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionReq
 
   static equals(a: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined, b: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined): boolean {
     return proto3.util.equals(UpdateSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLLoginEventsRequest
+ */
+export class ListSAMLLoginEventsRequest extends Message<ListSAMLLoginEventsRequest> {
+  /**
+   * @generated from field: string saml_connection_id = 1;
+   */
+  samlConnectionId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLLoginEventsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLLoginEventsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventsRequest {
+    return new ListSAMLLoginEventsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsRequest {
+    return new ListSAMLLoginEventsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsRequest {
+    return new ListSAMLLoginEventsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLLoginEventsRequest | PlainMessage<ListSAMLLoginEventsRequest> | undefined, b: ListSAMLLoginEventsRequest | PlainMessage<ListSAMLLoginEventsRequest> | undefined): boolean {
+    return proto3.util.equals(ListSAMLLoginEventsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLLoginEventsResponse
+ */
+export class ListSAMLLoginEventsResponse extends Message<ListSAMLLoginEventsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SAMLLoginEvent saml_login_events = 1;
+   */
+  samlLoginEvents: SAMLLoginEvent[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLLoginEventsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLLoginEventsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_login_events", kind: "message", T: SAMLLoginEvent, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventsResponse {
+    return new ListSAMLLoginEventsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsResponse {
+    return new ListSAMLLoginEventsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsResponse {
+    return new ListSAMLLoginEventsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLLoginEventsResponse | PlainMessage<ListSAMLLoginEventsResponse> | undefined, b: ListSAMLLoginEventsResponse | PlainMessage<ListSAMLLoginEventsResponse> | undefined): boolean {
+    return proto3.util.equals(ListSAMLLoginEventsResponse, a, b);
   }
 }
 
