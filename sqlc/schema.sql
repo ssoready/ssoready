@@ -16,6 +16,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: saml_login_event_timeline_entry_type; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.saml_login_event_timeline_entry_type AS ENUM (
+    'get_redirect',
+    'saml_initiate',
+    'saml_receive_assertion',
+    'redeem'
+);
+
+
+ALTER TYPE public.saml_login_event_timeline_entry_type OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -130,6 +144,40 @@ CREATE TABLE public.saml_connections (
 
 
 ALTER TABLE public.saml_connections OWNER TO postgres;
+
+--
+-- Name: saml_login_event_timeline_entry; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.saml_login_event_timeline_entry (
+    id uuid NOT NULL,
+    saml_login_event_id uuid NOT NULL,
+    "timestamp" timestamp with time zone NOT NULL,
+    type public.saml_login_event_timeline_entry_type NOT NULL,
+    get_redirect_url character varying,
+    saml_initiate_url character varying,
+    saml_receive_assertion_payload character varying
+);
+
+
+ALTER TABLE public.saml_login_event_timeline_entry OWNER TO postgres;
+
+--
+-- Name: saml_login_events; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.saml_login_events (
+    id uuid NOT NULL,
+    saml_connection_id uuid NOT NULL,
+    access_code uuid NOT NULL,
+    state character varying NOT NULL,
+    expire_time timestamp with time zone NOT NULL,
+    subject_idp_id character varying,
+    subject_idp_attributes jsonb
+);
+
+
+ALTER TABLE public.saml_login_events OWNER TO postgres;
 
 --
 -- Name: saml_sessions; Type: TABLE; Schema: public; Owner: postgres
@@ -255,6 +303,30 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
+-- Name: saml_login_event_timeline_entry saml_login_event_timeline_entry_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_login_event_timeline_entry
+    ADD CONSTRAINT saml_login_event_timeline_entry_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: saml_login_events saml_login_events_access_code_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_login_events
+    ADD CONSTRAINT saml_login_events_access_code_key UNIQUE (access_code);
+
+
+--
+-- Name: saml_login_events saml_login_events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_login_events
+    ADD CONSTRAINT saml_login_events_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: saml_sessions saml_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -324,6 +396,22 @@ ALTER TABLE ONLY public.organizations
 
 ALTER TABLE ONLY public.saml_connections
     ADD CONSTRAINT saml_connections_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
+
+
+--
+-- Name: saml_login_event_timeline_entry saml_login_event_timeline_entry_saml_login_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_login_event_timeline_entry
+    ADD CONSTRAINT saml_login_event_timeline_entry_saml_login_event_id_fkey FOREIGN KEY (saml_login_event_id) REFERENCES public.saml_login_events(id);
+
+
+--
+-- Name: saml_login_events saml_login_events_saml_connection_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_login_events
+    ADD CONSTRAINT saml_login_events_saml_connection_id_fkey FOREIGN KEY (saml_connection_id) REFERENCES public.saml_connections(id);
 
 
 --

@@ -74,5 +74,9 @@ type Response struct {
 				Value   string   `xml:"AttributeValue"`
 			} `xml:"Attribute"`
 		} `xml:"AttributeStatement"`
+		AuthnStatement struct {
+			XMLName      xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion AuthnStatement"`
+			SessionIndex string   `xml:"SessionIndex,attr"`
+		} `xml:"AuthnStatement"`
 	} `xml:"Assertion"`
 }

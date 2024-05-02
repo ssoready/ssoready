@@ -233,6 +233,86 @@ export class SAMLConnection extends Message<SAMLConnection> {
 }
 
 /**
+ * @generated from message ssoready.v1.GetSAMLRedirectURLRequest
+ */
+export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest> {
+  /**
+   * @generated from field: string saml_connection_id = 1;
+   */
+  samlConnectionId = "";
+
+  /**
+   * @generated from field: string state = 2;
+   */
+  state = "";
+
+  constructor(data?: PartialMessage<GetSAMLRedirectURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLRedirectURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLRedirectURLRequest {
+    return new GetSAMLRedirectURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLRequest {
+    return new GetSAMLRedirectURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLRequest {
+    return new GetSAMLRedirectURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLRedirectURLRequest | PlainMessage<GetSAMLRedirectURLRequest> | undefined, b: GetSAMLRedirectURLRequest | PlainMessage<GetSAMLRedirectURLRequest> | undefined): boolean {
+    return proto3.util.equals(GetSAMLRedirectURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSAMLRedirectURLResponse
+ */
+export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLResponse> {
+  /**
+   * @generated from field: string redirect_url = 1;
+   */
+  redirectUrl = "";
+
+  constructor(data?: PartialMessage<GetSAMLRedirectURLResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLRedirectURLResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLRedirectURLResponse {
+    return new GetSAMLRedirectURLResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLResponse {
+    return new GetSAMLRedirectURLResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLResponse {
+    return new GetSAMLRedirectURLResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLRedirectURLResponse | PlainMessage<GetSAMLRedirectURLResponse> | undefined, b: GetSAMLRedirectURLResponse | PlainMessage<GetSAMLRedirectURLResponse> | undefined): boolean {
+    return proto3.util.equals(GetSAMLRedirectURLResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.RedeemSAMLAccessTokenRequest
  */
 export class RedeemSAMLAccessTokenRequest extends Message<RedeemSAMLAccessTokenRequest> {

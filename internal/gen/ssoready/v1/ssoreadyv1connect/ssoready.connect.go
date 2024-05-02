@@ -33,6 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// SSOReadyServiceGetSAMLRedirectURLProcedure is the fully-qualified name of the SSOReadyService's
+	// GetSAMLRedirectURL RPC.
+	SSOReadyServiceGetSAMLRedirectURLProcedure = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
 	// SSOReadyServiceRedeemSAMLAccessTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's RedeemSAMLAccessToken RPC.
 	SSOReadyServiceRedeemSAMLAccessTokenProcedure = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessToken"
@@ -68,6 +71,7 @@ const (
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceClient interface {
+	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
@@ -91,6 +95,11 @@ type SSOReadyServiceClient interface {
 func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) SSOReadyServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &sSOReadyServiceClient{
+		getSAMLRedirectURL: connect.NewClient[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse](
+			httpClient,
+			baseURL+SSOReadyServiceGetSAMLRedirectURLProcedure,
+			opts...,
+		),
 		redeemSAMLAccessToken: connect.NewClient[v1.RedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessTokenResponse](
 			httpClient,
 			baseURL+SSOReadyServiceRedeemSAMLAccessTokenProcedure,
@@ -151,6 +160,7 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
+	getSAMLRedirectURL    *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
 	redeemSAMLAccessToken *connect.Client[v1.RedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessTokenResponse]
 	signIn                *connect.Client[v1.SignInRequest, v1.SignInResponse]
 	whoami                *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
@@ -162,6 +172,11 @@ type sSOReadyServiceClient struct {
 	getSAMLConnection     *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
 	createSAMLConnection  *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
 	updateSAMLConnection  *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
+}
+
+// GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
+func (c *sSOReadyServiceClient) GetSAMLRedirectURL(ctx context.Context, req *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error) {
+	return c.getSAMLRedirectURL.CallUnary(ctx, req)
 }
 
 // RedeemSAMLAccessToken calls ssoready.v1.SSOReadyService.RedeemSAMLAccessToken.
@@ -221,6 +236,7 @@ func (c *sSOReadyServiceClient) UpdateSAMLConnection(ctx context.Context, req *c
 
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
+	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
@@ -240,6 +256,11 @@ type SSOReadyServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	sSOReadyServiceGetSAMLRedirectURLHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetSAMLRedirectURLProcedure,
+		svc.GetSAMLRedirectURL,
+		opts...,
+	)
 	sSOReadyServiceRedeemSAMLAccessTokenHandler := connect.NewUnaryHandler(
 		SSOReadyServiceRedeemSAMLAccessTokenProcedure,
 		svc.RedeemSAMLAccessToken,
@@ -297,6 +318,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case SSOReadyServiceGetSAMLRedirectURLProcedure:
+			sSOReadyServiceGetSAMLRedirectURLHandler.ServeHTTP(w, r)
 		case SSOReadyServiceRedeemSAMLAccessTokenProcedure:
 			sSOReadyServiceRedeemSAMLAccessTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceSignInProcedure:
@@ -327,6 +350,10 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 
 // UnimplementedSSOReadyServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedSSOReadyServiceHandler struct{}
+
+func (UnimplementedSSOReadyServiceHandler) GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSAMLRedirectURL is not implemented"))
+}
 
 func (UnimplementedSSOReadyServiceHandler) RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemSAMLAccessToken is not implemented"))

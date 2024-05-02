@@ -117,7 +117,7 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 		return nil, err
 	}
 
-	authURL := s.defaultAuthURL
+	authURL := s.globalDefaultAuthURL
 	if env.AuthUrl != nil {
 		authURL = *env.AuthUrl
 	}

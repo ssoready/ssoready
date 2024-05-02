@@ -20,6 +20,7 @@ type ValidateRequest struct {
 }
 
 type ValidateResponse struct {
+	RequestID         string
 	SubjectID         string
 	SubjectAttributes map[string]string
 }
@@ -67,6 +68,7 @@ func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 	}
 
 	return &ValidateResponse{
+		RequestID:         res.Assertion.AuthnStatement.SessionIndex,
 		SubjectID:         res.Assertion.Subject.NameID.Value,
 		SubjectAttributes: attrs,
 	}, nil

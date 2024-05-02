@@ -463,6 +463,27 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 	return i, err
 }
 
+const getSAMLRedirectURLData = `-- name: GetSAMLRedirectURLData :one
+select environments.auth_url
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_connections.id = $2
+`
+
+type GetSAMLRedirectURLDataParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirectURLDataParams) (*string, error) {
+	row := q.db.QueryRow(ctx, getSAMLRedirectURLData, arg.AppOrganizationID, arg.ID)
+	var auth_url *string
+	err := row.Scan(&auth_url)
+	return auth_url, err
+}
+
 const listEnvironments = `-- name: ListEnvironments :many
 select id, redirect_url, app_organization_id, display_name, auth_url
 from environments

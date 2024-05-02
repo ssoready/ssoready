@@ -13,6 +13,14 @@ from saml_connections
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1;
 
+-- name: GetSAMLRedirectURLData :one
+select environments.auth_url
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_connections.id = $2;
+
 -- name: GetSAMLConnectionByID :one
 select *
 from saml_connections

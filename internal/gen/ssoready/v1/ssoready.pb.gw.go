@@ -31,6 +31,32 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
+func request_SSOReadyService_GetSAMLRedirectURL_0(ctx context.Context, marshaler runtime.Marshaler, client SSOReadyServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetSAMLRedirectURLRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.GetSAMLRedirectURL(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_SSOReadyService_GetSAMLRedirectURL_0(ctx context.Context, marshaler runtime.Marshaler, server SSOReadyServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetSAMLRedirectURLRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.GetSAMLRedirectURL(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_SSOReadyService_RedeemSAMLAccessToken_0(ctx context.Context, marshaler runtime.Marshaler, client SSOReadyServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq RedeemSAMLAccessTokenRequest
 	var metadata runtime.ServerMetadata
@@ -62,6 +88,31 @@ func local_request_SSOReadyService_RedeemSAMLAccessToken_0(ctx context.Context, 
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterSSOReadyServiceHandlerFromEndpoint instead.
 func RegisterSSOReadyServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server SSOReadyServiceServer) error {
+
+	mux.Handle("POST", pattern_SSOReadyService_GetSAMLRedirectURL_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL", runtime.WithHTTPPathPattern("/v1/saml/redirect"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SSOReadyService_GetSAMLRedirectURL_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SSOReadyService_GetSAMLRedirectURL_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
 
 	mux.Handle("POST", pattern_SSOReadyService_RedeemSAMLAccessToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -129,6 +180,28 @@ func RegisterSSOReadyServiceHandler(ctx context.Context, mux *runtime.ServeMux, 
 // "SSOReadyServiceClient" to call the correct interceptors.
 func RegisterSSOReadyServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SSOReadyServiceClient) error {
 
+	mux.Handle("POST", pattern_SSOReadyService_GetSAMLRedirectURL_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL", runtime.WithHTTPPathPattern("/v1/saml/redirect"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_SSOReadyService_GetSAMLRedirectURL_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SSOReadyService_GetSAMLRedirectURL_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_SSOReadyService_RedeemSAMLAccessToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -155,9 +228,13 @@ func RegisterSSOReadyServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
+	pattern_SSOReadyService_GetSAMLRedirectURL_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "saml", "redirect"}, ""))
+
 	pattern_SSOReadyService_RedeemSAMLAccessToken_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "saml", "redeem"}, ""))
 )
 
 var (
+	forward_SSOReadyService_GetSAMLRedirectURL_0 = runtime.ForwardResponseMessage
+
 	forward_SSOReadyService_RedeemSAMLAccessToken_0 = runtime.ForwardResponseMessage
 )

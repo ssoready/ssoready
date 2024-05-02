@@ -32,6 +32,7 @@ func main() {
 		})
 
 		initRes, err := saml.Init(&saml.InitRequest{
+			RequestID:      "MYREQUESTID",
 			IDPRedirectURL: dataRes.IDPRedirectURL,
 			SPEntityID:     dataRes.SPEntityID,
 			RelayState:     "this is a relay state",

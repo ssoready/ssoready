@@ -5,10 +5,56 @@
 package queries
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type SamlLoginEventTimelineEntryType string
+
+const (
+	SamlLoginEventTimelineEntryTypeGetRedirect          SamlLoginEventTimelineEntryType = "get_redirect"
+	SamlLoginEventTimelineEntryTypeSamlInitiate         SamlLoginEventTimelineEntryType = "saml_initiate"
+	SamlLoginEventTimelineEntryTypeSamlReceiveAssertion SamlLoginEventTimelineEntryType = "saml_receive_assertion"
+	SamlLoginEventTimelineEntryTypeRedeem               SamlLoginEventTimelineEntryType = "redeem"
+)
+
+func (e *SamlLoginEventTimelineEntryType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = SamlLoginEventTimelineEntryType(s)
+	case string:
+		*e = SamlLoginEventTimelineEntryType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for SamlLoginEventTimelineEntryType: %T", src)
+	}
+	return nil
+}
+
+type NullSamlLoginEventTimelineEntryType struct {
+	SamlLoginEventTimelineEntryType SamlLoginEventTimelineEntryType
+	Valid                           bool // Valid is true if SamlLoginEventTimelineEntryType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullSamlLoginEventTimelineEntryType) Scan(value interface{}) error {
+	if value == nil {
+		ns.SamlLoginEventTimelineEntryType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.SamlLoginEventTimelineEntryType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullSamlLoginEventTimelineEntryType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.SamlLoginEventTimelineEntryType), nil
+}
 
 type ApiKey struct {
 	ID                uuid.UUID
@@ -63,6 +109,26 @@ type SamlConnection struct {
 	IdpX509Certificate []byte
 	IdpEntityID        *string
 	SpEntityID         *string
+}
+
+type SamlLoginEvent struct {
+	ID                   uuid.UUID
+	SamlConnectionID     uuid.UUID
+	AccessCode           uuid.UUID
+	State                string
+	ExpireTime           time.Time
+	SubjectIdpID         *string
+	SubjectIdpAttributes []byte
+}
+
+type SamlLoginEventTimelineEntry struct {
+	ID                          uuid.UUID
+	SamlLoginEventID            uuid.UUID
+	Timestamp                   time.Time
+	Type                        SamlLoginEventTimelineEntryType
+	GetRedirectUrl              *string
+	SamlInitiateUrl             *string
+	SamlReceiveAssertionPayload *string
 }
 
 type SamlSession struct {

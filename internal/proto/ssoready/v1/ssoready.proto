@@ -5,6 +5,13 @@ package ssoready.v1;
 import "google/api/annotations.proto";
 
 service SSOReadyService {
+  rpc GetSAMLRedirectURL(GetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse) {
+    option (google.api.http) = {
+      post: "/v1/saml/redirect",
+      body: "*"
+    };
+  };
+
   rpc RedeemSAMLAccessToken(RedeemSAMLAccessTokenRequest) returns (RedeemSAMLAccessTokenResponse) {
     option (google.api.http) = {
       post: "/v1/saml/redeem",
@@ -54,6 +61,15 @@ message SAMLConnection {
   string idp_entity_id = 5;
   string sp_entity_id = 6;
   string sp_acs_url = 7;
+}
+
+message GetSAMLRedirectURLRequest {
+  string saml_connection_id = 1;
+  string state = 2;
+}
+
+message GetSAMLRedirectURLResponse {
+  string redirect_url = 1;
 }
 
 message RedeemSAMLAccessTokenRequest {
