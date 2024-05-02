@@ -68,7 +68,7 @@ func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 	}
 
 	return &ValidateResponse{
-		RequestID:         res.Assertion.AuthnStatement.SessionIndex,
+		RequestID:         res.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo,
 		SubjectID:         res.Assertion.Subject.NameID.Value,
 		SubjectAttributes: attrs,
 	}, nil

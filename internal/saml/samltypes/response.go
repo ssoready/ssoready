@@ -53,6 +53,13 @@ type Response struct {
 				XMLName xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion NameID"`
 				Value   string   `xml:",chardata"`
 			} `xml:"NameID"`
+			SubjectConfirmation struct {
+				XMLName                 xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion SubjectConfirmation"`
+				SubjectConfirmationData struct {
+					XMLName      xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion SubjectConfirmationData"`
+					InResponseTo string   `xml:"InResponseTo,attr"`
+				} `xml:"SubjectConfirmationData"`
+			} `xml:"SubjectConfirmation"`
 		} `xml:"Subject"`
 		Conditions struct {
 			XMLName             xml.Name  `xml:"urn:oasis:names:tc:SAML:2.0:assertion Conditions"`
