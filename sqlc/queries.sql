@@ -75,6 +75,7 @@ where secret_value = $1;
 select saml_login_events.id      as saml_login_event_id,
        saml_login_events.subject_idp_id,
        saml_login_events.subject_idp_attributes,
+       saml_login_events.state,
        organizations.id          as organization_id,
        organizations.external_id as organization_external_id,
        environments.id           as environment_id

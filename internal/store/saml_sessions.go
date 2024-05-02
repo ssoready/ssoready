@@ -124,6 +124,7 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	return &ssoreadyv1.RedeemSAMLAccessCodeResponse{
 		SubjectIdpId:           *samlAccessTokenData.SubjectIdpID,
 		SubjectIdpAttributes:   attrs,
+		State:                  samlAccessTokenData.State,
 		OrganizationId:         idformat.Organization.Format(samlAccessTokenData.OrganizationID),
 		OrganizationExternalId: derefOrEmpty(samlAccessTokenData.OrganizationExternalID),
 		EnvironmentId:          idformat.Environment.Format(samlAccessTokenData.EnvironmentID),

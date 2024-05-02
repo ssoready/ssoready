@@ -521,6 +521,11 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
    */
   environmentId = "";
 
+  /**
+   * @generated from field: string state = 6;
+   */
+  state = "";
+
   constructor(data?: PartialMessage<RedeemSAMLAccessCodeResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -534,6 +539,7 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
     { no: 3, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeResponse {

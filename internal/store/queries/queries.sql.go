@@ -481,6 +481,7 @@ const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
 select saml_login_events.id      as saml_login_event_id,
        saml_login_events.subject_idp_id,
        saml_login_events.subject_idp_attributes,
+       saml_login_events.state,
        organizations.id          as organization_id,
        organizations.external_id as organization_external_id,
        environments.id           as environment_id
@@ -501,6 +502,7 @@ type GetSAMLAccessCodeDataRow struct {
 	SamlLoginEventID       uuid.UUID
 	SubjectIdpID           *string
 	SubjectIdpAttributes   []byte
+	State                  string
 	OrganizationID         uuid.UUID
 	OrganizationExternalID *string
 	EnvironmentID          uuid.UUID
@@ -513,6 +515,7 @@ func (q *Queries) GetSAMLAccessCodeData(ctx context.Context, arg GetSAMLAccessCo
 		&i.SamlLoginEventID,
 		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,
+		&i.State,
 		&i.OrganizationID,
 		&i.OrganizationExternalID,
 		&i.EnvironmentID,
