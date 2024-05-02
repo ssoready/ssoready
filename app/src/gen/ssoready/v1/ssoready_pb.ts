@@ -313,46 +313,46 @@ export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLRespon
 }
 
 /**
- * @generated from message ssoready.v1.RedeemSAMLAccessTokenRequest
+ * @generated from message ssoready.v1.RedeemSAMLAccessCodeRequest
  */
-export class RedeemSAMLAccessTokenRequest extends Message<RedeemSAMLAccessTokenRequest> {
+export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeRequest> {
   /**
-   * @generated from field: string access_token = 1;
+   * @generated from field: string access_code = 1;
    */
-  accessToken = "";
+  accessCode = "";
 
-  constructor(data?: PartialMessage<RedeemSAMLAccessTokenRequest>) {
+  constructor(data?: PartialMessage<RedeemSAMLAccessCodeRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.RedeemSAMLAccessTokenRequest";
+  static readonly typeName = "ssoready.v1.RedeemSAMLAccessCodeRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "access_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessTokenRequest {
-    return new RedeemSAMLAccessTokenRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeRequest {
+    return new RedeemSAMLAccessCodeRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemSAMLAccessTokenRequest {
-    return new RedeemSAMLAccessTokenRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeRequest {
+    return new RedeemSAMLAccessCodeRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemSAMLAccessTokenRequest {
-    return new RedeemSAMLAccessTokenRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeRequest {
+    return new RedeemSAMLAccessCodeRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RedeemSAMLAccessTokenRequest | PlainMessage<RedeemSAMLAccessTokenRequest> | undefined, b: RedeemSAMLAccessTokenRequest | PlainMessage<RedeemSAMLAccessTokenRequest> | undefined): boolean {
-    return proto3.util.equals(RedeemSAMLAccessTokenRequest, a, b);
+  static equals(a: RedeemSAMLAccessCodeRequest | PlainMessage<RedeemSAMLAccessCodeRequest> | undefined, b: RedeemSAMLAccessCodeRequest | PlainMessage<RedeemSAMLAccessCodeRequest> | undefined): boolean {
+    return proto3.util.equals(RedeemSAMLAccessCodeRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.RedeemSAMLAccessTokenResponse
+ * @generated from message ssoready.v1.RedeemSAMLAccessCodeResponse
  */
-export class RedeemSAMLAccessTokenResponse extends Message<RedeemSAMLAccessTokenResponse> {
+export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeResponse> {
   /**
    * @generated from field: string subject_idp_id = 1;
    */
@@ -378,13 +378,13 @@ export class RedeemSAMLAccessTokenResponse extends Message<RedeemSAMLAccessToken
    */
   environmentId = "";
 
-  constructor(data?: PartialMessage<RedeemSAMLAccessTokenResponse>) {
+  constructor(data?: PartialMessage<RedeemSAMLAccessCodeResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.RedeemSAMLAccessTokenResponse";
+  static readonly typeName = "ssoready.v1.RedeemSAMLAccessCodeResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
@@ -393,20 +393,20 @@ export class RedeemSAMLAccessTokenResponse extends Message<RedeemSAMLAccessToken
     { no: 4, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessTokenResponse {
-    return new RedeemSAMLAccessTokenResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeResponse {
+    return new RedeemSAMLAccessCodeResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemSAMLAccessTokenResponse {
-    return new RedeemSAMLAccessTokenResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeResponse {
+    return new RedeemSAMLAccessCodeResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemSAMLAccessTokenResponse {
-    return new RedeemSAMLAccessTokenResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeResponse {
+    return new RedeemSAMLAccessCodeResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RedeemSAMLAccessTokenResponse | PlainMessage<RedeemSAMLAccessTokenResponse> | undefined, b: RedeemSAMLAccessTokenResponse | PlainMessage<RedeemSAMLAccessTokenResponse> | undefined): boolean {
-    return proto3.util.equals(RedeemSAMLAccessTokenResponse, a, b);
+  static equals(a: RedeemSAMLAccessCodeResponse | PlainMessage<RedeemSAMLAccessCodeResponse> | undefined, b: RedeemSAMLAccessCodeResponse | PlainMessage<RedeemSAMLAccessCodeResponse> | undefined): boolean {
+    return proto3.util.equals(RedeemSAMLAccessCodeResponse, a, b);
   }
 }
 

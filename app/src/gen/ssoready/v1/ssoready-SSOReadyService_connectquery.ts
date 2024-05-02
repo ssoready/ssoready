@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { MethodKind } from "@bufbuild/protobuf";
-import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, Organization, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
@@ -21,14 +21,14 @@ export const getSAMLRedirectURL = {
 } as const;
 
 /**
- * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessToken
+ * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessCode
  */
-export const redeemSAMLAccessToken = {
-  localName: "redeemSAMLAccessToken",
-  name: "RedeemSAMLAccessToken",
+export const redeemSAMLAccessCode = {
+  localName: "redeemSAMLAccessCode",
+  name: "RedeemSAMLAccessCode",
   kind: MethodKind.Unary,
-  I: RedeemSAMLAccessTokenRequest,
-  O: RedeemSAMLAccessTokenResponse,
+  I: RedeemSAMLAccessCodeRequest,
+  O: RedeemSAMLAccessCodeResponse,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }

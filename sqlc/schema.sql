@@ -146,10 +146,10 @@ CREATE TABLE public.saml_connections (
 ALTER TABLE public.saml_connections OWNER TO postgres;
 
 --
--- Name: saml_login_event_timeline_entry; Type: TABLE; Schema: public; Owner: postgres
+-- Name: saml_login_event_timeline_entries; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.saml_login_event_timeline_entry (
+CREATE TABLE public.saml_login_event_timeline_entries (
     id uuid NOT NULL,
     saml_login_event_id uuid NOT NULL,
     "timestamp" timestamp with time zone NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE public.saml_login_event_timeline_entry (
 );
 
 
-ALTER TABLE public.saml_login_event_timeline_entry OWNER TO postgres;
+ALTER TABLE public.saml_login_event_timeline_entries OWNER TO postgres;
 
 --
 -- Name: saml_login_events; Type: TABLE; Schema: public; Owner: postgres
@@ -303,11 +303,11 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
--- Name: saml_login_event_timeline_entry saml_login_event_timeline_entry_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_login_event_timeline_entries saml_login_event_timeline_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_login_event_timeline_entry
-    ADD CONSTRAINT saml_login_event_timeline_entry_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.saml_login_event_timeline_entries
+    ADD CONSTRAINT saml_login_event_timeline_entries_pkey PRIMARY KEY (id);
 
 
 --
@@ -399,11 +399,11 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
--- Name: saml_login_event_timeline_entry saml_login_event_timeline_entry_saml_login_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_login_event_timeline_entries saml_login_event_timeline_entries_saml_login_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_login_event_timeline_entry
-    ADD CONSTRAINT saml_login_event_timeline_entry_saml_login_event_id_fkey FOREIGN KEY (saml_login_event_id) REFERENCES public.saml_login_events(id);
+ALTER TABLE ONLY public.saml_login_event_timeline_entries
+    ADD CONSTRAINT saml_login_event_timeline_entries_saml_login_event_id_fkey FOREIGN KEY (saml_login_event_id) REFERENCES public.saml_login_events(id);
 
 
 --

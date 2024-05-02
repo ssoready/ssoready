@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, Organization, RedeemSAMLAccessTokenRequest, RedeemSAMLAccessTokenResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -22,12 +22,12 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessToken
+     * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessCode
      */
-    redeemSAMLAccessToken: {
-      name: "RedeemSAMLAccessToken",
-      I: RedeemSAMLAccessTokenRequest,
-      O: RedeemSAMLAccessTokenResponse,
+    redeemSAMLAccessCode: {
+      name: "RedeemSAMLAccessCode",
+      I: RedeemSAMLAccessCodeRequest,
+      O: RedeemSAMLAccessCodeResponse,
       kind: MethodKind.Unary,
     },
     /**

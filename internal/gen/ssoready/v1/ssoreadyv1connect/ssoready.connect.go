@@ -36,9 +36,9 @@ const (
 	// SSOReadyServiceGetSAMLRedirectURLProcedure is the fully-qualified name of the SSOReadyService's
 	// GetSAMLRedirectURL RPC.
 	SSOReadyServiceGetSAMLRedirectURLProcedure = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	// SSOReadyServiceRedeemSAMLAccessTokenProcedure is the fully-qualified name of the
-	// SSOReadyService's RedeemSAMLAccessToken RPC.
-	SSOReadyServiceRedeemSAMLAccessTokenProcedure = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessToken"
+	// SSOReadyServiceRedeemSAMLAccessCodeProcedure is the fully-qualified name of the SSOReadyService's
+	// RedeemSAMLAccessCode RPC.
+	SSOReadyServiceRedeemSAMLAccessCodeProcedure = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
 	// SSOReadyServiceSignInProcedure is the fully-qualified name of the SSOReadyService's SignIn RPC.
 	SSOReadyServiceSignInProcedure = "/ssoready.v1.SSOReadyService/SignIn"
 	// SSOReadyServiceWhoamiProcedure is the fully-qualified name of the SSOReadyService's Whoami RPC.
@@ -72,7 +72,7 @@ const (
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
-	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
+	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
@@ -100,9 +100,9 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceGetSAMLRedirectURLProcedure,
 			opts...,
 		),
-		redeemSAMLAccessToken: connect.NewClient[v1.RedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessTokenResponse](
+		redeemSAMLAccessCode: connect.NewClient[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse](
 			httpClient,
-			baseURL+SSOReadyServiceRedeemSAMLAccessTokenProcedure,
+			baseURL+SSOReadyServiceRedeemSAMLAccessCodeProcedure,
 			opts...,
 		),
 		signIn: connect.NewClient[v1.SignInRequest, v1.SignInResponse](
@@ -160,18 +160,18 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
-	getSAMLRedirectURL    *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	redeemSAMLAccessToken *connect.Client[v1.RedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessTokenResponse]
-	signIn                *connect.Client[v1.SignInRequest, v1.SignInResponse]
-	whoami                *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
-	listEnvironments      *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
-	getEnvironment        *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
-	listOrganizations     *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
-	getOrganization       *connect.Client[v1.GetOrganizationRequest, v1.Organization]
-	listSAMLConnections   *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
-	getSAMLConnection     *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
-	createSAMLConnection  *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
-	updateSAMLConnection  *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
+	getSAMLRedirectURL   *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	redeemSAMLAccessCode *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	signIn               *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	whoami               *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
+	listEnvironments     *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
+	getEnvironment       *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
+	listOrganizations    *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
+	getOrganization      *connect.Client[v1.GetOrganizationRequest, v1.Organization]
+	listSAMLConnections  *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
+	getSAMLConnection    *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
+	createSAMLConnection *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
+	updateSAMLConnection *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -179,9 +179,9 @@ func (c *sSOReadyServiceClient) GetSAMLRedirectURL(ctx context.Context, req *con
 	return c.getSAMLRedirectURL.CallUnary(ctx, req)
 }
 
-// RedeemSAMLAccessToken calls ssoready.v1.SSOReadyService.RedeemSAMLAccessToken.
-func (c *sSOReadyServiceClient) RedeemSAMLAccessToken(ctx context.Context, req *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error) {
-	return c.redeemSAMLAccessToken.CallUnary(ctx, req)
+// RedeemSAMLAccessCode calls ssoready.v1.SSOReadyService.RedeemSAMLAccessCode.
+func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, req *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
+	return c.redeemSAMLAccessCode.CallUnary(ctx, req)
 }
 
 // SignIn calls ssoready.v1.SSOReadyService.SignIn.
@@ -237,7 +237,7 @@ func (c *sSOReadyServiceClient) UpdateSAMLConnection(ctx context.Context, req *c
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
-	RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error)
+	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
@@ -261,9 +261,9 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.GetSAMLRedirectURL,
 		opts...,
 	)
-	sSOReadyServiceRedeemSAMLAccessTokenHandler := connect.NewUnaryHandler(
-		SSOReadyServiceRedeemSAMLAccessTokenProcedure,
-		svc.RedeemSAMLAccessToken,
+	sSOReadyServiceRedeemSAMLAccessCodeHandler := connect.NewUnaryHandler(
+		SSOReadyServiceRedeemSAMLAccessCodeProcedure,
+		svc.RedeemSAMLAccessCode,
 		opts...,
 	)
 	sSOReadyServiceSignInHandler := connect.NewUnaryHandler(
@@ -320,8 +320,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		switch r.URL.Path {
 		case SSOReadyServiceGetSAMLRedirectURLProcedure:
 			sSOReadyServiceGetSAMLRedirectURLHandler.ServeHTTP(w, r)
-		case SSOReadyServiceRedeemSAMLAccessTokenProcedure:
-			sSOReadyServiceRedeemSAMLAccessTokenHandler.ServeHTTP(w, r)
+		case SSOReadyServiceRedeemSAMLAccessCodeProcedure:
+			sSOReadyServiceRedeemSAMLAccessCodeHandler.ServeHTTP(w, r)
 		case SSOReadyServiceSignInProcedure:
 			sSOReadyServiceSignInHandler.ServeHTTP(w, r)
 		case SSOReadyServiceWhoamiProcedure:
@@ -355,8 +355,8 @@ func (UnimplementedSSOReadyServiceHandler) GetSAMLRedirectURL(context.Context, *
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSAMLRedirectURL is not implemented"))
 }
 
-func (UnimplementedSSOReadyServiceHandler) RedeemSAMLAccessToken(context.Context, *connect.Request[v1.RedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessTokenResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemSAMLAccessToken is not implemented"))
+func (UnimplementedSSOReadyServiceHandler) RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemSAMLAccessCode is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {

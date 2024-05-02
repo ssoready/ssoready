@@ -18,10 +18,10 @@ type InitResponse struct {
 	URL string
 }
 
-func Init(req *InitRequest) (*InitResponse, error) {
+func Init(req *InitRequest) *InitResponse {
 	redirectURL, err := url.Parse(req.IDPRedirectURL)
 	if err != nil {
-		return nil, fmt.Errorf("parse idp redirect url: %w", err)
+		panic(fmt.Errorf("parse idp redirect url: %w", err))
 	}
 
 	var samlReq samlRequest
@@ -30,15 +30,15 @@ func Init(req *InitRequest) (*InitResponse, error) {
 	samlReqData, err := xml.Marshal(samlReq)
 
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("marshal AuthnRequest: %w", err))
 	}
 
 	query := redirectURL.Query()
 	query.Set("SAMLRequest", base64.URLEncoding.EncodeToString(samlReqData))
-	query.Set("RelayState", req.RelayState) // todo sign this to prevent tampering
+	query.Set("RelayState", req.RelayState)
 	redirectURL.RawQuery = query.Encode()
 
-	return &InitResponse{URL: redirectURL.String()}, nil
+	return &InitResponse{URL: redirectURL.String()}
 }
 
 type samlRequest struct {

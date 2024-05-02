@@ -20,26 +20,45 @@ func main() {
 		panic(err)
 	}
 
-	store_ := store.New(db, pagetoken.Encoder{Secret: [32]byte{}}, "localhost:8080") // todo populate from env
+	// todo populate from env
+	store_ := store.New(store.NewStoreParams{
+		DB:                   db,
+		PageEncoder:          pagetoken.Encoder{Secret: [32]byte{}},
+		GlobalDefaultAuthURL: "http://localhost:8080",
+		SAMLStateSigningKey:  [32]byte{},
+	})
 
 	r := mux.NewRouter()
 	r.HandleFunc("/saml/{saml_conn_id}/init", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+
 		samlConnID := mux.Vars(r)["saml_conn_id"]
+		state := r.URL.Query().Get("state")
 
 		dataRes, err := store_.AuthGetInitData(ctx, &store.AuthGetInitDataRequest{
 			SAMLConnectionID: samlConnID,
-		})
-
-		initRes, err := saml.Init(&saml.InitRequest{
-			RequestID:      "MYREQUESTID",
-			IDPRedirectURL: dataRes.IDPRedirectURL,
-			SPEntityID:     dataRes.SPEntityID,
-			RelayState:     "this is a relay state",
+			State:            state,
 		})
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
+
+		initRes := saml.Init(&saml.InitRequest{
+			RequestID:      dataRes.RequestID,
+			IDPRedirectURL: dataRes.IDPRedirectURL,
+			SPEntityID:     dataRes.SPEntityID,
+			RelayState:     state,
+		})
+
+		if err := store_.AuthCreateInitiateTimelineEntry(ctx, &store.AuthCreateInitiateTimelineEntryRequest{
+			State:       state,
+			InitiateURL: initRes.URL,
+		}); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		http.Redirect(w, r, initRes.URL, http.StatusSeeOther)
 	}).Methods("GET")
 
@@ -60,8 +79,10 @@ func main() {
 			panic(err)
 		}
 
+		samlResponse := r.FormValue("SAMLResponse")
+
 		validateRes, err := saml.Validate(&saml.ValidateRequest{
-			SAMLResponse:   r.FormValue("SAMLResponse"),
+			SAMLResponse:   samlResponse,
 			IDPCertificate: cert,
 			IDPEntityID:    dataRes.IDPEntityID,
 			SPEntityID:     dataRes.SPEntityID,
@@ -71,10 +92,12 @@ func main() {
 			panic(err)
 		}
 
-		createSAMLSessRes, err := store_.CreateSAMLSession(ctx, &store.CreateSAMLSessionRequest{
+		createSAMLLoginRes, err := store_.AuthUpsertSAMLLoginEvent(ctx, &store.AuthUpsertSAMLLoginEventRequest{
 			SAMLConnectionID:     samlConnID,
 			SubjectID:            validateRes.SubjectID,
 			SubjectIDPAttributes: validateRes.SubjectAttributes,
+			SAMLLoginEventID:     validateRes.RequestID,
+			RawSAMLPayload:       samlResponse,
 		})
 		if err != nil {
 			panic(err)
@@ -86,7 +109,7 @@ func main() {
 		}
 
 		redirectQuery := url.Values{}
-		redirectQuery.Set("access_token", createSAMLSessRes.Token)
+		redirectQuery.Set("access_token", createSAMLLoginRes.Token)
 		redirectURL.RawQuery = redirectQuery.Encode()
 
 		http.Redirect(w, r, redirectURL.String(), http.StatusSeeOther)

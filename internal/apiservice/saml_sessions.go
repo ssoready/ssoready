@@ -16,8 +16,8 @@ func (s *Service) GetSAMLRedirectURL(ctx context.Context, req *connect.Request[s
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) RedeemSAMLAccessToken(ctx context.Context, req *connect.Request[ssoreadyv1.RedeemSAMLAccessTokenRequest]) (*connect.Response[ssoreadyv1.RedeemSAMLAccessTokenResponse], error) {
-	res, err := s.Store.RedeemSAMLAccessToken(ctx, req.Msg)
+func (s *Service) RedeemSAMLAccessCode(ctx context.Context, req *connect.Request[ssoreadyv1.RedeemSAMLAccessCodeRequest]) (*connect.Response[ssoreadyv1.RedeemSAMLAccessCodeResponse], error) {
+	res, err := s.Store.RedeemSAMLAccessCode(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}

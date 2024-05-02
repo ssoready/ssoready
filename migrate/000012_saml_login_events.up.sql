@@ -11,7 +11,7 @@ create table saml_login_events
 
 create type saml_login_event_timeline_entry_type as enum ('get_redirect', 'saml_initiate', 'saml_receive_assertion', 'redeem');
 
-create table saml_login_event_timeline_entry
+create table saml_login_event_timeline_entries
 (
     id                             uuid                                 not null primary key,
     saml_login_event_id            uuid                                 not null references saml_login_events (id),

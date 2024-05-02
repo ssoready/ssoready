@@ -30,6 +30,33 @@ func (q *Queries) AuthGetInitData(ctx context.Context, id uuid.UUID) (AuthGetIni
 	return i, err
 }
 
+const authGetSAMLLoginEvent = `-- name: AuthGetSAMLLoginEvent :one
+select id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
+from saml_login_events
+where id = $1
+  and saml_connection_id = $2
+`
+
+type AuthGetSAMLLoginEventParams struct {
+	ID               uuid.UUID
+	SamlConnectionID uuid.UUID
+}
+
+func (q *Queries) AuthGetSAMLLoginEvent(ctx context.Context, arg AuthGetSAMLLoginEventParams) (SamlLoginEvent, error) {
+	row := q.db.QueryRow(ctx, authGetSAMLLoginEvent, arg.ID, arg.SamlConnectionID)
+	var i SamlLoginEvent
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.AccessCode,
+		&i.State,
+		&i.ExpireTime,
+		&i.SubjectIdpID,
+		&i.SubjectIdpAttributes,
+	)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
@@ -163,6 +190,86 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
 		&i.SpEntityID,
+	)
+	return i, err
+}
+
+const createSAMLLoginEvent = `-- name: CreateSAMLLoginEvent :one
+insert into saml_login_events (id, saml_connection_id, access_code, state, expire_time, subject_idp_id,
+                               subject_idp_attributes)
+values ($1, $2, $3, $4, $5, $6, $7)
+returning id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
+`
+
+type CreateSAMLLoginEventParams struct {
+	ID                   uuid.UUID
+	SamlConnectionID     uuid.UUID
+	AccessCode           uuid.UUID
+	State                string
+	ExpireTime           time.Time
+	SubjectIdpID         *string
+	SubjectIdpAttributes []byte
+}
+
+func (q *Queries) CreateSAMLLoginEvent(ctx context.Context, arg CreateSAMLLoginEventParams) (SamlLoginEvent, error) {
+	row := q.db.QueryRow(ctx, createSAMLLoginEvent,
+		arg.ID,
+		arg.SamlConnectionID,
+		arg.AccessCode,
+		arg.State,
+		arg.ExpireTime,
+		arg.SubjectIdpID,
+		arg.SubjectIdpAttributes,
+	)
+	var i SamlLoginEvent
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.AccessCode,
+		&i.State,
+		&i.ExpireTime,
+		&i.SubjectIdpID,
+		&i.SubjectIdpAttributes,
+	)
+	return i, err
+}
+
+const createSAMLLoginEventTimelineEntry = `-- name: CreateSAMLLoginEventTimelineEntry :one
+insert into saml_login_event_timeline_entries (id, saml_login_event_id, timestamp, type, get_redirect_url,
+                                               saml_initiate_url, saml_receive_assertion_payload)
+values ($1, $2, $3, $4, $5, $6, $7)
+returning id, saml_login_event_id, timestamp, type, get_redirect_url, saml_initiate_url, saml_receive_assertion_payload
+`
+
+type CreateSAMLLoginEventTimelineEntryParams struct {
+	ID                          uuid.UUID
+	SamlLoginEventID            uuid.UUID
+	Timestamp                   time.Time
+	Type                        SamlLoginEventTimelineEntryType
+	GetRedirectUrl              *string
+	SamlInitiateUrl             *string
+	SamlReceiveAssertionPayload *string
+}
+
+func (q *Queries) CreateSAMLLoginEventTimelineEntry(ctx context.Context, arg CreateSAMLLoginEventTimelineEntryParams) (SamlLoginEventTimelineEntry, error) {
+	row := q.db.QueryRow(ctx, createSAMLLoginEventTimelineEntry,
+		arg.ID,
+		arg.SamlLoginEventID,
+		arg.Timestamp,
+		arg.Type,
+		arg.GetRedirectUrl,
+		arg.SamlInitiateUrl,
+		arg.SamlReceiveAssertionPayload,
+	)
+	var i SamlLoginEventTimelineEntry
+	err := row.Scan(
+		&i.ID,
+		&i.SamlLoginEventID,
+		&i.Timestamp,
+		&i.Type,
+		&i.GetRedirectUrl,
+		&i.SamlInitiateUrl,
+		&i.SamlReceiveAssertionPayload,
 	)
 	return i, err
 }
@@ -370,46 +477,44 @@ func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organi
 	return i, err
 }
 
-const getSAMLAccessTokenData = `-- name: GetSAMLAccessTokenData :one
-select saml_sessions.id, saml_sessions.saml_connection_id, saml_sessions.secret_access_token, saml_sessions.subject_id, saml_sessions.subject_idp_attributes,
+const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
+select saml_login_events.id as saml_login_event_id,
+       saml_login_events.subject_idp_id,
+       saml_login_events.subject_idp_attributes,
        organizations.id as organization_id,
-       organizations.external_id,
+       organizations.external_id as organization_external_id,
        environments.id  as environment_id
-from saml_sessions
-         join saml_connections on saml_sessions.saml_connection_id = saml_connections.id
+from saml_login_events
+         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_sessions.secret_access_token = $2
+  and saml_login_events.access_code = $2
 `
 
-type GetSAMLAccessTokenDataParams struct {
+type GetSAMLAccessCodeDataParams struct {
 	AppOrganizationID uuid.UUID
-	SecretAccessToken *uuid.UUID
+	AccessCode        uuid.UUID
 }
 
-type GetSAMLAccessTokenDataRow struct {
-	ID                   uuid.UUID
-	SamlConnectionID     uuid.UUID
-	SecretAccessToken    *uuid.UUID
-	SubjectID            *string
-	SubjectIdpAttributes []byte
-	OrganizationID       uuid.UUID
-	ExternalID           *string
-	EnvironmentID        uuid.UUID
+type GetSAMLAccessCodeDataRow struct {
+	SamlLoginEventID       uuid.UUID
+	SubjectIdpID           *string
+	SubjectIdpAttributes   []byte
+	OrganizationID         uuid.UUID
+	OrganizationExternalID *string
+	EnvironmentID          uuid.UUID
 }
 
-func (q *Queries) GetSAMLAccessTokenData(ctx context.Context, arg GetSAMLAccessTokenDataParams) (GetSAMLAccessTokenDataRow, error) {
-	row := q.db.QueryRow(ctx, getSAMLAccessTokenData, arg.AppOrganizationID, arg.SecretAccessToken)
-	var i GetSAMLAccessTokenDataRow
+func (q *Queries) GetSAMLAccessCodeData(ctx context.Context, arg GetSAMLAccessCodeDataParams) (GetSAMLAccessCodeDataRow, error) {
+	row := q.db.QueryRow(ctx, getSAMLAccessCodeData, arg.AppOrganizationID, arg.AccessCode)
+	var i GetSAMLAccessCodeDataRow
 	err := row.Scan(
-		&i.ID,
-		&i.SamlConnectionID,
-		&i.SecretAccessToken,
-		&i.SubjectID,
+		&i.SamlLoginEventID,
+		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,
 		&i.OrganizationID,
-		&i.ExternalID,
+		&i.OrganizationExternalID,
 		&i.EnvironmentID,
 	)
 	return i, err
@@ -659,6 +764,35 @@ func (q *Queries) UpdateSAMLConnection(ctx context.Context, arg UpdateSAMLConnec
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
 		&i.SpEntityID,
+	)
+	return i, err
+}
+
+const updateSAMLLoginEventSubjectData = `-- name: UpdateSAMLLoginEventSubjectData :one
+update saml_login_events
+set subject_idp_id         = $1,
+    subject_idp_attributes = $2
+where id = $3
+returning id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
+`
+
+type UpdateSAMLLoginEventSubjectDataParams struct {
+	SubjectIdpID         *string
+	SubjectIdpAttributes []byte
+	ID                   uuid.UUID
+}
+
+func (q *Queries) UpdateSAMLLoginEventSubjectData(ctx context.Context, arg UpdateSAMLLoginEventSubjectDataParams) (SamlLoginEvent, error) {
+	row := q.db.QueryRow(ctx, updateSAMLLoginEventSubjectData, arg.SubjectIdpID, arg.SubjectIdpAttributes, arg.ID)
+	var i SamlLoginEvent
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.AccessCode,
+		&i.State,
+		&i.ExpireTime,
+		&i.SubjectIdpID,
+		&i.SubjectIdpAttributes,
 	)
 	return i, err
 }

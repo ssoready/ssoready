@@ -12,7 +12,7 @@ service SSOReadyService {
     };
   };
 
-  rpc RedeemSAMLAccessToken(RedeemSAMLAccessTokenRequest) returns (RedeemSAMLAccessTokenResponse) {
+  rpc RedeemSAMLAccessCode(RedeemSAMLAccessCodeRequest) returns (RedeemSAMLAccessCodeResponse) {
     option (google.api.http) = {
       post: "/v1/saml/redeem",
       body: "*"
@@ -72,11 +72,11 @@ message GetSAMLRedirectURLResponse {
   string redirect_url = 1;
 }
 
-message RedeemSAMLAccessTokenRequest {
-  string access_token = 1;
+message RedeemSAMLAccessCodeRequest {
+  string access_code = 1;
 }
 
-message RedeemSAMLAccessTokenResponse {
+message RedeemSAMLAccessCodeResponse {
   string subject_idp_id = 1;
   map<string, string> subject_idp_attributes = 2;
   string organization_id = 3;

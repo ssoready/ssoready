@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ssoready/ssoready/internal/pagetoken"
+	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
@@ -15,7 +16,7 @@ type Store struct {
 	q                    *queries.Queries
 	pageEncoder          pagetoken.Encoder
 	globalDefaultAuthURL string
-	samlStateSigningKey  [32]byte
+	statesigner          *statesign.Signer
 }
 
 type NewStoreParams struct {
@@ -31,7 +32,7 @@ func New(p NewStoreParams) *Store {
 		q:                    queries.New(p.DB),
 		pageEncoder:          p.PageEncoder,
 		globalDefaultAuthURL: p.GlobalDefaultAuthURL,
-		samlStateSigningKey:  p.SAMLStateSigningKey,
+		statesigner:          &statesign.Signer{Key: p.SAMLStateSigningKey},
 	}
 }
 

@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SSOReadyService_GetSAMLRedirectURL_FullMethodName    = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	SSOReadyService_RedeemSAMLAccessToken_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessToken"
-	SSOReadyService_SignIn_FullMethodName                = "/ssoready.v1.SSOReadyService/SignIn"
-	SSOReadyService_Whoami_FullMethodName                = "/ssoready.v1.SSOReadyService/Whoami"
-	SSOReadyService_ListEnvironments_FullMethodName      = "/ssoready.v1.SSOReadyService/ListEnvironments"
-	SSOReadyService_GetEnvironment_FullMethodName        = "/ssoready.v1.SSOReadyService/GetEnvironment"
-	SSOReadyService_ListOrganizations_FullMethodName     = "/ssoready.v1.SSOReadyService/ListOrganizations"
-	SSOReadyService_GetOrganization_FullMethodName       = "/ssoready.v1.SSOReadyService/GetOrganization"
-	SSOReadyService_ListSAMLConnections_FullMethodName   = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
-	SSOReadyService_GetSAMLConnection_FullMethodName     = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
-	SSOReadyService_CreateSAMLConnection_FullMethodName  = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
-	SSOReadyService_UpdateSAMLConnection_FullMethodName  = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
+	SSOReadyService_GetSAMLRedirectURL_FullMethodName   = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
+	SSOReadyService_RedeemSAMLAccessCode_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_SignIn_FullMethodName               = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_Whoami_FullMethodName               = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_ListEnvironments_FullMethodName     = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName       = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_ListOrganizations_FullMethodName    = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_GetOrganization_FullMethodName      = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_ListSAMLConnections_FullMethodName  = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
+	SSOReadyService_GetSAMLConnection_FullMethodName    = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
+	SSOReadyService_UpdateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -38,7 +38,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(ctx context.Context, in *GetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
-	RedeemSAMLAccessToken(ctx context.Context, in *RedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessTokenResponse, error)
+	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
@@ -68,9 +68,9 @@ func (c *sSOReadyServiceClient) GetSAMLRedirectURL(ctx context.Context, in *GetS
 	return out, nil
 }
 
-func (c *sSOReadyServiceClient) RedeemSAMLAccessToken(ctx context.Context, in *RedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessTokenResponse, error) {
-	out := new(RedeemSAMLAccessTokenResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_RedeemSAMLAccessToken_FullMethodName, in, out, opts...)
+func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error) {
+	out := new(RedeemSAMLAccessCodeResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_RedeemSAMLAccessCode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (c *sSOReadyServiceClient) UpdateSAMLConnection(ctx context.Context, in *Up
 // for forward compatibility
 type SSOReadyServiceServer interface {
 	GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
-	RedeemSAMLAccessToken(context.Context, *RedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessTokenResponse, error)
+	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
@@ -193,8 +193,8 @@ type UnimplementedSSOReadyServiceServer struct {
 func (UnimplementedSSOReadyServiceServer) GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSAMLRedirectURL not implemented")
 }
-func (UnimplementedSSOReadyServiceServer) RedeemSAMLAccessToken(context.Context, *RedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RedeemSAMLAccessToken not implemented")
+func (UnimplementedSSOReadyServiceServer) RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedeemSAMLAccessCode not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
@@ -257,20 +257,20 @@ func _SSOReadyService_GetSAMLRedirectURL_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SSOReadyService_RedeemSAMLAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RedeemSAMLAccessTokenRequest)
+func _SSOReadyService_RedeemSAMLAccessCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RedeemSAMLAccessCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).RedeemSAMLAccessToken(ctx, in)
+		return srv.(SSOReadyServiceServer).RedeemSAMLAccessCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SSOReadyService_RedeemSAMLAccessToken_FullMethodName,
+		FullMethod: SSOReadyService_RedeemSAMLAccessCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).RedeemSAMLAccessToken(ctx, req.(*RedeemSAMLAccessTokenRequest))
+		return srv.(SSOReadyServiceServer).RedeemSAMLAccessCode(ctx, req.(*RedeemSAMLAccessCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -467,8 +467,8 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SSOReadyService_GetSAMLRedirectURL_Handler,
 		},
 		{
-			MethodName: "RedeemSAMLAccessToken",
-			Handler:    _SSOReadyService_RedeemSAMLAccessToken_Handler,
+			MethodName: "RedeemSAMLAccessCode",
+			Handler:    _SSOReadyService_RedeemSAMLAccessCode_Handler,
 		},
 		{
 			MethodName: "SignIn",
