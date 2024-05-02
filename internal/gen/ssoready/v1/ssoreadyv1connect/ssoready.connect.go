@@ -70,6 +70,9 @@ const (
 	// SSOReadyServiceListSAMLLoginEventsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListSAMLLoginEvents RPC.
 	SSOReadyServiceListSAMLLoginEventsProcedure = "/ssoready.v1.SSOReadyService/ListSAMLLoginEvents"
+	// SSOReadyServiceListSAMLLoginEventTimelineEntriesProcedure is the fully-qualified name of the
+	// SSOReadyService's ListSAMLLoginEventTimelineEntries RPC.
+	SSOReadyServiceListSAMLLoginEventTimelineEntriesProcedure = "/ssoready.v1.SSOReadyService/ListSAMLLoginEventTimelineEntries"
 )
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
@@ -87,6 +90,7 @@ type SSOReadyServiceClient interface {
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	UpdateSAMLConnection(context.Context, *connect.Request[v1.UpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	ListSAMLLoginEvents(context.Context, *connect.Request[v1.ListSAMLLoginEventsRequest]) (*connect.Response[v1.ListSAMLLoginEventsResponse], error)
+	ListSAMLLoginEventTimelineEntries(context.Context, *connect.Request[v1.ListSAMLLoginEventTimelineEntriesRequest]) (*connect.Response[v1.ListSAMLLoginEventTimelineEntriesResponse], error)
 }
 
 // NewSSOReadyServiceClient constructs a client for the ssoready.v1.SSOReadyService service. By
@@ -164,24 +168,30 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceListSAMLLoginEventsProcedure,
 			opts...,
 		),
+		listSAMLLoginEventTimelineEntries: connect.NewClient[v1.ListSAMLLoginEventTimelineEntriesRequest, v1.ListSAMLLoginEventTimelineEntriesResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListSAMLLoginEventTimelineEntriesProcedure,
+			opts...,
+		),
 	}
 }
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
-	getSAMLRedirectURL   *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	redeemSAMLAccessCode *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	signIn               *connect.Client[v1.SignInRequest, v1.SignInResponse]
-	whoami               *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
-	listEnvironments     *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
-	getEnvironment       *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
-	listOrganizations    *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
-	getOrganization      *connect.Client[v1.GetOrganizationRequest, v1.Organization]
-	listSAMLConnections  *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
-	getSAMLConnection    *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
-	createSAMLConnection *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
-	updateSAMLConnection *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
-	listSAMLLoginEvents  *connect.Client[v1.ListSAMLLoginEventsRequest, v1.ListSAMLLoginEventsResponse]
+	getSAMLRedirectURL                *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	redeemSAMLAccessCode              *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	signIn                            *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	whoami                            *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
+	listEnvironments                  *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
+	getEnvironment                    *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
+	listOrganizations                 *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
+	getOrganization                   *connect.Client[v1.GetOrganizationRequest, v1.Organization]
+	listSAMLConnections               *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
+	getSAMLConnection                 *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
+	createSAMLConnection              *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
+	updateSAMLConnection              *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
+	listSAMLLoginEvents               *connect.Client[v1.ListSAMLLoginEventsRequest, v1.ListSAMLLoginEventsResponse]
+	listSAMLLoginEventTimelineEntries *connect.Client[v1.ListSAMLLoginEventTimelineEntriesRequest, v1.ListSAMLLoginEventTimelineEntriesResponse]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -249,6 +259,12 @@ func (c *sSOReadyServiceClient) ListSAMLLoginEvents(ctx context.Context, req *co
 	return c.listSAMLLoginEvents.CallUnary(ctx, req)
 }
 
+// ListSAMLLoginEventTimelineEntries calls
+// ssoready.v1.SSOReadyService.ListSAMLLoginEventTimelineEntries.
+func (c *sSOReadyServiceClient) ListSAMLLoginEventTimelineEntries(ctx context.Context, req *connect.Request[v1.ListSAMLLoginEventTimelineEntriesRequest]) (*connect.Response[v1.ListSAMLLoginEventTimelineEntriesResponse], error) {
+	return c.listSAMLLoginEventTimelineEntries.CallUnary(ctx, req)
+}
+
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
@@ -264,6 +280,7 @@ type SSOReadyServiceHandler interface {
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	UpdateSAMLConnection(context.Context, *connect.Request[v1.UpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	ListSAMLLoginEvents(context.Context, *connect.Request[v1.ListSAMLLoginEventsRequest]) (*connect.Response[v1.ListSAMLLoginEventsResponse], error)
+	ListSAMLLoginEventTimelineEntries(context.Context, *connect.Request[v1.ListSAMLLoginEventTimelineEntriesRequest]) (*connect.Response[v1.ListSAMLLoginEventTimelineEntriesResponse], error)
 }
 
 // NewSSOReadyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -337,6 +354,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.ListSAMLLoginEvents,
 		opts...,
 	)
+	sSOReadyServiceListSAMLLoginEventTimelineEntriesHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListSAMLLoginEventTimelineEntriesProcedure,
+		svc.ListSAMLLoginEventTimelineEntries,
+		opts...,
+	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SSOReadyServiceGetSAMLRedirectURLProcedure:
@@ -365,6 +387,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceUpdateSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListSAMLLoginEventsProcedure:
 			sSOReadyServiceListSAMLLoginEventsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListSAMLLoginEventTimelineEntriesProcedure:
+			sSOReadyServiceListSAMLLoginEventTimelineEntriesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -424,4 +448,8 @@ func (UnimplementedSSOReadyServiceHandler) UpdateSAMLConnection(context.Context,
 
 func (UnimplementedSSOReadyServiceHandler) ListSAMLLoginEvents(context.Context, *connect.Request[v1.ListSAMLLoginEventsRequest]) (*connect.Response[v1.ListSAMLLoginEventsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSAMLLoginEvents is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListSAMLLoginEventTimelineEntries(context.Context, *connect.Request[v1.ListSAMLLoginEventTimelineEntriesRequest]) (*connect.Response[v1.ListSAMLLoginEventTimelineEntriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSAMLLoginEventTimelineEntries is not implemented"))
 }

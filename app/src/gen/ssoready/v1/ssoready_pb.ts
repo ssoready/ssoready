@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3 } from "@bufbuild/protobuf";
+import { Empty, Message, proto3, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from message ssoready.v1.AppUser
@@ -290,6 +290,88 @@ export class SAMLLoginEvent extends Message<SAMLLoginEvent> {
 
   static equals(a: SAMLLoginEvent | PlainMessage<SAMLLoginEvent> | undefined, b: SAMLLoginEvent | PlainMessage<SAMLLoginEvent> | undefined): boolean {
     return proto3.util.equals(SAMLLoginEvent, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.SAMLLoginEventTimelineEntry
+ */
+export class SAMLLoginEventTimelineEntry extends Message<SAMLLoginEventTimelineEntry> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string saml_login_event_id = 2;
+   */
+  samlLoginEventId = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp timestamp = 3;
+   */
+  timestamp?: Timestamp;
+
+  /**
+   * @generated from oneof ssoready.v1.SAMLLoginEventTimelineEntry.details
+   */
+  details: {
+    /**
+     * @generated from field: string get_redirect = 4;
+     */
+    value: string;
+    case: "getRedirect";
+  } | {
+    /**
+     * @generated from field: string saml_initiate = 5;
+     */
+    value: string;
+    case: "samlInitiate";
+  } | {
+    /**
+     * @generated from field: string saml_receive_assertion = 6;
+     */
+    value: string;
+    case: "samlReceiveAssertion";
+  } | {
+    /**
+     * @generated from field: google.protobuf.Empty redeem = 7;
+     */
+    value: Empty;
+    case: "redeem";
+  } | { case: undefined; value?: undefined } = { case: undefined };
+
+  constructor(data?: PartialMessage<SAMLLoginEventTimelineEntry>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SAMLLoginEventTimelineEntry";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_login_event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "timestamp", kind: "message", T: Timestamp },
+    { no: 4, name: "get_redirect", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
+    { no: 5, name: "saml_initiate", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
+    { no: 6, name: "saml_receive_assertion", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
+    { no: 7, name: "redeem", kind: "message", T: Empty, oneof: "details" },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLLoginEventTimelineEntry {
+    return new SAMLLoginEventTimelineEntry().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLLoginEventTimelineEntry {
+    return new SAMLLoginEventTimelineEntry().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLLoginEventTimelineEntry {
+    return new SAMLLoginEventTimelineEntry().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SAMLLoginEventTimelineEntry | PlainMessage<SAMLLoginEventTimelineEntry> | undefined, b: SAMLLoginEventTimelineEntry | PlainMessage<SAMLLoginEventTimelineEntry> | undefined): boolean {
+    return proto3.util.equals(SAMLLoginEventTimelineEntry, a, b);
   }
 }
 
@@ -1145,6 +1227,92 @@ export class ListSAMLLoginEventsResponse extends Message<ListSAMLLoginEventsResp
 
   static equals(a: ListSAMLLoginEventsResponse | PlainMessage<ListSAMLLoginEventsResponse> | undefined, b: ListSAMLLoginEventsResponse | PlainMessage<ListSAMLLoginEventsResponse> | undefined): boolean {
     return proto3.util.equals(ListSAMLLoginEventsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLLoginEventTimelineEntriesRequest
+ */
+export class ListSAMLLoginEventTimelineEntriesRequest extends Message<ListSAMLLoginEventTimelineEntriesRequest> {
+  /**
+   * @generated from field: string saml_login_event_id = 1;
+   */
+  samlLoginEventId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLLoginEventTimelineEntriesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLLoginEventTimelineEntriesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_login_event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventTimelineEntriesRequest {
+    return new ListSAMLLoginEventTimelineEntriesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesRequest {
+    return new ListSAMLLoginEventTimelineEntriesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesRequest {
+    return new ListSAMLLoginEventTimelineEntriesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLLoginEventTimelineEntriesRequest | PlainMessage<ListSAMLLoginEventTimelineEntriesRequest> | undefined, b: ListSAMLLoginEventTimelineEntriesRequest | PlainMessage<ListSAMLLoginEventTimelineEntriesRequest> | undefined): boolean {
+    return proto3.util.equals(ListSAMLLoginEventTimelineEntriesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLLoginEventTimelineEntriesResponse
+ */
+export class ListSAMLLoginEventTimelineEntriesResponse extends Message<ListSAMLLoginEventTimelineEntriesResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SAMLLoginEventTimelineEntry saml_login_event_timeline_entries = 1;
+   */
+  samlLoginEventTimelineEntries: SAMLLoginEventTimelineEntry[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLLoginEventTimelineEntriesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLLoginEventTimelineEntriesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_login_event_timeline_entries", kind: "message", T: SAMLLoginEventTimelineEntry, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventTimelineEntriesResponse {
+    return new ListSAMLLoginEventTimelineEntriesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesResponse {
+    return new ListSAMLLoginEventTimelineEntriesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesResponse {
+    return new ListSAMLLoginEventTimelineEntriesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLLoginEventTimelineEntriesResponse | PlainMessage<ListSAMLLoginEventTimelineEntriesResponse> | undefined, b: ListSAMLLoginEventTimelineEntriesResponse | PlainMessage<ListSAMLLoginEventTimelineEntriesResponse> | undefined): boolean {
+    return proto3.util.equals(ListSAMLLoginEventTimelineEntriesResponse, a, b);
   }
 }
 

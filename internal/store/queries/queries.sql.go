@@ -568,6 +568,36 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 	return i, err
 }
 
+const getSAMLLoginEvent = `-- name: GetSAMLLoginEvent :one
+select saml_login_events.id, saml_login_events.saml_connection_id, saml_login_events.access_code, saml_login_events.state, saml_login_events.expire_time, saml_login_events.subject_idp_id, saml_login_events.subject_idp_attributes
+from saml_login_events
+         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_login_events.id = $2
+`
+
+type GetSAMLLoginEventParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetSAMLLoginEvent(ctx context.Context, arg GetSAMLLoginEventParams) (SamlLoginEvent, error) {
+	row := q.db.QueryRow(ctx, getSAMLLoginEvent, arg.AppOrganizationID, arg.ID)
+	var i SamlLoginEvent
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.AccessCode,
+		&i.State,
+		&i.ExpireTime,
+		&i.SubjectIdpID,
+		&i.SubjectIdpAttributes,
+	)
+	return i, err
+}
+
 const getSAMLRedirectURLData = `-- name: GetSAMLRedirectURLData :one
 select environments.auth_url
 from saml_connections
@@ -722,6 +752,55 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 			&i.IdpX509Certificate,
 			&i.IdpEntityID,
 			&i.SpEntityID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSAMLLoginEventTimelineEntries = `-- name: ListSAMLLoginEventTimelineEntries :many
+select id, saml_login_event_id, timestamp, type, get_redirect_url, saml_initiate_url, saml_receive_assertion_payload
+from saml_login_event_timeline_entries
+where saml_login_event_id = $1
+  and (timestamp, id) > ($2, $4::uuid)
+order by timestamp, id
+limit $3
+`
+
+type ListSAMLLoginEventTimelineEntriesParams struct {
+	SamlLoginEventID uuid.UUID
+	Timestamp        time.Time
+	Limit            int32
+	ID               uuid.UUID
+}
+
+func (q *Queries) ListSAMLLoginEventTimelineEntries(ctx context.Context, arg ListSAMLLoginEventTimelineEntriesParams) ([]SamlLoginEventTimelineEntry, error) {
+	rows, err := q.db.Query(ctx, listSAMLLoginEventTimelineEntries,
+		arg.SamlLoginEventID,
+		arg.Timestamp,
+		arg.Limit,
+		arg.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SamlLoginEventTimelineEntry
+	for rows.Next() {
+		var i SamlLoginEventTimelineEntry
+		if err := rows.Scan(
+			&i.ID,
+			&i.SamlLoginEventID,
+			&i.Timestamp,
+			&i.Type,
+			&i.GetRedirectUrl,
+			&i.SamlInitiateUrl,
+			&i.SamlReceiveAssertionPayload,
 		); err != nil {
 			return nil, err
 		}

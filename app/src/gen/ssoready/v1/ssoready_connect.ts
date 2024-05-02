@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLLoginEventsRequest, ListSAMLLoginEventsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLLoginEventsRequest, ListSAMLLoginEventsResponse, ListSAMLLoginEventTimelineEntriesRequest, ListSAMLLoginEventTimelineEntriesResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -127,6 +127,15 @@ export const SSOReadyService = {
       name: "ListSAMLLoginEvents",
       I: ListSAMLLoginEventsRequest,
       O: ListSAMLLoginEventsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLLoginEventTimelineEntries
+     */
+    listSAMLLoginEventTimelineEntries: {
+      name: "ListSAMLLoginEventTimelineEntries",
+      I: ListSAMLLoginEventTimelineEntriesRequest,
+      O: ListSAMLLoginEventTimelineEntriesResponse,
       kind: MethodKind.Unary,
     },
   }

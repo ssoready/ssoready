@@ -193,3 +193,20 @@ where saml_connection_id = $1
   and id > $2
 order by id
 limit $3;
+
+-- name: GetSAMLLoginEvent :one
+select saml_login_events.*
+from saml_login_events
+         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
+         join organizations on saml_connections.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_login_events.id = $2;
+
+-- name: ListSAMLLoginEventTimelineEntries :many
+select *
+from saml_login_event_timeline_entries
+where saml_login_event_id = $1
+  and (timestamp, id) > ($2, @id::uuid)
+order by timestamp, id
+limit $3;

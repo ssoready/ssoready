@@ -3,6 +3,8 @@ syntax = "proto3";
 package ssoready.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 service SSOReadyService {
   rpc GetSAMLRedirectURL(GetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse) {
@@ -34,6 +36,8 @@ service SSOReadyService {
   rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (SAMLConnection);
 
   rpc ListSAMLLoginEvents(ListSAMLLoginEventsRequest) returns (ListSAMLLoginEventsResponse);
+
+  rpc ListSAMLLoginEventTimelineEntries(ListSAMLLoginEventTimelineEntriesRequest) returns (ListSAMLLoginEventTimelineEntriesResponse);
 }
 
 message AppUser {
@@ -71,6 +75,18 @@ message SAMLLoginEvent {
   string state = 3;
   string subject_idp_id = 4;
   map<string, string> subject_idp_attributes = 5;
+}
+
+message SAMLLoginEventTimelineEntry {
+  string id = 1;
+  string saml_login_event_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  oneof details {
+    string get_redirect = 4;
+    string saml_initiate = 5;
+    string saml_receive_assertion = 6;
+    google.protobuf.Empty redeem = 7;
+  }
 }
 
 message GetSAMLRedirectURLRequest {
@@ -167,5 +183,15 @@ message ListSAMLLoginEventsRequest {
 
 message ListSAMLLoginEventsResponse {
   repeated SAMLLoginEvent saml_login_events = 1;
+  string next_page_token = 2;
+}
+
+message ListSAMLLoginEventTimelineEntriesRequest {
+  string saml_login_event_id = 1;
+  string page_token = 2;
+}
+
+message ListSAMLLoginEventTimelineEntriesResponse {
+  repeated SAMLLoginEventTimelineEntry saml_login_event_timeline_entries = 1;
   string next_page_token = 2;
 }
