@@ -1,8 +1,3 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/qxfm7X1lFC9
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,7 +13,7 @@ import {
   getEnvironment,
   listEnvironments,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
-import { Box } from "lucide-react";
+import { Box, Check, ChevronDown, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router";
 
@@ -45,7 +40,7 @@ export function EnvironmentSwitcher() {
             <Box className="h-4 w-4" />
             <span className="font-medium">{currentEnv?.displayName}</span>
           </span>
-          <ChevronDownIcon className="h-4 w-4" />
+          <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-[360px]">
@@ -62,7 +57,7 @@ export function EnvironmentSwitcher() {
                   </div>
                 </div>
                 {env.id === environmentId && (
-                  <CheckIcon className="h-5 w-5 text-green-500" />
+                  <Check className="h-5 w-5 text-green-500" />
                 )}
               </div>
             </Link>
@@ -71,69 +66,11 @@ export function EnvironmentSwitcher() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <div className="flex items-center gap-2">
-            <PlusIcon className="h-5 w-5 text-gray-500" />
+            <Plus className="h-5 w-5 text-gray-500" />
             <span>Create new environment</span>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-function CheckIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
-
-function ChevronDownIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m6 9 6 6 6-6" />
-    </svg>
-  );
-}
-
-function PlusIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
-    </svg>
   );
 }
