@@ -9,7 +9,9 @@ export function Page() {
         <EnvironmentSwitcher />
       </div>
       <div className="ml-72 p-8">
-        <Outlet />
+        <div className="mx-auto max-w-6xl">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
