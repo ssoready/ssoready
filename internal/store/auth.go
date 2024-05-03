@@ -41,7 +41,7 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 	}
 
 	return &AuthGetInitDataResponse{
-		RequestID:      stateData.SAMLLoginEventID,
+		RequestID:      stateData.SAMLFlowID,
 		IDPRedirectURL: *res.IdpRedirectUrl,
 		SPEntityID:     *res.SpEntityID,
 	}, nil
@@ -64,17 +64,17 @@ func (s *Store) AuthCreateInitiateTimelineEntry(ctx context.Context, req *AuthCr
 		return err
 	}
 
-	samlLoginEventID, err := idformat.SAMLLoginEvent.Parse(stateData.SAMLLoginEventID)
+	samlFlowID, err := idformat.SAMLFlow.Parse(stateData.SAMLFlowID)
 	if err != nil {
 		return err
 	}
 
-	if _, err := q.CreateSAMLLoginEventTimelineEntry(ctx, queries.CreateSAMLLoginEventTimelineEntryParams{
-		ID:               uuid.New(),
-		SamlLoginEventID: samlLoginEventID,
-		Timestamp:        time.Now(),
-		Type:             queries.SamlLoginEventTimelineEntryTypeSamlInitiate,
-		SamlInitiateUrl:  &req.InitiateURL,
+	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
+		ID:              uuid.New(),
+		SamlFlowID:      samlFlowID,
+		Timestamp:       time.Now(),
+		Type:            queries.SamlFlowStepTypeSamlInitiate,
+		SamlInitiateUrl: &req.InitiateURL,
 	}); err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 }
 
 type AuthUpsertSAMLLoginEventRequest struct {
-	SAMLLoginEventID     string
+	SAMLFlowID           string
 	SAMLConnectionID     string
 	SubjectID            string
 	SubjectIDPAttributes map[string]string
@@ -140,19 +140,22 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 		return nil, err
 	}
 
-	var samlLoginEventID uuid.UUID
+	var samlFlowID uuid.UUID
 
-	if req.SAMLLoginEventID == "" {
-		if _, err := q.CreateSAMLLoginEvent(ctx, queries.CreateSAMLLoginEventParams{
+	if req.SAMLFlowID == "" {
+		qSAMLFlow, err := q.CreateSAMLFlow(ctx, queries.CreateSAMLFlowParams{
 			ID:               uuid.New(),
 			SamlConnectionID: samlConnID,
 			AccessCode:       uuid.New(),
 			ExpireTime:       time.Now().Add(time.Hour),
-		}); err != nil {
+		})
+		if err != nil {
 			return nil, err
 		}
+
+		samlFlowID = qSAMLFlow.ID
 	} else {
-		samlLoginEventID, err = idformat.SAMLLoginEvent.Parse(req.SAMLLoginEventID)
+		samlFlowID, err = idformat.SAMLFlow.Parse(req.SAMLFlowID)
 		if err != nil {
 			return nil, err
 		}
@@ -163,8 +166,8 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 		return nil, err
 	}
 
-	qSAMLLoginEvent, err := q.UpdateSAMLLoginEventSubjectData(ctx, queries.UpdateSAMLLoginEventSubjectDataParams{
-		ID:                   samlLoginEventID,
+	qSAMLFlow, err := q.UpdateSAMLFlowSubjectData(ctx, queries.UpdateSAMLFlowSubjectDataParams{
+		ID:                   samlFlowID,
 		SubjectIdpID:         &req.SubjectID,
 		SubjectIdpAttributes: attrs,
 	})
@@ -173,15 +176,15 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 	}
 
 	// todo think through the security consequences here more deeply
-	if qSAMLLoginEvent.SamlConnectionID != samlConnID {
-		panic(fmt.Errorf("invariant failure: login_event.conn != conn: %q, %q", qSAMLLoginEvent.SamlConnectionID, req.SAMLConnectionID))
+	if qSAMLFlow.SamlConnectionID != samlConnID {
+		panic(fmt.Errorf("invariant failure: flow.conn != conn: %q, %q", qSAMLFlow.SamlConnectionID, req.SAMLConnectionID))
 	}
 
-	if _, err := q.CreateSAMLLoginEventTimelineEntry(ctx, queries.CreateSAMLLoginEventTimelineEntryParams{
+	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
 		ID:                          uuid.New(),
-		SamlLoginEventID:            qSAMLLoginEvent.ID,
+		SamlFlowID:                  qSAMLFlow.ID,
 		Timestamp:                   time.Now(),
-		Type:                        queries.SamlLoginEventTimelineEntryTypeSamlReceiveAssertion,
+		Type:                        queries.SamlFlowStepTypeSamlReceiveAssertion,
 		SamlReceiveAssertionPayload: &req.RawSAMLPayload,
 	}); err != nil {
 		return nil, err
@@ -192,6 +195,6 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 	}
 
 	return &AuthUpsertSAMLLoginEventResponse{
-		Token: idformat.SAMLAccessCode.Format(qSAMLLoginEvent.AccessCode),
+		Token: idformat.SAMLAccessCode.Format(qSAMLFlow.AccessCode),
 	}, nil
 }

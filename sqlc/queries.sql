@@ -13,26 +13,26 @@ from saml_connections
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1;
 
--- name: CreateSAMLLoginEvent :one
-insert into saml_login_events (id, saml_connection_id, access_code, state, expire_time, subject_idp_id,
-                               subject_idp_attributes)
+-- name: CreateSAMLFlow :one
+insert into saml_flows (id, saml_connection_id, access_code, state, expire_time, create_time, subject_idp_id,
+                        subject_idp_attributes)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
+returning *;
+
+-- name: CreateSAMLFlowStep :one
+insert into saml_flow_steps (id, saml_flow_id, timestamp, type, get_redirect_url,
+                             saml_initiate_url, saml_receive_assertion_payload)
 values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
 
--- name: CreateSAMLLoginEventTimelineEntry :one
-insert into saml_login_event_timeline_entries (id, saml_login_event_id, timestamp, type, get_redirect_url,
-                                               saml_initiate_url, saml_receive_assertion_payload)
-values ($1, $2, $3, $4, $5, $6, $7)
-returning *;
-
--- name: AuthGetSAMLLoginEvent :one
+-- name: AuthGetSAMLFlow :one
 select *
-from saml_login_events
+from saml_flows
 where id = $1
   and saml_connection_id = $2;
 
--- name: UpdateSAMLLoginEventSubjectData :one
-update saml_login_events
+-- name: UpdateSAMLFlowSubjectData :one
+update saml_flows
 set subject_idp_id         = $1,
     subject_idp_attributes = $2
 where id = $3
@@ -61,30 +61,25 @@ select *
 from environments
 where id = $1;
 
--- name: CreateSAMLSession :one
-insert into saml_sessions (id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes)
-values ($1, $2, $3, $4, $5)
-returning *;
-
 -- name: GetAPIKeyBySecretValue :one
 select *
 from api_keys
 where secret_value = $1;
 
 -- name: GetSAMLAccessCodeData :one
-select saml_login_events.id      as saml_login_event_id,
-       saml_login_events.subject_idp_id,
-       saml_login_events.subject_idp_attributes,
-       saml_login_events.state,
+select saml_flows.id             as saml_flow_id,
+       saml_flows.subject_idp_id,
+       saml_flows.subject_idp_attributes,
+       saml_flows.state,
        organizations.id          as organization_id,
        organizations.external_id as organization_external_id,
        environments.id           as environment_id
-from saml_login_events
-         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
+from saml_flows
+         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_login_events.access_code = $2;
+  and saml_flows.access_code = $2;
 
 -- name: GetAppUserByEmail :one
 select *
@@ -187,27 +182,27 @@ set idp_entity_id        = $1,
 where id = $4
 returning *;
 
--- name: ListSAMLLoginEvents :many
+-- name: ListSAMLFlows :many
 select *
-from saml_login_events
+from saml_flows
 where saml_connection_id = $1
   and id > $2
 order by id
 limit $3;
 
--- name: GetSAMLLoginEvent :one
-select saml_login_events.*
-from saml_login_events
-         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
+-- name: GetSAMLFlow :one
+select saml_flows.*
+from saml_flows
+         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_login_events.id = $2;
+  and saml_flows.id = $2;
 
--- name: ListSAMLLoginEventTimelineEntries :many
+-- name: ListSAMLFlowSteps :many
 select *
-from saml_login_event_timeline_entries
-where saml_login_event_id = $1
+from saml_flow_steps
+where saml_flow_id = $1
   and (timestamp, id) > ($2, @id::uuid)
 order by timestamp, id
 limit $3;

@@ -17,10 +17,10 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: saml_login_event_timeline_entry_type; Type: TYPE; Schema: public; Owner: postgres
+-- Name: saml_flow_step_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE public.saml_login_event_timeline_entry_type AS ENUM (
+CREATE TYPE public.saml_flow_step_type AS ENUM (
     'get_redirect',
     'saml_initiate',
     'saml_receive_assertion',
@@ -28,7 +28,7 @@ CREATE TYPE public.saml_login_event_timeline_entry_type AS ENUM (
 );
 
 
-ALTER TYPE public.saml_login_event_timeline_entry_type OWNER TO postgres;
+ALTER TYPE public.saml_flow_step_type OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -146,53 +146,39 @@ CREATE TABLE public.saml_connections (
 ALTER TABLE public.saml_connections OWNER TO postgres;
 
 --
--- Name: saml_login_event_timeline_entries; Type: TABLE; Schema: public; Owner: postgres
+-- Name: saml_flow_steps; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.saml_login_event_timeline_entries (
+CREATE TABLE public.saml_flow_steps (
     id uuid NOT NULL,
-    saml_login_event_id uuid NOT NULL,
+    saml_flow_id uuid NOT NULL,
     "timestamp" timestamp with time zone NOT NULL,
-    type public.saml_login_event_timeline_entry_type NOT NULL,
+    type public.saml_flow_step_type NOT NULL,
     get_redirect_url character varying,
     saml_initiate_url character varying,
     saml_receive_assertion_payload character varying
 );
 
 
-ALTER TABLE public.saml_login_event_timeline_entries OWNER TO postgres;
+ALTER TABLE public.saml_flow_steps OWNER TO postgres;
 
 --
--- Name: saml_login_events; Type: TABLE; Schema: public; Owner: postgres
+-- Name: saml_flows; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.saml_login_events (
+CREATE TABLE public.saml_flows (
     id uuid NOT NULL,
     saml_connection_id uuid NOT NULL,
     access_code uuid NOT NULL,
     state character varying NOT NULL,
+    create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL,
     subject_idp_id character varying,
     subject_idp_attributes jsonb
 );
 
 
-ALTER TABLE public.saml_login_events OWNER TO postgres;
-
---
--- Name: saml_sessions; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.saml_sessions (
-    id uuid NOT NULL,
-    saml_connection_id uuid NOT NULL,
-    secret_access_token uuid,
-    subject_id character varying,
-    subject_idp_attributes jsonb
-);
-
-
-ALTER TABLE public.saml_sessions OWNER TO postgres;
+ALTER TABLE public.saml_flows OWNER TO postgres;
 
 --
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: postgres
@@ -303,35 +289,27 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
--- Name: saml_login_event_timeline_entries saml_login_event_timeline_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_flow_steps saml_flow_steps_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_login_event_timeline_entries
-    ADD CONSTRAINT saml_login_event_timeline_entries_pkey PRIMARY KEY (id);
-
-
---
--- Name: saml_login_events saml_login_events_access_code_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.saml_login_events
-    ADD CONSTRAINT saml_login_events_access_code_key UNIQUE (access_code);
+ALTER TABLE ONLY public.saml_flow_steps
+    ADD CONSTRAINT saml_flow_steps_pkey PRIMARY KEY (id);
 
 
 --
--- Name: saml_login_events saml_login_events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_flows saml_flows_access_code_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_login_events
-    ADD CONSTRAINT saml_login_events_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.saml_flows
+    ADD CONSTRAINT saml_flows_access_code_key UNIQUE (access_code);
 
 
 --
--- Name: saml_sessions saml_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_flows saml_flows_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_sessions
-    ADD CONSTRAINT saml_sessions_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.saml_flows
+    ADD CONSTRAINT saml_flows_pkey PRIMARY KEY (id);
 
 
 --
@@ -399,27 +377,19 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
--- Name: saml_login_event_timeline_entries saml_login_event_timeline_entries_saml_login_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_flow_steps saml_flow_steps_saml_flow_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_login_event_timeline_entries
-    ADD CONSTRAINT saml_login_event_timeline_entries_saml_login_event_id_fkey FOREIGN KEY (saml_login_event_id) REFERENCES public.saml_login_events(id);
-
-
---
--- Name: saml_login_events saml_login_events_saml_connection_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.saml_login_events
-    ADD CONSTRAINT saml_login_events_saml_connection_id_fkey FOREIGN KEY (saml_connection_id) REFERENCES public.saml_connections(id);
+ALTER TABLE ONLY public.saml_flow_steps
+    ADD CONSTRAINT saml_flow_steps_saml_flow_id_fkey FOREIGN KEY (saml_flow_id) REFERENCES public.saml_flows(id);
 
 
 --
--- Name: saml_sessions saml_sessions_saml_connection_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saml_flows saml_flows_saml_connection_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.saml_sessions
-    ADD CONSTRAINT saml_sessions_saml_connection_id_fkey FOREIGN KEY (saml_connection_id) REFERENCES public.saml_connections(id);
+ALTER TABLE ONLY public.saml_flows
+    ADD CONSTRAINT saml_flows_saml_connection_id_fkey FOREIGN KEY (saml_connection_id) REFERENCES public.saml_connections(id);
 
 
 --

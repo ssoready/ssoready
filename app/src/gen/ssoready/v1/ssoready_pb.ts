@@ -233,9 +233,9 @@ export class SAMLConnection extends Message<SAMLConnection> {
 }
 
 /**
- * @generated from message ssoready.v1.SAMLLoginEvent
+ * @generated from message ssoready.v1.SAMLFlow
  */
-export class SAMLLoginEvent extends Message<SAMLLoginEvent> {
+export class SAMLFlow extends Message<SAMLFlow> {
   /**
    * @generated from field: string id = 1;
    */
@@ -261,13 +261,13 @@ export class SAMLLoginEvent extends Message<SAMLLoginEvent> {
    */
   subjectIdpAttributes: { [key: string]: string } = {};
 
-  constructor(data?: PartialMessage<SAMLLoginEvent>) {
+  constructor(data?: PartialMessage<SAMLFlow>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.SAMLLoginEvent";
+  static readonly typeName = "ssoready.v1.SAMLFlow";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
@@ -276,36 +276,36 @@ export class SAMLLoginEvent extends Message<SAMLLoginEvent> {
     { no: 5, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLLoginEvent {
-    return new SAMLLoginEvent().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLFlow {
+    return new SAMLFlow().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLLoginEvent {
-    return new SAMLLoginEvent().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLFlow {
+    return new SAMLFlow().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLLoginEvent {
-    return new SAMLLoginEvent().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLFlow {
+    return new SAMLFlow().fromJsonString(jsonString, options);
   }
 
-  static equals(a: SAMLLoginEvent | PlainMessage<SAMLLoginEvent> | undefined, b: SAMLLoginEvent | PlainMessage<SAMLLoginEvent> | undefined): boolean {
-    return proto3.util.equals(SAMLLoginEvent, a, b);
+  static equals(a: SAMLFlow | PlainMessage<SAMLFlow> | undefined, b: SAMLFlow | PlainMessage<SAMLFlow> | undefined): boolean {
+    return proto3.util.equals(SAMLFlow, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.SAMLLoginEventTimelineEntry
+ * @generated from message ssoready.v1.SAMLFlowStep
  */
-export class SAMLLoginEventTimelineEntry extends Message<SAMLLoginEventTimelineEntry> {
+export class SAMLFlowStep extends Message<SAMLFlowStep> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
-   * @generated from field: string saml_login_event_id = 2;
+   * @generated from field: string saml_flow_id = 2;
    */
-  samlLoginEventId = "";
+  samlFlowId = "";
 
   /**
    * @generated from field: google.protobuf.Timestamp timestamp = 3;
@@ -313,7 +313,7 @@ export class SAMLLoginEventTimelineEntry extends Message<SAMLLoginEventTimelineE
   timestamp?: Timestamp;
 
   /**
-   * @generated from oneof ssoready.v1.SAMLLoginEventTimelineEntry.details
+   * @generated from oneof ssoready.v1.SAMLFlowStep.details
    */
   details: {
     /**
@@ -341,16 +341,16 @@ export class SAMLLoginEventTimelineEntry extends Message<SAMLLoginEventTimelineE
     case: "redeem";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
-  constructor(data?: PartialMessage<SAMLLoginEventTimelineEntry>) {
+  constructor(data?: PartialMessage<SAMLFlowStep>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.SAMLLoginEventTimelineEntry";
+  static readonly typeName = "ssoready.v1.SAMLFlowStep";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "saml_login_event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_flow_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "timestamp", kind: "message", T: Timestamp },
     { no: 4, name: "get_redirect", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
     { no: 5, name: "saml_initiate", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
@@ -358,20 +358,20 @@ export class SAMLLoginEventTimelineEntry extends Message<SAMLLoginEventTimelineE
     { no: 7, name: "redeem", kind: "message", T: Empty, oneof: "details" },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLLoginEventTimelineEntry {
-    return new SAMLLoginEventTimelineEntry().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLFlowStep {
+    return new SAMLFlowStep().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLLoginEventTimelineEntry {
-    return new SAMLLoginEventTimelineEntry().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLFlowStep {
+    return new SAMLFlowStep().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLLoginEventTimelineEntry {
-    return new SAMLLoginEventTimelineEntry().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLFlowStep {
+    return new SAMLFlowStep().fromJsonString(jsonString, options);
   }
 
-  static equals(a: SAMLLoginEventTimelineEntry | PlainMessage<SAMLLoginEventTimelineEntry> | undefined, b: SAMLLoginEventTimelineEntry | PlainMessage<SAMLLoginEventTimelineEntry> | undefined): boolean {
-    return proto3.util.equals(SAMLLoginEventTimelineEntry, a, b);
+  static equals(a: SAMLFlowStep | PlainMessage<SAMLFlowStep> | undefined, b: SAMLFlowStep | PlainMessage<SAMLFlowStep> | undefined): boolean {
+    return proto3.util.equals(SAMLFlowStep, a, b);
   }
 }
 
@@ -507,6 +507,11 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
   subjectIdpAttributes: { [key: string]: string } = {};
 
   /**
+   * @generated from field: string state = 6;
+   */
+  state = "";
+
+  /**
    * @generated from field: string organization_id = 3;
    */
   organizationId = "";
@@ -521,11 +526,6 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
    */
   environmentId = "";
 
-  /**
-   * @generated from field: string state = 6;
-   */
-  state = "";
-
   constructor(data?: PartialMessage<RedeemSAMLAccessCodeResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -536,10 +536,10 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 6, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeResponse {
@@ -1151,9 +1151,9 @@ export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionReq
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLLoginEventsRequest
+ * @generated from message ssoready.v1.ListSAMLFlowsRequest
  */
-export class ListSAMLLoginEventsRequest extends Message<ListSAMLLoginEventsRequest> {
+export class ListSAMLFlowsRequest extends Message<ListSAMLFlowsRequest> {
   /**
    * @generated from field: string saml_connection_id = 1;
    */
@@ -1164,161 +1164,161 @@ export class ListSAMLLoginEventsRequest extends Message<ListSAMLLoginEventsReque
    */
   pageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLLoginEventsRequest>) {
+  constructor(data?: PartialMessage<ListSAMLFlowsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLLoginEventsRequest";
+  static readonly typeName = "ssoready.v1.ListSAMLFlowsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventsRequest {
-    return new ListSAMLLoginEventsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowsRequest {
+    return new ListSAMLFlowsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsRequest {
-    return new ListSAMLLoginEventsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowsRequest {
+    return new ListSAMLFlowsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsRequest {
-    return new ListSAMLLoginEventsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowsRequest {
+    return new ListSAMLFlowsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLLoginEventsRequest | PlainMessage<ListSAMLLoginEventsRequest> | undefined, b: ListSAMLLoginEventsRequest | PlainMessage<ListSAMLLoginEventsRequest> | undefined): boolean {
-    return proto3.util.equals(ListSAMLLoginEventsRequest, a, b);
+  static equals(a: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined, b: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined): boolean {
+    return proto3.util.equals(ListSAMLFlowsRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLLoginEventsResponse
+ * @generated from message ssoready.v1.ListSAMLFlowsResponse
  */
-export class ListSAMLLoginEventsResponse extends Message<ListSAMLLoginEventsResponse> {
+export class ListSAMLFlowsResponse extends Message<ListSAMLFlowsResponse> {
   /**
-   * @generated from field: repeated ssoready.v1.SAMLLoginEvent saml_login_events = 1;
+   * @generated from field: repeated ssoready.v1.SAMLFlow saml_flows = 1;
    */
-  samlLoginEvents: SAMLLoginEvent[] = [];
+  samlFlows: SAMLFlow[] = [];
 
   /**
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLLoginEventsResponse>) {
+  constructor(data?: PartialMessage<ListSAMLFlowsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLLoginEventsResponse";
+  static readonly typeName = "ssoready.v1.ListSAMLFlowsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "saml_login_events", kind: "message", T: SAMLLoginEvent, repeated: true },
+    { no: 1, name: "saml_flows", kind: "message", T: SAMLFlow, repeated: true },
     { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventsResponse {
-    return new ListSAMLLoginEventsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowsResponse {
+    return new ListSAMLFlowsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsResponse {
-    return new ListSAMLLoginEventsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowsResponse {
+    return new ListSAMLFlowsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventsResponse {
-    return new ListSAMLLoginEventsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowsResponse {
+    return new ListSAMLFlowsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLLoginEventsResponse | PlainMessage<ListSAMLLoginEventsResponse> | undefined, b: ListSAMLLoginEventsResponse | PlainMessage<ListSAMLLoginEventsResponse> | undefined): boolean {
-    return proto3.util.equals(ListSAMLLoginEventsResponse, a, b);
+  static equals(a: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined, b: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined): boolean {
+    return proto3.util.equals(ListSAMLFlowsResponse, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLLoginEventTimelineEntriesRequest
+ * @generated from message ssoready.v1.ListSAMLFlowStepsRequest
  */
-export class ListSAMLLoginEventTimelineEntriesRequest extends Message<ListSAMLLoginEventTimelineEntriesRequest> {
+export class ListSAMLFlowStepsRequest extends Message<ListSAMLFlowStepsRequest> {
   /**
-   * @generated from field: string saml_login_event_id = 1;
+   * @generated from field: string saml_flow_id = 1;
    */
-  samlLoginEventId = "";
+  samlFlowId = "";
 
   /**
    * @generated from field: string page_token = 2;
    */
   pageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLLoginEventTimelineEntriesRequest>) {
+  constructor(data?: PartialMessage<ListSAMLFlowStepsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLLoginEventTimelineEntriesRequest";
+  static readonly typeName = "ssoready.v1.ListSAMLFlowStepsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "saml_login_event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "saml_flow_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventTimelineEntriesRequest {
-    return new ListSAMLLoginEventTimelineEntriesRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowStepsRequest {
+    return new ListSAMLFlowStepsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesRequest {
-    return new ListSAMLLoginEventTimelineEntriesRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsRequest {
+    return new ListSAMLFlowStepsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesRequest {
-    return new ListSAMLLoginEventTimelineEntriesRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsRequest {
+    return new ListSAMLFlowStepsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLLoginEventTimelineEntriesRequest | PlainMessage<ListSAMLLoginEventTimelineEntriesRequest> | undefined, b: ListSAMLLoginEventTimelineEntriesRequest | PlainMessage<ListSAMLLoginEventTimelineEntriesRequest> | undefined): boolean {
-    return proto3.util.equals(ListSAMLLoginEventTimelineEntriesRequest, a, b);
+  static equals(a: ListSAMLFlowStepsRequest | PlainMessage<ListSAMLFlowStepsRequest> | undefined, b: ListSAMLFlowStepsRequest | PlainMessage<ListSAMLFlowStepsRequest> | undefined): boolean {
+    return proto3.util.equals(ListSAMLFlowStepsRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLLoginEventTimelineEntriesResponse
+ * @generated from message ssoready.v1.ListSAMLFlowStepsResponse
  */
-export class ListSAMLLoginEventTimelineEntriesResponse extends Message<ListSAMLLoginEventTimelineEntriesResponse> {
+export class ListSAMLFlowStepsResponse extends Message<ListSAMLFlowStepsResponse> {
   /**
-   * @generated from field: repeated ssoready.v1.SAMLLoginEventTimelineEntry saml_login_event_timeline_entries = 1;
+   * @generated from field: repeated ssoready.v1.SAMLFlowStep saml_flow_steps = 1;
    */
-  samlLoginEventTimelineEntries: SAMLLoginEventTimelineEntry[] = [];
+  samlFlowSteps: SAMLFlowStep[] = [];
 
   /**
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLLoginEventTimelineEntriesResponse>) {
+  constructor(data?: PartialMessage<ListSAMLFlowStepsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLLoginEventTimelineEntriesResponse";
+  static readonly typeName = "ssoready.v1.ListSAMLFlowStepsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "saml_login_event_timeline_entries", kind: "message", T: SAMLLoginEventTimelineEntry, repeated: true },
+    { no: 1, name: "saml_flow_steps", kind: "message", T: SAMLFlowStep, repeated: true },
     { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLLoginEventTimelineEntriesResponse {
-    return new ListSAMLLoginEventTimelineEntriesResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowStepsResponse {
+    return new ListSAMLFlowStepsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesResponse {
-    return new ListSAMLLoginEventTimelineEntriesResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsResponse {
+    return new ListSAMLFlowStepsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLLoginEventTimelineEntriesResponse {
-    return new ListSAMLLoginEventTimelineEntriesResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsResponse {
+    return new ListSAMLFlowStepsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLLoginEventTimelineEntriesResponse | PlainMessage<ListSAMLLoginEventTimelineEntriesResponse> | undefined, b: ListSAMLLoginEventTimelineEntriesResponse | PlainMessage<ListSAMLLoginEventTimelineEntriesResponse> | undefined): boolean {
-    return proto3.util.equals(ListSAMLLoginEventTimelineEntriesResponse, a, b);
+  static equals(a: ListSAMLFlowStepsResponse | PlainMessage<ListSAMLFlowStepsResponse> | undefined, b: ListSAMLFlowStepsResponse | PlainMessage<ListSAMLFlowStepsResponse> | undefined): boolean {
+    return proto3.util.equals(ListSAMLFlowStepsResponse, a, b);
   }
 }
 

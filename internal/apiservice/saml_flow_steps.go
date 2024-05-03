@@ -8,8 +8,8 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 )
 
-func (s *Service) ListSAMLLoginEvents(ctx context.Context, req *connect.Request[ssoreadyv1.ListSAMLLoginEventsRequest]) (*connect.Response[ssoreadyv1.ListSAMLLoginEventsResponse], error) {
-	res, err := s.Store.ListSAMLLoginEvents(ctx, req.Msg)
+func (s *Service) ListSAMLFlowSteps(ctx context.Context, req *connect.Request[ssoreadyv1.ListSAMLFlowStepsRequest]) (*connect.Response[ssoreadyv1.ListSAMLFlowStepsResponse], error) {
+	res, err := s.Store.ListSAMLFlowSteps(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}

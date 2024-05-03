@@ -14,12 +14,12 @@ type Signer struct {
 }
 
 type Data struct {
-	SAMLLoginEventID string
-	State            string
+	SAMLFlowID string
+	State      string
 }
 
 func (signer *Signer) Encode(d Data) string {
-	payload := fmt.Sprintf("%s.%s", d.SAMLLoginEventID, base64.RawURLEncoding.EncodeToString([]byte(d.State)))
+	payload := fmt.Sprintf("%s.%s", d.SAMLFlowID, base64.RawURLEncoding.EncodeToString([]byte(d.State)))
 	digest := auth.Sum([]byte(payload), &signer.Key)
 	return fmt.Sprintf("%s.%s", base64.RawURLEncoding.EncodeToString([]byte(payload)), base64.RawURLEncoding.EncodeToString(digest[:]))
 }
@@ -44,7 +44,7 @@ func (signer *Signer) Decode(s string) (*Data, error) {
 		return nil, fmt.Errorf("invalid signature: digest mismatch")
 	}
 
-	samlLoginEventID, stateBase64, ok := bytes.Cut(payload, []byte("."))
+	samlFlowID, stateBase64, ok := bytes.Cut(payload, []byte("."))
 	if !ok {
 		return nil, fmt.Errorf("invalid signature: missing '.' in payload")
 	}
@@ -54,5 +54,5 @@ func (signer *Signer) Decode(s string) (*Data, error) {
 		return nil, fmt.Errorf("invalid signature: parse state: %w", err)
 	}
 
-	return &Data{SAMLLoginEventID: string(samlLoginEventID), State: string(state)}, nil
+	return &Data{SAMLFlowID: string(samlFlowID), State: string(state)}, nil
 }

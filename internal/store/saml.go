@@ -40,7 +40,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		authURL = *envAuthURL
 	}
 
-	qSAMLLoginEvent, err := q.CreateSAMLLoginEvent(ctx, queries.CreateSAMLLoginEventParams{
+	qSAMLFlow, err := q.CreateSAMLFlow(ctx, queries.CreateSAMLFlowParams{
 		ID:               uuid.New(),
 		SamlConnectionID: samlConnID,
 		AccessCode:       uuid.New(),
@@ -53,8 +53,8 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 
 	redirectURLQuery := url.Values{}
 	redirectURLQuery.Set("state", s.statesigner.Encode(statesign.Data{
-		SAMLLoginEventID: idformat.SAMLLoginEvent.Format(qSAMLLoginEvent.ID),
-		State:            req.State,
+		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),
+		State:      req.State,
 	}))
 
 	redirectURL, err := url.Parse(authURL)
@@ -66,12 +66,12 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 
 	redirect := redirectURL.String()
 
-	if _, err := q.CreateSAMLLoginEventTimelineEntry(ctx, queries.CreateSAMLLoginEventTimelineEntryParams{
-		ID:               uuid.New(),
-		SamlLoginEventID: qSAMLLoginEvent.ID,
-		Timestamp:        time.Now(),
-		Type:             queries.SamlLoginEventTimelineEntryTypeGetRedirect,
-		GetRedirectUrl:   &redirect,
+	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
+		ID:             uuid.New(),
+		SamlFlowID:     qSAMLFlow.ID,
+		Timestamp:      time.Now(),
+		Type:           queries.SamlFlowStepTypeGetRedirect,
+		GetRedirectUrl: &redirect,
 	}); err != nil {
 		return nil, err
 	}
@@ -108,11 +108,11 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, err
 	}
 
-	if _, err := q.CreateSAMLLoginEventTimelineEntry(ctx, queries.CreateSAMLLoginEventTimelineEntryParams{
-		ID:               uuid.New(),
-		SamlLoginEventID: samlAccessTokenData.SamlLoginEventID,
-		Timestamp:        time.Now(),
-		Type:             queries.SamlLoginEventTimelineEntryTypeRedeem,
+	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
+		ID:         uuid.New(),
+		SamlFlowID: samlAccessTokenData.SamlFlowID,
+		Timestamp:  time.Now(),
+		Type:       queries.SamlFlowStepTypeRedeem,
 	}); err != nil {
 		return nil, err
 	}

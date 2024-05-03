@@ -35,9 +35,9 @@ service SSOReadyService {
   rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (SAMLConnection);
   rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (SAMLConnection);
 
-  rpc ListSAMLLoginEvents(ListSAMLLoginEventsRequest) returns (ListSAMLLoginEventsResponse);
+  rpc ListSAMLFlows(ListSAMLFlowsRequest) returns (ListSAMLFlowsResponse);
 
-  rpc ListSAMLLoginEventTimelineEntries(ListSAMLLoginEventTimelineEntriesRequest) returns (ListSAMLLoginEventTimelineEntriesResponse);
+  rpc ListSAMLFlowSteps(ListSAMLFlowStepsRequest) returns (ListSAMLFlowStepsResponse);
 }
 
 message AppUser {
@@ -69,7 +69,7 @@ message SAMLConnection {
   string sp_acs_url = 7;
 }
 
-message SAMLLoginEvent {
+message SAMLFlow {
   string id = 1;
   string saml_connection_id = 2;
   string state = 3;
@@ -77,9 +77,9 @@ message SAMLLoginEvent {
   map<string, string> subject_idp_attributes = 5;
 }
 
-message SAMLLoginEventTimelineEntry {
+message SAMLFlowStep {
   string id = 1;
-  string saml_login_event_id = 2;
+  string saml_flow_id = 2;
   google.protobuf.Timestamp timestamp = 3;
   oneof details {
     string get_redirect = 4;
@@ -177,22 +177,22 @@ message UpdateSAMLConnectionRequest {
   SAMLConnection saml_connection = 1;
 }
 
-message ListSAMLLoginEventsRequest {
+message ListSAMLFlowsRequest {
   string saml_connection_id = 1;
   string page_token = 2;
 }
 
-message ListSAMLLoginEventsResponse {
-  repeated SAMLLoginEvent saml_login_events = 1;
+message ListSAMLFlowsResponse {
+  repeated SAMLFlow saml_flows = 1;
   string next_page_token = 2;
 }
 
-message ListSAMLLoginEventTimelineEntriesRequest {
-  string saml_login_event_id = 1;
+message ListSAMLFlowStepsRequest {
+  string saml_flow_id = 1;
   string page_token = 2;
 }
 
-message ListSAMLLoginEventTimelineEntriesResponse {
-  repeated SAMLLoginEventTimelineEntry saml_login_event_timeline_entries = 1;
+message ListSAMLFlowStepsResponse {
+  repeated SAMLFlowStep saml_flow_steps = 1;
   string next_page_token = 2;
 }

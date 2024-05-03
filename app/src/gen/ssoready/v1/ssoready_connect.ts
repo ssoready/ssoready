@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLLoginEventsRequest, ListSAMLLoginEventsResponse, ListSAMLLoginEventTimelineEntriesRequest, ListSAMLLoginEventTimelineEntriesResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, ListSAMLFlowStepsRequest, ListSAMLFlowStepsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -121,21 +121,21 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLLoginEvents
+     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLFlows
      */
-    listSAMLLoginEvents: {
-      name: "ListSAMLLoginEvents",
-      I: ListSAMLLoginEventsRequest,
-      O: ListSAMLLoginEventsResponse,
+    listSAMLFlows: {
+      name: "ListSAMLFlows",
+      I: ListSAMLFlowsRequest,
+      O: ListSAMLFlowsResponse,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLLoginEventTimelineEntries
+     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLFlowSteps
      */
-    listSAMLLoginEventTimelineEntries: {
-      name: "ListSAMLLoginEventTimelineEntries",
-      I: ListSAMLLoginEventTimelineEntriesRequest,
-      O: ListSAMLLoginEventTimelineEntriesResponse,
+    listSAMLFlowSteps: {
+      name: "ListSAMLFlowSteps",
+      I: ListSAMLFlowStepsRequest,
+      O: ListSAMLFlowStepsResponse,
       kind: MethodKind.Unary,
     },
   }

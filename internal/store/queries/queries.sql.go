@@ -30,26 +30,27 @@ func (q *Queries) AuthGetInitData(ctx context.Context, id uuid.UUID) (AuthGetIni
 	return i, err
 }
 
-const authGetSAMLLoginEvent = `-- name: AuthGetSAMLLoginEvent :one
-select id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
-from saml_login_events
+const authGetSAMLFlow = `-- name: AuthGetSAMLFlow :one
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes
+from saml_flows
 where id = $1
   and saml_connection_id = $2
 `
 
-type AuthGetSAMLLoginEventParams struct {
+type AuthGetSAMLFlowParams struct {
 	ID               uuid.UUID
 	SamlConnectionID uuid.UUID
 }
 
-func (q *Queries) AuthGetSAMLLoginEvent(ctx context.Context, arg AuthGetSAMLLoginEventParams) (SamlLoginEvent, error) {
-	row := q.db.QueryRow(ctx, authGetSAMLLoginEvent, arg.ID, arg.SamlConnectionID)
-	var i SamlLoginEvent
+func (q *Queries) AuthGetSAMLFlow(ctx context.Context, arg AuthGetSAMLFlowParams) (SamlFlow, error) {
+	row := q.db.QueryRow(ctx, authGetSAMLFlow, arg.ID, arg.SamlConnectionID)
+	var i SamlFlow
 	err := row.Scan(
 		&i.ID,
 		&i.SamlConnectionID,
 		&i.AccessCode,
 		&i.State,
+		&i.CreateTime,
 		&i.ExpireTime,
 		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,
@@ -194,39 +195,42 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 	return i, err
 }
 
-const createSAMLLoginEvent = `-- name: CreateSAMLLoginEvent :one
-insert into saml_login_events (id, saml_connection_id, access_code, state, expire_time, subject_idp_id,
-                               subject_idp_attributes)
-values ($1, $2, $3, $4, $5, $6, $7)
-returning id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
+const createSAMLFlow = `-- name: CreateSAMLFlow :one
+insert into saml_flows (id, saml_connection_id, access_code, state, expire_time, create_time, subject_idp_id,
+                        subject_idp_attributes)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes
 `
 
-type CreateSAMLLoginEventParams struct {
+type CreateSAMLFlowParams struct {
 	ID                   uuid.UUID
 	SamlConnectionID     uuid.UUID
 	AccessCode           uuid.UUID
 	State                string
 	ExpireTime           time.Time
+	CreateTime           time.Time
 	SubjectIdpID         *string
 	SubjectIdpAttributes []byte
 }
 
-func (q *Queries) CreateSAMLLoginEvent(ctx context.Context, arg CreateSAMLLoginEventParams) (SamlLoginEvent, error) {
-	row := q.db.QueryRow(ctx, createSAMLLoginEvent,
+func (q *Queries) CreateSAMLFlow(ctx context.Context, arg CreateSAMLFlowParams) (SamlFlow, error) {
+	row := q.db.QueryRow(ctx, createSAMLFlow,
 		arg.ID,
 		arg.SamlConnectionID,
 		arg.AccessCode,
 		arg.State,
 		arg.ExpireTime,
+		arg.CreateTime,
 		arg.SubjectIdpID,
 		arg.SubjectIdpAttributes,
 	)
-	var i SamlLoginEvent
+	var i SamlFlow
 	err := row.Scan(
 		&i.ID,
 		&i.SamlConnectionID,
 		&i.AccessCode,
 		&i.State,
+		&i.CreateTime,
 		&i.ExpireTime,
 		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,
@@ -234,75 +238,42 @@ func (q *Queries) CreateSAMLLoginEvent(ctx context.Context, arg CreateSAMLLoginE
 	return i, err
 }
 
-const createSAMLLoginEventTimelineEntry = `-- name: CreateSAMLLoginEventTimelineEntry :one
-insert into saml_login_event_timeline_entries (id, saml_login_event_id, timestamp, type, get_redirect_url,
-                                               saml_initiate_url, saml_receive_assertion_payload)
+const createSAMLFlowStep = `-- name: CreateSAMLFlowStep :one
+insert into saml_flow_steps (id, saml_flow_id, timestamp, type, get_redirect_url,
+                             saml_initiate_url, saml_receive_assertion_payload)
 values ($1, $2, $3, $4, $5, $6, $7)
-returning id, saml_login_event_id, timestamp, type, get_redirect_url, saml_initiate_url, saml_receive_assertion_payload
+returning id, saml_flow_id, timestamp, type, get_redirect_url, saml_initiate_url, saml_receive_assertion_payload
 `
 
-type CreateSAMLLoginEventTimelineEntryParams struct {
+type CreateSAMLFlowStepParams struct {
 	ID                          uuid.UUID
-	SamlLoginEventID            uuid.UUID
+	SamlFlowID                  uuid.UUID
 	Timestamp                   time.Time
-	Type                        SamlLoginEventTimelineEntryType
+	Type                        SamlFlowStepType
 	GetRedirectUrl              *string
 	SamlInitiateUrl             *string
 	SamlReceiveAssertionPayload *string
 }
 
-func (q *Queries) CreateSAMLLoginEventTimelineEntry(ctx context.Context, arg CreateSAMLLoginEventTimelineEntryParams) (SamlLoginEventTimelineEntry, error) {
-	row := q.db.QueryRow(ctx, createSAMLLoginEventTimelineEntry,
+func (q *Queries) CreateSAMLFlowStep(ctx context.Context, arg CreateSAMLFlowStepParams) (SamlFlowStep, error) {
+	row := q.db.QueryRow(ctx, createSAMLFlowStep,
 		arg.ID,
-		arg.SamlLoginEventID,
+		arg.SamlFlowID,
 		arg.Timestamp,
 		arg.Type,
 		arg.GetRedirectUrl,
 		arg.SamlInitiateUrl,
 		arg.SamlReceiveAssertionPayload,
 	)
-	var i SamlLoginEventTimelineEntry
+	var i SamlFlowStep
 	err := row.Scan(
 		&i.ID,
-		&i.SamlLoginEventID,
+		&i.SamlFlowID,
 		&i.Timestamp,
 		&i.Type,
 		&i.GetRedirectUrl,
 		&i.SamlInitiateUrl,
 		&i.SamlReceiveAssertionPayload,
-	)
-	return i, err
-}
-
-const createSAMLSession = `-- name: CreateSAMLSession :one
-insert into saml_sessions (id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes)
-values ($1, $2, $3, $4, $5)
-returning id, saml_connection_id, secret_access_token, subject_id, subject_idp_attributes
-`
-
-type CreateSAMLSessionParams struct {
-	ID                   uuid.UUID
-	SamlConnectionID     uuid.UUID
-	SecretAccessToken    *uuid.UUID
-	SubjectID            *string
-	SubjectIdpAttributes []byte
-}
-
-func (q *Queries) CreateSAMLSession(ctx context.Context, arg CreateSAMLSessionParams) (SamlSession, error) {
-	row := q.db.QueryRow(ctx, createSAMLSession,
-		arg.ID,
-		arg.SamlConnectionID,
-		arg.SecretAccessToken,
-		arg.SubjectID,
-		arg.SubjectIdpAttributes,
-	)
-	var i SamlSession
-	err := row.Scan(
-		&i.ID,
-		&i.SamlConnectionID,
-		&i.SecretAccessToken,
-		&i.SubjectID,
-		&i.SubjectIdpAttributes,
 	)
 	return i, err
 }
@@ -478,19 +449,19 @@ func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organi
 }
 
 const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
-select saml_login_events.id      as saml_login_event_id,
-       saml_login_events.subject_idp_id,
-       saml_login_events.subject_idp_attributes,
-       saml_login_events.state,
+select saml_flows.id             as saml_flow_id,
+       saml_flows.subject_idp_id,
+       saml_flows.subject_idp_attributes,
+       saml_flows.state,
        organizations.id          as organization_id,
        organizations.external_id as organization_external_id,
        environments.id           as environment_id
-from saml_login_events
-         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
+from saml_flows
+         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_login_events.access_code = $2
+  and saml_flows.access_code = $2
 `
 
 type GetSAMLAccessCodeDataParams struct {
@@ -499,7 +470,7 @@ type GetSAMLAccessCodeDataParams struct {
 }
 
 type GetSAMLAccessCodeDataRow struct {
-	SamlLoginEventID       uuid.UUID
+	SamlFlowID             uuid.UUID
 	SubjectIdpID           *string
 	SubjectIdpAttributes   []byte
 	State                  string
@@ -512,7 +483,7 @@ func (q *Queries) GetSAMLAccessCodeData(ctx context.Context, arg GetSAMLAccessCo
 	row := q.db.QueryRow(ctx, getSAMLAccessCodeData, arg.AppOrganizationID, arg.AccessCode)
 	var i GetSAMLAccessCodeDataRow
 	err := row.Scan(
-		&i.SamlLoginEventID,
+		&i.SamlFlowID,
 		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,
 		&i.State,
@@ -571,29 +542,30 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 	return i, err
 }
 
-const getSAMLLoginEvent = `-- name: GetSAMLLoginEvent :one
-select saml_login_events.id, saml_login_events.saml_connection_id, saml_login_events.access_code, saml_login_events.state, saml_login_events.expire_time, saml_login_events.subject_idp_id, saml_login_events.subject_idp_attributes
-from saml_login_events
-         join saml_connections on saml_login_events.saml_connection_id = saml_connections.id
+const getSAMLFlow = `-- name: GetSAMLFlow :one
+select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.subject_idp_id, saml_flows.subject_idp_attributes
+from saml_flows
+         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_login_events.id = $2
+  and saml_flows.id = $2
 `
 
-type GetSAMLLoginEventParams struct {
+type GetSAMLFlowParams struct {
 	AppOrganizationID uuid.UUID
 	ID                uuid.UUID
 }
 
-func (q *Queries) GetSAMLLoginEvent(ctx context.Context, arg GetSAMLLoginEventParams) (SamlLoginEvent, error) {
-	row := q.db.QueryRow(ctx, getSAMLLoginEvent, arg.AppOrganizationID, arg.ID)
-	var i SamlLoginEvent
+func (q *Queries) GetSAMLFlow(ctx context.Context, arg GetSAMLFlowParams) (SamlFlow, error) {
+	row := q.db.QueryRow(ctx, getSAMLFlow, arg.AppOrganizationID, arg.ID)
+	var i SamlFlow
 	err := row.Scan(
 		&i.ID,
 		&i.SamlConnectionID,
 		&i.AccessCode,
 		&i.State,
+		&i.CreateTime,
 		&i.ExpireTime,
 		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,
@@ -766,25 +738,25 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 	return items, nil
 }
 
-const listSAMLLoginEventTimelineEntries = `-- name: ListSAMLLoginEventTimelineEntries :many
-select id, saml_login_event_id, timestamp, type, get_redirect_url, saml_initiate_url, saml_receive_assertion_payload
-from saml_login_event_timeline_entries
-where saml_login_event_id = $1
+const listSAMLFlowSteps = `-- name: ListSAMLFlowSteps :many
+select id, saml_flow_id, timestamp, type, get_redirect_url, saml_initiate_url, saml_receive_assertion_payload
+from saml_flow_steps
+where saml_flow_id = $1
   and (timestamp, id) > ($2, $4::uuid)
 order by timestamp, id
 limit $3
 `
 
-type ListSAMLLoginEventTimelineEntriesParams struct {
-	SamlLoginEventID uuid.UUID
-	Timestamp        time.Time
-	Limit            int32
-	ID               uuid.UUID
+type ListSAMLFlowStepsParams struct {
+	SamlFlowID uuid.UUID
+	Timestamp  time.Time
+	Limit      int32
+	ID         uuid.UUID
 }
 
-func (q *Queries) ListSAMLLoginEventTimelineEntries(ctx context.Context, arg ListSAMLLoginEventTimelineEntriesParams) ([]SamlLoginEventTimelineEntry, error) {
-	rows, err := q.db.Query(ctx, listSAMLLoginEventTimelineEntries,
-		arg.SamlLoginEventID,
+func (q *Queries) ListSAMLFlowSteps(ctx context.Context, arg ListSAMLFlowStepsParams) ([]SamlFlowStep, error) {
+	rows, err := q.db.Query(ctx, listSAMLFlowSteps,
+		arg.SamlFlowID,
 		arg.Timestamp,
 		arg.Limit,
 		arg.ID,
@@ -793,12 +765,12 @@ func (q *Queries) ListSAMLLoginEventTimelineEntries(ctx context.Context, arg Lis
 		return nil, err
 	}
 	defer rows.Close()
-	var items []SamlLoginEventTimelineEntry
+	var items []SamlFlowStep
 	for rows.Next() {
-		var i SamlLoginEventTimelineEntry
+		var i SamlFlowStep
 		if err := rows.Scan(
 			&i.ID,
-			&i.SamlLoginEventID,
+			&i.SamlFlowID,
 			&i.Timestamp,
 			&i.Type,
 			&i.GetRedirectUrl,
@@ -815,35 +787,36 @@ func (q *Queries) ListSAMLLoginEventTimelineEntries(ctx context.Context, arg Lis
 	return items, nil
 }
 
-const listSAMLLoginEvents = `-- name: ListSAMLLoginEvents :many
-select id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
-from saml_login_events
+const listSAMLFlows = `-- name: ListSAMLFlows :many
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes
+from saml_flows
 where saml_connection_id = $1
   and id > $2
 order by id
 limit $3
 `
 
-type ListSAMLLoginEventsParams struct {
+type ListSAMLFlowsParams struct {
 	SamlConnectionID uuid.UUID
 	ID               uuid.UUID
 	Limit            int32
 }
 
-func (q *Queries) ListSAMLLoginEvents(ctx context.Context, arg ListSAMLLoginEventsParams) ([]SamlLoginEvent, error) {
-	rows, err := q.db.Query(ctx, listSAMLLoginEvents, arg.SamlConnectionID, arg.ID, arg.Limit)
+func (q *Queries) ListSAMLFlows(ctx context.Context, arg ListSAMLFlowsParams) ([]SamlFlow, error) {
+	rows, err := q.db.Query(ctx, listSAMLFlows, arg.SamlConnectionID, arg.ID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []SamlLoginEvent
+	var items []SamlFlow
 	for rows.Next() {
-		var i SamlLoginEvent
+		var i SamlFlow
 		if err := rows.Scan(
 			&i.ID,
 			&i.SamlConnectionID,
 			&i.AccessCode,
 			&i.State,
+			&i.CreateTime,
 			&i.ExpireTime,
 			&i.SubjectIdpID,
 			&i.SubjectIdpAttributes,
@@ -893,28 +866,29 @@ func (q *Queries) UpdateSAMLConnection(ctx context.Context, arg UpdateSAMLConnec
 	return i, err
 }
 
-const updateSAMLLoginEventSubjectData = `-- name: UpdateSAMLLoginEventSubjectData :one
-update saml_login_events
+const updateSAMLFlowSubjectData = `-- name: UpdateSAMLFlowSubjectData :one
+update saml_flows
 set subject_idp_id         = $1,
     subject_idp_attributes = $2
 where id = $3
-returning id, saml_connection_id, access_code, state, expire_time, subject_idp_id, subject_idp_attributes
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes
 `
 
-type UpdateSAMLLoginEventSubjectDataParams struct {
+type UpdateSAMLFlowSubjectDataParams struct {
 	SubjectIdpID         *string
 	SubjectIdpAttributes []byte
 	ID                   uuid.UUID
 }
 
-func (q *Queries) UpdateSAMLLoginEventSubjectData(ctx context.Context, arg UpdateSAMLLoginEventSubjectDataParams) (SamlLoginEvent, error) {
-	row := q.db.QueryRow(ctx, updateSAMLLoginEventSubjectData, arg.SubjectIdpID, arg.SubjectIdpAttributes, arg.ID)
-	var i SamlLoginEvent
+func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLFlowSubjectDataParams) (SamlFlow, error) {
+	row := q.db.QueryRow(ctx, updateSAMLFlowSubjectData, arg.SubjectIdpID, arg.SubjectIdpAttributes, arg.ID)
+	var i SamlFlow
 	err := row.Scan(
 		&i.ID,
 		&i.SamlConnectionID,
 		&i.AccessCode,
 		&i.State,
+		&i.CreateTime,
 		&i.ExpireTime,
 		&i.SubjectIdpID,
 		&i.SubjectIdpAttributes,

@@ -19,20 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SSOReadyService_GetSAMLRedirectURL_FullMethodName                = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	SSOReadyService_RedeemSAMLAccessCode_FullMethodName              = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
-	SSOReadyService_SignIn_FullMethodName                            = "/ssoready.v1.SSOReadyService/SignIn"
-	SSOReadyService_Whoami_FullMethodName                            = "/ssoready.v1.SSOReadyService/Whoami"
-	SSOReadyService_ListEnvironments_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListEnvironments"
-	SSOReadyService_GetEnvironment_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetEnvironment"
-	SSOReadyService_ListOrganizations_FullMethodName                 = "/ssoready.v1.SSOReadyService/ListOrganizations"
-	SSOReadyService_GetOrganization_FullMethodName                   = "/ssoready.v1.SSOReadyService/GetOrganization"
-	SSOReadyService_ListSAMLConnections_FullMethodName               = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
-	SSOReadyService_GetSAMLConnection_FullMethodName                 = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
-	SSOReadyService_CreateSAMLConnection_FullMethodName              = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
-	SSOReadyService_UpdateSAMLConnection_FullMethodName              = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
-	SSOReadyService_ListSAMLLoginEvents_FullMethodName               = "/ssoready.v1.SSOReadyService/ListSAMLLoginEvents"
-	SSOReadyService_ListSAMLLoginEventTimelineEntries_FullMethodName = "/ssoready.v1.SSOReadyService/ListSAMLLoginEventTimelineEntries"
+	SSOReadyService_GetSAMLRedirectURL_FullMethodName   = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
+	SSOReadyService_RedeemSAMLAccessCode_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_SignIn_FullMethodName               = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_Whoami_FullMethodName               = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_ListEnvironments_FullMethodName     = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName       = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_ListOrganizations_FullMethodName    = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_GetOrganization_FullMethodName      = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_ListSAMLConnections_FullMethodName  = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
+	SSOReadyService_GetSAMLConnection_FullMethodName    = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
+	SSOReadyService_UpdateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
+	SSOReadyService_ListSAMLFlows_FullMethodName        = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
+	SSOReadyService_ListSAMLFlowSteps_FullMethodName    = "/ssoready.v1.SSOReadyService/ListSAMLFlowSteps"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -51,8 +51,8 @@ type SSOReadyServiceClient interface {
 	GetSAMLConnection(ctx context.Context, in *GetSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	UpdateSAMLConnection(ctx context.Context, in *UpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
-	ListSAMLLoginEvents(ctx context.Context, in *ListSAMLLoginEventsRequest, opts ...grpc.CallOption) (*ListSAMLLoginEventsResponse, error)
-	ListSAMLLoginEventTimelineEntries(ctx context.Context, in *ListSAMLLoginEventTimelineEntriesRequest, opts ...grpc.CallOption) (*ListSAMLLoginEventTimelineEntriesResponse, error)
+	ListSAMLFlows(ctx context.Context, in *ListSAMLFlowsRequest, opts ...grpc.CallOption) (*ListSAMLFlowsResponse, error)
+	ListSAMLFlowSteps(ctx context.Context, in *ListSAMLFlowStepsRequest, opts ...grpc.CallOption) (*ListSAMLFlowStepsResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -171,18 +171,18 @@ func (c *sSOReadyServiceClient) UpdateSAMLConnection(ctx context.Context, in *Up
 	return out, nil
 }
 
-func (c *sSOReadyServiceClient) ListSAMLLoginEvents(ctx context.Context, in *ListSAMLLoginEventsRequest, opts ...grpc.CallOption) (*ListSAMLLoginEventsResponse, error) {
-	out := new(ListSAMLLoginEventsResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLLoginEvents_FullMethodName, in, out, opts...)
+func (c *sSOReadyServiceClient) ListSAMLFlows(ctx context.Context, in *ListSAMLFlowsRequest, opts ...grpc.CallOption) (*ListSAMLFlowsResponse, error) {
+	out := new(ListSAMLFlowsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLFlows_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *sSOReadyServiceClient) ListSAMLLoginEventTimelineEntries(ctx context.Context, in *ListSAMLLoginEventTimelineEntriesRequest, opts ...grpc.CallOption) (*ListSAMLLoginEventTimelineEntriesResponse, error) {
-	out := new(ListSAMLLoginEventTimelineEntriesResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLLoginEventTimelineEntries_FullMethodName, in, out, opts...)
+func (c *sSOReadyServiceClient) ListSAMLFlowSteps(ctx context.Context, in *ListSAMLFlowStepsRequest, opts ...grpc.CallOption) (*ListSAMLFlowStepsResponse, error) {
+	out := new(ListSAMLFlowStepsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLFlowSteps_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -205,8 +205,8 @@ type SSOReadyServiceServer interface {
 	GetSAMLConnection(context.Context, *GetSAMLConnectionRequest) (*SAMLConnection, error)
 	CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*SAMLConnection, error)
 	UpdateSAMLConnection(context.Context, *UpdateSAMLConnectionRequest) (*SAMLConnection, error)
-	ListSAMLLoginEvents(context.Context, *ListSAMLLoginEventsRequest) (*ListSAMLLoginEventsResponse, error)
-	ListSAMLLoginEventTimelineEntries(context.Context, *ListSAMLLoginEventTimelineEntriesRequest) (*ListSAMLLoginEventTimelineEntriesResponse, error)
+	ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error)
+	ListSAMLFlowSteps(context.Context, *ListSAMLFlowStepsRequest) (*ListSAMLFlowStepsResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -250,11 +250,11 @@ func (UnimplementedSSOReadyServiceServer) CreateSAMLConnection(context.Context, 
 func (UnimplementedSSOReadyServiceServer) UpdateSAMLConnection(context.Context, *UpdateSAMLConnectionRequest) (*SAMLConnection, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSAMLConnection not implemented")
 }
-func (UnimplementedSSOReadyServiceServer) ListSAMLLoginEvents(context.Context, *ListSAMLLoginEventsRequest) (*ListSAMLLoginEventsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLLoginEvents not implemented")
+func (UnimplementedSSOReadyServiceServer) ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLFlows not implemented")
 }
-func (UnimplementedSSOReadyServiceServer) ListSAMLLoginEventTimelineEntries(context.Context, *ListSAMLLoginEventTimelineEntriesRequest) (*ListSAMLLoginEventTimelineEntriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLLoginEventTimelineEntries not implemented")
+func (UnimplementedSSOReadyServiceServer) ListSAMLFlowSteps(context.Context, *ListSAMLFlowStepsRequest) (*ListSAMLFlowStepsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLFlowSteps not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -485,38 +485,38 @@ func _SSOReadyService_UpdateSAMLConnection_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SSOReadyService_ListSAMLLoginEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSAMLLoginEventsRequest)
+func _SSOReadyService_ListSAMLFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSAMLFlowsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).ListSAMLLoginEvents(ctx, in)
+		return srv.(SSOReadyServiceServer).ListSAMLFlows(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SSOReadyService_ListSAMLLoginEvents_FullMethodName,
+		FullMethod: SSOReadyService_ListSAMLFlows_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).ListSAMLLoginEvents(ctx, req.(*ListSAMLLoginEventsRequest))
+		return srv.(SSOReadyServiceServer).ListSAMLFlows(ctx, req.(*ListSAMLFlowsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SSOReadyService_ListSAMLLoginEventTimelineEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSAMLLoginEventTimelineEntriesRequest)
+func _SSOReadyService_ListSAMLFlowSteps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSAMLFlowStepsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).ListSAMLLoginEventTimelineEntries(ctx, in)
+		return srv.(SSOReadyServiceServer).ListSAMLFlowSteps(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SSOReadyService_ListSAMLLoginEventTimelineEntries_FullMethodName,
+		FullMethod: SSOReadyService_ListSAMLFlowSteps_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).ListSAMLLoginEventTimelineEntries(ctx, req.(*ListSAMLLoginEventTimelineEntriesRequest))
+		return srv.(SSOReadyServiceServer).ListSAMLFlowSteps(ctx, req.(*ListSAMLFlowStepsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -577,12 +577,12 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SSOReadyService_UpdateSAMLConnection_Handler,
 		},
 		{
-			MethodName: "ListSAMLLoginEvents",
-			Handler:    _SSOReadyService_ListSAMLLoginEvents_Handler,
+			MethodName: "ListSAMLFlows",
+			Handler:    _SSOReadyService_ListSAMLFlows_Handler,
 		},
 		{
-			MethodName: "ListSAMLLoginEventTimelineEntries",
-			Handler:    _SSOReadyService_ListSAMLLoginEventTimelineEntries_Handler,
+			MethodName: "ListSAMLFlowSteps",
+			Handler:    _SSOReadyService_ListSAMLFlowSteps_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

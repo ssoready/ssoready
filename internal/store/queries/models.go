@@ -12,48 +12,48 @@ import (
 	"github.com/google/uuid"
 )
 
-type SamlLoginEventTimelineEntryType string
+type SamlFlowStepType string
 
 const (
-	SamlLoginEventTimelineEntryTypeGetRedirect          SamlLoginEventTimelineEntryType = "get_redirect"
-	SamlLoginEventTimelineEntryTypeSamlInitiate         SamlLoginEventTimelineEntryType = "saml_initiate"
-	SamlLoginEventTimelineEntryTypeSamlReceiveAssertion SamlLoginEventTimelineEntryType = "saml_receive_assertion"
-	SamlLoginEventTimelineEntryTypeRedeem               SamlLoginEventTimelineEntryType = "redeem"
+	SamlFlowStepTypeGetRedirect          SamlFlowStepType = "get_redirect"
+	SamlFlowStepTypeSamlInitiate         SamlFlowStepType = "saml_initiate"
+	SamlFlowStepTypeSamlReceiveAssertion SamlFlowStepType = "saml_receive_assertion"
+	SamlFlowStepTypeRedeem               SamlFlowStepType = "redeem"
 )
 
-func (e *SamlLoginEventTimelineEntryType) Scan(src interface{}) error {
+func (e *SamlFlowStepType) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = SamlLoginEventTimelineEntryType(s)
+		*e = SamlFlowStepType(s)
 	case string:
-		*e = SamlLoginEventTimelineEntryType(s)
+		*e = SamlFlowStepType(s)
 	default:
-		return fmt.Errorf("unsupported scan type for SamlLoginEventTimelineEntryType: %T", src)
+		return fmt.Errorf("unsupported scan type for SamlFlowStepType: %T", src)
 	}
 	return nil
 }
 
-type NullSamlLoginEventTimelineEntryType struct {
-	SamlLoginEventTimelineEntryType SamlLoginEventTimelineEntryType
-	Valid                           bool // Valid is true if SamlLoginEventTimelineEntryType is not NULL
+type NullSamlFlowStepType struct {
+	SamlFlowStepType SamlFlowStepType
+	Valid            bool // Valid is true if SamlFlowStepType is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullSamlLoginEventTimelineEntryType) Scan(value interface{}) error {
+func (ns *NullSamlFlowStepType) Scan(value interface{}) error {
 	if value == nil {
-		ns.SamlLoginEventTimelineEntryType, ns.Valid = "", false
+		ns.SamlFlowStepType, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.SamlLoginEventTimelineEntryType.Scan(value)
+	return ns.SamlFlowStepType.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullSamlLoginEventTimelineEntryType) Value() (driver.Value, error) {
+func (ns NullSamlFlowStepType) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.SamlLoginEventTimelineEntryType), nil
+	return string(ns.SamlFlowStepType), nil
 }
 
 type ApiKey struct {
@@ -111,32 +111,25 @@ type SamlConnection struct {
 	SpEntityID         *string
 }
 
-type SamlLoginEvent struct {
+type SamlFlow struct {
 	ID                   uuid.UUID
 	SamlConnectionID     uuid.UUID
 	AccessCode           uuid.UUID
 	State                string
+	CreateTime           time.Time
 	ExpireTime           time.Time
 	SubjectIdpID         *string
 	SubjectIdpAttributes []byte
 }
 
-type SamlLoginEventTimelineEntry struct {
+type SamlFlowStep struct {
 	ID                          uuid.UUID
-	SamlLoginEventID            uuid.UUID
+	SamlFlowID                  uuid.UUID
 	Timestamp                   time.Time
-	Type                        SamlLoginEventTimelineEntryType
+	Type                        SamlFlowStepType
 	GetRedirectUrl              *string
 	SamlInitiateUrl             *string
 	SamlReceiveAssertionPayload *string
-}
-
-type SamlSession struct {
-	ID                   uuid.UUID
-	SamlConnectionID     uuid.UUID
-	SecretAccessToken    *uuid.UUID
-	SubjectID            *string
-	SubjectIdpAttributes []byte
 }
 
 type SchemaMigration struct {

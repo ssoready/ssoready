@@ -96,7 +96,7 @@ func main() {
 			SAMLConnectionID:     samlConnID,
 			SubjectID:            validateRes.SubjectID,
 			SubjectIDPAttributes: validateRes.SubjectAttributes,
-			SAMLLoginEventID:     validateRes.RequestID,
+			SAMLFlowID:           validateRes.RequestID,
 			RawSAMLPayload:       samlResponse,
 		})
 		if err != nil {
