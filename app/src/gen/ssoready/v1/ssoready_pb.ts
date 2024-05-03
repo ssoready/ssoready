@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Empty, Message, proto3, Timestamp } from "@bufbuild/protobuf";
+import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from message ssoready.v1.AppUser
@@ -261,6 +261,56 @@ export class SAMLFlow extends Message<SAMLFlow> {
    */
   subjectIdpAttributes: { [key: string]: string } = {};
 
+  /**
+   * @generated from field: google.protobuf.Timestamp create_time = 6;
+   */
+  createTime?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp update_time = 7;
+   */
+  updateTime?: Timestamp;
+
+  /**
+   * @generated from field: string auth_redirect_url = 8;
+   */
+  authRedirectUrl = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp get_redirect_time = 9;
+   */
+  getRedirectTime?: Timestamp;
+
+  /**
+   * @generated from field: string initiate_request = 10;
+   */
+  initiateRequest = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp initiate_time = 11;
+   */
+  initiateTime?: Timestamp;
+
+  /**
+   * @generated from field: string assertion = 12;
+   */
+  assertion = "";
+
+  /**
+   * @generated from field: string app_redirect_url = 13;
+   */
+  appRedirectUrl = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp receive_assertion_time = 14;
+   */
+  receiveAssertionTime?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp redeem_time = 15;
+   */
+  redeemTime?: Timestamp;
+
   constructor(data?: PartialMessage<SAMLFlow>) {
     super();
     proto3.util.initPartial(data, this);
@@ -274,6 +324,16 @@ export class SAMLFlow extends Message<SAMLFlow> {
     { no: 3, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 6, name: "create_time", kind: "message", T: Timestamp },
+    { no: 7, name: "update_time", kind: "message", T: Timestamp },
+    { no: 8, name: "auth_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "get_redirect_time", kind: "message", T: Timestamp },
+    { no: 10, name: "initiate_request", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "initiate_time", kind: "message", T: Timestamp },
+    { no: 12, name: "assertion", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 13, name: "app_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 14, name: "receive_assertion_time", kind: "message", T: Timestamp },
+    { no: 15, name: "redeem_time", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLFlow {
@@ -290,88 +350,6 @@ export class SAMLFlow extends Message<SAMLFlow> {
 
   static equals(a: SAMLFlow | PlainMessage<SAMLFlow> | undefined, b: SAMLFlow | PlainMessage<SAMLFlow> | undefined): boolean {
     return proto3.util.equals(SAMLFlow, a, b);
-  }
-}
-
-/**
- * @generated from message ssoready.v1.SAMLFlowStep
- */
-export class SAMLFlowStep extends Message<SAMLFlowStep> {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id = "";
-
-  /**
-   * @generated from field: string saml_flow_id = 2;
-   */
-  samlFlowId = "";
-
-  /**
-   * @generated from field: google.protobuf.Timestamp timestamp = 3;
-   */
-  timestamp?: Timestamp;
-
-  /**
-   * @generated from oneof ssoready.v1.SAMLFlowStep.details
-   */
-  details: {
-    /**
-     * @generated from field: string get_redirect = 4;
-     */
-    value: string;
-    case: "getRedirect";
-  } | {
-    /**
-     * @generated from field: string saml_initiate = 5;
-     */
-    value: string;
-    case: "samlInitiate";
-  } | {
-    /**
-     * @generated from field: string saml_receive_assertion = 6;
-     */
-    value: string;
-    case: "samlReceiveAssertion";
-  } | {
-    /**
-     * @generated from field: google.protobuf.Empty redeem = 7;
-     */
-    value: Empty;
-    case: "redeem";
-  } | { case: undefined; value?: undefined } = { case: undefined };
-
-  constructor(data?: PartialMessage<SAMLFlowStep>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.SAMLFlowStep";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "saml_flow_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "timestamp", kind: "message", T: Timestamp },
-    { no: 4, name: "get_redirect", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
-    { no: 5, name: "saml_initiate", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
-    { no: 6, name: "saml_receive_assertion", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "details" },
-    { no: 7, name: "redeem", kind: "message", T: Empty, oneof: "details" },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLFlowStep {
-    return new SAMLFlowStep().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLFlowStep {
-    return new SAMLFlowStep().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLFlowStep {
-    return new SAMLFlowStep().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: SAMLFlowStep | PlainMessage<SAMLFlowStep> | undefined, b: SAMLFlowStep | PlainMessage<SAMLFlowStep> | undefined): boolean {
-    return proto3.util.equals(SAMLFlowStep, a, b);
   }
 }
 
@@ -1233,92 +1211,6 @@ export class ListSAMLFlowsResponse extends Message<ListSAMLFlowsResponse> {
 
   static equals(a: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined, b: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined): boolean {
     return proto3.util.equals(ListSAMLFlowsResponse, a, b);
-  }
-}
-
-/**
- * @generated from message ssoready.v1.ListSAMLFlowStepsRequest
- */
-export class ListSAMLFlowStepsRequest extends Message<ListSAMLFlowStepsRequest> {
-  /**
-   * @generated from field: string saml_flow_id = 1;
-   */
-  samlFlowId = "";
-
-  /**
-   * @generated from field: string page_token = 2;
-   */
-  pageToken = "";
-
-  constructor(data?: PartialMessage<ListSAMLFlowStepsRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLFlowStepsRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "saml_flow_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowStepsRequest {
-    return new ListSAMLFlowStepsRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsRequest {
-    return new ListSAMLFlowStepsRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsRequest {
-    return new ListSAMLFlowStepsRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: ListSAMLFlowStepsRequest | PlainMessage<ListSAMLFlowStepsRequest> | undefined, b: ListSAMLFlowStepsRequest | PlainMessage<ListSAMLFlowStepsRequest> | undefined): boolean {
-    return proto3.util.equals(ListSAMLFlowStepsRequest, a, b);
-  }
-}
-
-/**
- * @generated from message ssoready.v1.ListSAMLFlowStepsResponse
- */
-export class ListSAMLFlowStepsResponse extends Message<ListSAMLFlowStepsResponse> {
-  /**
-   * @generated from field: repeated ssoready.v1.SAMLFlowStep saml_flow_steps = 1;
-   */
-  samlFlowSteps: SAMLFlowStep[] = [];
-
-  /**
-   * @generated from field: string next_page_token = 2;
-   */
-  nextPageToken = "";
-
-  constructor(data?: PartialMessage<ListSAMLFlowStepsResponse>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLFlowStepsResponse";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "saml_flow_steps", kind: "message", T: SAMLFlowStep, repeated: true },
-    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowStepsResponse {
-    return new ListSAMLFlowStepsResponse().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsResponse {
-    return new ListSAMLFlowStepsResponse().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowStepsResponse {
-    return new ListSAMLFlowStepsResponse().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: ListSAMLFlowStepsResponse | PlainMessage<ListSAMLFlowStepsResponse> | undefined, b: ListSAMLFlowStepsResponse | PlainMessage<ListSAMLFlowStepsResponse> | undefined): boolean {
-    return proto3.util.equals(ListSAMLFlowStepsResponse, a, b);
   }
 }
 

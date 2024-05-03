@@ -40,20 +40,11 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		authURL = *envAuthURL
 	}
 
-	qSAMLFlow, err := q.CreateSAMLFlow(ctx, queries.CreateSAMLFlowParams{
-		ID:               uuid.New(),
-		SamlConnectionID: samlConnID,
-		AccessCode:       uuid.New(),
-		State:            req.State,
-		ExpireTime:       time.Now().Add(time.Hour),
-	})
-	if err != nil {
-		return nil, err
-	}
+	samlFlowID := uuid.New()
 
 	redirectURLQuery := url.Values{}
 	redirectURLQuery.Set("state", s.statesigner.Encode(statesign.Data{
-		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),
+		SAMLFlowID: idformat.SAMLFlow.Format(samlFlowID),
 		State:      req.State,
 	}))
 
@@ -66,12 +57,17 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 
 	redirect := redirectURL.String()
 
-	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
-		ID:             uuid.New(),
-		SamlFlowID:     qSAMLFlow.ID,
-		Timestamp:      time.Now(),
-		Type:           queries.SamlFlowStepTypeGetRedirect,
-		GetRedirectUrl: &redirect,
+	now := time.Now()
+	if _, err := q.CreateSAMLFlowGetRedirect(ctx, queries.CreateSAMLFlowGetRedirectParams{
+		ID:               samlFlowID,
+		SamlConnectionID: samlConnID,
+		AccessCode:       uuid.New(),
+		ExpireTime:       time.Now().Add(time.Hour),
+		State:            req.State,
+		CreateTime:       time.Now(),
+		UpdateTime:       time.Now(),
+		AuthRedirectUrl:  &redirect,
+		GetRedirectTime:  &now,
 	}); err != nil {
 		return nil, err
 	}
@@ -108,11 +104,11 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, err
 	}
 
-	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
-		ID:         uuid.New(),
-		SamlFlowID: samlAccessTokenData.SamlFlowID,
-		Timestamp:  time.Now(),
-		Type:       queries.SamlFlowStepTypeRedeem,
+	now := time.Now()
+	if _, err := q.UpdateSAMLFlowRedeem(ctx, queries.UpdateSAMLFlowRedeemParams{
+		ID:         samlAccessTokenData.SamlFlowID,
+		UpdateTime: time.Now(),
+		RedeemTime: &now,
 	}); err != nil {
 		return nil, err
 	}

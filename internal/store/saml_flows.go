@@ -9,6 +9,7 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlowsRequest) (*ssoreadyv1.ListSAMLFlowsResponse, error) {
@@ -77,5 +78,15 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		State:                qSAMLFlow.State,
 		SubjectIdpId:         derefOrEmpty(qSAMLFlow.SubjectIdpID),
 		SubjectIdpAttributes: attrs,
+		CreateTime:           timestamppb.New(qSAMLFlow.CreateTime),
+		UpdateTime:           timestamppb.New(qSAMLFlow.UpdateTime),
+		AuthRedirectUrl:      derefOrEmpty(qSAMLFlow.AuthRedirectUrl),
+		GetRedirectTime:      ptrTimeToTimestamp(qSAMLFlow.GetRedirectTime),
+		InitiateRequest:      derefOrEmpty(qSAMLFlow.InitiateRequest),
+		InitiateTime:         ptrTimeToTimestamp(qSAMLFlow.InitiateTime),
+		Assertion:            derefOrEmpty(qSAMLFlow.Assertion),
+		AppRedirectUrl:       derefOrEmpty(qSAMLFlow.AppRedirectUrl),
+		ReceiveAssertionTime: ptrTimeToTimestamp(qSAMLFlow.ReceiveAssertionTime),
+		RedeemTime:           ptrTimeToTimestamp(qSAMLFlow.RedeemTime),
 	}
 }

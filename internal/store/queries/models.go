@@ -5,56 +5,10 @@
 package queries
 
 import (
-	"database/sql/driver"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
-
-type SamlFlowStepType string
-
-const (
-	SamlFlowStepTypeGetRedirect          SamlFlowStepType = "get_redirect"
-	SamlFlowStepTypeSamlInitiate         SamlFlowStepType = "saml_initiate"
-	SamlFlowStepTypeSamlReceiveAssertion SamlFlowStepType = "saml_receive_assertion"
-	SamlFlowStepTypeRedeem               SamlFlowStepType = "redeem"
-)
-
-func (e *SamlFlowStepType) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = SamlFlowStepType(s)
-	case string:
-		*e = SamlFlowStepType(s)
-	default:
-		return fmt.Errorf("unsupported scan type for SamlFlowStepType: %T", src)
-	}
-	return nil
-}
-
-type NullSamlFlowStepType struct {
-	SamlFlowStepType SamlFlowStepType
-	Valid            bool // Valid is true if SamlFlowStepType is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullSamlFlowStepType) Scan(value interface{}) error {
-	if value == nil {
-		ns.SamlFlowStepType, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.SamlFlowStepType.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullSamlFlowStepType) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.SamlFlowStepType), nil
-}
 
 type ApiKey struct {
 	ID                uuid.UUID
@@ -120,16 +74,15 @@ type SamlFlow struct {
 	ExpireTime           time.Time
 	SubjectIdpID         *string
 	SubjectIdpAttributes []byte
-}
-
-type SamlFlowStep struct {
-	ID                          uuid.UUID
-	SamlFlowID                  uuid.UUID
-	Timestamp                   time.Time
-	Type                        SamlFlowStepType
-	GetRedirectUrl              *string
-	SamlInitiateUrl             *string
-	SamlReceiveAssertionPayload *string
+	UpdateTime           time.Time
+	AuthRedirectUrl      *string
+	GetRedirectTime      *time.Time
+	InitiateRequest      *string
+	InitiateTime         *time.Time
+	Assertion            *string
+	AppRedirectUrl       *string
+	ReceiveAssertionTime *time.Time
+	RedeemTime           *time.Time
 }
 
 type SchemaMigration struct {

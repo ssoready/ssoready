@@ -15,7 +15,8 @@ type InitRequest struct {
 }
 
 type InitResponse struct {
-	URL string
+	URL             string
+	InitiateRequest string
 }
 
 func Init(req *InitRequest) *InitResponse {
@@ -38,7 +39,7 @@ func Init(req *InitRequest) *InitResponse {
 	query.Set("RelayState", req.RelayState)
 	redirectURL.RawQuery = query.Encode()
 
-	return &InitResponse{URL: redirectURL.String()}
+	return &InitResponse{URL: redirectURL.String(), InitiateRequest: string(samlReqData)}
 }
 
 type samlRequest struct {

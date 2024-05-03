@@ -51,9 +51,9 @@ func main() {
 			RelayState:     state,
 		})
 
-		if err := store_.AuthCreateInitiateTimelineEntry(ctx, &store.AuthCreateInitiateTimelineEntryRequest{
-			State:       state,
-			InitiateURL: initRes.URL,
+		if err := store_.AuthUpsertInitiateData(ctx, &store.AuthUpsertInitiateDataRequest{
+			State:           state,
+			InitiateRequest: initRes.InitiateRequest,
 		}); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -79,10 +79,8 @@ func main() {
 			panic(err)
 		}
 
-		samlResponse := r.FormValue("SAMLResponse")
-
 		validateRes, err := saml.Validate(&saml.ValidateRequest{
-			SAMLResponse:   samlResponse,
+			SAMLResponse:   r.FormValue("SAMLResponse"),
 			IDPCertificate: cert,
 			IDPEntityID:    dataRes.IDPEntityID,
 			SPEntityID:     dataRes.SPEntityID,
@@ -92,12 +90,12 @@ func main() {
 			panic(err)
 		}
 
-		createSAMLLoginRes, err := store_.AuthUpsertSAMLLoginEvent(ctx, &store.AuthUpsertSAMLLoginEventRequest{
+		createSAMLLoginRes, err := store_.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
 			SAMLConnectionID:     samlConnID,
 			SubjectID:            validateRes.SubjectID,
 			SubjectIDPAttributes: validateRes.SubjectAttributes,
 			SAMLFlowID:           validateRes.RequestID,
-			RawSAMLPayload:       samlResponse,
+			SAMLAssertion:        validateRes.Assertion,
 		})
 		if err != nil {
 			panic(err)
@@ -111,8 +109,16 @@ func main() {
 		redirectQuery := url.Values{}
 		redirectQuery.Set("access_token", createSAMLLoginRes.Token)
 		redirectURL.RawQuery = redirectQuery.Encode()
+		redirect := redirectURL.String()
 
-		http.Redirect(w, r, redirectURL.String(), http.StatusSeeOther)
+		if err := store_.AuthUpdateAppRedirectURL(ctx, &store.AuthUpdateAppRedirectURLRequest{
+			SAMLFlowID:     createSAMLLoginRes.SAMLFlowID,
+			AppRedirectURL: redirect,
+		}); err != nil {
+			panic(err)
+		}
+
+		http.Redirect(w, r, redirect, http.StatusSeeOther)
 	}).Methods("POST")
 
 	if err := http.ListenAndServe("localhost:8080", r); err != nil {

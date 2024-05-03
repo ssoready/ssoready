@@ -36,8 +36,6 @@ service SSOReadyService {
   rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (SAMLConnection);
 
   rpc ListSAMLFlows(ListSAMLFlowsRequest) returns (ListSAMLFlowsResponse);
-
-  rpc ListSAMLFlowSteps(ListSAMLFlowStepsRequest) returns (ListSAMLFlowStepsResponse);
 }
 
 message AppUser {
@@ -75,18 +73,21 @@ message SAMLFlow {
   string state = 3;
   string subject_idp_id = 4;
   map<string, string> subject_idp_attributes = 5;
-}
 
-message SAMLFlowStep {
-  string id = 1;
-  string saml_flow_id = 2;
-  google.protobuf.Timestamp timestamp = 3;
-  oneof details {
-    string get_redirect = 4;
-    string saml_initiate = 5;
-    string saml_receive_assertion = 6;
-    google.protobuf.Empty redeem = 7;
-  }
+  google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp update_time = 7;
+
+  string auth_redirect_url = 8;
+  google.protobuf.Timestamp get_redirect_time = 9;
+
+  string initiate_request = 10;
+  google.protobuf.Timestamp initiate_time = 11;
+
+  string assertion = 12;
+  string app_redirect_url = 13;
+  google.protobuf.Timestamp receive_assertion_time = 14;
+
+  google.protobuf.Timestamp redeem_time = 15;
 }
 
 message GetSAMLRedirectURLRequest {
@@ -184,15 +185,5 @@ message ListSAMLFlowsRequest {
 
 message ListSAMLFlowsResponse {
   repeated SAMLFlow saml_flows = 1;
-  string next_page_token = 2;
-}
-
-message ListSAMLFlowStepsRequest {
-  string saml_flow_id = 1;
-  string page_token = 2;
-}
-
-message ListSAMLFlowStepsResponse {
-  repeated SAMLFlowStep saml_flow_steps = 1;
   string next_page_token = 2;
 }

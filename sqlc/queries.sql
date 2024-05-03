@@ -13,23 +13,47 @@ from saml_connections
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1;
 
--- name: CreateSAMLFlow :one
-insert into saml_flows (id, saml_connection_id, access_code, state, expire_time, create_time, subject_idp_id,
-                        subject_idp_attributes)
-values ($1, $2, $3, $4, $5, $6, $7, $8)
+-- name: CreateSAMLFlowGetRedirect :one
+insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+                        auth_redirect_url, get_redirect_time)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 returning *;
 
--- name: CreateSAMLFlowStep :one
-insert into saml_flow_steps (id, saml_flow_id, timestamp, type, get_redirect_url,
-                             saml_initiate_url, saml_receive_assertion_payload)
-values ($1, $2, $3, $4, $5, $6, $7)
+-- name: UpsertSAMLFlowInitiate :one
+insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+                        initiate_request, initiate_time)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+on conflict (id) do update set update_time      = excluded.update_time,
+                               initiate_request = excluded.initiate_request,
+                               initiate_time    = excluded.initiate_time
+returning *;
+
+-- name: UpsertSAMLFlowReceiveAssertion :one
+insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+                        assertion, receive_assertion_time)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+on conflict (id) do update set update_time            = excluded.update_time,
+                               assertion              = excluded.assertion,
+                               receive_assertion_time = excluded.receive_assertion_time
+returning *;
+
+-- name: UpdateSAMLFlowAppRedirectURL :one
+update saml_flows
+set app_redirect_url = $1
+where id = $2
+returning *;
+
+-- name: UpdateSAMLFlowRedeem :one
+update saml_flows
+set update_time = $1,
+    redeem_time = $2
+where id = $3
 returning *;
 
 -- name: AuthGetSAMLFlow :one
 select *
 from saml_flows
-where id = $1
-  and saml_connection_id = $2;
+where id = $1;
 
 -- name: UpdateSAMLFlowSubjectData :one
 update saml_flows
@@ -198,11 +222,3 @@ from saml_flows
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_flows.id = $2;
-
--- name: ListSAMLFlowSteps :many
-select *
-from saml_flow_steps
-where saml_flow_id = $1
-  and (timestamp, id) > ($2, @id::uuid)
-order by timestamp, id
-limit $3;

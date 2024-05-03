@@ -12,5 +12,4 @@ var (
 	SAMLConnection = prettyuuid.MustNewFormat("saml_conn_", alphabet)
 	SAMLFlow       = prettyuuid.MustNewFormat("saml_flow_", alphabet)
 	SAMLAccessCode = prettyuuid.MustNewFormat("saml_access_code_", alphabet)
-	SAMLFlowStep   = prettyuuid.MustNewFormat("saml_flow_step_", alphabet)
 )

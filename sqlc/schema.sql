@@ -16,20 +16,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: saml_flow_step_type; Type: TYPE; Schema: public; Owner: postgres
---
-
-CREATE TYPE public.saml_flow_step_type AS ENUM (
-    'get_redirect',
-    'saml_initiate',
-    'saml_receive_assertion',
-    'redeem'
-);
-
-
-ALTER TYPE public.saml_flow_step_type OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -146,23 +132,6 @@ CREATE TABLE public.saml_connections (
 ALTER TABLE public.saml_connections OWNER TO postgres;
 
 --
--- Name: saml_flow_steps; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.saml_flow_steps (
-    id uuid NOT NULL,
-    saml_flow_id uuid NOT NULL,
-    "timestamp" timestamp with time zone NOT NULL,
-    type public.saml_flow_step_type NOT NULL,
-    get_redirect_url character varying,
-    saml_initiate_url character varying,
-    saml_receive_assertion_payload character varying
-);
-
-
-ALTER TABLE public.saml_flow_steps OWNER TO postgres;
-
---
 -- Name: saml_flows; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -174,7 +143,16 @@ CREATE TABLE public.saml_flows (
     create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL,
     subject_idp_id character varying,
-    subject_idp_attributes jsonb
+    subject_idp_attributes jsonb,
+    update_time timestamp with time zone NOT NULL,
+    auth_redirect_url character varying,
+    get_redirect_time timestamp with time zone,
+    initiate_request character varying,
+    initiate_time timestamp with time zone,
+    assertion character varying,
+    app_redirect_url character varying,
+    receive_assertion_time timestamp with time zone,
+    redeem_time timestamp with time zone
 );
 
 
@@ -289,14 +267,6 @@ ALTER TABLE ONLY public.saml_connections
 
 
 --
--- Name: saml_flow_steps saml_flow_steps_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.saml_flow_steps
-    ADD CONSTRAINT saml_flow_steps_pkey PRIMARY KEY (id);
-
-
---
 -- Name: saml_flows saml_flows_access_code_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -374,14 +344,6 @@ ALTER TABLE ONLY public.organizations
 
 ALTER TABLE ONLY public.saml_connections
     ADD CONSTRAINT saml_connections_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
-
-
---
--- Name: saml_flow_steps saml_flow_steps_saml_flow_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.saml_flow_steps
-    ADD CONSTRAINT saml_flow_steps_saml_flow_id_fkey FOREIGN KEY (saml_flow_id) REFERENCES public.saml_flows(id);
 
 
 --

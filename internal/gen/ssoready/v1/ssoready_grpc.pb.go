@@ -32,7 +32,6 @@ const (
 	SSOReadyService_CreateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
 	SSOReadyService_UpdateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
 	SSOReadyService_ListSAMLFlows_FullMethodName        = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
-	SSOReadyService_ListSAMLFlowSteps_FullMethodName    = "/ssoready.v1.SSOReadyService/ListSAMLFlowSteps"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -52,7 +51,6 @@ type SSOReadyServiceClient interface {
 	CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	UpdateSAMLConnection(ctx context.Context, in *UpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	ListSAMLFlows(ctx context.Context, in *ListSAMLFlowsRequest, opts ...grpc.CallOption) (*ListSAMLFlowsResponse, error)
-	ListSAMLFlowSteps(ctx context.Context, in *ListSAMLFlowStepsRequest, opts ...grpc.CallOption) (*ListSAMLFlowStepsResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -180,15 +178,6 @@ func (c *sSOReadyServiceClient) ListSAMLFlows(ctx context.Context, in *ListSAMLF
 	return out, nil
 }
 
-func (c *sSOReadyServiceClient) ListSAMLFlowSteps(ctx context.Context, in *ListSAMLFlowStepsRequest, opts ...grpc.CallOption) (*ListSAMLFlowStepsResponse, error) {
-	out := new(ListSAMLFlowStepsResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLFlowSteps_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -206,7 +195,6 @@ type SSOReadyServiceServer interface {
 	CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*SAMLConnection, error)
 	UpdateSAMLConnection(context.Context, *UpdateSAMLConnectionRequest) (*SAMLConnection, error)
 	ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error)
-	ListSAMLFlowSteps(context.Context, *ListSAMLFlowStepsRequest) (*ListSAMLFlowStepsResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -252,9 +240,6 @@ func (UnimplementedSSOReadyServiceServer) UpdateSAMLConnection(context.Context, 
 }
 func (UnimplementedSSOReadyServiceServer) ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLFlows not implemented")
-}
-func (UnimplementedSSOReadyServiceServer) ListSAMLFlowSteps(context.Context, *ListSAMLFlowStepsRequest) (*ListSAMLFlowStepsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLFlowSteps not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -503,24 +488,6 @@ func _SSOReadyService_ListSAMLFlows_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SSOReadyService_ListSAMLFlowSteps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSAMLFlowStepsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).ListSAMLFlowSteps(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SSOReadyService_ListSAMLFlowSteps_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).ListSAMLFlowSteps(ctx, req.(*ListSAMLFlowStepsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -579,10 +546,6 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSAMLFlows",
 			Handler:    _SSOReadyService_ListSAMLFlows_Handler,
-		},
-		{
-			MethodName: "ListSAMLFlowSteps",
-			Handler:    _SSOReadyService_ListSAMLFlowSteps_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

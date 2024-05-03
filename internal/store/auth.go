@@ -47,12 +47,12 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 	}, nil
 }
 
-type AuthCreateInitiateTimelineEntryRequest struct {
-	State       string
-	InitiateURL string
+type AuthUpsertInitiateDataRequest struct {
+	State           string
+	InitiateRequest string
 }
 
-func (s *Store) AuthCreateInitiateTimelineEntry(ctx context.Context, req *AuthCreateInitiateTimelineEntryRequest) error {
+func (s *Store) AuthUpsertInitiateData(ctx context.Context, req *AuthUpsertInitiateDataRequest) error {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return err
@@ -69,12 +69,22 @@ func (s *Store) AuthCreateInitiateTimelineEntry(ctx context.Context, req *AuthCr
 		return err
 	}
 
-	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
-		ID:              uuid.New(),
-		SamlFlowID:      samlFlowID,
-		Timestamp:       time.Now(),
-		Type:            queries.SamlFlowStepTypeSamlInitiate,
-		SamlInitiateUrl: &req.InitiateURL,
+	qSAMLFlow, err := q.AuthGetSAMLFlow(ctx, samlFlowID)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	if _, err := q.UpsertSAMLFlowInitiate(ctx, queries.UpsertSAMLFlowInitiateParams{
+		ID:               samlFlowID,
+		SamlConnectionID: qSAMLFlow.SamlConnectionID,
+		AccessCode:       uuid.New(),
+		ExpireTime:       time.Now().Add(time.Hour),
+		State:            stateData.State,
+		CreateTime:       time.Now(),
+		UpdateTime:       time.Now(),
+		InitiateRequest:  &req.InitiateRequest,
+		InitiateTime:     &now,
 	}); err != nil {
 		return err
 	}
@@ -117,18 +127,19 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 }
 
 type AuthUpsertSAMLLoginEventRequest struct {
-	SAMLFlowID           string
 	SAMLConnectionID     string
+	SAMLFlowID           string
 	SubjectID            string
 	SubjectIDPAttributes map[string]string
-	RawSAMLPayload       string
+	SAMLAssertion        string
 }
 
 type AuthUpsertSAMLLoginEventResponse struct {
-	Token string
+	SAMLFlowID string
+	Token      string
 }
 
-func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAMLLoginEventRequest) (*AuthUpsertSAMLLoginEventResponse, error) {
+func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUpsertSAMLLoginEventRequest) (*AuthUpsertSAMLLoginEventResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -141,24 +152,33 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 	}
 
 	var samlFlowID uuid.UUID
-
-	if req.SAMLFlowID == "" {
-		qSAMLFlow, err := q.CreateSAMLFlow(ctx, queries.CreateSAMLFlowParams{
-			ID:               uuid.New(),
-			SamlConnectionID: samlConnID,
-			AccessCode:       uuid.New(),
-			ExpireTime:       time.Now().Add(time.Hour),
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		samlFlowID = qSAMLFlow.ID
-	} else {
+	if req.SAMLFlowID != "" {
 		samlFlowID, err = idformat.SAMLFlow.Parse(req.SAMLFlowID)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		samlFlowID = uuid.New()
+	}
+
+	// create a new flow
+	now := time.Now()
+	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
+		ID:                   samlFlowID,
+		SamlConnectionID:     samlConnID,
+		AccessCode:           uuid.New(),
+		ExpireTime:           time.Now().Add(time.Hour),
+		CreateTime:           time.Now(),
+		UpdateTime:           time.Now(),
+		Assertion:            &req.SAMLAssertion,
+		ReceiveAssertionTime: &now,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if qSAMLFlow.SamlConnectionID != samlConnID {
+		return nil, fmt.Errorf("saml flow does not belong to given saml connection")
 	}
 
 	attrs, err := json.Marshal(req.SubjectIDPAttributes)
@@ -166,26 +186,10 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 		return nil, err
 	}
 
-	qSAMLFlow, err := q.UpdateSAMLFlowSubjectData(ctx, queries.UpdateSAMLFlowSubjectDataParams{
+	if _, err := q.UpdateSAMLFlowSubjectData(ctx, queries.UpdateSAMLFlowSubjectDataParams{
 		ID:                   samlFlowID,
 		SubjectIdpID:         &req.SubjectID,
 		SubjectIdpAttributes: attrs,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// todo think through the security consequences here more deeply
-	if qSAMLFlow.SamlConnectionID != samlConnID {
-		panic(fmt.Errorf("invariant failure: flow.conn != conn: %q, %q", qSAMLFlow.SamlConnectionID, req.SAMLConnectionID))
-	}
-
-	if _, err := q.CreateSAMLFlowStep(ctx, queries.CreateSAMLFlowStepParams{
-		ID:                          uuid.New(),
-		SamlFlowID:                  qSAMLFlow.ID,
-		Timestamp:                   time.Now(),
-		Type:                        queries.SamlFlowStepTypeSamlReceiveAssertion,
-		SamlReceiveAssertionPayload: &req.RawSAMLPayload,
 	}); err != nil {
 		return nil, err
 	}
@@ -195,6 +199,28 @@ func (s *Store) AuthUpsertSAMLLoginEvent(ctx context.Context, req *AuthUpsertSAM
 	}
 
 	return &AuthUpsertSAMLLoginEventResponse{
-		Token: idformat.SAMLAccessCode.Format(qSAMLFlow.AccessCode),
+		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),
+		Token:      idformat.SAMLAccessCode.Format(qSAMLFlow.AccessCode),
 	}, nil
+}
+
+type AuthUpdateAppRedirectURLRequest struct {
+	SAMLFlowID     string
+	AppRedirectURL string
+}
+
+func (s *Store) AuthUpdateAppRedirectURL(ctx context.Context, req *AuthUpdateAppRedirectURLRequest) error {
+	samlFlowID, err := idformat.SAMLFlow.Parse(req.SAMLFlowID)
+	if err != nil {
+		return err
+	}
+
+	if _, err := s.q.UpdateSAMLFlowAppRedirectURL(ctx, queries.UpdateSAMLFlowAppRedirectURLParams{
+		ID:             samlFlowID,
+		AppRedirectUrl: &req.AppRedirectURL,
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }

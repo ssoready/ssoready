@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { MethodKind } from "@bufbuild/protobuf";
-import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, ListSAMLFlowStepsRequest, ListSAMLFlowStepsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SignInRequest, SignInResponse, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
@@ -183,20 +183,6 @@ export const listSAMLFlows = {
   kind: MethodKind.Unary,
   I: ListSAMLFlowsRequest,
   O: ListSAMLFlowsResponse,
-  service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
-} as const;
-
-/**
- * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLFlowSteps
- */
-export const listSAMLFlowSteps = {
-  localName: "listSAMLFlowSteps",
-  name: "ListSAMLFlowSteps",
-  kind: MethodKind.Unary,
-  I: ListSAMLFlowStepsRequest,
-  O: ListSAMLFlowStepsResponse,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }

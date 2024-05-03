@@ -3,12 +3,14 @@ package store
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Store struct {
@@ -52,4 +54,11 @@ func derefOrEmpty(s *string) string {
 		return ""
 	}
 	return *s
+}
+
+func ptrTimeToTimestamp(t *time.Time) *timestamppb.Timestamp {
+	if t == nil {
+		return nil
+	}
+	return timestamppb.New(*t)
 }
