@@ -13,6 +13,7 @@ import { ViewEnvironmentPage } from "@/pages/ViewEnvironmentPage";
 import { ViewOrganizationPage } from "@/pages/ViewOrganizationPage";
 import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 import { EditSAMLConnectionPage } from "@/pages/EditSAMLConnectionPage";
+import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,10 @@ export function App() {
                 <Route
                   path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/edit"
                   element={<EditSAMLConnectionPage />}
+                />
+                <Route
+                  path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows/:samlFlowId"
+                  element={<ViewSAMLFlowPage />}
                 />
               </Route>
             </Route>

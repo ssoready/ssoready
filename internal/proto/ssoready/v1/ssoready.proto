@@ -36,6 +36,7 @@ service SSOReadyService {
   rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (SAMLConnection);
 
   rpc ListSAMLFlows(ListSAMLFlowsRequest) returns (ListSAMLFlowsResponse);
+  rpc GetSAMLFlow(GetSAMLFlowRequest) returns (SAMLFlow);
 }
 
 message AppUser {
@@ -186,4 +187,8 @@ message ListSAMLFlowsRequest {
 message ListSAMLFlowsResponse {
   repeated SAMLFlow saml_flows = 1;
   string next_page_token = 2;
+}
+
+message GetSAMLFlowRequest {
+  string id = 1;
 }

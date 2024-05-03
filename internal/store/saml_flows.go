@@ -64,6 +64,29 @@ func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlows
 	}, nil
 }
 
+func (s *Store) GetSAMLFlow(ctx context.Context, req *ssoreadyv1.GetSAMLFlowRequest) (*ssoreadyv1.SAMLFlow, error) {
+	id, err := idformat.SAMLFlow.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	qSAMLFlow, err := q.GetSAMLFlow(ctx, queries.GetSAMLFlowParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                id,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return parseSAMLFlow(qSAMLFlow), nil
+}
+
 func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 	var attrs map[string]string
 	if len(qSAMLFlow.SubjectIdpAttributes) != 0 {

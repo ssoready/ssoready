@@ -70,6 +70,9 @@ const (
 	// SSOReadyServiceListSAMLFlowsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListSAMLFlows RPC.
 	SSOReadyServiceListSAMLFlowsProcedure = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
+	// SSOReadyServiceGetSAMLFlowProcedure is the fully-qualified name of the SSOReadyService's
+	// GetSAMLFlow RPC.
+	SSOReadyServiceGetSAMLFlowProcedure = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
 )
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
@@ -87,6 +90,7 @@ type SSOReadyServiceClient interface {
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	UpdateSAMLConnection(context.Context, *connect.Request[v1.UpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error)
+	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 }
 
 // NewSSOReadyServiceClient constructs a client for the ssoready.v1.SSOReadyService service. By
@@ -164,6 +168,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceListSAMLFlowsProcedure,
 			opts...,
 		),
+		getSAMLFlow: connect.NewClient[v1.GetSAMLFlowRequest, v1.SAMLFlow](
+			httpClient,
+			baseURL+SSOReadyServiceGetSAMLFlowProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -182,6 +191,7 @@ type sSOReadyServiceClient struct {
 	createSAMLConnection *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
 	updateSAMLConnection *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
 	listSAMLFlows        *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
+	getSAMLFlow          *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -249,6 +259,11 @@ func (c *sSOReadyServiceClient) ListSAMLFlows(ctx context.Context, req *connect.
 	return c.listSAMLFlows.CallUnary(ctx, req)
 }
 
+// GetSAMLFlow calls ssoready.v1.SSOReadyService.GetSAMLFlow.
+func (c *sSOReadyServiceClient) GetSAMLFlow(ctx context.Context, req *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error) {
+	return c.getSAMLFlow.CallUnary(ctx, req)
+}
+
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
@@ -264,6 +279,7 @@ type SSOReadyServiceHandler interface {
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	UpdateSAMLConnection(context.Context, *connect.Request[v1.UpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error)
+	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 }
 
 // NewSSOReadyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -337,6 +353,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.ListSAMLFlows,
 		opts...,
 	)
+	sSOReadyServiceGetSAMLFlowHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetSAMLFlowProcedure,
+		svc.GetSAMLFlow,
+		opts...,
+	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SSOReadyServiceGetSAMLRedirectURLProcedure:
@@ -365,6 +386,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceUpdateSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListSAMLFlowsProcedure:
 			sSOReadyServiceListSAMLFlowsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetSAMLFlowProcedure:
+			sSOReadyServiceGetSAMLFlowHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -424,4 +447,8 @@ func (UnimplementedSSOReadyServiceHandler) UpdateSAMLConnection(context.Context,
 
 func (UnimplementedSSOReadyServiceHandler) ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSAMLFlows is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSAMLFlow is not implemented"))
 }

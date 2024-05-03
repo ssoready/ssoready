@@ -32,6 +32,7 @@ const (
 	SSOReadyService_CreateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
 	SSOReadyService_UpdateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
 	SSOReadyService_ListSAMLFlows_FullMethodName        = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
+	SSOReadyService_GetSAMLFlow_FullMethodName          = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -51,6 +52,7 @@ type SSOReadyServiceClient interface {
 	CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	UpdateSAMLConnection(ctx context.Context, in *UpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	ListSAMLFlows(ctx context.Context, in *ListSAMLFlowsRequest, opts ...grpc.CallOption) (*ListSAMLFlowsResponse, error)
+	GetSAMLFlow(ctx context.Context, in *GetSAMLFlowRequest, opts ...grpc.CallOption) (*SAMLFlow, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -178,6 +180,15 @@ func (c *sSOReadyServiceClient) ListSAMLFlows(ctx context.Context, in *ListSAMLF
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) GetSAMLFlow(ctx context.Context, in *GetSAMLFlowRequest, opts ...grpc.CallOption) (*SAMLFlow, error) {
+	out := new(SAMLFlow)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetSAMLFlow_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -195,6 +206,7 @@ type SSOReadyServiceServer interface {
 	CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*SAMLConnection, error)
 	UpdateSAMLConnection(context.Context, *UpdateSAMLConnectionRequest) (*SAMLConnection, error)
 	ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error)
+	GetSAMLFlow(context.Context, *GetSAMLFlowRequest) (*SAMLFlow, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -240,6 +252,9 @@ func (UnimplementedSSOReadyServiceServer) UpdateSAMLConnection(context.Context, 
 }
 func (UnimplementedSSOReadyServiceServer) ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLFlows not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetSAMLFlow(context.Context, *GetSAMLFlowRequest) (*SAMLFlow, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSAMLFlow not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -488,6 +503,24 @@ func _SSOReadyService_ListSAMLFlows_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_GetSAMLFlow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSAMLFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetSAMLFlow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetSAMLFlow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetSAMLFlow(ctx, req.(*GetSAMLFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -546,6 +579,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSAMLFlows",
 			Handler:    _SSOReadyService_ListSAMLFlows_Handler,
+		},
+		{
+			MethodName: "GetSAMLFlow",
+			Handler:    _SSOReadyService_GetSAMLFlow_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

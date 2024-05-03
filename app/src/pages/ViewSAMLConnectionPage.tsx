@@ -5,17 +5,29 @@ import {
   getOrganization,
   getSAMLConnection,
   listSAMLConnections,
+  listSAMLFlows,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
   const { data: samlConnection } = useQuery(getSAMLConnection, {
     id: samlConnectionId,
+  });
+  const { data: listFlowsRes } = useQuery(listSAMLFlows, {
+    samlConnectionId,
   });
 
   return (
@@ -77,6 +89,32 @@ export function ViewSAMLConnectionPage() {
               <code>{samlConnection?.idpCertificate}</code>
             </pre>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent SAML Login Flows</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableHead>SAML Flow ID</TableHead>
+            </TableHeader>
+            <TableBody>
+              {listFlowsRes?.samlFlows?.map((samlFlow) => (
+                <TableRow>
+                  <TableCell>
+                    <Link
+                      to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows/${samlFlow.id}`}
+                    >
+                      {samlFlow.id}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </>

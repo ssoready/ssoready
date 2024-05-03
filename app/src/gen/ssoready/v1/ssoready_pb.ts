@@ -1214,3 +1214,40 @@ export class ListSAMLFlowsResponse extends Message<ListSAMLFlowsResponse> {
   }
 }
 
+/**
+ * @generated from message ssoready.v1.GetSAMLFlowRequest
+ */
+export class GetSAMLFlowRequest extends Message<GetSAMLFlowRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSAMLFlowRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLFlowRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLFlowRequest {
+    return new GetSAMLFlowRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLFlowRequest {
+    return new GetSAMLFlowRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLFlowRequest {
+    return new GetSAMLFlowRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined, b: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined): boolean {
+    return proto3.util.equals(GetSAMLFlowRequest, a, b);
+  }
+}
+
