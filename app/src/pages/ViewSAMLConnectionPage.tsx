@@ -64,10 +64,6 @@ export function ViewSAMLConnectionPage() {
                 customer's Identity Provider.
               </CardDescription>
             </div>
-
-            {/*{environment && (*/}
-            {/*    <EditEnvironmentAlertDialog environment={environment} />*/}
-            {/*)}*/}
           </div>
         </CardHeader>
       </Card>
@@ -147,7 +143,7 @@ export function ViewSAMLConnectionPage() {
                   Certificate (click to show)
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="bg-black rounded-lg px-6 py-4 mt-4">
+                  <div className="bg-black rounded-lg px-6 py-4 mt-4 inline-block">
                     <code className="text-sm text-white">
                       <pre>{samlConnection?.idpCertificate}</pre>
                     </code>
