@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router";
+import { useMatch, useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
 import {
   getEnvironment,
@@ -41,6 +41,9 @@ export function ViewSAMLConnectionPage() {
   const { data: samlConnection } = useQuery(getSAMLConnection, {
     id: samlConnectionId,
   });
+  const flowsPathMatch = useMatch(
+    "/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows",
+  );
 
   return (
     <div className="grid gap-8">
@@ -69,12 +72,24 @@ export function ViewSAMLConnectionPage() {
         </CardHeader>
       </Card>
 
-      <Tabs defaultValue="account">
+      <Tabs defaultValue={flowsPathMatch ? "flows" : "config"}>
         <TabsList>
-          <TabsTrigger value="account">Configuration</TabsTrigger>
-          <TabsTrigger value="password">Login Flows</TabsTrigger>
+          <TabsTrigger value="config">
+            <Link
+              to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
+            >
+              Configuration
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger value="flows" asChild>
+            <Link
+              to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows`}
+            >
+              Login Flows
+            </Link>
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
+        <TabsContent value="config">
           <Card>
             <CardHeader>
               <CardTitle>Service Provider Configuration</CardTitle>
@@ -142,7 +157,7 @@ export function ViewSAMLConnectionPage() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="password">
+        <TabsContent value="flows">
           <ListLoginFlowsTabContent />
         </TabsContent>
       </Tabs>
