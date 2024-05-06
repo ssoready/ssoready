@@ -1,6 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router";
-import { useMutation, useQuery } from "@connectrpc/connect-query";
+import {
+  createConnectQueryKey,
+  useMutation,
+  useQuery,
+} from "@connectrpc/connect-query";
 import {
   getEnvironment,
   listOrganizations,
@@ -49,6 +53,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
@@ -162,6 +167,7 @@ function EditEnvironmentAlertDialog({
 
   const [open, setOpen] = useState(false);
   const updateEnvironmentMutation = useMutation(updateEnvironment);
+  const queryClient = useQueryClient();
   const handleSubmit = useCallback(
     async (values: z.infer<typeof FormSchema>, e: any) => {
       e.preventDefault();
@@ -172,6 +178,11 @@ function EditEnvironmentAlertDialog({
           redirectUrl: values.redirectUrl,
         },
       });
+
+      await queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getEnvironment, { id: environment.id }),
+      });
+
       setOpen(false);
     },
     [setOpen, environment, updateEnvironmentMutation],
