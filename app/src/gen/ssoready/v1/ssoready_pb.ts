@@ -1006,6 +1006,43 @@ export class CreateOrganizationRequest extends Message<CreateOrganizationRequest
 }
 
 /**
+ * @generated from message ssoready.v1.UpdateOrganizationRequest
+ */
+export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest> {
+  /**
+   * @generated from field: ssoready.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+
+  constructor(data?: PartialMessage<UpdateOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization", kind: "message", T: Organization },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOrganizationRequest {
+    return new UpdateOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
+    return new UpdateOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
+    return new UpdateOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined, b: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateOrganizationRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListSAMLConnectionsRequest
  */
 export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsRequest> {

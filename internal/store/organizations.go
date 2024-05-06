@@ -155,6 +155,63 @@ func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOr
 	return parseOrganization(qOrg, qOrgDomains), nil
 }
 
+func (s *Store) UpdateOrganization(ctx context.Context, req *ssoreadyv1.UpdateOrganizationRequest) (*ssoreadyv1.Organization, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	id, err := idformat.Organization.Parse(req.Organization.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// authz check
+	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                id,
+	}); err != nil {
+		return nil, err
+	}
+
+	if err := q.DeleteOrganizationDomains(ctx, id); err != nil {
+		return nil, err
+	}
+
+	var externalID *string
+	if req.Organization.ExternalId != "" {
+		externalID = &req.Organization.ExternalId
+	}
+
+	qOrg, err := q.UpdateOrganization(ctx, queries.UpdateOrganizationParams{
+		ID:         id,
+		ExternalID: externalID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var qOrgDomains []queries.OrganizationDomain
+	for _, d := range req.Organization.Domains {
+		qOrgDomain, err := q.CreateOrganizationDomain(ctx, queries.CreateOrganizationDomainParams{
+			ID:             uuid.New(),
+			OrganizationID: qOrg.ID,
+			Domain:         d,
+		})
+		if err != nil {
+			return nil, err
+		}
+		qOrgDomains = append(qOrgDomains, qOrgDomain)
+	}
+
+	if err := commit(); err != nil {
+		return nil, err
+	}
+
+	return parseOrganization(qOrg, qOrgDomains), nil
+}
+
 func parseOrganization(qOrg queries.Organization, qOrgDomains []queries.OrganizationDomain) *ssoreadyv1.Organization {
 	var domains []string
 	for _, qOrgDomain := range qOrgDomains {

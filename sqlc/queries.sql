@@ -194,6 +194,17 @@ insert into organization_domains (id, organization_id, domain)
 values ($1, $2, $3)
 returning *;
 
+-- name: UpdateOrganization :one
+update organizations
+set external_id = $1
+where id = $2
+returning *;
+
+-- name: DeleteOrganizationDomains :exec
+delete
+from organization_domains
+where organization_id = $1;
+
 -- name: ListSAMLConnections :many
 select *
 from saml_connections

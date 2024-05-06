@@ -1,10 +1,19 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useMutation, useQuery } from "@connectrpc/connect-query";
 import {
+  createConnectQueryKey,
+  useMutation,
+  useQuery,
+} from "@connectrpc/connect-query";
+import {
+  createOrganization,
   createSAMLConnection,
+  getEnvironment,
   getOrganization,
+  listOrganizations,
   listSAMLConnections,
+  updateEnvironment,
+  updateOrganization,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -24,7 +33,32 @@ import {
 } from "@/components/ui/table";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Plus, PlusCircle } from "lucide-react";
+import { z } from "zod";
+import { Environment, Organization } from "@/gen/ssoready/v1/ssoready_pb";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { InputTags } from "@/components/InputTags";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -50,31 +84,56 @@ export function ViewOrganizationPage() {
   }, [organizationId]);
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       <Card>
         <CardHeader>
-          <CardTitle>{organization?.id}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="font-semibold">Organization Details</div>
-          <div className="flex justify-between">
-            <div>External ID</div>
-            <div>{organization?.externalId}</div>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col space-y-1.5">
+              <div className="flex gap-4">
+                <CardTitle>Organization</CardTitle>
+
+                <span className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
+                  {organizationId}
+                </span>
+              </div>
+
+              <CardDescription>
+                An organization corresponds to a tenant in your application.
+              </CardDescription>
+            </div>
+
+            {organization && (
+              <EditOrganizationAlertDialog organization={organization} />
+            )}
           </div>
-          <div className="flex justify-between">
-            <div>Domains</div>
-            <div>
-              {organization?.domains?.map((domain, i) => (
-                <Badge key={i}>{domain}</Badge>
-              ))}
+        </CardHeader>
+
+        <CardContent>
+          <div className="grid grid-cols-4 gap-y-2">
+            <div className="text-sm col-span-1 text-muted-foreground">
+              External ID
+            </div>
+            <div className="text-sm col-span-3">{organization?.externalId}</div>
+
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Domains
+            </div>
+            <div className="text-sm col-span-3">
+              {" "}
+              <div className="flex gap-1">
+                {organization?.domains.map((domain, i) => (
+                  <Badge key={i}>{domain}</Badge>
+                ))}
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
+
       <Card>
         <CardHeader>
-          <div className="flex justify-between">
-            <div>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col space-y-1.5">
               <CardTitle>SAML Connections</CardTitle>
               <CardDescription>
                 SAML Connections within this organization.
@@ -82,15 +141,9 @@ export function ViewOrganizationPage() {
             </div>
 
             <div>
-              <Button
-                size="sm"
-                className="h-8 gap-1"
-                onClick={handleCreateSAMLConnection}
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add SAML Connection
-                </span>
+              <Button variant="outline" onClick={handleCreateSAMLConnection}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add SAML Connection
               </Button>
             </div>
           </div>
@@ -99,13 +152,15 @@ export function ViewOrganizationPage() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableHead>SAML Connection ID</TableHead>
-              <TableHead>IDP Redirect URL</TableHead>
-              <TableHead>IDP Entity ID</TableHead>
+              <TableRow>
+                <TableHead>SAML Connection ID</TableHead>
+                <TableHead>IDP Redirect URL</TableHead>
+                <TableHead>IDP Entity ID</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {listSAMLConnectionsRes?.samlConnections?.map((samlConn) => (
-                <TableRow>
+                <TableRow key={samlConn.id}>
                   <TableCell>
                     <Link
                       to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/saml-connections/${samlConn.id}`}
@@ -113,14 +168,127 @@ export function ViewOrganizationPage() {
                       {samlConn.id}
                     </Link>
                   </TableCell>
-                  <TableCell>{samlConn.idpRedirectUrl}</TableCell>
-                  <TableCell>{samlConn.idpEntityId}</TableCell>
+                  <TableCell className="max-w-[300px] truncate">
+                    {samlConn.idpRedirectUrl}
+                  </TableCell>
+                  <TableCell className="max-w-[300px] truncate">
+                    {samlConn.idpEntityId}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
-    </>
+    </div>
+  );
+}
+
+const FormSchema = z.object({
+  externalId: z.string(),
+  domains: z.array(z.string()),
+});
+
+function EditOrganizationAlertDialog({
+  organization,
+}: {
+  organization: Organization;
+}) {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      externalId: organization.externalId,
+      domains: organization.domains,
+    },
+  });
+
+  const [open, setOpen] = useState(false);
+  const updateOrganizationMutation = useMutation(updateOrganization);
+  const queryClient = useQueryClient();
+  const handleSubmit = useCallback(
+    async (values: z.infer<typeof FormSchema>, e: any) => {
+      e.preventDefault();
+      await updateOrganizationMutation.mutateAsync({
+        organization: {
+          id: organization.id,
+          externalId: values.externalId,
+          domains: values.domains,
+        },
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getOrganization, {
+          id: organization.id,
+        }),
+      });
+
+      setOpen(false);
+    },
+    [setOpen, organization, updateOrganizationMutation, queryClient],
+  );
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Edit</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Edit environment</AlertDialogTitle>
+            </AlertDialogHeader>
+
+            <div className="my-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="externalId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>External ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. 42, 507f191e810c19729de860ea, ..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      An optional unique identifier for this organization. This
+                      is returned in the SAML Redeem endpoint. Use this to more
+                      easily tie an SSOReady organization to its counterpart in
+                      your application.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="domains"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Domains</FormLabel>
+                    <FormControl>
+                      <InputTags {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      SSOReady will only allow SAML logins from users whose
+                      email are in this list of domains.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit">Save</Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

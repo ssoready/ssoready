@@ -61,6 +61,9 @@ const (
 	// SSOReadyServiceCreateOrganizationProcedure is the fully-qualified name of the SSOReadyService's
 	// CreateOrganization RPC.
 	SSOReadyServiceCreateOrganizationProcedure = "/ssoready.v1.SSOReadyService/CreateOrganization"
+	// SSOReadyServiceUpdateOrganizationProcedure is the fully-qualified name of the SSOReadyService's
+	// UpdateOrganization RPC.
+	SSOReadyServiceUpdateOrganizationProcedure = "/ssoready.v1.SSOReadyService/UpdateOrganization"
 	// SSOReadyServiceListSAMLConnectionsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListSAMLConnections RPC.
 	SSOReadyServiceListSAMLConnectionsProcedure = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
@@ -93,6 +96,7 @@ type SSOReadyServiceClient interface {
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
+	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error)
 	GetSAMLConnection(context.Context, *connect.Request[v1.GetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
@@ -161,6 +165,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceCreateOrganizationProcedure,
 			opts...,
 		),
+		updateOrganization: connect.NewClient[v1.UpdateOrganizationRequest, v1.Organization](
+			httpClient,
+			baseURL+SSOReadyServiceUpdateOrganizationProcedure,
+			opts...,
+		),
 		listSAMLConnections: connect.NewClient[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceListSAMLConnectionsProcedure,
@@ -206,6 +215,7 @@ type sSOReadyServiceClient struct {
 	listOrganizations    *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
 	getOrganization      *connect.Client[v1.GetOrganizationRequest, v1.Organization]
 	createOrganization   *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
+	updateOrganization   *connect.Client[v1.UpdateOrganizationRequest, v1.Organization]
 	listSAMLConnections  *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
 	getSAMLConnection    *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
 	createSAMLConnection *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
@@ -264,6 +274,11 @@ func (c *sSOReadyServiceClient) CreateOrganization(ctx context.Context, req *con
 	return c.createOrganization.CallUnary(ctx, req)
 }
 
+// UpdateOrganization calls ssoready.v1.SSOReadyService.UpdateOrganization.
+func (c *sSOReadyServiceClient) UpdateOrganization(ctx context.Context, req *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.Organization], error) {
+	return c.updateOrganization.CallUnary(ctx, req)
+}
+
 // ListSAMLConnections calls ssoready.v1.SSOReadyService.ListSAMLConnections.
 func (c *sSOReadyServiceClient) ListSAMLConnections(ctx context.Context, req *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error) {
 	return c.listSAMLConnections.CallUnary(ctx, req)
@@ -306,6 +321,7 @@ type SSOReadyServiceHandler interface {
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
+	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error)
 	GetSAMLConnection(context.Context, *connect.Request[v1.GetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
@@ -370,6 +386,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.CreateOrganization,
 		opts...,
 	)
+	sSOReadyServiceUpdateOrganizationHandler := connect.NewUnaryHandler(
+		SSOReadyServiceUpdateOrganizationProcedure,
+		svc.UpdateOrganization,
+		opts...,
+	)
 	sSOReadyServiceListSAMLConnectionsHandler := connect.NewUnaryHandler(
 		SSOReadyServiceListSAMLConnectionsProcedure,
 		svc.ListSAMLConnections,
@@ -422,6 +443,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetOrganizationHandler.ServeHTTP(w, r)
 		case SSOReadyServiceCreateOrganizationProcedure:
 			sSOReadyServiceCreateOrganizationHandler.ServeHTTP(w, r)
+		case SSOReadyServiceUpdateOrganizationProcedure:
+			sSOReadyServiceUpdateOrganizationHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListSAMLConnectionsProcedure:
 			sSOReadyServiceListSAMLConnectionsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetSAMLConnectionProcedure:
@@ -481,6 +504,10 @@ func (UnimplementedSSOReadyServiceHandler) GetOrganization(context.Context, *con
 
 func (UnimplementedSSOReadyServiceHandler) CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateOrganization is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.Organization], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.UpdateOrganization is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error) {

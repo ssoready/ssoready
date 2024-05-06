@@ -290,6 +290,17 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 	return i, err
 }
 
+const deleteOrganizationDomains = `-- name: DeleteOrganizationDomains :exec
+delete
+from organization_domains
+where organization_id = $1
+`
+
+func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteOrganizationDomains, organizationID)
+	return err
+}
+
 const getAPIKeyBySecretValue = `-- name: GetAPIKeyBySecretValue :one
 select id, app_organization_id, secret_value
 from api_keys
@@ -836,6 +847,25 @@ func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentPa
 		&i.DisplayName,
 		&i.AuthUrl,
 	)
+	return i, err
+}
+
+const updateOrganization = `-- name: UpdateOrganization :one
+update organizations
+set external_id = $1
+where id = $2
+returning id, environment_id, external_id
+`
+
+type UpdateOrganizationParams struct {
+	ExternalID *string
+	ID         uuid.UUID
+}
+
+func (q *Queries) UpdateOrganization(ctx context.Context, arg UpdateOrganizationParams) (Organization, error) {
+	row := q.db.QueryRow(ctx, updateOrganization, arg.ExternalID, arg.ID)
+	var i Organization
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
 	return i, err
 }
 
