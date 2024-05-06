@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { useMatch, useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
 import {
@@ -8,6 +8,7 @@ import {
   listOrganizations,
   listSAMLConnections,
   listSAMLFlows,
+  updateSAMLConnection,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -35,6 +36,32 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import moment from "moment";
+import { z } from "zod";
+import { SAMLConnection } from "@/gen/ssoready/v1/ssoready_pb";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -70,7 +97,7 @@ export function ViewSAMLConnectionPage() {
 
       <Tabs defaultValue={flowsPathMatch ? "flows" : "config"}>
         <TabsList>
-          <TabsTrigger value="config">
+          <TabsTrigger value="config" asChild>
             <Link
               to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
             >
@@ -116,11 +143,21 @@ export function ViewSAMLConnectionPage() {
 
           <Card className="mt-4">
             <CardHeader>
-              <CardTitle>Identity Provider Configuration</CardTitle>
-              <CardDescription>
-                The configuration here needs to be copied over from the
-                customer's Identity Provider.
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col space-y-1.5">
+                  <CardTitle>Identity Provider Configuration</CardTitle>
+                  <CardDescription>
+                    The configuration here needs to be copied over from the
+                    customer's Identity Provider.
+                  </CardDescription>
+                </div>
+
+                {samlConnection && (
+                  <EditSAMLConnectionAlertDialog
+                    samlConnection={samlConnection}
+                  />
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-4 gap-y-2 items-center">
@@ -199,5 +236,132 @@ function ListLoginFlowsTabContent() {
         </Table>
       </CardContent>
     </Card>
+  );
+}
+
+const FormSchema = z.object({
+  idpEntityId: z.string().min(1, {
+    message: "IDP Entity ID must be non-empty.",
+  }),
+  idpRedirectUrl: z.string().url({
+    message: "IDP Redirect URL must be a valid URL.",
+  }),
+  idpCertificate: z.string().startsWith("-----BEGIN CERTIFICATE-----", {
+    message: "IDP Certificate must be a PEM-encoded X.509 certificate.",
+  }),
+});
+
+function EditSAMLConnectionAlertDialog({
+  samlConnection,
+}: {
+  samlConnection: SAMLConnection;
+}) {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      idpEntityId: samlConnection.idpEntityId,
+      idpRedirectUrl: samlConnection.idpRedirectUrl,
+      idpCertificate: samlConnection.idpCertificate,
+    },
+  });
+
+  const [open, setOpen] = useState(false);
+  const updateSAMLConnectionMutation = useMutation(updateSAMLConnection);
+  const queryClient = useQueryClient();
+
+  const handleSubmit = useCallback(
+    async (data: z.infer<typeof FormSchema>, e: any) => {
+      e.preventDefault();
+      await updateSAMLConnectionMutation.mutateAsync({
+        samlConnection: {
+          id: samlConnection.id,
+          idpEntityId: data.idpEntityId,
+          idpRedirectUrl: data.idpRedirectUrl,
+          idpCertificate: data.idpCertificate,
+        },
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getSAMLConnection, {
+          id: samlConnection.id,
+        }),
+      });
+
+      setOpen(false);
+    },
+    [samlConnection.id, updateSAMLConnectionMutation, queryClient, setOpen],
+  );
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Edit</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="w-full space-y-6"
+          >
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Edit identity provider configuration
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            <FormField
+              control={form.control}
+              name="idpEntityId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>IDP Entity ID</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>IDP Entity ID.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="idpRedirectUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>IDP Redirect URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>IDP Redirect URL.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="idpCertificate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>IDP Certificate</FormLabel>
+                  <FormControl>
+                    <Textarea className="min-h-[200px]" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    IDP Certificate, as a PEM-encoded X.509 certificate. These
+                    start with '-----BEGIN CERTIFICATE-----' and end with
+                    '-----END CERTIFICATE-----'.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit">Save</Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
