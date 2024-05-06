@@ -185,7 +185,7 @@ function EditEnvironmentAlertDialog({
 
       setOpen(false);
     },
-    [setOpen, environment, updateEnvironmentMutation],
+    [setOpen, environment, updateEnvironmentMutation, queryClient],
   );
 
   return (
