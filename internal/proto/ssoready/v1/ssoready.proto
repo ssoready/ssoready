@@ -4,6 +4,7 @@ package ssoready.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 
 service SSOReadyService {
@@ -26,6 +27,7 @@ service SSOReadyService {
 
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
   rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
+  rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (Environment);
 
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
   rpc GetOrganization(GetOrganizationRequest) returns (Organization);
@@ -141,6 +143,10 @@ message ListEnvironmentsResponse {
 
 message GetEnvironmentRequest {
   string id = 1;
+}
+
+message UpdateEnvironmentRequest {
+  Environment environment = 1;
 }
 
 message ListOrganizationsRequest {

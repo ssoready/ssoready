@@ -157,6 +157,13 @@ from environments
 where app_organization_id = $1
   and id = $2;
 
+-- name: UpdateEnvironment :one
+update environments
+set display_name = $1,
+    redirect_url = $2
+where id = $3
+returning *;
+
 -- name: ListOrganizations :many
 select *
 from organizations

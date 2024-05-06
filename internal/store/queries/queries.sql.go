@@ -774,6 +774,33 @@ func (q *Queries) ListSAMLFlows(ctx context.Context, arg ListSAMLFlowsParams) ([
 	return items, nil
 }
 
+const updateEnvironment = `-- name: UpdateEnvironment :one
+update environments
+set display_name = $1,
+    redirect_url = $2
+where id = $3
+returning id, redirect_url, app_organization_id, display_name, auth_url
+`
+
+type UpdateEnvironmentParams struct {
+	DisplayName *string
+	RedirectUrl *string
+	ID          uuid.UUID
+}
+
+func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentParams) (Environment, error) {
+	row := q.db.QueryRow(ctx, updateEnvironment, arg.DisplayName, arg.RedirectUrl, arg.ID)
+	var i Environment
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.AuthUrl,
+	)
+	return i, err
+}
+
 const updateSAMLConnection = `-- name: UpdateSAMLConnection :one
 update saml_connections
 set idp_entity_id        = $1,

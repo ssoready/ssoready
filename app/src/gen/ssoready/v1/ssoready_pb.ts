@@ -809,6 +809,43 @@ export class GetEnvironmentRequest extends Message<GetEnvironmentRequest> {
 }
 
 /**
+ * @generated from message ssoready.v1.UpdateEnvironmentRequest
+ */
+export class UpdateEnvironmentRequest extends Message<UpdateEnvironmentRequest> {
+  /**
+   * @generated from field: ssoready.v1.Environment environment = 1;
+   */
+  environment?: Environment;
+
+  constructor(data?: PartialMessage<UpdateEnvironmentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateEnvironmentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment", kind: "message", T: Environment },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEnvironmentRequest {
+    return new UpdateEnvironmentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateEnvironmentRequest {
+    return new UpdateEnvironmentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEnvironmentRequest {
+    return new UpdateEnvironmentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateEnvironmentRequest | PlainMessage<UpdateEnvironmentRequest> | undefined, b: UpdateEnvironmentRequest | PlainMessage<UpdateEnvironmentRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateEnvironmentRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListOrganizationsRequest
  */
 export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> {
