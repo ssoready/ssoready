@@ -31,6 +31,7 @@ service SSOReadyService {
 
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
   rpc GetOrganization(GetOrganizationRequest) returns (Organization);
+  rpc CreateOrganization(CreateOrganizationRequest) returns (Organization);
 
   rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
   rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (SAMLConnection);
@@ -161,6 +162,10 @@ message ListOrganizationsResponse {
 
 message GetOrganizationRequest {
   string id = 1;
+}
+
+message CreateOrganizationRequest {
+  Organization organization = 1;
 }
 
 message ListSAMLConnectionsRequest {

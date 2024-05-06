@@ -172,6 +172,44 @@ func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (A
 	return i, err
 }
 
+const createOrganization = `-- name: CreateOrganization :one
+insert into organizations (id, environment_id, external_id)
+values ($1, $2, $3)
+returning id, environment_id, external_id
+`
+
+type CreateOrganizationParams struct {
+	ID            uuid.UUID
+	EnvironmentID uuid.UUID
+	ExternalID    *string
+}
+
+func (q *Queries) CreateOrganization(ctx context.Context, arg CreateOrganizationParams) (Organization, error) {
+	row := q.db.QueryRow(ctx, createOrganization, arg.ID, arg.EnvironmentID, arg.ExternalID)
+	var i Organization
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	return i, err
+}
+
+const createOrganizationDomain = `-- name: CreateOrganizationDomain :one
+insert into organization_domains (id, organization_id, domain)
+values ($1, $2, $3)
+returning id, organization_id, domain
+`
+
+type CreateOrganizationDomainParams struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+	Domain         string
+}
+
+func (q *Queries) CreateOrganizationDomain(ctx context.Context, arg CreateOrganizationDomainParams) (OrganizationDomain, error) {
+	row := q.db.QueryRow(ctx, createOrganizationDomain, arg.ID, arg.OrganizationID, arg.Domain)
+	var i OrganizationDomain
+	err := row.Scan(&i.ID, &i.OrganizationID, &i.Domain)
+	return i, err
+}
+
 const createSAMLConnection = `-- name: CreateSAMLConnection :one
 insert into saml_connections (id, organization_id, sp_entity_id)
 values ($1, $2, $3)

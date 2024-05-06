@@ -6,6 +6,7 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  createOrganization,
   getEnvironment,
   listOrganizations,
   updateEnvironment,
@@ -54,6 +55,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
+import { InputTags } from "@/components/InputTags";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
@@ -102,10 +105,19 @@ export function ViewEnvironmentPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Organizations</CardTitle>
-          <CardDescription>
-            Organizations within this environment.
-          </CardDescription>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col space-y-1.5">
+              <CardTitle>Organizations</CardTitle>
+
+              <CardDescription>
+                Organizations within this environment.
+              </CardDescription>
+            </div>
+
+            {environment && (
+              <CreateOrganizationAlertDialog environment={environment} />
+            )}
+          </div>
         </CardHeader>
 
         <CardContent>
@@ -129,9 +141,11 @@ export function ViewEnvironmentPage() {
                   </TableCell>
                   <TableCell>{org.externalId}</TableCell>
                   <TableCell>
-                    {org.domains.map((domain, i) => (
-                      <Badge key={i}>{domain}</Badge>
-                    ))}
+                    <div className="flex gap-1">
+                      {org.domains.map((domain, i) => (
+                        <Badge key={i}>{domain}</Badge>
+                      ))}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -231,6 +245,118 @@ function EditEnvironmentAlertDialog({
                       After a SAML login, your users get redirected to this
                       address. You usually want to point this at an
                       SSOReady-specific page on your web application.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit">Save</Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+const OrgFormSchema = z.object({
+  externalId: z.string(),
+  domains: z.array(z.string()),
+});
+
+function CreateOrganizationAlertDialog({
+  environment,
+}: {
+  environment: Environment;
+}) {
+  const form = useForm<z.infer<typeof OrgFormSchema>>({
+    resolver: zodResolver(OrgFormSchema),
+    defaultValues: {
+      externalId: "",
+      domains: [],
+    },
+  });
+
+  const [open, setOpen] = useState(false);
+  const createOrganizationMutation = useMutation(createOrganization);
+  const queryClient = useQueryClient();
+  const handleSubmit = useCallback(
+    async (values: z.infer<typeof OrgFormSchema>, e: any) => {
+      e.preventDefault();
+      await createOrganizationMutation.mutateAsync({
+        organization: {
+          environmentId: environment.id,
+          externalId: values.externalId,
+          domains: values.domains,
+        },
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(listOrganizations, {
+          environmentId: environment.id,
+        }),
+      });
+
+      setOpen(false);
+    },
+    [setOpen, environment, createOrganizationMutation, queryClient],
+  );
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">
+          <Plus className="mr-2 h-4 w-4" />
+          Create organization
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Edit environment</AlertDialogTitle>
+            </AlertDialogHeader>
+
+            <div className="my-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="externalId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>External ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. 42, 507f191e810c19729de860ea, ..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      An optional unique identifier for this organization. This
+                      is returned in the SAML Redeem endpoint. Use this to more
+                      easily tie an SSOReady organization to its counterpart in
+                      your application.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="domains"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Domains</FormLabel>
+                    <FormControl>
+                      <InputTags {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      SSOReady will only allow SAML logins from users whose
+                      email are in this list of domains.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -28,6 +28,7 @@ const (
 	SSOReadyService_UpdateEnvironment_FullMethodName    = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
 	SSOReadyService_ListOrganizations_FullMethodName    = "/ssoready.v1.SSOReadyService/ListOrganizations"
 	SSOReadyService_GetOrganization_FullMethodName      = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_CreateOrganization_FullMethodName   = "/ssoready.v1.SSOReadyService/CreateOrganization"
 	SSOReadyService_ListSAMLConnections_FullMethodName  = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
 	SSOReadyService_GetSAMLConnection_FullMethodName    = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
 	SSOReadyService_CreateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
@@ -49,6 +50,7 @@ type SSOReadyServiceClient interface {
 	UpdateEnvironment(ctx context.Context, in *UpdateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error)
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
+	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
 	ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error)
 	GetSAMLConnection(ctx context.Context, in *GetSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
@@ -146,6 +148,15 @@ func (c *sSOReadyServiceClient) GetOrganization(ctx context.Context, in *GetOrga
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*Organization, error) {
+	out := new(Organization)
+	err := c.cc.Invoke(ctx, SSOReadyService_CreateOrganization_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error) {
 	out := new(ListSAMLConnectionsResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_ListSAMLConnections_FullMethodName, in, out, opts...)
@@ -213,6 +224,7 @@ type SSOReadyServiceServer interface {
 	UpdateEnvironment(context.Context, *UpdateEnvironmentRequest) (*Environment, error)
 	ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error)
 	GetOrganization(context.Context, *GetOrganizationRequest) (*Organization, error)
+	CreateOrganization(context.Context, *CreateOrganizationRequest) (*Organization, error)
 	ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error)
 	GetSAMLConnection(context.Context, *GetSAMLConnectionRequest) (*SAMLConnection, error)
 	CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*SAMLConnection, error)
@@ -252,6 +264,9 @@ func (UnimplementedSSOReadyServiceServer) ListOrganizations(context.Context, *Li
 }
 func (UnimplementedSSOReadyServiceServer) GetOrganization(context.Context, *GetOrganizationRequest) (*Organization, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrganization not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) CreateOrganization(context.Context, *CreateOrganizationRequest) (*Organization, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrganization not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSAMLConnections not implemented")
@@ -446,6 +461,24 @@ func _SSOReadyService_GetOrganization_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_CreateOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).CreateOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_CreateOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).CreateOrganization(ctx, req.(*CreateOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_ListSAMLConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListSAMLConnectionsRequest)
 	if err := dec(in); err != nil {
@@ -596,6 +629,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrganization",
 			Handler:    _SSOReadyService_GetOrganization_Handler,
+		},
+		{
+			MethodName: "CreateOrganization",
+			Handler:    _SSOReadyService_CreateOrganization_Handler,
 		},
 		{
 			MethodName: "ListSAMLConnections",

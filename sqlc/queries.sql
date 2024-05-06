@@ -184,6 +184,16 @@ select *
 from organization_domains
 where organization_id = any ($1::uuid[]);
 
+-- name: CreateOrganization :one
+insert into organizations (id, environment_id, external_id)
+values ($1, $2, $3)
+returning *;
+
+-- name: CreateOrganizationDomain :one
+insert into organization_domains (id, organization_id, domain)
+values ($1, $2, $3)
+returning *;
+
 -- name: ListSAMLConnections :many
 select *
 from saml_connections

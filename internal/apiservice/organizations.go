@@ -25,3 +25,12 @@ func (s *Service) GetOrganization(ctx context.Context, req *connect.Request[ssor
 
 	return connect.NewResponse(res), nil
 }
+
+func (s *Service) CreateOrganization(ctx context.Context, req *connect.Request[ssoreadyv1.CreateOrganizationRequest]) (*connect.Response[ssoreadyv1.Organization], error) {
+	res, err := s.Store.CreateOrganization(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}

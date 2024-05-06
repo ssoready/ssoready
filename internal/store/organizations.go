@@ -58,20 +58,7 @@ func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrgan
 
 	var orgs []*ssoreadyv1.Organization
 	for _, qOrg := range qOrgs {
-		var domains []string
-		for _, qOrgDomain := range qOrgDomains {
-			if qOrgDomain.OrganizationID == qOrg.ID {
-				domains = append(domains, qOrgDomain.Domain)
-			}
-		}
-		sort.Strings(domains)
-
-		orgs = append(orgs, &ssoreadyv1.Organization{
-			Id:            idformat.Organization.Format(qOrg.ID),
-			EnvironmentId: idformat.Environment.Format(qOrg.EnvironmentID),
-			ExternalId:    derefOrEmpty(qOrg.ExternalID),
-			Domains:       domains,
-		})
+		orgs = append(orgs, parseOrganization(qOrg, qOrgDomains))
 	}
 
 	var nextPageToken string
@@ -111,9 +98,69 @@ func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganiza
 		return nil, err
 	}
 
+	return parseOrganization(qOrg, qOrgDomains), nil
+}
+
+func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOrganizationRequest) (*ssoreadyv1.Organization, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	envID, err := idformat.Environment.Parse(req.Organization.EnvironmentId)
+	if err != nil {
+		return nil, err
+	}
+
+	// idor check
+	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                envID,
+	}); err != nil {
+		return nil, err
+	}
+
+	var externalID *string
+	if req.Organization.ExternalId != "" {
+		externalID = &req.Organization.ExternalId
+	}
+
+	qOrg, err := q.CreateOrganization(ctx, queries.CreateOrganizationParams{
+		ID:            uuid.New(),
+		EnvironmentID: envID,
+		ExternalID:    externalID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var qOrgDomains []queries.OrganizationDomain
+	for _, d := range req.Organization.Domains {
+		qOrgDomain, err := q.CreateOrganizationDomain(ctx, queries.CreateOrganizationDomainParams{
+			ID:             uuid.New(),
+			OrganizationID: qOrg.ID,
+			Domain:         d,
+		})
+		if err != nil {
+			return nil, err
+		}
+		qOrgDomains = append(qOrgDomains, qOrgDomain)
+	}
+
+	if err := commit(); err != nil {
+		return nil, err
+	}
+
+	return parseOrganization(qOrg, qOrgDomains), nil
+}
+
+func parseOrganization(qOrg queries.Organization, qOrgDomains []queries.OrganizationDomain) *ssoreadyv1.Organization {
 	var domains []string
 	for _, qOrgDomain := range qOrgDomains {
-		domains = append(domains, qOrgDomain.Domain)
+		if qOrgDomain.OrganizationID == qOrg.ID {
+			domains = append(domains, qOrgDomain.Domain)
+		}
 	}
 	sort.Strings(domains)
 
@@ -122,5 +169,5 @@ func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganiza
 		EnvironmentId: idformat.Environment.Format(qOrg.EnvironmentID),
 		ExternalId:    derefOrEmpty(qOrg.ExternalID),
 		Domains:       domains,
-	}, nil
+	}
 }
