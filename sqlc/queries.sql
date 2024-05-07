@@ -166,8 +166,9 @@ returning *;
 -- name: UpdateEnvironment :one
 update environments
 set display_name = $1,
-    redirect_url = $2
-where id = $3
+    redirect_url = $2,
+    auth_url = $3
+where id = $4
 returning *;
 
 -- name: ListOrganizations :many

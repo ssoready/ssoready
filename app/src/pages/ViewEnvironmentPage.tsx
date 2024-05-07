@@ -94,11 +94,15 @@ export function ViewEnvironmentPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4">
+          <div className="grid grid-cols-4 gap-y-2">
             <div className="text-sm col-span-1 text-muted-foreground">
               Redirect URL
             </div>
             <div className="text-sm col-span-3">{environment?.redirectUrl}</div>
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Auth URL
+            </div>
+            <div className="text-sm col-span-3">{environment?.authUrl}</div>
           </div>
         </CardContent>
       </Card>
@@ -164,6 +168,9 @@ const FormSchema = z.object({
   redirectUrl: z.string().url({
     message: "Redirect URL must be a valid URL.",
   }),
+  authUrl: z.string().url({
+    message: "Auth URL must be a valid URL.",
+  }),
 });
 
 function EditEnvironmentAlertDialog({
@@ -176,6 +183,7 @@ function EditEnvironmentAlertDialog({
     defaultValues: {
       displayName: environment.displayName,
       redirectUrl: environment.redirectUrl,
+      authUrl: environment.authUrl,
     },
   });
 
@@ -190,6 +198,7 @@ function EditEnvironmentAlertDialog({
           id: environment.id,
           displayName: values.displayName,
           redirectUrl: values.redirectUrl,
+          authUrl: values.authUrl,
         },
       });
 
@@ -245,6 +254,26 @@ function EditEnvironmentAlertDialog({
                       After a SAML login, your users get redirected to this
                       address. You usually want to point this at an
                       SSOReady-specific page on your web application.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="authUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Auth URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      The base of the URL that your customer's IT admins put
+                      into their Identity Provider. This should either be
+                      https://auth.ssoready.com or a custom domain that CNAMEs
+                      there.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

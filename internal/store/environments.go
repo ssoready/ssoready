@@ -109,6 +109,7 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 		ID:          id,
 		DisplayName: &req.Environment.DisplayName,
 		RedirectUrl: &req.Environment.RedirectUrl,
+		AuthUrl:     &req.Environment.AuthUrl,
 	})
 	if err != nil {
 		return nil, err
