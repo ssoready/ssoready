@@ -45,8 +45,8 @@ returning *;
 
 -- name: UpdateSAMLFlowRedeem :one
 update saml_flows
-set update_time = $1,
-    redeem_time = $2,
+set update_time     = $1,
+    redeem_time     = $2,
     redeem_response = $3
 where id = $4
 returning *;
@@ -223,8 +223,8 @@ where environments.app_organization_id = $1
   and saml_connections.id = $2;
 
 -- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id)
-values ($1, $2, $3)
+insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate)
+values ($1, $2, $3, $4, $5, $6)
 returning *;
 
 -- name: UpdateSAMLConnection :one

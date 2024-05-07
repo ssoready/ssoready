@@ -212,19 +212,29 @@ func (q *Queries) CreateOrganizationDomain(ctx context.Context, arg CreateOrgani
 }
 
 const createSAMLConnection = `-- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id)
-values ($1, $2, $3)
+insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate)
+values ($1, $2, $3, $4, $5, $6)
 returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
 `
 
 type CreateSAMLConnectionParams struct {
-	ID             uuid.UUID
-	OrganizationID uuid.UUID
-	SpEntityID     *string
+	ID                 uuid.UUID
+	OrganizationID     uuid.UUID
+	SpEntityID         *string
+	IdpEntityID        *string
+	IdpRedirectUrl     *string
+	IdpX509Certificate []byte
 }
 
 func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnectionParams) (SamlConnection, error) {
-	row := q.db.QueryRow(ctx, createSAMLConnection, arg.ID, arg.OrganizationID, arg.SpEntityID)
+	row := q.db.QueryRow(ctx, createSAMLConnection,
+		arg.ID,
+		arg.OrganizationID,
+		arg.SpEntityID,
+		arg.IdpEntityID,
+		arg.IdpRedirectUrl,
+		arg.IdpX509Certificate,
+	)
 	var i SamlConnection
 	err := row.Scan(
 		&i.ID,

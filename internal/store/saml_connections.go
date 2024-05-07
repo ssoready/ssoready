@@ -122,12 +122,27 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 		authURL = *env.AuthUrl
 	}
 
+	var idpCert []byte
+	if req.SamlConnection.IdpCertificate != "" {
+		blk, _ := pem.Decode([]byte(req.SamlConnection.IdpCertificate))
+		if blk == nil || blk.Type != "CERTIFICATE" {
+			return nil, fmt.Errorf("idp certificate must be a PEM-encoded CERTIFICATE block")
+		}
+		if _, err := x509.ParseCertificate(blk.Bytes); err != nil {
+			return nil, fmt.Errorf("parse idp certificate: %w", err)
+		}
+		idpCert = blk.Bytes
+	}
+
 	id := uuid.New()
 	entityID := fmt.Sprintf("%s/saml/%s", authURL, idformat.SAMLConnection.Format(id))
 	qSAMLConn, err := q.CreateSAMLConnection(ctx, queries.CreateSAMLConnectionParams{
-		ID:             id,
-		OrganizationID: orgID,
-		SpEntityID:     &entityID,
+		ID:                 id,
+		OrganizationID:     orgID,
+		SpEntityID:         &entityID,
+		IdpEntityID:        &req.SamlConnection.IdpEntityId,
+		IdpRedirectUrl:     &req.SamlConnection.IdpRedirectUrl,
+		IdpX509Certificate: idpCert,
 	})
 	if err != nil {
 		return nil, err
