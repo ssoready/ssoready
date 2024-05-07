@@ -87,8 +87,9 @@ from environments
 where id = $1;
 
 -- name: GetAPIKeyBySecretValue :one
-select *
+select api_keys.*, environments.app_organization_id
 from api_keys
+         join environments on api_keys.environment_id = environments.id
 where secret_value = $1;
 
 -- name: GetSAMLAccessCodeData :one
@@ -167,9 +168,34 @@ returning *;
 update environments
 set display_name = $1,
     redirect_url = $2,
-    auth_url = $3
+    auth_url     = $3
 where id = $4
 returning *;
+
+-- name: ListAPIKeys :many
+select *
+from api_keys
+where environment_id = $1
+  and id > $2
+order by id
+limit $3;
+
+-- name: GetAPIKey :one
+select api_keys.*
+from api_keys
+         join environments on api_keys.environment_id = environments.id
+where environments.app_organization_id = $1
+  and api_keys.id = $2;
+
+-- name: CreateAPIKey :one
+insert into api_keys (id, secret_value, environment_id)
+values ($1, $2, $3)
+returning *;
+
+-- name: DeleteAPIKey :exec
+delete
+from api_keys
+where id = $1;
 
 -- name: ListOrganizations :many
 select *

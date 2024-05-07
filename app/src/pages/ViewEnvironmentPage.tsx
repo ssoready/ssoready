@@ -6,8 +6,10 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  createAPIKey,
   createOrganization,
   getEnvironment,
+  listAPIKeys,
   listOrganizations,
   updateEnvironment,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -55,20 +57,68 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { CircleAlert, Plus } from "lucide-react";
 import { InputTags } from "@/components/InputTags";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
   const { data: environment } = useQuery(getEnvironment, {
     id: environmentId,
   });
+  const { data: listAPIKeysRes } = useQuery(listAPIKeys, {
+    environmentId,
+  });
   const { data: listOrgsRes } = useQuery(listOrganizations, {
     environmentId,
   });
 
+  const [apiKeySecret, setApiKeySecret] = useState("");
+  const [apiKeyAlertOpen, setApiKeyAlertOpen] = useState(false);
+  const createAPIKeyMutation = useMutation(createAPIKey);
+  const handleCreateAPIKey = useCallback(async () => {
+    const apiKey = await createAPIKeyMutation.mutateAsync({
+      apiKey: {
+        environmentId,
+      },
+    });
+
+    setApiKeySecret(apiKey.secretToken);
+    setApiKeyAlertOpen(true);
+  }, [createAPIKeyMutation, setApiKeySecret, setApiKeyAlertOpen]);
+
   return (
     <div className="grid gap-8">
+      <AlertDialog open={apiKeyAlertOpen} onOpenChange={setApiKeyAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>New API Key</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your new API key has been created.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <Alert>
+            <CircleAlert className="h-4 w-4" />
+            <AlertTitle>Copy this secret</AlertTitle>
+            <AlertDescription>
+              Store this secret in a password or secrets manager. You can't
+              retrieve it later.
+            </AlertDescription>
+          </Alert>
+
+          <div className="text-sm font-medium leading-none">API Key Secret</div>
+
+          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border">
+            {apiKeySecret}
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -104,6 +154,45 @@ export function ViewEnvironmentPage() {
             </div>
             <div className="text-sm col-span-3">{environment?.authUrl}</div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col space-y-1.5">
+              <CardTitle>API Keys</CardTitle>
+
+              <CardDescription>API keys for this environment.</CardDescription>
+            </div>
+
+            <Button variant="outline" onClick={handleCreateAPIKey}>
+              Create API Key
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>API Key ID</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {listAPIKeysRes?.apiKeys?.map((apiKey) => (
+                <TableRow key={apiKey.id}>
+                  <TableCell>
+                    <Link
+                      to={`/environments/${environmentId}/api-keys/${apiKey?.id}`}
+                    >
+                      {apiKey.id}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 

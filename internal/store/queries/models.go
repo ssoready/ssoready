@@ -11,9 +11,9 @@ import (
 )
 
 type ApiKey struct {
-	ID                uuid.UUID
-	AppOrganizationID uuid.UUID
-	SecretValue       string
+	ID            uuid.UUID
+	SecretValue   string
+	EnvironmentID uuid.UUID
 }
 
 type AppOrganization struct {

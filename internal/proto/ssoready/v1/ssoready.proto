@@ -30,6 +30,11 @@ service SSOReadyService {
   rpc CreateEnvironment(CreateEnvironmentRequest) returns (Environment);
   rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (Environment);
 
+  rpc ListAPIKeys(ListAPIKeysRequest) returns (ListAPIKeysResponse);
+  rpc GetAPIKey(GetAPIKeyRequest) returns (APIKey);
+  rpc CreateAPIKey(CreateAPIKeyRequest) returns (APIKey);
+  rpc DeleteAPIKey(DeleteAPIKeyRequest) returns (google.protobuf.Empty);
+
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
   rpc GetOrganization(GetOrganizationRequest) returns (Organization);
   rpc CreateOrganization(CreateOrganizationRequest) returns (Organization);
@@ -55,6 +60,12 @@ message Environment {
   string redirect_url = 2;
   string display_name = 3;
   string auth_url = 4;
+}
+
+message APIKey {
+  string id = 1;
+  string environment_id = 2;
+  string secret_token = 3;
 }
 
 message Organization {
@@ -156,6 +167,28 @@ message CreateEnvironmentRequest {
 
 message UpdateEnvironmentRequest {
   Environment environment = 1;
+}
+
+message ListAPIKeysRequest {
+  string environment_id = 1;
+  string page_token = 2;
+}
+
+message ListAPIKeysResponse {
+  repeated APIKey api_keys = 1;
+  string next_page_token = 2;
+}
+
+message GetAPIKeyRequest {
+  string id = 1;
+}
+
+message CreateAPIKeyRequest {
+  APIKey api_key = 1;
+}
+
+message DeleteAPIKeyRequest {
+  string id = 1;
 }
 
 message ListOrganizationsRequest {

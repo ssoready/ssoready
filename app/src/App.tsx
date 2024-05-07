@@ -15,6 +15,7 @@ import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 import { EditSAMLConnectionPage } from "@/pages/EditSAMLConnectionPage";
 import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 import { CreateEnvironmentPage } from "@/pages/CreateEnvironmentPage";
+import { ViewAPIKeyPage } from "@/pages/ViewAPIKeyPage";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,10 @@ export function App() {
                 <Route
                   path="/environments/:environmentId"
                   element={<ViewEnvironmentPage />}
+                />
+                <Route
+                  path="/environments/:environmentId/api-keys/:apiKeyId"
+                  element={<ViewAPIKeyPage />}
                 />
                 <Route
                   path="/environments/:environmentId/organizations/:organizationId"

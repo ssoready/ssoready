@@ -9,6 +9,7 @@ import (
 	context "context"
 	errors "errors"
 	v1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -55,6 +56,18 @@ const (
 	// SSOReadyServiceUpdateEnvironmentProcedure is the fully-qualified name of the SSOReadyService's
 	// UpdateEnvironment RPC.
 	SSOReadyServiceUpdateEnvironmentProcedure = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
+	// SSOReadyServiceListAPIKeysProcedure is the fully-qualified name of the SSOReadyService's
+	// ListAPIKeys RPC.
+	SSOReadyServiceListAPIKeysProcedure = "/ssoready.v1.SSOReadyService/ListAPIKeys"
+	// SSOReadyServiceGetAPIKeyProcedure is the fully-qualified name of the SSOReadyService's GetAPIKey
+	// RPC.
+	SSOReadyServiceGetAPIKeyProcedure = "/ssoready.v1.SSOReadyService/GetAPIKey"
+	// SSOReadyServiceCreateAPIKeyProcedure is the fully-qualified name of the SSOReadyService's
+	// CreateAPIKey RPC.
+	SSOReadyServiceCreateAPIKeyProcedure = "/ssoready.v1.SSOReadyService/CreateAPIKey"
+	// SSOReadyServiceDeleteAPIKeyProcedure is the fully-qualified name of the SSOReadyService's
+	// DeleteAPIKey RPC.
+	SSOReadyServiceDeleteAPIKeyProcedure = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
 	// SSOReadyServiceListOrganizationsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListOrganizations RPC.
 	SSOReadyServiceListOrganizationsProcedure = "/ssoready.v1.SSOReadyService/ListOrganizations"
@@ -97,6 +110,10 @@ type SSOReadyServiceClient interface {
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
+	ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error)
+	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
+	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
+	DeleteAPIKey(context.Context, *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error)
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
@@ -157,6 +174,26 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		updateEnvironment: connect.NewClient[v1.UpdateEnvironmentRequest, v1.Environment](
 			httpClient,
 			baseURL+SSOReadyServiceUpdateEnvironmentProcedure,
+			opts...,
+		),
+		listAPIKeys: connect.NewClient[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListAPIKeysProcedure,
+			opts...,
+		),
+		getAPIKey: connect.NewClient[v1.GetAPIKeyRequest, v1.APIKey](
+			httpClient,
+			baseURL+SSOReadyServiceGetAPIKeyProcedure,
+			opts...,
+		),
+		createAPIKey: connect.NewClient[v1.CreateAPIKeyRequest, v1.APIKey](
+			httpClient,
+			baseURL+SSOReadyServiceCreateAPIKeyProcedure,
+			opts...,
+		),
+		deleteAPIKey: connect.NewClient[v1.DeleteAPIKeyRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceDeleteAPIKeyProcedure,
 			opts...,
 		),
 		listOrganizations: connect.NewClient[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse](
@@ -222,6 +259,10 @@ type sSOReadyServiceClient struct {
 	getEnvironment       *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
 	createEnvironment    *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
 	updateEnvironment    *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
+	listAPIKeys          *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
+	getAPIKey            *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
+	createAPIKey         *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
+	deleteAPIKey         *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
 	listOrganizations    *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
 	getOrganization      *connect.Client[v1.GetOrganizationRequest, v1.Organization]
 	createOrganization   *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
@@ -272,6 +313,26 @@ func (c *sSOReadyServiceClient) CreateEnvironment(ctx context.Context, req *conn
 // UpdateEnvironment calls ssoready.v1.SSOReadyService.UpdateEnvironment.
 func (c *sSOReadyServiceClient) UpdateEnvironment(ctx context.Context, req *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
 	return c.updateEnvironment.CallUnary(ctx, req)
+}
+
+// ListAPIKeys calls ssoready.v1.SSOReadyService.ListAPIKeys.
+func (c *sSOReadyServiceClient) ListAPIKeys(ctx context.Context, req *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error) {
+	return c.listAPIKeys.CallUnary(ctx, req)
+}
+
+// GetAPIKey calls ssoready.v1.SSOReadyService.GetAPIKey.
+func (c *sSOReadyServiceClient) GetAPIKey(ctx context.Context, req *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error) {
+	return c.getAPIKey.CallUnary(ctx, req)
+}
+
+// CreateAPIKey calls ssoready.v1.SSOReadyService.CreateAPIKey.
+func (c *sSOReadyServiceClient) CreateAPIKey(ctx context.Context, req *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error) {
+	return c.createAPIKey.CallUnary(ctx, req)
+}
+
+// DeleteAPIKey calls ssoready.v1.SSOReadyService.DeleteAPIKey.
+func (c *sSOReadyServiceClient) DeleteAPIKey(ctx context.Context, req *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.deleteAPIKey.CallUnary(ctx, req)
 }
 
 // ListOrganizations calls ssoready.v1.SSOReadyService.ListOrganizations.
@@ -334,6 +395,10 @@ type SSOReadyServiceHandler interface {
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
+	ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error)
+	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
+	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
+	DeleteAPIKey(context.Context, *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error)
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
@@ -390,6 +455,26 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceUpdateEnvironmentHandler := connect.NewUnaryHandler(
 		SSOReadyServiceUpdateEnvironmentProcedure,
 		svc.UpdateEnvironment,
+		opts...,
+	)
+	sSOReadyServiceListAPIKeysHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListAPIKeysProcedure,
+		svc.ListAPIKeys,
+		opts...,
+	)
+	sSOReadyServiceGetAPIKeyHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetAPIKeyProcedure,
+		svc.GetAPIKey,
+		opts...,
+	)
+	sSOReadyServiceCreateAPIKeyHandler := connect.NewUnaryHandler(
+		SSOReadyServiceCreateAPIKeyProcedure,
+		svc.CreateAPIKey,
+		opts...,
+	)
+	sSOReadyServiceDeleteAPIKeyHandler := connect.NewUnaryHandler(
+		SSOReadyServiceDeleteAPIKeyProcedure,
+		svc.DeleteAPIKey,
 		opts...,
 	)
 	sSOReadyServiceListOrganizationsHandler := connect.NewUnaryHandler(
@@ -460,6 +545,14 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceCreateEnvironmentHandler.ServeHTTP(w, r)
 		case SSOReadyServiceUpdateEnvironmentProcedure:
 			sSOReadyServiceUpdateEnvironmentHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListAPIKeysProcedure:
+			sSOReadyServiceListAPIKeysHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetAPIKeyProcedure:
+			sSOReadyServiceGetAPIKeyHandler.ServeHTTP(w, r)
+		case SSOReadyServiceCreateAPIKeyProcedure:
+			sSOReadyServiceCreateAPIKeyHandler.ServeHTTP(w, r)
+		case SSOReadyServiceDeleteAPIKeyProcedure:
+			sSOReadyServiceDeleteAPIKeyHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListOrganizationsProcedure:
 			sSOReadyServiceListOrganizationsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetOrganizationProcedure:
@@ -519,6 +612,22 @@ func (UnimplementedSSOReadyServiceHandler) CreateEnvironment(context.Context, *c
 
 func (UnimplementedSSOReadyServiceHandler) UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.UpdateEnvironment is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListAPIKeys is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetAPIKey is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateAPIKey is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) DeleteAPIKey(context.Context, *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.DeleteAPIKey is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error) {

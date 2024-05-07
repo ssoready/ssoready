@@ -26,8 +26,8 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.api_keys (
     id uuid NOT NULL,
-    app_organization_id uuid NOT NULL,
-    secret_value character varying NOT NULL
+    secret_value character varying NOT NULL,
+    environment_id uuid NOT NULL
 );
 
 
@@ -292,11 +292,11 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: api_keys api_keys_app_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: api_keys api_keys_environment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.api_keys
-    ADD CONSTRAINT api_keys_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
+    ADD CONSTRAINT api_keys_environment_id_fkey FOREIGN KEY (environment_id) REFERENCES public.environments(id);
 
 
 --

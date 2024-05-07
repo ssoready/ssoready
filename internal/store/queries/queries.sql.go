@@ -92,6 +92,25 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 	return i, err
 }
 
+const createAPIKey = `-- name: CreateAPIKey :one
+insert into api_keys (id, secret_value, environment_id)
+values ($1, $2, $3)
+returning id, secret_value, environment_id
+`
+
+type CreateAPIKeyParams struct {
+	ID            uuid.UUID
+	SecretValue   string
+	EnvironmentID uuid.UUID
+}
+
+func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (ApiKey, error) {
+	row := q.db.QueryRow(ctx, createAPIKey, arg.ID, arg.SecretValue, arg.EnvironmentID)
+	var i ApiKey
+	err := row.Scan(&i.ID, &i.SecretValue, &i.EnvironmentID)
+	return i, err
+}
+
 const createAppOrganization = `-- name: CreateAppOrganization :one
 insert into app_organizations (id, google_hosted_domain)
 values ($1, $2)
@@ -335,6 +354,17 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 	return i, err
 }
 
+const deleteAPIKey = `-- name: DeleteAPIKey :exec
+delete
+from api_keys
+where id = $1
+`
+
+func (q *Queries) DeleteAPIKey(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteAPIKey, id)
+	return err
+}
+
 const deleteOrganizationDomains = `-- name: DeleteOrganizationDomains :exec
 delete
 from organization_domains
@@ -346,16 +376,49 @@ func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID 
 	return err
 }
 
-const getAPIKeyBySecretValue = `-- name: GetAPIKeyBySecretValue :one
-select id, app_organization_id, secret_value
+const getAPIKey = `-- name: GetAPIKey :one
+select api_keys.id, api_keys.secret_value, api_keys.environment_id
 from api_keys
+         join environments on api_keys.environment_id = environments.id
+where environments.app_organization_id = $1
+  and api_keys.id = $2
+`
+
+type GetAPIKeyParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetAPIKey(ctx context.Context, arg GetAPIKeyParams) (ApiKey, error) {
+	row := q.db.QueryRow(ctx, getAPIKey, arg.AppOrganizationID, arg.ID)
+	var i ApiKey
+	err := row.Scan(&i.ID, &i.SecretValue, &i.EnvironmentID)
+	return i, err
+}
+
+const getAPIKeyBySecretValue = `-- name: GetAPIKeyBySecretValue :one
+select api_keys.id, api_keys.secret_value, api_keys.environment_id, environments.app_organization_id
+from api_keys
+         join environments on api_keys.environment_id = environments.id
 where secret_value = $1
 `
 
-func (q *Queries) GetAPIKeyBySecretValue(ctx context.Context, secretValue string) (ApiKey, error) {
+type GetAPIKeyBySecretValueRow struct {
+	ID                uuid.UUID
+	SecretValue       string
+	EnvironmentID     uuid.UUID
+	AppOrganizationID uuid.UUID
+}
+
+func (q *Queries) GetAPIKeyBySecretValue(ctx context.Context, secretValue string) (GetAPIKeyBySecretValueRow, error) {
 	row := q.db.QueryRow(ctx, getAPIKeyBySecretValue, secretValue)
-	var i ApiKey
-	err := row.Scan(&i.ID, &i.AppOrganizationID, &i.SecretValue)
+	var i GetAPIKeyBySecretValueRow
+	err := row.Scan(
+		&i.ID,
+		&i.SecretValue,
+		&i.EnvironmentID,
+		&i.AppOrganizationID,
+	)
 	return i, err
 }
 
@@ -672,6 +735,41 @@ func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirec
 	return auth_url, err
 }
 
+const listAPIKeys = `-- name: ListAPIKeys :many
+select id, secret_value, environment_id
+from api_keys
+where environment_id = $1
+  and id > $2
+order by id
+limit $3
+`
+
+type ListAPIKeysParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+	Limit         int32
+}
+
+func (q *Queries) ListAPIKeys(ctx context.Context, arg ListAPIKeysParams) ([]ApiKey, error) {
+	rows, err := q.db.Query(ctx, listAPIKeys, arg.EnvironmentID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ApiKey
+	for rows.Next() {
+		var i ApiKey
+		if err := rows.Scan(&i.ID, &i.SecretValue, &i.EnvironmentID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listEnvironments = `-- name: ListEnvironments :many
 select id, redirect_url, app_organization_id, display_name, auth_url
 from environments
@@ -874,7 +972,7 @@ const updateEnvironment = `-- name: UpdateEnvironment :one
 update environments
 set display_name = $1,
     redirect_url = $2,
-    auth_url = $3
+    auth_url     = $3
 where id = $4
 returning id, redirect_url, app_organization_id, display_name, auth_url
 `

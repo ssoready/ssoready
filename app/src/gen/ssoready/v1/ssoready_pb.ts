@@ -111,6 +111,55 @@ export class Environment extends Message<Environment> {
 }
 
 /**
+ * @generated from message ssoready.v1.APIKey
+ */
+export class APIKey extends Message<APIKey> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string environment_id = 2;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string secret_token = 3;
+   */
+  secretToken = "";
+
+  constructor(data?: PartialMessage<APIKey>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.APIKey";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): APIKey {
+    return new APIKey().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): APIKey {
+    return new APIKey().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): APIKey {
+    return new APIKey().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: APIKey | PlainMessage<APIKey> | undefined, b: APIKey | PlainMessage<APIKey> | undefined): boolean {
+    return proto3.util.equals(APIKey, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.Organization
  */
 export class Organization extends Message<Organization> {
@@ -891,6 +940,203 @@ export class UpdateEnvironmentRequest extends Message<UpdateEnvironmentRequest> 
 
   static equals(a: UpdateEnvironmentRequest | PlainMessage<UpdateEnvironmentRequest> | undefined, b: UpdateEnvironmentRequest | PlainMessage<UpdateEnvironmentRequest> | undefined): boolean {
     return proto3.util.equals(UpdateEnvironmentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListAPIKeysRequest
+ */
+export class ListAPIKeysRequest extends Message<ListAPIKeysRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListAPIKeysRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListAPIKeysRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAPIKeysRequest {
+    return new ListAPIKeysRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAPIKeysRequest {
+    return new ListAPIKeysRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAPIKeysRequest {
+    return new ListAPIKeysRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListAPIKeysRequest | PlainMessage<ListAPIKeysRequest> | undefined, b: ListAPIKeysRequest | PlainMessage<ListAPIKeysRequest> | undefined): boolean {
+    return proto3.util.equals(ListAPIKeysRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListAPIKeysResponse
+ */
+export class ListAPIKeysResponse extends Message<ListAPIKeysResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.APIKey api_keys = 1;
+   */
+  apiKeys: APIKey[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListAPIKeysResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListAPIKeysResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "api_keys", kind: "message", T: APIKey, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAPIKeysResponse {
+    return new ListAPIKeysResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAPIKeysResponse {
+    return new ListAPIKeysResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAPIKeysResponse {
+    return new ListAPIKeysResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListAPIKeysResponse | PlainMessage<ListAPIKeysResponse> | undefined, b: ListAPIKeysResponse | PlainMessage<ListAPIKeysResponse> | undefined): boolean {
+    return proto3.util.equals(ListAPIKeysResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetAPIKeyRequest
+ */
+export class GetAPIKeyRequest extends Message<GetAPIKeyRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetAPIKeyRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetAPIKeyRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAPIKeyRequest {
+    return new GetAPIKeyRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAPIKeyRequest {
+    return new GetAPIKeyRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAPIKeyRequest {
+    return new GetAPIKeyRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetAPIKeyRequest | PlainMessage<GetAPIKeyRequest> | undefined, b: GetAPIKeyRequest | PlainMessage<GetAPIKeyRequest> | undefined): boolean {
+    return proto3.util.equals(GetAPIKeyRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateAPIKeyRequest
+ */
+export class CreateAPIKeyRequest extends Message<CreateAPIKeyRequest> {
+  /**
+   * @generated from field: ssoready.v1.APIKey api_key = 1;
+   */
+  apiKey?: APIKey;
+
+  constructor(data?: PartialMessage<CreateAPIKeyRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateAPIKeyRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "api_key", kind: "message", T: APIKey },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAPIKeyRequest {
+    return new CreateAPIKeyRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateAPIKeyRequest {
+    return new CreateAPIKeyRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateAPIKeyRequest {
+    return new CreateAPIKeyRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateAPIKeyRequest | PlainMessage<CreateAPIKeyRequest> | undefined, b: CreateAPIKeyRequest | PlainMessage<CreateAPIKeyRequest> | undefined): boolean {
+    return proto3.util.equals(CreateAPIKeyRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.DeleteAPIKeyRequest
+ */
+export class DeleteAPIKeyRequest extends Message<DeleteAPIKeyRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<DeleteAPIKeyRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.DeleteAPIKeyRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteAPIKeyRequest {
+    return new DeleteAPIKeyRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteAPIKeyRequest {
+    return new DeleteAPIKeyRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteAPIKeyRequest {
+    return new DeleteAPIKeyRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined, b: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteAPIKeyRequest, a, b);
   }
 }
 

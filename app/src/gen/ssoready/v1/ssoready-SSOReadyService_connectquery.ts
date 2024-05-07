@@ -3,8 +3,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { MethodKind } from "@bufbuild/protobuf";
-import { CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, Environment, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { Empty, MethodKind } from "@bufbuild/protobuf";
+import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
@@ -113,6 +113,62 @@ export const updateEnvironment = {
   kind: MethodKind.Unary,
   I: UpdateEnvironmentRequest,
   O: Environment,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.ListAPIKeys
+ */
+export const listAPIKeys = {
+  localName: "listAPIKeys",
+  name: "ListAPIKeys",
+  kind: MethodKind.Unary,
+  I: ListAPIKeysRequest,
+  O: ListAPIKeysResponse,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.GetAPIKey
+ */
+export const getAPIKey = {
+  localName: "getAPIKey",
+  name: "GetAPIKey",
+  kind: MethodKind.Unary,
+  I: GetAPIKeyRequest,
+  O: APIKey,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.CreateAPIKey
+ */
+export const createAPIKey = {
+  localName: "createAPIKey",
+  name: "CreateAPIKey",
+  kind: MethodKind.Unary,
+  I: CreateAPIKeyRequest,
+  O: APIKey,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.DeleteAPIKey
+ */
+export const deleteAPIKey = {
+  localName: "deleteAPIKey",
+  name: "DeleteAPIKey",
+  kind: MethodKind.Unary,
+  I: DeleteAPIKeyRequest,
+  O: Empty,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }
