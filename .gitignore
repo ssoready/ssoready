@@ -1,2 +1,6 @@
 /node_modules
-/app/.idea
+/app/node_modules
+/app/public/index.css
+/app/public/index.js
+/app/public/index.js.map
+/app/.idea/
