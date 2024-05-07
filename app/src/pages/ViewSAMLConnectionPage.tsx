@@ -225,7 +225,13 @@ function ListLoginFlowsTabContent() {
           <TableBody>
             {listFlowsRes?.samlFlows?.map((flow) => (
               <TableRow key={flow.id}>
-                <TableCell>{flow.id}</TableCell>
+                <TableCell>
+                  <Link
+                    to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows/${flow.id}`}
+                  >
+                    {flow.id}
+                  </Link>
+                </TableCell>
                 <TableCell>
                   {moment(flow.createTime!.toDate()).format()}
                 </TableCell>
