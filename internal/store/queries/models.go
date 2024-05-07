@@ -36,6 +36,13 @@ type AppUser struct {
 	Email             *string
 }
 
+type EmailVerificationChallenge struct {
+	ID          uuid.UUID
+	Email       string
+	ExpireTime  time.Time
+	SecretToken string
+}
+
 type Environment struct {
 	ID                uuid.UUID
 	RedirectUrl       *string

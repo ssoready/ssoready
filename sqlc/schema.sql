@@ -75,6 +75,20 @@ CREATE TABLE public.app_users (
 ALTER TABLE public.app_users OWNER TO postgres;
 
 --
+-- Name: email_verification_challenges; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.email_verification_challenges (
+    id uuid NOT NULL,
+    email character varying NOT NULL,
+    expire_time timestamp with time zone NOT NULL,
+    secret_token character varying NOT NULL
+);
+
+
+ALTER TABLE public.email_verification_challenges OWNER TO postgres;
+
+--
 -- Name: environments; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -225,6 +239,14 @@ ALTER TABLE ONLY public.app_users
 
 ALTER TABLE ONLY public.app_users
     ADD CONSTRAINT app_users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: email_verification_challenges email_verification_challenges_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.email_verification_challenges
+    ADD CONSTRAINT email_verification_challenges_pkey PRIMARY KEY (id);
 
 
 --

@@ -599,6 +599,43 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
 }
 
 /**
+ * @generated from message ssoready.v1.VerifyEmailRequest
+ */
+export class VerifyEmailRequest extends Message<VerifyEmailRequest> {
+  /**
+   * @generated from field: string email = 1;
+   */
+  email = "";
+
+  constructor(data?: PartialMessage<VerifyEmailRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.VerifyEmailRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): VerifyEmailRequest {
+    return new VerifyEmailRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): VerifyEmailRequest {
+    return new VerifyEmailRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): VerifyEmailRequest {
+    return new VerifyEmailRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: VerifyEmailRequest | PlainMessage<VerifyEmailRequest> | undefined, b: VerifyEmailRequest | PlainMessage<VerifyEmailRequest> | undefined): boolean {
+    return proto3.util.equals(VerifyEmailRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.SignInRequest
  */
 export class SignInRequest extends Message<SignInRequest> {
@@ -606,6 +643,11 @@ export class SignInRequest extends Message<SignInRequest> {
    * @generated from field: string google_credential = 1;
    */
   googleCredential = "";
+
+  /**
+   * @generated from field: string email_verify_token = 2;
+   */
+  emailVerifyToken = "";
 
   constructor(data?: PartialMessage<SignInRequest>) {
     super();
@@ -616,6 +658,7 @@ export class SignInRequest extends Message<SignInRequest> {
   static readonly typeName = "ssoready.v1.SignInRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "google_credential", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "email_verify_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignInRequest {

@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	SSOReadyService_GetSAMLRedirectURL_FullMethodName   = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
 	SSOReadyService_RedeemSAMLAccessCode_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_VerifyEmail_FullMethodName          = "/ssoready.v1.SSOReadyService/VerifyEmail"
 	SSOReadyService_SignIn_FullMethodName               = "/ssoready.v1.SSOReadyService/SignIn"
 	SSOReadyService_Whoami_FullMethodName               = "/ssoready.v1.SSOReadyService/Whoami"
 	SSOReadyService_ListEnvironments_FullMethodName     = "/ssoready.v1.SSOReadyService/ListEnvironments"
@@ -50,6 +51,7 @@ const (
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(ctx context.Context, in *GetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
 	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
+	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
@@ -92,6 +94,15 @@ func (c *sSOReadyServiceClient) GetSAMLRedirectURL(ctx context.Context, in *GetS
 func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error) {
 	out := new(RedeemSAMLAccessCodeResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_RedeemSAMLAccessCode_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SSOReadyService_VerifyEmail_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -284,6 +295,7 @@ func (c *sSOReadyServiceClient) GetSAMLFlow(ctx context.Context, in *GetSAMLFlow
 type SSOReadyServiceServer interface {
 	GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
 	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
+	VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
@@ -316,6 +328,9 @@ func (UnimplementedSSOReadyServiceServer) GetSAMLRedirectURL(context.Context, *G
 }
 func (UnimplementedSSOReadyServiceServer) RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RedeemSAMLAccessCode not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
@@ -422,6 +437,24 @@ func _SSOReadyService_RedeemSAMLAccessCode_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).RedeemSAMLAccessCode(ctx, req.(*RedeemSAMLAccessCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).VerifyEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_VerifyEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).VerifyEmail(ctx, req.(*VerifyEmailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -800,6 +833,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RedeemSAMLAccessCode",
 			Handler:    _SSOReadyService_RedeemSAMLAccessCode_Handler,
+		},
+		{
+			MethodName: "VerifyEmail",
+			Handler:    _SSOReadyService_VerifyEmail_Handler,
 		},
 		{
 			MethodName: "SignIn",

@@ -11,11 +11,18 @@ import (
 	"github.com/ssoready/ssoready/internal/store"
 )
 
+var skipRPCs = []string{
+	"/ssoready.v1.SSOReadyService/EmailVerify",
+	"/ssoready.v1.SSOReadyService/SignIn",
+}
+
 func New(s *store.Store) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			if req.Spec().Procedure == "/ssoready.v1.SSOReadyService/SignIn" {
-				return next(ctx, req)
+			for _, rpc := range skipRPCs {
+				if req.Spec().Procedure == rpc {
+					return next(ctx, req)
+				}
 			}
 
 			authorization := req.Header().Get("Authorization")

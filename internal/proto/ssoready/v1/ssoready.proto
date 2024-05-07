@@ -22,6 +22,7 @@ service SSOReadyService {
     };
   };
 
+  rpc VerifyEmail(VerifyEmailRequest) returns (google.protobuf.Empty);
   rpc SignIn(SignInRequest) returns (SignInResponse);
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
 
@@ -131,8 +132,13 @@ message RedeemSAMLAccessCodeResponse {
   string environment_id = 4;
 }
 
+message VerifyEmailRequest {
+  string email = 1;
+}
+
 message SignInRequest {
   string google_credential = 1;
+  string email_verify_token = 2;
 }
 
 message SignInResponse {

@@ -1,3 +1,14 @@
+-- name: CreateEmailVerificationChallenge :one
+insert into email_verification_challenges (id, email, expire_time, secret_token)
+values ($1, $2, $3, $4)
+returning *;
+
+-- name: GetEmailVerificationChallengeBySecretToken :one
+select *
+from email_verification_challenges
+where secret_token = $1
+  and expire_time > $2;
+
 -- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections

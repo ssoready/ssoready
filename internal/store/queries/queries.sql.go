@@ -192,6 +192,36 @@ func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (A
 	return i, err
 }
 
+const createEmailVerificationChallenge = `-- name: CreateEmailVerificationChallenge :one
+insert into email_verification_challenges (id, email, expire_time, secret_token)
+values ($1, $2, $3, $4)
+returning id, email, expire_time, secret_token
+`
+
+type CreateEmailVerificationChallengeParams struct {
+	ID          uuid.UUID
+	Email       string
+	ExpireTime  time.Time
+	SecretToken string
+}
+
+func (q *Queries) CreateEmailVerificationChallenge(ctx context.Context, arg CreateEmailVerificationChallengeParams) (EmailVerificationChallenge, error) {
+	row := q.db.QueryRow(ctx, createEmailVerificationChallenge,
+		arg.ID,
+		arg.Email,
+		arg.ExpireTime,
+		arg.SecretToken,
+	)
+	var i EmailVerificationChallenge
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.ExpireTime,
+		&i.SecretToken,
+	)
+	return i, err
+}
+
 const createEnvironment = `-- name: CreateEnvironment :one
 insert into environments (id, redirect_url, app_organization_id, display_name, auth_url)
 values ($1, $2, $3, $4, $5)
@@ -498,6 +528,30 @@ func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) 
 		&i.AppOrganizationID,
 		&i.DisplayName,
 		&i.Email,
+	)
+	return i, err
+}
+
+const getEmailVerificationChallengeBySecretToken = `-- name: GetEmailVerificationChallengeBySecretToken :one
+select id, email, expire_time, secret_token
+from email_verification_challenges
+where secret_token = $1
+  and expire_time > $2
+`
+
+type GetEmailVerificationChallengeBySecretTokenParams struct {
+	SecretToken string
+	ExpireTime  time.Time
+}
+
+func (q *Queries) GetEmailVerificationChallengeBySecretToken(ctx context.Context, arg GetEmailVerificationChallengeBySecretTokenParams) (EmailVerificationChallenge, error) {
+	row := q.db.QueryRow(ctx, getEmailVerificationChallengeBySecretToken, arg.SecretToken, arg.ExpireTime)
+	var i EmailVerificationChallenge
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.ExpireTime,
+		&i.SecretToken,
 	)
 	return i, err
 }

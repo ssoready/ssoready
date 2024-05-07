@@ -40,6 +40,9 @@ const (
 	// SSOReadyServiceRedeemSAMLAccessCodeProcedure is the fully-qualified name of the SSOReadyService's
 	// RedeemSAMLAccessCode RPC.
 	SSOReadyServiceRedeemSAMLAccessCodeProcedure = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	// SSOReadyServiceVerifyEmailProcedure is the fully-qualified name of the SSOReadyService's
+	// VerifyEmail RPC.
+	SSOReadyServiceVerifyEmailProcedure = "/ssoready.v1.SSOReadyService/VerifyEmail"
 	// SSOReadyServiceSignInProcedure is the fully-qualified name of the SSOReadyService's SignIn RPC.
 	SSOReadyServiceSignInProcedure = "/ssoready.v1.SSOReadyService/SignIn"
 	// SSOReadyServiceWhoamiProcedure is the fully-qualified name of the SSOReadyService's Whoami RPC.
@@ -104,6 +107,7 @@ const (
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
+	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
@@ -144,6 +148,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		redeemSAMLAccessCode: connect.NewClient[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse](
 			httpClient,
 			baseURL+SSOReadyServiceRedeemSAMLAccessCodeProcedure,
+			opts...,
+		),
+		verifyEmail: connect.NewClient[v1.VerifyEmailRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceVerifyEmailProcedure,
 			opts...,
 		),
 		signIn: connect.NewClient[v1.SignInRequest, v1.SignInResponse](
@@ -253,6 +262,7 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 type sSOReadyServiceClient struct {
 	getSAMLRedirectURL   *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
 	redeemSAMLAccessCode *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	verifyEmail          *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
 	signIn               *connect.Client[v1.SignInRequest, v1.SignInResponse]
 	whoami               *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
 	listEnvironments     *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
@@ -283,6 +293,11 @@ func (c *sSOReadyServiceClient) GetSAMLRedirectURL(ctx context.Context, req *con
 // RedeemSAMLAccessCode calls ssoready.v1.SSOReadyService.RedeemSAMLAccessCode.
 func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, req *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
 	return c.redeemSAMLAccessCode.CallUnary(ctx, req)
+}
+
+// VerifyEmail calls ssoready.v1.SSOReadyService.VerifyEmail.
+func (c *sSOReadyServiceClient) VerifyEmail(ctx context.Context, req *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.verifyEmail.CallUnary(ctx, req)
 }
 
 // SignIn calls ssoready.v1.SSOReadyService.SignIn.
@@ -389,6 +404,7 @@ func (c *sSOReadyServiceClient) GetSAMLFlow(ctx context.Context, req *connect.Re
 type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
+	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
@@ -425,6 +441,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceRedeemSAMLAccessCodeHandler := connect.NewUnaryHandler(
 		SSOReadyServiceRedeemSAMLAccessCodeProcedure,
 		svc.RedeemSAMLAccessCode,
+		opts...,
+	)
+	sSOReadyServiceVerifyEmailHandler := connect.NewUnaryHandler(
+		SSOReadyServiceVerifyEmailProcedure,
+		svc.VerifyEmail,
 		opts...,
 	)
 	sSOReadyServiceSignInHandler := connect.NewUnaryHandler(
@@ -533,6 +554,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetSAMLRedirectURLHandler.ServeHTTP(w, r)
 		case SSOReadyServiceRedeemSAMLAccessCodeProcedure:
 			sSOReadyServiceRedeemSAMLAccessCodeHandler.ServeHTTP(w, r)
+		case SSOReadyServiceVerifyEmailProcedure:
+			sSOReadyServiceVerifyEmailHandler.ServeHTTP(w, r)
 		case SSOReadyServiceSignInProcedure:
 			sSOReadyServiceSignInHandler.ServeHTTP(w, r)
 		case SSOReadyServiceWhoamiProcedure:
@@ -588,6 +611,10 @@ func (UnimplementedSSOReadyServiceHandler) GetSAMLRedirectURL(context.Context, *
 
 func (UnimplementedSSOReadyServiceHandler) RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemSAMLAccessCode is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.VerifyEmail is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {

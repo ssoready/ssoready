@@ -16,6 +16,7 @@ import { EditSAMLConnectionPage } from "@/pages/EditSAMLConnectionPage";
 import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 import { CreateEnvironmentPage } from "@/pages/CreateEnvironmentPage";
 import { ViewAPIKeyPage } from "@/pages/ViewAPIKeyPage";
+import { VerifyEmailPage } from "@/pages/VerifyEmailPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ export function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
 
             <Route path="/" element={<LoginGate />}>
               <Route path="/" element={<Page />}>

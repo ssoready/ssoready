@@ -83,68 +83,6 @@ func (s *Store) CreateGoogleSession(ctx context.Context, req *CreateGoogleSessio
 	}
 
 	return &CreateGoogleSessionResponse{SessionToken: appSession.Token}, nil
-
-	//tx, err := s.DB.BeginTx(ctx, nil)
-	//if err != nil {
-	//	return nil, fmt.Errorf("begin: %w", err)
-	//}
-	//defer tx.Rollback()
-	//
-	//q := queries.New(tx)
-
-	//users, err := q.GetAppUserByGoogleEmail(ctx, &req.Email)
-	//if err != nil {
-	//	return nil, fmt.Errorf("db: %w", err)
-	//}
-	//
-	//var userID uuid.UUID
-	//
-	//if len(users) == 0 {
-	//	// no user with this email, create one
-	//	org, err := q.CreateAppOrganization(ctx, uuid.New())
-	//	if err != nil {
-	//		return nil, fmt.Errorf("db: %w", err)
-	//	}
-	//
-	//	// create a dev env
-	//	if _, err := q.CreateEnvironment(ctx, queries.CreateEnvironmentParams{
-	//		ID:                uuid.New(),
-	//		AppOrganizationID: org.ID,
-	//		RedirectUrl:       "http://localhost:8080",
-	//	}); err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	user, err := q.CreateAppUser(ctx, queries.CreateAppUserParams{
-	//		ID:                uuid.New(),
-	//		AppOrganizationID: org.ID,
-	//		Email:       &req.Email,
-	//	})
-	//
-	//	if err != nil {
-	//		return nil, fmt.Errorf("db: %w", err)
-	//	}
-	//
-	//	userID = user.ID
-	//} else {
-	//	userID = users[0].ID
-	//}
-	//
-	//sess, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
-	//	ID:         uuid.New(),
-	//	AppUserID:  userID,
-	//	ExpireTime: time.Now().Add(7 * 24 * time.Hour),
-	//})
-	//
-	//if err != nil {
-	//	return nil, fmt.Errorf("db: %w", err)
-	//}
-	//
-	//if err := tx.Commit(); err != nil {
-	//	return nil, fmt.Errorf("db: %w", err)
-	//}
-	//
-	//return &sess.ID, nil
 }
 
 func (s *Store) upsertGoogleAppUser(ctx context.Context, q *queries.Queries, req *CreateGoogleSessionRequest) (*queries.AppUser, error) {
@@ -194,4 +132,115 @@ func (s *Store) upsertGoogleAppOrg(ctx context.Context, q *queries.Queries, req 
 	}
 
 	return &appOrg, nil
+}
+
+type CreateEmailVerificationChallengeRequest struct {
+	Email string
+}
+
+type CreateEmailVerificationChallengeResponse struct {
+	SecretToken string
+}
+
+func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *CreateEmailVerificationChallengeRequest) (*CreateEmailVerificationChallengeResponse, error) {
+	// generate token as 32-byte random string, hex-encoded
+	var tokenBytes [32]byte
+	if _, err := rand.Read(tokenBytes[:]); err != nil {
+		return nil, err
+	}
+	token := hex.EncodeToString(tokenBytes[:])
+
+	qChallenge, err := s.q.CreateEmailVerificationChallenge(ctx, queries.CreateEmailVerificationChallengeParams{
+		ID:          uuid.New(),
+		Email:       req.Email,
+		ExpireTime:  time.Now().Add(24 * time.Hour),
+		SecretToken: token,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateEmailVerificationChallengeResponse{SecretToken: qChallenge.SecretToken}, nil
+}
+
+type VerifyEmailRequest struct {
+	Token string
+}
+
+type VerifyEmailResponse struct {
+	SessionToken string
+}
+
+func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*VerifyEmailResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	qChallenge, err := q.GetEmailVerificationChallengeBySecretToken(ctx, queries.GetEmailVerificationChallengeBySecretTokenParams{
+		SecretToken: req.Token,
+		ExpireTime:  time.Now(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	appUser, err := s.upsertUserByEmailSoleInOrg(ctx, q, qChallenge.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	// generate token as 32-byte random string, hex-encoded
+	var tokenBytes [32]byte
+	if _, err := rand.Read(tokenBytes[:]); err != nil {
+		return nil, err
+	}
+	token := hex.EncodeToString(tokenBytes[:])
+
+	appSession, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
+		ID:         uuid.New(),
+		AppUserID:  appUser.ID,
+		CreateTime: time.Now(),
+		ExpireTime: time.Now().Add(time.Hour * 24 * 7),
+		Token:      token,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := commit(); err != nil {
+		return nil, err
+	}
+
+	return &VerifyEmailResponse{SessionToken: appSession.Token}, nil
+}
+
+func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queries, email string) (*queries.AppUser, error) {
+	appUser, err := q.GetAppUserByEmail(ctx, &email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			appOrg, err := q.CreateAppOrganization(ctx, queries.CreateAppOrganizationParams{
+				ID: uuid.New(),
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			appUser, err := q.CreateAppUser(ctx, queries.CreateAppUserParams{
+				ID:                uuid.New(),
+				AppOrganizationID: appOrg.ID,
+				Email:             &email,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			return &appUser, nil
+		}
+
+		return nil, err
+	}
+
+	return &appUser, nil
 }

@@ -7,6 +7,7 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/vanguard"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/resend/resend-go/v2"
 	"github.com/rs/cors"
 	"github.com/ssoready/ssoready/internal/apiservice"
 	"github.com/ssoready/ssoready/internal/appauth/appauthinterceptor"
@@ -37,6 +38,9 @@ func main() {
 				HTTPClient:          http.DefaultClient,
 				GoogleOAuthClientID: "171906208332-m8dg2p6av2f0aa7lliaj6oo0grct57p1.apps.googleusercontent.com",
 			},
+			ResendClient:              resend.NewClient("re_jEFaTdrh_EmCQcqC9PZU4SeKY21XWSpcB"),
+			EmailChallengeFrom:        "onboarding@resend.dev",
+			EmailVerificationEndpoint: "https://app.ssoready.com/verify-email",
 		},
 		connect.WithInterceptors(appauthinterceptor.New(store_)),
 	)
