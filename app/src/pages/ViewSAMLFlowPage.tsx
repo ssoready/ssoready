@@ -91,7 +91,7 @@ export function ViewSAMLFlowPage() {
 
       <div className="relative">
         <span
-          className="absolute left-5 top-5 -ml-px h-full w-0.5 bg-gray-200 -z-10"
+          className="absolute left-5 top-5 -ml-px w-0.5 bg-gray-200 -z-10 h-[calc(100%-20px)]"
           aria-hidden="true"
         />
         <div className="flex flex-col gap-y-8">
@@ -99,10 +99,12 @@ export function ViewSAMLFlowPage() {
             <Card>
               <div className="p-6 space-y-2">
                 <div className="flex gap-x-2">
-                  <span className="text-sm font-semibold">
+                  <span className="text-sm text-muted-foreground">
                     {moment(samlFlow.getRedirectTime.toDate()).format()}
                   </span>
-                  <span className="text-sm">Requested SAML Redirect URL</span>
+                  <span className="text-sm font-semibold">
+                    Requested SAML Redirect URL
+                  </span>
                 </div>
 
                 <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
@@ -115,10 +117,12 @@ export function ViewSAMLFlowPage() {
             <Card>
               <div className="p-6 space-y-2">
                 <div className="flex gap-x-2">
-                  <span className="text-sm font-semibold">
+                  <span className="text-sm text-muted-foreground">
                     {moment(samlFlow.initiateTime.toDate()).format()}
                   </span>
-                  <span className="text-sm">Initiated SAML Flow</span>
+                  <span className="text-sm font-semibold">
+                    Initiated SAML Flow
+                  </span>
                 </div>
 
                 <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
@@ -142,10 +146,12 @@ export function ViewSAMLFlowPage() {
             <Card>
               <div className="p-6 space-y-2">
                 <div className="flex gap-x-2">
-                  <span className="text-sm font-semibold">
+                  <span className="text-sm text-muted-foreground">
                     {moment(samlFlow.receiveAssertionTime.toDate()).format()}
                   </span>
-                  <span className="text-sm">Received SAML Assertion</span>
+                  <span className="text-sm font-semibold">
+                    Received SAML Assertion
+                  </span>
                 </div>
 
                 <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
@@ -170,10 +176,31 @@ export function ViewSAMLFlowPage() {
             <Card>
               <div className="p-6 space-y-2">
                 <div className="flex gap-x-2">
-                  <span className="text-sm font-semibold">
+                  <span className="text-sm text-muted-foreground">
                     {moment(samlFlow.redeemTime.toDate()).format()}
                   </span>
-                  <span className="text-sm">Redeemed SAML Access Code</span>
+                  <span className="text-sm font-semibold">
+                    Redeemed SAML Access Code
+                  </span>
+                </div>
+
+                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
+                  <code>
+                    <pre
+                      dangerouslySetInnerHTML={{
+                        __html: hljs.highlight(
+                          JSON.stringify(
+                            JSON.parse(samlFlow.redeemResponse),
+                            null,
+                            4,
+                          ),
+                          {
+                            language: "json",
+                          },
+                        ).value,
+                      }}
+                    />
+                  </code>
                 </div>
               </div>
             </Card>

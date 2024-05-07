@@ -111,5 +111,6 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		AppRedirectUrl:       derefOrEmpty(qSAMLFlow.AppRedirectUrl),
 		ReceiveAssertionTime: ptrTimeToTimestamp(qSAMLFlow.ReceiveAssertionTime),
 		RedeemTime:           ptrTimeToTimestamp(qSAMLFlow.RedeemTime),
+		RedeemResponse:       string(qSAMLFlow.RedeemResponse),
 	}
 }

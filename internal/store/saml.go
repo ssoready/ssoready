@@ -104,11 +104,26 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, err
 	}
 
+	res := &ssoreadyv1.RedeemSAMLAccessCodeResponse{
+		SubjectIdpId:           *samlAccessTokenData.SubjectIdpID,
+		SubjectIdpAttributes:   attrs,
+		State:                  samlAccessTokenData.State,
+		OrganizationId:         idformat.Organization.Format(samlAccessTokenData.OrganizationID),
+		OrganizationExternalId: derefOrEmpty(samlAccessTokenData.OrganizationExternalID),
+		EnvironmentId:          idformat.Environment.Format(samlAccessTokenData.EnvironmentID),
+	}
+
+	resJSON, err := json.Marshal(res)
+	if err != nil {
+		panic(err)
+	}
+
 	now := time.Now()
 	if _, err := q.UpdateSAMLFlowRedeem(ctx, queries.UpdateSAMLFlowRedeemParams{
-		ID:         samlAccessTokenData.SamlFlowID,
-		UpdateTime: time.Now(),
-		RedeemTime: &now,
+		ID:             samlAccessTokenData.SamlFlowID,
+		UpdateTime:     time.Now(),
+		RedeemTime:     &now,
+		RedeemResponse: resJSON,
 	}); err != nil {
 		return nil, err
 	}
@@ -117,12 +132,5 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, err
 	}
 
-	return &ssoreadyv1.RedeemSAMLAccessCodeResponse{
-		SubjectIdpId:           *samlAccessTokenData.SubjectIdpID,
-		SubjectIdpAttributes:   attrs,
-		State:                  samlAccessTokenData.State,
-		OrganizationId:         idformat.Organization.Format(samlAccessTokenData.OrganizationID),
-		OrganizationExternalId: derefOrEmpty(samlAccessTokenData.OrganizationExternalID),
-		EnvironmentId:          idformat.Environment.Format(samlAccessTokenData.EnvironmentID),
-	}, nil
+	return res, nil
 }

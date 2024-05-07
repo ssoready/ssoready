@@ -152,7 +152,8 @@ CREATE TABLE public.saml_flows (
     assertion character varying,
     app_redirect_url character varying,
     receive_assertion_time timestamp with time zone,
-    redeem_time timestamp with time zone
+    redeem_time timestamp with time zone,
+    redeem_response jsonb
 );
 
 

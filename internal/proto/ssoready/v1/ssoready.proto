@@ -93,6 +93,7 @@ message SAMLFlow {
   google.protobuf.Timestamp receive_assertion_time = 14;
 
   google.protobuf.Timestamp redeem_time = 15;
+  string redeem_response = 16;
 }
 
 message GetSAMLRedirectURLRequest {

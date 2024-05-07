@@ -311,6 +311,11 @@ export class SAMLFlow extends Message<SAMLFlow> {
    */
   redeemTime?: Timestamp;
 
+  /**
+   * @generated from field: string redeem_response = 16;
+   */
+  redeemResponse = "";
+
   constructor(data?: PartialMessage<SAMLFlow>) {
     super();
     proto3.util.initPartial(data, this);
@@ -334,6 +339,7 @@ export class SAMLFlow extends Message<SAMLFlow> {
     { no: 13, name: "app_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 14, name: "receive_assertion_time", kind: "message", T: Timestamp },
     { no: 15, name: "redeem_time", kind: "message", T: Timestamp },
+    { no: 16, name: "redeem_response", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLFlow {

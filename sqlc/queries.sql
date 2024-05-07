@@ -46,8 +46,9 @@ returning *;
 -- name: UpdateSAMLFlowRedeem :one
 update saml_flows
 set update_time = $1,
-    redeem_time = $2
-where id = $3
+    redeem_time = $2,
+    redeem_response = $3
+where id = $4
 returning *;
 
 -- name: AuthGetSAMLFlow :one

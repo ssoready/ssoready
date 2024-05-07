@@ -31,7 +31,7 @@ func (q *Queries) AuthGetInitData(ctx context.Context, id uuid.UUID) (AuthGetIni
 }
 
 const authGetSAMLFlow = `-- name: AuthGetSAMLFlow :one
-select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 from saml_flows
 where id = $1
 `
@@ -57,6 +57,7 @@ func (q *Queries) AuthGetSAMLFlow(ctx context.Context, id uuid.UUID) (SamlFlow, 
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -240,7 +241,7 @@ const createSAMLFlowGetRedirect = `-- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 `
 
 type CreateSAMLFlowGetRedirectParams struct {
@@ -286,6 +287,7 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -566,7 +568,7 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 }
 
 const getSAMLFlow = `-- name: GetSAMLFlow :one
-select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.subject_idp_id, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time
+select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.subject_idp_id, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time, saml_flows.redeem_response
 from saml_flows
          join saml_connections on saml_flows.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
@@ -601,6 +603,7 @@ func (q *Queries) GetSAMLFlow(ctx context.Context, arg GetSAMLFlowParams) (SamlF
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -771,7 +774,7 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 }
 
 const listSAMLFlows = `-- name: ListSAMLFlows :many
-select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 from saml_flows
 where saml_connection_id = $1
   and id > $2
@@ -812,6 +815,7 @@ func (q *Queries) ListSAMLFlows(ctx context.Context, arg ListSAMLFlowsParams) ([
 			&i.AppRedirectUrl,
 			&i.ReceiveAssertionTime,
 			&i.RedeemTime,
+			&i.RedeemResponse,
 		); err != nil {
 			return nil, err
 		}
@@ -908,7 +912,7 @@ const updateSAMLFlowAppRedirectURL = `-- name: UpdateSAMLFlowAppRedirectURL :one
 update saml_flows
 set app_redirect_url = $1
 where id = $2
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 `
 
 type UpdateSAMLFlowAppRedirectURLParams struct {
@@ -937,6 +941,7 @@ func (q *Queries) UpdateSAMLFlowAppRedirectURL(ctx context.Context, arg UpdateSA
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -944,19 +949,26 @@ func (q *Queries) UpdateSAMLFlowAppRedirectURL(ctx context.Context, arg UpdateSA
 const updateSAMLFlowRedeem = `-- name: UpdateSAMLFlowRedeem :one
 update saml_flows
 set update_time = $1,
-    redeem_time = $2
-where id = $3
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+    redeem_time = $2,
+    redeem_response = $3
+where id = $4
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 `
 
 type UpdateSAMLFlowRedeemParams struct {
-	UpdateTime time.Time
-	RedeemTime *time.Time
-	ID         uuid.UUID
+	UpdateTime     time.Time
+	RedeemTime     *time.Time
+	RedeemResponse []byte
+	ID             uuid.UUID
 }
 
 func (q *Queries) UpdateSAMLFlowRedeem(ctx context.Context, arg UpdateSAMLFlowRedeemParams) (SamlFlow, error) {
-	row := q.db.QueryRow(ctx, updateSAMLFlowRedeem, arg.UpdateTime, arg.RedeemTime, arg.ID)
+	row := q.db.QueryRow(ctx, updateSAMLFlowRedeem,
+		arg.UpdateTime,
+		arg.RedeemTime,
+		arg.RedeemResponse,
+		arg.ID,
+	)
 	var i SamlFlow
 	err := row.Scan(
 		&i.ID,
@@ -976,6 +988,7 @@ func (q *Queries) UpdateSAMLFlowRedeem(ctx context.Context, arg UpdateSAMLFlowRe
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -985,7 +998,7 @@ update saml_flows
 set subject_idp_id         = $1,
     subject_idp_attributes = $2
 where id = $3
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 `
 
 type UpdateSAMLFlowSubjectDataParams struct {
@@ -1015,6 +1028,7 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -1026,7 +1040,7 @@ values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
                                initiate_time    = excluded.initiate_time
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 `
 
 type UpsertSAMLFlowInitiateParams struct {
@@ -1072,6 +1086,7 @@ func (q *Queries) UpsertSAMLFlowInitiate(ctx context.Context, arg UpsertSAMLFlow
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }
@@ -1083,7 +1098,7 @@ values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 on conflict (id) do update set update_time            = excluded.update_time,
                                assertion              = excluded.assertion,
                                receive_assertion_time = excluded.receive_assertion_time
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 `
 
 type UpsertSAMLFlowReceiveAssertionParams struct {
@@ -1129,6 +1144,7 @@ func (q *Queries) UpsertSAMLFlowReceiveAssertion(ctx context.Context, arg Upsert
 		&i.AppRedirectUrl,
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
+		&i.RedeemResponse,
 	)
 	return i, err
 }

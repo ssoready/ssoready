@@ -83,6 +83,7 @@ type SamlFlow struct {
 	AppRedirectUrl       *string
 	ReceiveAssertionTime *time.Time
 	RedeemTime           *time.Time
+	RedeemResponse       []byte
 }
 
 type SchemaMigration struct {
