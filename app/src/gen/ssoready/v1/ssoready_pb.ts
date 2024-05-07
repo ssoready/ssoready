@@ -74,6 +74,11 @@ export class Environment extends Message<Environment> {
    */
   displayName = "";
 
+  /**
+   * @generated from field: string auth_url = 4;
+   */
+  authUrl = "";
+
   constructor(data?: PartialMessage<Environment>) {
     super();
     proto3.util.initPartial(data, this);
@@ -85,6 +90,7 @@ export class Environment extends Message<Environment> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "auth_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Environment {
@@ -811,6 +817,43 @@ export class GetEnvironmentRequest extends Message<GetEnvironmentRequest> {
 
   static equals(a: GetEnvironmentRequest | PlainMessage<GetEnvironmentRequest> | undefined, b: GetEnvironmentRequest | PlainMessage<GetEnvironmentRequest> | undefined): boolean {
     return proto3.util.equals(GetEnvironmentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateEnvironmentRequest
+ */
+export class CreateEnvironmentRequest extends Message<CreateEnvironmentRequest> {
+  /**
+   * @generated from field: ssoready.v1.Environment environment = 1;
+   */
+  environment?: Environment;
+
+  constructor(data?: PartialMessage<CreateEnvironmentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateEnvironmentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment", kind: "message", T: Environment },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateEnvironmentRequest {
+    return new CreateEnvironmentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateEnvironmentRequest {
+    return new CreateEnvironmentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateEnvironmentRequest {
+    return new CreateEnvironmentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateEnvironmentRequest | PlainMessage<CreateEnvironmentRequest> | undefined, b: CreateEnvironmentRequest | PlainMessage<CreateEnvironmentRequest> | undefined): boolean {
+    return proto3.util.equals(CreateEnvironmentRequest, a, b);
   }
 }
 

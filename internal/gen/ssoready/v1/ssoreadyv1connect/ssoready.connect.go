@@ -49,6 +49,9 @@ const (
 	// SSOReadyServiceGetEnvironmentProcedure is the fully-qualified name of the SSOReadyService's
 	// GetEnvironment RPC.
 	SSOReadyServiceGetEnvironmentProcedure = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	// SSOReadyServiceCreateEnvironmentProcedure is the fully-qualified name of the SSOReadyService's
+	// CreateEnvironment RPC.
+	SSOReadyServiceCreateEnvironmentProcedure = "/ssoready.v1.SSOReadyService/CreateEnvironment"
 	// SSOReadyServiceUpdateEnvironmentProcedure is the fully-qualified name of the SSOReadyService's
 	// UpdateEnvironment RPC.
 	SSOReadyServiceUpdateEnvironmentProcedure = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
@@ -92,6 +95,7 @@ type SSOReadyServiceClient interface {
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
+	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
@@ -143,6 +147,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		getEnvironment: connect.NewClient[v1.GetEnvironmentRequest, v1.Environment](
 			httpClient,
 			baseURL+SSOReadyServiceGetEnvironmentProcedure,
+			opts...,
+		),
+		createEnvironment: connect.NewClient[v1.CreateEnvironmentRequest, v1.Environment](
+			httpClient,
+			baseURL+SSOReadyServiceCreateEnvironmentProcedure,
 			opts...,
 		),
 		updateEnvironment: connect.NewClient[v1.UpdateEnvironmentRequest, v1.Environment](
@@ -211,6 +220,7 @@ type sSOReadyServiceClient struct {
 	whoami               *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
 	listEnvironments     *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
 	getEnvironment       *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
+	createEnvironment    *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
 	updateEnvironment    *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
 	listOrganizations    *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
 	getOrganization      *connect.Client[v1.GetOrganizationRequest, v1.Organization]
@@ -252,6 +262,11 @@ func (c *sSOReadyServiceClient) ListEnvironments(ctx context.Context, req *conne
 // GetEnvironment calls ssoready.v1.SSOReadyService.GetEnvironment.
 func (c *sSOReadyServiceClient) GetEnvironment(ctx context.Context, req *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
 	return c.getEnvironment.CallUnary(ctx, req)
+}
+
+// CreateEnvironment calls ssoready.v1.SSOReadyService.CreateEnvironment.
+func (c *sSOReadyServiceClient) CreateEnvironment(ctx context.Context, req *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
+	return c.createEnvironment.CallUnary(ctx, req)
 }
 
 // UpdateEnvironment calls ssoready.v1.SSOReadyService.UpdateEnvironment.
@@ -317,6 +332,7 @@ type SSOReadyServiceHandler interface {
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
+	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
@@ -364,6 +380,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceGetEnvironmentHandler := connect.NewUnaryHandler(
 		SSOReadyServiceGetEnvironmentProcedure,
 		svc.GetEnvironment,
+		opts...,
+	)
+	sSOReadyServiceCreateEnvironmentHandler := connect.NewUnaryHandler(
+		SSOReadyServiceCreateEnvironmentProcedure,
+		svc.CreateEnvironment,
 		opts...,
 	)
 	sSOReadyServiceUpdateEnvironmentHandler := connect.NewUnaryHandler(
@@ -435,6 +456,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceListEnvironmentsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetEnvironmentProcedure:
 			sSOReadyServiceGetEnvironmentHandler.ServeHTTP(w, r)
+		case SSOReadyServiceCreateEnvironmentProcedure:
+			sSOReadyServiceCreateEnvironmentHandler.ServeHTTP(w, r)
 		case SSOReadyServiceUpdateEnvironmentProcedure:
 			sSOReadyServiceUpdateEnvironmentHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListOrganizationsProcedure:
@@ -488,6 +511,10 @@ func (UnimplementedSSOReadyServiceHandler) ListEnvironments(context.Context, *co
 
 func (UnimplementedSSOReadyServiceHandler) GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetEnvironment is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateEnvironment is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {

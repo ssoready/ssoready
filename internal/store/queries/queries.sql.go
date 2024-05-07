@@ -173,6 +173,39 @@ func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (A
 	return i, err
 }
 
+const createEnvironment = `-- name: CreateEnvironment :one
+insert into environments (id, redirect_url, app_organization_id, display_name, auth_url)
+values ($1, $2, $3, $4, $5)
+returning id, redirect_url, app_organization_id, display_name, auth_url
+`
+
+type CreateEnvironmentParams struct {
+	ID                uuid.UUID
+	RedirectUrl       *string
+	AppOrganizationID uuid.UUID
+	DisplayName       *string
+	AuthUrl           *string
+}
+
+func (q *Queries) CreateEnvironment(ctx context.Context, arg CreateEnvironmentParams) (Environment, error) {
+	row := q.db.QueryRow(ctx, createEnvironment,
+		arg.ID,
+		arg.RedirectUrl,
+		arg.AppOrganizationID,
+		arg.DisplayName,
+		arg.AuthUrl,
+	)
+	var i Environment
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.AuthUrl,
+	)
+	return i, err
+}
+
 const createOrganization = `-- name: CreateOrganization :one
 insert into organizations (id, environment_id, external_id)
 values ($1, $2, $3)
@@ -958,8 +991,8 @@ func (q *Queries) UpdateSAMLFlowAppRedirectURL(ctx context.Context, arg UpdateSA
 
 const updateSAMLFlowRedeem = `-- name: UpdateSAMLFlowRedeem :one
 update saml_flows
-set update_time = $1,
-    redeem_time = $2,
+set update_time     = $1,
+    redeem_time     = $2,
     redeem_response = $3
 where id = $4
 returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response

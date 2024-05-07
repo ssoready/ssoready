@@ -60,6 +60,31 @@ func (s *Store) GetEnvironment(ctx context.Context, req *ssoreadyv1.GetEnvironme
 	return parseEnvironment(qEnv), nil
 }
 
+func (s *Store) CreateEnvironment(ctx context.Context, req *ssoreadyv1.CreateEnvironmentRequest) (*ssoreadyv1.Environment, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	qEnv, err := q.CreateEnvironment(ctx, queries.CreateEnvironmentParams{
+		AppOrganizationID: appauth.OrgID(ctx),
+		ID:                uuid.New(),
+		RedirectUrl:       &req.Environment.RedirectUrl,
+		DisplayName:       &req.Environment.DisplayName,
+		AuthUrl:           &req.Environment.AuthUrl,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := commit(); err != nil {
+		return nil, err
+	}
+
+	return parseEnvironment(qEnv), nil
+}
+
 func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnvironmentRequest) (*ssoreadyv1.Environment, error) {
 	id, err := idformat.Environment.Parse(req.Environment.Id)
 	if err != nil {
@@ -101,5 +126,6 @@ func parseEnvironment(qEnv queries.Environment) *ssoreadyv1.Environment {
 		Id:          idformat.Environment.Format(qEnv.ID),
 		DisplayName: derefOrEmpty(qEnv.DisplayName),
 		RedirectUrl: derefOrEmpty(qEnv.RedirectUrl),
+		AuthUrl:     derefOrEmpty(qEnv.AuthUrl),
 	}
 }

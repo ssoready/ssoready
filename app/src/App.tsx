@@ -14,6 +14,7 @@ import { ViewOrganizationPage } from "@/pages/ViewOrganizationPage";
 import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 import { EditSAMLConnectionPage } from "@/pages/EditSAMLConnectionPage";
 import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
+import { CreateEnvironmentPage } from "@/pages/CreateEnvironmentPage";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,10 @@ export function App() {
             <Route path="/" element={<LoginGate />}>
               <Route path="/" element={<Page />}>
                 <Route path="/" element={<HomePage />} />
+                <Route
+                  path="/environments/new"
+                  element={<CreateEnvironmentPage />}
+                />
                 <Route
                   path="/environments/:environmentId"
                   element={<ViewEnvironmentPage />}

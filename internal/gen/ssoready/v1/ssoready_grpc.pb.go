@@ -25,6 +25,7 @@ const (
 	SSOReadyService_Whoami_FullMethodName               = "/ssoready.v1.SSOReadyService/Whoami"
 	SSOReadyService_ListEnvironments_FullMethodName     = "/ssoready.v1.SSOReadyService/ListEnvironments"
 	SSOReadyService_GetEnvironment_FullMethodName       = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_CreateEnvironment_FullMethodName    = "/ssoready.v1.SSOReadyService/CreateEnvironment"
 	SSOReadyService_UpdateEnvironment_FullMethodName    = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
 	SSOReadyService_ListOrganizations_FullMethodName    = "/ssoready.v1.SSOReadyService/ListOrganizations"
 	SSOReadyService_GetOrganization_FullMethodName      = "/ssoready.v1.SSOReadyService/GetOrganization"
@@ -48,6 +49,7 @@ type SSOReadyServiceClient interface {
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
 	GetEnvironment(ctx context.Context, in *GetEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
+	CreateEnvironment(ctx context.Context, in *CreateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	UpdateEnvironment(ctx context.Context, in *UpdateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error)
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
@@ -117,6 +119,15 @@ func (c *sSOReadyServiceClient) ListEnvironments(ctx context.Context, in *ListEn
 func (c *sSOReadyServiceClient) GetEnvironment(ctx context.Context, in *GetEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error) {
 	out := new(Environment)
 	err := c.cc.Invoke(ctx, SSOReadyService_GetEnvironment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) CreateEnvironment(ctx context.Context, in *CreateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error) {
+	out := new(Environment)
+	err := c.cc.Invoke(ctx, SSOReadyService_CreateEnvironment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -232,6 +243,7 @@ type SSOReadyServiceServer interface {
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
 	GetEnvironment(context.Context, *GetEnvironmentRequest) (*Environment, error)
+	CreateEnvironment(context.Context, *CreateEnvironmentRequest) (*Environment, error)
 	UpdateEnvironment(context.Context, *UpdateEnvironmentRequest) (*Environment, error)
 	ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error)
 	GetOrganization(context.Context, *GetOrganizationRequest) (*Organization, error)
@@ -267,6 +279,9 @@ func (UnimplementedSSOReadyServiceServer) ListEnvironments(context.Context, *Lis
 }
 func (UnimplementedSSOReadyServiceServer) GetEnvironment(context.Context, *GetEnvironmentRequest) (*Environment, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEnvironment not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) CreateEnvironment(context.Context, *CreateEnvironmentRequest) (*Environment, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEnvironment not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) UpdateEnvironment(context.Context, *UpdateEnvironmentRequest) (*Environment, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEnvironment not implemented")
@@ -418,6 +433,24 @@ func _SSOReadyService_GetEnvironment_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).GetEnvironment(ctx, req.(*GetEnvironmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_CreateEnvironment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateEnvironmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).CreateEnvironment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_CreateEnvironment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).CreateEnvironment(ctx, req.(*CreateEnvironmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -650,6 +683,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEnvironment",
 			Handler:    _SSOReadyService_GetEnvironment_Handler,
+		},
+		{
+			MethodName: "CreateEnvironment",
+			Handler:    _SSOReadyService_CreateEnvironment_Handler,
 		},
 		{
 			MethodName: "UpdateEnvironment",

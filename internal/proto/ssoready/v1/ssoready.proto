@@ -27,6 +27,7 @@ service SSOReadyService {
 
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
   rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
+  rpc CreateEnvironment(CreateEnvironmentRequest) returns (Environment);
   rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (Environment);
 
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
@@ -53,6 +54,7 @@ message Environment {
   string id = 1;
   string redirect_url = 2;
   string display_name = 3;
+  string auth_url = 4;
 }
 
 message Organization {
@@ -146,6 +148,10 @@ message ListEnvironmentsResponse {
 
 message GetEnvironmentRequest {
   string id = 1;
+}
+
+message CreateEnvironmentRequest {
+  Environment environment = 1;
 }
 
 message UpdateEnvironmentRequest {

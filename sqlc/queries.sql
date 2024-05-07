@@ -158,6 +158,11 @@ from environments
 where app_organization_id = $1
   and id = $2;
 
+-- name: CreateEnvironment :one
+insert into environments (id, redirect_url, app_organization_id, display_name, auth_url)
+values ($1, $2, $3, $4, $5)
+returning *;
+
 -- name: UpdateEnvironment :one
 update environments
 set display_name = $1,
