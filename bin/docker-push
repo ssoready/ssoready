@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+account="$1"
+bin="$2"
+tag="$3"
+
+docker build -f ./cmd/"$bin"/Dockerfile -t "$bin":"$tag" .
+docker tag "$bin":"$tag" "$account".dkr.ecr.us-east-2.amazonaws.com/"$bin":"$tag"
+docker push "$account".dkr.ecr.us-east-2.amazonaws.com/"$bin":"$tag"
+echo "$account".dkr.ecr.us-east-2.amazonaws.com/"$bin":"$tag"

@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"connectrpc.com/connect"
 	"connectrpc.com/vanguard"
@@ -21,16 +23,18 @@ import (
 )
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
+
 	config := struct {
-		ServeAddr                 string `conf:"serve-addr"`
+		ServeAddr                 string `conf:"serve-addr,noredact"`
 		DB                        string `conf:"db"`
-		GlobalDefaultAuthURL      string `conf:"global-default-auth-url"`
+		GlobalDefaultAuthURL      string `conf:"global-default-auth-url,noredact"`
 		PageEncodingSecret        string `conf:"page-encoding-secret"`
 		SAMLStateSigningKey       string `conf:"saml-state-signing-key"`
-		GoogleOAuthClientID       string `conf:"google-oauth-client-id"`
+		GoogleOAuthClientID       string `conf:"google-oauth-client-id,noredact"`
 		ResendAPIKey              string `conf:"resend-api-key"`
-		EmailChallengeFrom        string `conf:"email-challenge-from"`
-		EmailVerificationEndpoint string `conf:"email-verification-endpoint"`
+		EmailChallengeFrom        string `conf:"email-challenge-from,noredact"`
+		EmailVerificationEndpoint string `conf:"email-verification-endpoint,noredact"`
 	}{
 		ServeAddr:                 "localhost:8081",
 		DB:                        "postgres://postgres:password@localhost/postgres",
@@ -40,6 +44,7 @@ func main() {
 	}
 
 	conf.Load(&config)
+	slog.Info("config", "config", conf.Redact(config))
 
 	db, err := pgxpool.New(context.Background(), config.DB)
 	if err != nil {
