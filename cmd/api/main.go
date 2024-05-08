@@ -93,6 +93,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("/internal/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		slog.InfoContext(r.Context(), "health")
 		w.WriteHeader(http.StatusOK)
 	}))
 	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))
