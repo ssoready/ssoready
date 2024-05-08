@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/ssoready/ssoready/internal/apikeyauth"
 	"github.com/ssoready/ssoready/internal/appauth"
 	"github.com/ssoready/ssoready/internal/store"
 )
@@ -35,14 +36,14 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 				return nil, connect.NewError(connect.CodeUnauthenticated, nil)
 			}
 
-			if strings.HasPrefix(secretValue, "sk_") {
+			if strings.HasPrefix(secretValue, "ssoready_sk_") {
 				// it's an api key
 				apiKey, err := s.GetAPIKeyBySecretToken(ctx, &store.GetAPIKeyBySecretTokenRequest{Token: secretValue})
 				if err != nil {
 					return nil, err
 				}
 
-				ctx = appauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.ID)
+				ctx = apikeyauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.EnvironmentID)
 			} else {
 				session, err := s.GetAppSession(ctx, &store.GetAppSessionRequest{SessionToken: secretValue, Now: time.Now()})
 				if err != nil {

@@ -80,7 +80,8 @@ from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_connections.id = $2;
+  and environments.id = @environment_id
+  and saml_connections.id = @saml_connection_id;
 
 -- name: GetSAMLConnectionByID :one
 select *
@@ -116,6 +117,7 @@ from saml_flows
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
+  and environments.id = @environment_id
   and saml_flows.access_code = $2;
 
 -- name: GetAppUserByEmail :one

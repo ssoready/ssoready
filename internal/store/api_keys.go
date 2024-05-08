@@ -19,6 +19,7 @@ type GetAPIKeyBySecretTokenRequest struct {
 type GetAPIKeyBySecretTokenResponse struct {
 	ID                string
 	AppOrganizationID uuid.UUID
+	EnvironmentID     uuid.UUID
 }
 
 func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecretTokenRequest) (*GetAPIKeyBySecretTokenResponse, error) {
@@ -30,6 +31,7 @@ func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecr
 	return &GetAPIKeyBySecretTokenResponse{
 		ID:                idformat.APIKey.Format(apiKey.ID),
 		AppOrganizationID: apiKey.AppOrganizationID,
+		EnvironmentID:     apiKey.EnvironmentID,
 	}, nil
 }
 

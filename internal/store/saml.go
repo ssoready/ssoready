@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/apikeyauth"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store/idformat"
@@ -28,8 +28,9 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	}
 
 	envAuthURL, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{
-		AppOrganizationID: appauth.OrgID(ctx),
-		ID:                samlConnID,
+		AppOrganizationID: apikeyauth.AppOrgID(ctx),
+		EnvironmentID:     apikeyauth.EnvID(ctx),
+		SamlConnectionID:  samlConnID,
 	})
 	if err != nil {
 		return nil, err
@@ -92,7 +93,8 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	}
 
 	samlAccessTokenData, err := q.GetSAMLAccessCodeData(ctx, queries.GetSAMLAccessCodeDataParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: apikeyauth.AppOrgID(ctx),
+		EnvironmentID:     apikeyauth.EnvID(ctx),
 		AccessCode:        samlAccessCode,
 	})
 	if err != nil {

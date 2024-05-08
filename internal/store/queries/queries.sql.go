@@ -646,12 +646,14 @@ from saml_flows
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
+  and environments.id = $3
   and saml_flows.access_code = $2
 `
 
 type GetSAMLAccessCodeDataParams struct {
 	AppOrganizationID uuid.UUID
 	AccessCode        uuid.UUID
+	EnvironmentID     uuid.UUID
 }
 
 type GetSAMLAccessCodeDataRow struct {
@@ -665,7 +667,7 @@ type GetSAMLAccessCodeDataRow struct {
 }
 
 func (q *Queries) GetSAMLAccessCodeData(ctx context.Context, arg GetSAMLAccessCodeDataParams) (GetSAMLAccessCodeDataRow, error) {
-	row := q.db.QueryRow(ctx, getSAMLAccessCodeData, arg.AppOrganizationID, arg.AccessCode)
+	row := q.db.QueryRow(ctx, getSAMLAccessCodeData, arg.AppOrganizationID, arg.AccessCode, arg.EnvironmentID)
 	var i GetSAMLAccessCodeDataRow
 	err := row.Scan(
 		&i.SamlFlowID,
@@ -774,16 +776,18 @@ from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
-  and saml_connections.id = $2
+  and environments.id = $2
+  and saml_connections.id = $3
 `
 
 type GetSAMLRedirectURLDataParams struct {
 	AppOrganizationID uuid.UUID
-	ID                uuid.UUID
+	EnvironmentID     uuid.UUID
+	SamlConnectionID  uuid.UUID
 }
 
 func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirectURLDataParams) (*string, error) {
-	row := q.db.QueryRow(ctx, getSAMLRedirectURLData, arg.AppOrganizationID, arg.ID)
+	row := q.db.QueryRow(ctx, getSAMLRedirectURLData, arg.AppOrganizationID, arg.EnvironmentID, arg.SamlConnectionID)
 	var auth_url *string
 	err := row.Scan(&auth_url)
 	return auth_url, err
