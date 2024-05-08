@@ -178,7 +178,9 @@ export function ViewOrganizationPage() {
 
 const FormSchema = z.object({
   externalId: z.string(),
-  domains: z.array(z.string()),
+  domains: z.array(z.string()).min(1, {
+    message: "At least one domain is required.",
+  }),
 });
 
 function EditOrganizationAlertDialog({

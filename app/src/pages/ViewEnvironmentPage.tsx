@@ -383,7 +383,9 @@ function EditEnvironmentAlertDialog({
 
 const OrgFormSchema = z.object({
   externalId: z.string(),
-  domains: z.array(z.string()),
+  domains: z.array(z.string()).min(1, {
+    message: "At least one domain is required.",
+  }),
 });
 
 function CreateOrganizationAlertDialog({
