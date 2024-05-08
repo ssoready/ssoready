@@ -29,6 +29,7 @@ require (
 	github.com/resend/resend-go/v2 v2.6.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/rs/cors v1.11.0 // indirect
+	github.com/ssoready/conf v0.0.0-20240508183332-dbc356674c9e // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
