@@ -92,6 +92,9 @@ func main() {
 	connectMux.Handle(connectPath, cors.AllowAll().Handler(connectHandler))
 
 	mux := http.NewServeMux()
+	mux.Handle("/internal/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
 	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))
 	mux.Handle("/", transcoder)
 	if err := http.ListenAndServe("localhost:8081", mux); err != nil {
