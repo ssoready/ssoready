@@ -114,6 +114,18 @@ func (s *Store) upsertGoogleAppUser(ctx context.Context, q *queries.Queries, req
 }
 
 func (s *Store) upsertGoogleAppOrg(ctx context.Context, q *queries.Queries, req *CreateGoogleSessionRequest) (*queries.AppOrganization, error) {
+	if req.HostedDomain == "" {
+		// this is a personal address; give them their own app org
+		appOrg, err := q.CreateAppOrganization(ctx, queries.CreateAppOrganizationParams{
+			ID: uuid.New(),
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return &appOrg, nil
+	}
+
 	appOrg, err := q.GetAppOrganizationByGoogleHostedDomain(ctx, &req.HostedDomain)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
