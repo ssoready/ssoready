@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/ssoready/ssoready/internal/emailaddr"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/saml"
 	"github.com/ssoready/ssoready/internal/store"
@@ -88,6 +89,25 @@ func main() {
 		})
 		if err != nil {
 			panic(err)
+		}
+
+		// check that the subject IDP ID is an email, and that email belongs to one of the org's domains
+		subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		var domainOk bool
+		for _, domain := range dataRes.OrganizationDomains {
+			if domain == subjectEmailDomain {
+				domainOk = true
+			}
+		}
+
+		if !domainOk {
+			http.Error(w, "unauthorized subject email address domain", http.StatusBadRequest)
+			return
 		}
 
 		createSAMLLoginRes, err := store_.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{

@@ -24,6 +24,13 @@ from saml_connections
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1;
 
+-- name: AuthGetSAMLConnectionDomains :many
+select organization_domains.domain
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join organization_domains on organizations.id = organization_domains.organization_id
+where saml_connections.id = $1;
+
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time)

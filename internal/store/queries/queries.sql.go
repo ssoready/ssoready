@@ -30,6 +30,34 @@ func (q *Queries) AuthGetInitData(ctx context.Context, id uuid.UUID) (AuthGetIni
 	return i, err
 }
 
+const authGetSAMLConnectionDomains = `-- name: AuthGetSAMLConnectionDomains :many
+select organization_domains.domain
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+         join organization_domains on organizations.id = organization_domains.organization_id
+where saml_connections.id = $1
+`
+
+func (q *Queries) AuthGetSAMLConnectionDomains(ctx context.Context, id uuid.UUID) ([]string, error) {
+	rows, err := q.db.Query(ctx, authGetSAMLConnectionDomains, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var domain string
+		if err := rows.Scan(&domain); err != nil {
+			return nil, err
+		}
+		items = append(items, domain)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const authGetSAMLFlow = `-- name: AuthGetSAMLFlow :one
 select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
 from saml_flows

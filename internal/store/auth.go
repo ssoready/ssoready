@@ -104,6 +104,7 @@ type AuthGetValidateDataResponse struct {
 	SPEntityID             string
 	IDPEntityID            string
 	IDPX509Certificate     []byte
+	OrganizationDomains    []string
 	EnvironmentRedirectURL string
 }
 
@@ -113,7 +114,18 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 		return nil, err
 	}
 
-	res, err := s.q.AuthGetValidateData(ctx, samlConnID)
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	res, err := q.AuthGetValidateData(ctx, samlConnID)
+	if err != nil {
+		return nil, err
+	}
+
+	domains, err := q.AuthGetSAMLConnectionDomains(ctx, samlConnID)
 	if err != nil {
 		return nil, err
 	}
@@ -122,6 +134,7 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 		SPEntityID:             *res.SpEntityID,
 		IDPEntityID:            *res.IdpEntityID,
 		IDPX509Certificate:     res.IdpX509Certificate,
+		OrganizationDomains:    domains,
 		EnvironmentRedirectURL: *res.RedirectUrl,
 	}, nil
 }
