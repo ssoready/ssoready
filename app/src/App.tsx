@@ -17,11 +17,12 @@ import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 import { CreateEnvironmentPage } from "@/pages/CreateEnvironmentPage";
 import { ViewAPIKeyPage } from "@/pages/ViewAPIKeyPage";
 import { VerifyEmailPage } from "@/pages/VerifyEmailPage";
+import { API_URL } from "@/config";
 
 const queryClient = new QueryClient();
 
 const transport = createConnectTransport({
-  baseUrl: "http://localhost:8081/internal/connect",
+  baseUrl: API_URL,
   interceptors: [
     (next) => async (req) => {
       req.header.set("Authorization", `Bearer ${getSessionToken()}`);
