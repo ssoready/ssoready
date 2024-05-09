@@ -62,6 +62,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -73,7 +81,37 @@ export function ViewSAMLConnectionPage() {
   );
 
   return (
-    <div className="grid gap-8">
+    <div className="flex flex-col gap-y-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to={`/environments/${environmentId}`}>{environmentId}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}`}
+              >
+                {organizationId}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{samlConnectionId}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -228,6 +266,7 @@ function ListLoginFlowsTabContent() {
                 <TableCell>
                   <Link
                     to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows/${flow.id}`}
+                    className="underline underline-offset-4 decoration-muted-foreground"
                   >
                     {flow.id}
                   </Link>

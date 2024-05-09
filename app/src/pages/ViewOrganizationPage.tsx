@@ -67,6 +67,14 @@ import { Input } from "@/components/ui/input";
 import { InputTags } from "@/components/InputTags";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -94,6 +102,26 @@ export function ViewOrganizationPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to={`/environments/${environmentId}`}>{environmentId}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{organizationId}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

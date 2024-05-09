@@ -16,15 +16,58 @@ import {
 import moment from "moment";
 import formatXml from "xml-formatter";
 import hljs from "highlight.js/lib/core";
+import {
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Link } from "react-router-dom";
 
 export function ViewSAMLFlowPage() {
-  const { samlFlowId } = useParams();
+  const { environmentId, organizationId, samlConnectionId, samlFlowId } =
+    useParams();
   const { data: samlFlow } = useQuery(getSAMLFlow, {
     id: samlFlowId,
   });
 
   return (
     <div className="flex flex-col gap-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to={`/environments/${environmentId}`}>{environmentId}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbEllipsis />
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
+              >
+                {samlConnectionId}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{samlFlowId}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

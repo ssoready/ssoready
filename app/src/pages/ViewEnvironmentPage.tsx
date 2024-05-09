@@ -61,6 +61,14 @@ import { CircleAlert, Plus } from "lucide-react";
 import { InputTags } from "@/components/InputTags";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
@@ -100,7 +108,21 @@ export function ViewEnvironmentPage() {
   ]);
 
   return (
-    <div className="grid gap-8">
+    <div className="flex flex-col gap-y-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{environmentId}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <AlertDialog open={apiKeyAlertOpen} onOpenChange={setApiKeyAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
