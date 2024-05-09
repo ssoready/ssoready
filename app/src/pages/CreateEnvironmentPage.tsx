@@ -66,6 +66,7 @@ export function CreateEnvironmentPage() {
         environment: {
           displayName: values.displayName,
           redirectUrl: values.redirectUrl,
+          authUrl: values.authUrl,
         },
       });
 
