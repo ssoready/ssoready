@@ -1700,3 +1700,89 @@ export class GetSAMLFlowRequest extends Message<GetSAMLFlowRequest> {
   }
 }
 
+/**
+ * @generated from message ssoready.v1.ParseSAMLMetadataRequest
+ */
+export class ParseSAMLMetadataRequest extends Message<ParseSAMLMetadataRequest> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<ParseSAMLMetadataRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ParseSAMLMetadataRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ParseSAMLMetadataRequest {
+    return new ParseSAMLMetadataRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ParseSAMLMetadataRequest {
+    return new ParseSAMLMetadataRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ParseSAMLMetadataRequest {
+    return new ParseSAMLMetadataRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ParseSAMLMetadataRequest | PlainMessage<ParseSAMLMetadataRequest> | undefined, b: ParseSAMLMetadataRequest | PlainMessage<ParseSAMLMetadataRequest> | undefined): boolean {
+    return proto3.util.equals(ParseSAMLMetadataRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ParseSAMLMetadataResponse
+ */
+export class ParseSAMLMetadataResponse extends Message<ParseSAMLMetadataResponse> {
+  /**
+   * @generated from field: string idp_redirect_url = 1;
+   */
+  idpRedirectUrl = "";
+
+  /**
+   * @generated from field: string idp_certificate = 2;
+   */
+  idpCertificate = "";
+
+  /**
+   * @generated from field: string idp_entity_id = 3;
+   */
+  idpEntityId = "";
+
+  constructor(data?: PartialMessage<ParseSAMLMetadataResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ParseSAMLMetadataResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "idp_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ParseSAMLMetadataResponse {
+    return new ParseSAMLMetadataResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ParseSAMLMetadataResponse {
+    return new ParseSAMLMetadataResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ParseSAMLMetadataResponse {
+    return new ParseSAMLMetadataResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ParseSAMLMetadataResponse | PlainMessage<ParseSAMLMetadataResponse> | undefined, b: ParseSAMLMetadataResponse | PlainMessage<ParseSAMLMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(ParseSAMLMetadataResponse, a, b);
+  }
+}
+

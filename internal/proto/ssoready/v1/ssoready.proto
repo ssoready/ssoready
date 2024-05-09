@@ -48,6 +48,8 @@ service SSOReadyService {
 
   rpc ListSAMLFlows(ListSAMLFlowsRequest) returns (ListSAMLFlowsResponse);
   rpc GetSAMLFlow(GetSAMLFlowRequest) returns (SAMLFlow);
+
+  rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
 }
 
 message AppUser {
@@ -253,4 +255,14 @@ message ListSAMLFlowsResponse {
 
 message GetSAMLFlowRequest {
   string id = 1;
+}
+
+message ParseSAMLMetadataRequest {
+  string url = 1;
+}
+
+message ParseSAMLMetadataResponse {
+  string idp_redirect_url = 1;
+  string idp_certificate = 2;
+  string idp_entity_id = 3;
 }

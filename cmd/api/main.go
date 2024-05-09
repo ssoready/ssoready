@@ -78,6 +78,7 @@ func main() {
 			ResendClient:              resend.NewClient(config.ResendAPIKey),
 			EmailChallengeFrom:        config.EmailChallengeFrom,
 			EmailVerificationEndpoint: config.EmailVerificationEndpoint,
+			SAMLMetadataHTTPClient:    http.DefaultClient,
 		},
 		connect.WithInterceptors(appauthinterceptor.New(store_)),
 	)

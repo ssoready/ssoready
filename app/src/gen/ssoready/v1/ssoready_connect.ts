@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -217,6 +217,15 @@ export const SSOReadyService = {
       name: "GetSAMLFlow",
       I: GetSAMLFlowRequest,
       O: SAMLFlow,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.ParseSAMLMetadata
+     */
+    parseSAMLMetadata: {
+      name: "ParseSAMLMetadata",
+      I: ParseSAMLMetadataRequest,
+      O: ParseSAMLMetadataResponse,
       kind: MethodKind.Unary,
     },
   }

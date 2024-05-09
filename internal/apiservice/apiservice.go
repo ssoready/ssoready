@@ -1,6 +1,8 @@
 package apiservice
 
 import (
+	"net/http"
+
 	"github.com/resend/resend-go/v2"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
@@ -13,5 +15,6 @@ type Service struct {
 	ResendClient              *resend.Client
 	EmailChallengeFrom        string
 	EmailVerificationEndpoint string
+	SAMLMetadataHTTPClient    *http.Client
 	ssoreadyv1connect.UnimplementedSSOReadyServiceHandler
 }

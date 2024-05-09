@@ -43,6 +43,7 @@ const (
 	SSOReadyService_UpdateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
 	SSOReadyService_ListSAMLFlows_FullMethodName        = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
 	SSOReadyService_GetSAMLFlow_FullMethodName          = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
+	SSOReadyService_ParseSAMLMetadata_FullMethodName    = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -72,6 +73,7 @@ type SSOReadyServiceClient interface {
 	UpdateSAMLConnection(ctx context.Context, in *UpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	ListSAMLFlows(ctx context.Context, in *ListSAMLFlowsRequest, opts ...grpc.CallOption) (*ListSAMLFlowsResponse, error)
 	GetSAMLFlow(ctx context.Context, in *GetSAMLFlowRequest, opts ...grpc.CallOption) (*SAMLFlow, error)
+	ParseSAMLMetadata(ctx context.Context, in *ParseSAMLMetadataRequest, opts ...grpc.CallOption) (*ParseSAMLMetadataResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -289,6 +291,15 @@ func (c *sSOReadyServiceClient) GetSAMLFlow(ctx context.Context, in *GetSAMLFlow
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) ParseSAMLMetadata(ctx context.Context, in *ParseSAMLMetadataRequest, opts ...grpc.CallOption) (*ParseSAMLMetadataResponse, error) {
+	out := new(ParseSAMLMetadataResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ParseSAMLMetadata_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -316,6 +327,7 @@ type SSOReadyServiceServer interface {
 	UpdateSAMLConnection(context.Context, *UpdateSAMLConnectionRequest) (*SAMLConnection, error)
 	ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error)
 	GetSAMLFlow(context.Context, *GetSAMLFlowRequest) (*SAMLFlow, error)
+	ParseSAMLMetadata(context.Context, *ParseSAMLMetadataRequest) (*ParseSAMLMetadataResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -391,6 +403,9 @@ func (UnimplementedSSOReadyServiceServer) ListSAMLFlows(context.Context, *ListSA
 }
 func (UnimplementedSSOReadyServiceServer) GetSAMLFlow(context.Context, *GetSAMLFlowRequest) (*SAMLFlow, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSAMLFlow not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ParseSAMLMetadata(context.Context, *ParseSAMLMetadataRequest) (*ParseSAMLMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParseSAMLMetadata not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -819,6 +834,24 @@ func _SSOReadyService_GetSAMLFlow_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_ParseSAMLMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParseSAMLMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ParseSAMLMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ParseSAMLMetadata_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ParseSAMLMetadata(ctx, req.(*ParseSAMLMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -917,6 +950,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSAMLFlow",
 			Handler:    _SSOReadyService_GetSAMLFlow_Handler,
+		},
+		{
+			MethodName: "ParseSAMLMetadata",
+			Handler:    _SSOReadyService_ParseSAMLMetadata_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

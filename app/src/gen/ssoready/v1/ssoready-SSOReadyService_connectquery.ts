@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
@@ -323,6 +323,20 @@ export const getSAMLFlow = {
   kind: MethodKind.Unary,
   I: GetSAMLFlowRequest,
   O: SAMLFlow,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.ParseSAMLMetadata
+ */
+export const parseSAMLMetadata = {
+  localName: "parseSAMLMetadata",
+  name: "ParseSAMLMetadata",
+  kind: MethodKind.Unary,
+  I: ParseSAMLMetadataRequest,
+  O: ParseSAMLMetadataResponse,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }

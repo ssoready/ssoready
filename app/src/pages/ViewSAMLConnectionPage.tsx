@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useId, useState } from "react";
 import { useMatch, useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
 import {
@@ -8,6 +8,7 @@ import {
   listOrganizations,
   listSAMLConnections,
   listSAMLFlows,
+  parseSAMLMetadata,
   updateSAMLConnection,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
@@ -70,6 +71,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Label } from "@/components/ui/label";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -337,6 +339,18 @@ function EditSAMLConnectionAlertDialog({
     [samlConnection.id, updateSAMLConnectionMutation, queryClient, setOpen],
   );
 
+  const id = useId();
+  const [metadataUrl, setMetadataUrl] = useState("");
+  const parseSAMLMetadataMutation = useMutation(parseSAMLMetadata);
+  const handleLoadMetadata = useCallback(async () => {
+    const { idpRedirectUrl, idpCertificate, idpEntityId } =
+      await parseSAMLMetadataMutation.mutateAsync({ url: metadataUrl });
+
+    form.setValue("idpRedirectUrl", idpRedirectUrl);
+    form.setValue("idpCertificate", idpCertificate);
+    form.setValue("idpEntityId", idpEntityId);
+  }, [parseSAMLMetadataMutation, metadataUrl, form]);
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
@@ -353,6 +367,34 @@ function EditSAMLConnectionAlertDialog({
                 Edit identity provider configuration
               </AlertDialogTitle>
             </AlertDialogHeader>
+
+            <FormItem>
+              <Label htmlFor={id}>IDP Metadata URL</Label>
+              <div className="flex w-full items-center space-x-2">
+                <Input
+                  id={id}
+                  placeholder="https://identity-provider.com/app/123/metadata.xml"
+                  value={metadataUrl}
+                  onChange={(e) => setMetadataUrl(e.target.value)}
+                />
+                <Button type="button" onClick={handleLoadMetadata}>
+                  Load from metadata
+                </Button>
+              </div>
+              <FormDescription>IDP Metadata URL.</FormDescription>
+            </FormItem>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or manually enter
+                </span>
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="idpEntityId"
