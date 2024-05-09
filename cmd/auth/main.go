@@ -24,9 +24,9 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
 
 	config := struct {
-		ServeAddr            string `conf:"serve-addr"`
+		ServeAddr            string `conf:"serve-addr,noredact"`
 		DB                   string `conf:"db"`
-		GlobalDefaultAuthURL string `conf:"global-default-auth-url"`
+		GlobalDefaultAuthURL string `conf:"global-default-auth-url,noredact"`
 		PageEncodingSecret   string `conf:"page-encoding-secret"`
 		SAMLStateSigningKey  string `conf:"saml-state-signing-key"`
 	}{

@@ -65,7 +65,7 @@ export function EnvironmentSwitcher() {
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Link className="flex items-center" to="/environments/new">
+          <Link className="flex items-center w-full" to="/environments/new">
             <Plus className="mr-2 h-4 w-4" />
             <span>New environment</span>
           </Link>
