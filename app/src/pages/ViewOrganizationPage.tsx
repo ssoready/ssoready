@@ -66,6 +66,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputTags } from "@/components/InputTags";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -75,6 +76,21 @@ export function ViewOrganizationPage() {
   const { data: listSAMLConnectionsRes } = useQuery(listSAMLConnections, {
     organizationId,
   });
+
+  const createSAMLConnectionMutation = useMutation(createSAMLConnection);
+  const navigate = useNavigate();
+  const handleCreateSAMLConnection = useCallback(async () => {
+    const samlConnection = await createSAMLConnectionMutation.mutateAsync({
+      samlConnection: {
+        organizationId,
+      },
+    });
+
+    toast("SAML Connection has been created.");
+    navigate(
+      `/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnection.id}`,
+    );
+  }, [environmentId, organizationId, createSAMLConnectionMutation, navigate]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -133,11 +149,10 @@ export function ViewOrganizationPage() {
               </CardDescription>
             </div>
 
-            {organization && (
-              <CreateSAMLConnectionAlertDialog
-                organizationId={organization.id}
-              />
-            )}
+            <Button variant="outline" onClick={handleCreateSAMLConnection}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create SAML connection
+            </Button>
           </div>
         </CardHeader>
 
@@ -275,138 +290,6 @@ function EditOrganizationAlertDialog({
                 )}
               />
             </div>
-
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <Button type="submit">Save</Button>
-            </AlertDialogFooter>
-          </form>
-        </Form>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-const ConnectionFormSchema = z.object({
-  idpEntityId: z.string(),
-  idpRedirectUrl: z
-    .string()
-    .url({
-      message: "IDP Redirect URL must be a valid URL.",
-    })
-    .or(z.literal("")),
-  idpCertificate: z
-    .string()
-    .startsWith("-----BEGIN CERTIFICATE-----", {
-      message: "IDP Certificate must be a PEM-encoded X.509 certificate.",
-    })
-    .or(z.literal("")),
-});
-
-function CreateSAMLConnectionAlertDialog({
-  organizationId,
-}: {
-  organizationId: string;
-}) {
-  const form = useForm<z.infer<typeof ConnectionFormSchema>>({
-    resolver: zodResolver(ConnectionFormSchema),
-    defaultValues: {
-      idpEntityId: "",
-      idpRedirectUrl: "",
-      idpCertificate: "",
-    },
-  });
-
-  const [open, setOpen] = useState(false);
-  const createSAMLConnectionMutation = useMutation(createSAMLConnection);
-  const queryClient = useQueryClient();
-
-  const handleSubmit = useCallback(
-    async (data: z.infer<typeof ConnectionFormSchema>, e: any) => {
-      e.preventDefault();
-      await createSAMLConnectionMutation.mutateAsync({
-        samlConnection: {
-          organizationId,
-          idpEntityId: data.idpEntityId,
-          idpRedirectUrl: data.idpRedirectUrl,
-          idpCertificate: data.idpCertificate,
-        },
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(listSAMLConnections, {
-          organizationId,
-        }),
-      });
-
-      setOpen(false);
-    },
-    [organizationId, createSAMLConnectionMutation, queryClient, setOpen],
-  );
-
-  return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">
-          <Plus className="mr-2 h-4 w-4" />
-          Create SAML connection
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="w-full space-y-6"
-          >
-            <AlertDialogHeader>
-              <AlertDialogTitle>Create SAML connection</AlertDialogTitle>
-            </AlertDialogHeader>
-            <FormField
-              control={form.control}
-              name="idpEntityId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>IDP Entity ID</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>IDP Entity ID.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="idpRedirectUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>IDP Redirect URL</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>IDP Redirect URL.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="idpCertificate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>IDP Certificate</FormLabel>
-                  <FormControl>
-                    <Textarea className="min-h-[200px]" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    IDP Certificate, as a PEM-encoded X.509 certificate. These
-                    start with '-----BEGIN CERTIFICATE-----' and end with
-                    '-----END CERTIFICATE-----'.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>

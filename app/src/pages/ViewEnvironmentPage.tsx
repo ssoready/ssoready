@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   createConnectQueryKey,
   useMutation,
@@ -60,6 +60,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { CircleAlert, Plus } from "lucide-react";
 import { InputTags } from "@/components/InputTags";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
@@ -404,10 +405,11 @@ function CreateOrganizationAlertDialog({
   const [open, setOpen] = useState(false);
   const createOrganizationMutation = useMutation(createOrganization);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const handleSubmit = useCallback(
     async (values: z.infer<typeof OrgFormSchema>, e: any) => {
       e.preventDefault();
-      await createOrganizationMutation.mutateAsync({
+      const organization = await createOrganizationMutation.mutateAsync({
         organization: {
           environmentId: environment.id,
           externalId: values.externalId,
@@ -422,8 +424,12 @@ function CreateOrganizationAlertDialog({
       });
 
       setOpen(false);
+      toast("Organization has been created.");
+      navigate(
+        `/environments/${environment.id}/organizations/${organization.id}`,
+      );
     },
-    [setOpen, environment, createOrganizationMutation, queryClient],
+    [setOpen, environment, createOrganizationMutation, queryClient, navigate],
   );
 
   return (
