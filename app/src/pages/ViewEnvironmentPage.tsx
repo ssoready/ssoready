@@ -197,6 +197,7 @@ export function ViewEnvironmentPage() {
                   <TableCell>
                     <Link
                       to={`/environments/${environmentId}/api-keys/${apiKey?.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
                     >
                       {apiKey.id}
                     </Link>
@@ -240,6 +241,7 @@ export function ViewEnvironmentPage() {
                   <TableCell>
                     <Link
                       to={`/environments/${environmentId}/organizations/${org?.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
                     >
                       {org.id}
                     </Link>

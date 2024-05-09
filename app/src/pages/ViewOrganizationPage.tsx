@@ -171,6 +171,7 @@ export function ViewOrganizationPage() {
                   <TableCell>
                     <Link
                       to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/saml-connections/${samlConn.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
                     >
                       {samlConn.id}
                     </Link>
