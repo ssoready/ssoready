@@ -98,7 +98,9 @@ func main() {
 	}))
 	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))
 	mux.Handle("/", transcoder)
-	if err := http.ListenAndServe("localhost:8081", mux); err != nil {
+
+	slog.Info("serve")
+	if err := http.ListenAndServe(config.ServeAddr, mux); err != nil {
 		panic(err)
 	}
 }
