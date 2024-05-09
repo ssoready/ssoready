@@ -5,8 +5,10 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -19,6 +21,8 @@ import (
 )
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
+
 	config := struct {
 		ServeAddr            string `conf:"serve-addr"`
 		DB                   string `conf:"db"`
@@ -32,6 +36,7 @@ func main() {
 	}
 
 	conf.Load(&config)
+	slog.Info("config", "config", conf.Redact(config))
 
 	db, err := pgxpool.New(context.Background(), config.DB)
 	if err != nil {
@@ -167,6 +172,12 @@ func main() {
 		http.Redirect(w, r, redirect, http.StatusSeeOther)
 	}).Methods("POST")
 
+	r.HandleFunc("/internal/health", func(w http.ResponseWriter, r *http.Request) {
+		slog.InfoContext(r.Context(), "health")
+		w.WriteHeader(http.StatusOK)
+	}).Methods("GET")
+
+	slog.Info("serve")
 	if err := http.ListenAndServe(config.ServeAddr, r); err != nil {
 		panic(err)
 	}
