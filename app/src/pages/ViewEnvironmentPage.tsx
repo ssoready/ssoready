@@ -77,6 +77,7 @@ export function ViewEnvironmentPage() {
   const [apiKeySecret, setApiKeySecret] = useState("");
   const [apiKeyAlertOpen, setApiKeyAlertOpen] = useState(false);
   const createAPIKeyMutation = useMutation(createAPIKey);
+  const queryClient = useQueryClient();
   const handleCreateAPIKey = useCallback(async () => {
     const apiKey = await createAPIKeyMutation.mutateAsync({
       apiKey: {
@@ -84,9 +85,19 @@ export function ViewEnvironmentPage() {
       },
     });
 
+    await queryClient.invalidateQueries({
+      queryKey: createConnectQueryKey(listAPIKeys, { environmentId }),
+    });
+
     setApiKeySecret(apiKey.secretToken);
     setApiKeyAlertOpen(true);
-  }, [createAPIKeyMutation, setApiKeySecret, setApiKeyAlertOpen]);
+  }, [
+    environmentId,
+    createAPIKeyMutation,
+    queryClient,
+    setApiKeySecret,
+    setApiKeyAlertOpen,
+  ]);
 
   return (
     <div className="grid gap-8">
