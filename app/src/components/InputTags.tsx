@@ -10,7 +10,7 @@ type InputTagsProps = InputProps & {
 };
 
 export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
-  ({ value, onChange, ...props }, ref) => {
+  ({ value, onChange, onBlur, ...props }, ref) => {
     const [pendingDataPoint, setPendingDataPoint] = useState("");
 
     const addPendingDataPoint = () => {
@@ -34,6 +34,14 @@ export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
               } else if (e.key === "," || e.key === " ") {
                 e.preventDefault();
                 addPendingDataPoint();
+              }
+            }}
+            onBlur={(e) => {
+              if (pendingDataPoint !== "") {
+                addPendingDataPoint();
+              }
+              if (onBlur) {
+                onBlur(e);
               }
             }}
             className="rounded-r-none"
