@@ -426,11 +426,20 @@ function EditSAMLConnectionAlertDialog({
             <FormField
               control={form.control}
               name="idpCertificate"
-              render={({ field }) => (
+              render={({ field: { onChange } }) => (
                 <FormItem>
                   <FormLabel>IDP Certificate</FormLabel>
                   <FormControl>
-                    <Textarea className="min-h-[200px]" {...field} />
+                    <Input
+                      type="file"
+                      onChange={async (e) => {
+                        // File inputs are special; they are necessarily "uncontrolled", and their value is a FileList.
+                        // We just copy over the file's contents to the react-form-hook state manually on input change.
+                        if (e.target.files) {
+                          onChange(await e.target.files[0].text());
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormDescription>
                     IDP Certificate, as a PEM-encoded X.509 certificate. These
