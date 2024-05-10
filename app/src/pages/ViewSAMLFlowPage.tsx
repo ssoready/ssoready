@@ -40,17 +40,13 @@ export function ViewSAMLFlowPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to="/">Home</Link>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}`}
+              >
+                {organizationId}
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={`/environments/${environmentId}`}>{environmentId}</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbEllipsis />
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
@@ -62,6 +58,7 @@ export function ViewSAMLFlowPage() {
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
+
           <BreadcrumbItem>
             <BreadcrumbPage>{samlFlowId}</BreadcrumbPage>
           </BreadcrumbItem>

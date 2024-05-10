@@ -109,20 +109,6 @@ export function ViewEnvironmentPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/">Home</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{environmentId}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
       <AlertDialog open={apiKeyAlertOpen} onOpenChange={setApiKeyAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
