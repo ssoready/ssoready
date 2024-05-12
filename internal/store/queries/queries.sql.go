@@ -59,7 +59,7 @@ func (q *Queries) AuthGetSAMLConnectionDomains(ctx context.Context, id uuid.UUID
 }
 
 const authGetSAMLFlow = `-- name: AuthGetSAMLFlow :one
-select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 from saml_flows
 where id = $1
 `
@@ -86,6 +86,11 @@ func (q *Queries) AuthGetSAMLFlow(ctx context.Context, id uuid.UUID) (SamlFlow, 
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
@@ -361,7 +366,7 @@ const createSAMLFlowGetRedirect = `-- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type CreateSAMLFlowGetRedirectParams struct {
@@ -408,6 +413,11 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
@@ -758,7 +768,7 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 }
 
 const getSAMLFlow = `-- name: GetSAMLFlow :one
-select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.subject_idp_id, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time, saml_flows.redeem_response
+select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.subject_idp_id, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time, saml_flows.redeem_response, saml_flows.error_bad_issuer, saml_flows.error_bad_audience, saml_flows.error_bad_subject_id, saml_flows.error_email_outside_organization_domains, saml_flows.status
 from saml_flows
          join saml_connections on saml_flows.saml_connection_id = saml_connections.id
          join organizations on saml_connections.organization_id = organizations.id
@@ -794,6 +804,11 @@ func (q *Queries) GetSAMLFlow(ctx context.Context, arg GetSAMLFlowParams) (SamlF
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
@@ -1000,23 +1015,21 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 	return items, nil
 }
 
-const listSAMLFlows = `-- name: ListSAMLFlows :many
-select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+const listSAMLFlowsFirstPage = `-- name: ListSAMLFlowsFirstPage :many
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 from saml_flows
 where saml_connection_id = $1
-  and id > $2
-order by id
-limit $3
+order by (create_time, id) desc
+limit $2
 `
 
-type ListSAMLFlowsParams struct {
+type ListSAMLFlowsFirstPageParams struct {
 	SamlConnectionID uuid.UUID
-	ID               uuid.UUID
 	Limit            int32
 }
 
-func (q *Queries) ListSAMLFlows(ctx context.Context, arg ListSAMLFlowsParams) ([]SamlFlow, error) {
-	rows, err := q.db.Query(ctx, listSAMLFlows, arg.SamlConnectionID, arg.ID, arg.Limit)
+func (q *Queries) ListSAMLFlowsFirstPage(ctx context.Context, arg ListSAMLFlowsFirstPageParams) ([]SamlFlow, error) {
+	rows, err := q.db.Query(ctx, listSAMLFlowsFirstPage, arg.SamlConnectionID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -1043,6 +1056,76 @@ func (q *Queries) ListSAMLFlows(ctx context.Context, arg ListSAMLFlowsParams) ([
 			&i.ReceiveAssertionTime,
 			&i.RedeemTime,
 			&i.RedeemResponse,
+			&i.ErrorBadIssuer,
+			&i.ErrorBadAudience,
+			&i.ErrorBadSubjectID,
+			&i.ErrorEmailOutsideOrganizationDomains,
+			&i.Status,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSAMLFlowsNextPage = `-- name: ListSAMLFlowsNextPage :many
+select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
+from saml_flows
+where saml_connection_id = $1
+  and (create_time, id) < ($3, $4::uuid)
+order by (create_time, id) desc
+limit $2
+`
+
+type ListSAMLFlowsNextPageParams struct {
+	SamlConnectionID uuid.UUID
+	Limit            int32
+	CreateTime       time.Time
+	ID               uuid.UUID
+}
+
+func (q *Queries) ListSAMLFlowsNextPage(ctx context.Context, arg ListSAMLFlowsNextPageParams) ([]SamlFlow, error) {
+	rows, err := q.db.Query(ctx, listSAMLFlowsNextPage,
+		arg.SamlConnectionID,
+		arg.Limit,
+		arg.CreateTime,
+		arg.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SamlFlow
+	for rows.Next() {
+		var i SamlFlow
+		if err := rows.Scan(
+			&i.ID,
+			&i.SamlConnectionID,
+			&i.AccessCode,
+			&i.State,
+			&i.CreateTime,
+			&i.ExpireTime,
+			&i.SubjectIdpID,
+			&i.SubjectIdpAttributes,
+			&i.UpdateTime,
+			&i.AuthRedirectUrl,
+			&i.GetRedirectTime,
+			&i.InitiateRequest,
+			&i.InitiateTime,
+			&i.Assertion,
+			&i.AppRedirectUrl,
+			&i.ReceiveAssertionTime,
+			&i.RedeemTime,
+			&i.RedeemResponse,
+			&i.ErrorBadIssuer,
+			&i.ErrorBadAudience,
+			&i.ErrorBadSubjectID,
+			&i.ErrorEmailOutsideOrganizationDomains,
+			&i.Status,
 		); err != nil {
 			return nil, err
 		}
@@ -1146,7 +1229,7 @@ const updateSAMLFlowAppRedirectURL = `-- name: UpdateSAMLFlowAppRedirectURL :one
 update saml_flows
 set app_redirect_url = $1
 where id = $2
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type UpdateSAMLFlowAppRedirectURLParams struct {
@@ -1176,6 +1259,11 @@ func (q *Queries) UpdateSAMLFlowAppRedirectURL(ctx context.Context, arg UpdateSA
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
@@ -1186,7 +1274,7 @@ set update_time     = $1,
     redeem_time     = $2,
     redeem_response = $3
 where id = $4
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type UpdateSAMLFlowRedeemParams struct {
@@ -1223,6 +1311,54 @@ func (q *Queries) UpdateSAMLFlowRedeem(ctx context.Context, arg UpdateSAMLFlowRe
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
+	)
+	return i, err
+}
+
+const updateSAMLFlowStatus = `-- name: UpdateSAMLFlowStatus :one
+update saml_flows
+set status = $1
+where id = $2
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
+`
+
+type UpdateSAMLFlowStatusParams struct {
+	Status NullSamlFlowStatus
+	ID     uuid.UUID
+}
+
+func (q *Queries) UpdateSAMLFlowStatus(ctx context.Context, arg UpdateSAMLFlowStatusParams) (SamlFlow, error) {
+	row := q.db.QueryRow(ctx, updateSAMLFlowStatus, arg.Status, arg.ID)
+	var i SamlFlow
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.AccessCode,
+		&i.State,
+		&i.CreateTime,
+		&i.ExpireTime,
+		&i.SubjectIdpID,
+		&i.SubjectIdpAttributes,
+		&i.UpdateTime,
+		&i.AuthRedirectUrl,
+		&i.GetRedirectTime,
+		&i.InitiateRequest,
+		&i.InitiateTime,
+		&i.Assertion,
+		&i.AppRedirectUrl,
+		&i.ReceiveAssertionTime,
+		&i.RedeemTime,
+		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
@@ -1232,7 +1368,7 @@ update saml_flows
 set subject_idp_id         = $1,
     subject_idp_attributes = $2
 where id = $3
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type UpdateSAMLFlowSubjectDataParams struct {
@@ -1263,6 +1399,11 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
@@ -1274,7 +1415,7 @@ values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
                                initiate_time    = excluded.initiate_time
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type UpsertSAMLFlowInitiateParams struct {
@@ -1321,30 +1462,44 @@ func (q *Queries) UpsertSAMLFlowInitiate(ctx context.Context, arg UpsertSAMLFlow
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }
 
 const upsertSAMLFlowReceiveAssertion = `-- name: UpsertSAMLFlowReceiveAssertion :one
 insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
-                        assertion, receive_assertion_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-on conflict (id) do update set update_time            = excluded.update_time,
-                               assertion              = excluded.assertion,
-                               receive_assertion_time = excluded.receive_assertion_time
-returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response
+                        assertion, receive_assertion_time, error_bad_issuer, error_bad_audience, error_bad_subject_id,
+                        error_email_outside_organization_domains)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+on conflict (id) do update set update_time                              = excluded.update_time,
+                               assertion                                = excluded.assertion,
+                               receive_assertion_time                   = excluded.receive_assertion_time,
+                               error_bad_issuer                         = excluded.error_bad_issuer,
+                               error_bad_audience                       = excluded.error_bad_audience,
+                               error_bad_subject_id                     = excluded.error_bad_subject_id,
+                               error_email_outside_organization_domains = excluded.error_email_outside_organization_domains
+returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type UpsertSAMLFlowReceiveAssertionParams struct {
-	ID                   uuid.UUID
-	SamlConnectionID     uuid.UUID
-	AccessCode           uuid.UUID
-	ExpireTime           time.Time
-	State                string
-	CreateTime           time.Time
-	UpdateTime           time.Time
-	Assertion            *string
-	ReceiveAssertionTime *time.Time
+	ID                                   uuid.UUID
+	SamlConnectionID                     uuid.UUID
+	AccessCode                           uuid.UUID
+	ExpireTime                           time.Time
+	State                                string
+	CreateTime                           time.Time
+	UpdateTime                           time.Time
+	Assertion                            *string
+	ReceiveAssertionTime                 *time.Time
+	ErrorBadIssuer                       *string
+	ErrorBadAudience                     *string
+	ErrorBadSubjectID                    *string
+	ErrorEmailOutsideOrganizationDomains *string
 }
 
 func (q *Queries) UpsertSAMLFlowReceiveAssertion(ctx context.Context, arg UpsertSAMLFlowReceiveAssertionParams) (SamlFlow, error) {
@@ -1358,6 +1513,10 @@ func (q *Queries) UpsertSAMLFlowReceiveAssertion(ctx context.Context, arg Upsert
 		arg.UpdateTime,
 		arg.Assertion,
 		arg.ReceiveAssertionTime,
+		arg.ErrorBadIssuer,
+		arg.ErrorBadAudience,
+		arg.ErrorBadSubjectID,
+		arg.ErrorEmailOutsideOrganizationDomains,
 	)
 	var i SamlFlow
 	err := row.Scan(
@@ -1379,6 +1538,11 @@ func (q *Queries) UpsertSAMLFlowReceiveAssertion(ctx context.Context, arg Upsert
 		&i.ReceiveAssertionTime,
 		&i.RedeemTime,
 		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
 	)
 	return i, err
 }

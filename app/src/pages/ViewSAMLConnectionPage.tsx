@@ -1,6 +1,6 @@
 import React, { useCallback, useId, useState } from "react";
 import { useMatch, useParams } from "react-router";
-import { useQuery } from "@connectrpc/connect-query";
+import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
   getEnvironment,
   getOrganization,
@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/collapsible";
 import moment from "moment";
 import { z } from "zod";
-import { SAMLConnection } from "@/gen/ssoready/v1/ssoready_pb";
+import { SAMLConnection, SAMLFlowStatus } from "@/gen/ssoready/v1/ssoready_pb";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
@@ -228,9 +228,18 @@ export function ViewSAMLConnectionPage() {
 
 function ListLoginFlowsTabContent() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
-  const { data: listFlowsRes } = useQuery(listSAMLFlows, {
-    samlConnectionId,
-  });
+  const {
+    data: listFlowsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    listSAMLFlows,
+    { samlConnectionId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
 
   return (
     <Card>
@@ -246,29 +255,51 @@ function ListLoginFlowsTabContent() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Timestamp</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>User ID</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {listFlowsRes?.samlFlows?.map((flow) => (
-              <TableRow key={flow.id}>
-                <TableCell>
-                  <Link
-                    to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows/${flow.id}`}
-                    className="underline underline-offset-4 decoration-muted-foreground"
-                  >
-                    {flow.id}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  {moment(flow.createTime!.toDate()).format()}
-                </TableCell>
-                <TableCell>{flow.subjectIdpId}</TableCell>
-              </TableRow>
-            ))}
+            {listFlowsResponses?.pages
+              ?.flatMap((page) => page.samlFlows)
+              ?.map((flow) => (
+                <TableRow key={flow.id}>
+                  <TableCell className="max-w-[200px] truncate">
+                    <Link
+                      to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows/${flow.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
+                    >
+                      {flow.id}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    {moment(flow.createTime!.toDate()).format()}
+                  </TableCell>
+                  <TableCell>
+                    {flow.status ===
+                      SAMLFlowStatus.SAML_FLOW_STATUS_IN_PROGRESS && (
+                      <Badge variant="secondary">In progress</Badge>
+                    )}
+                    {flow.status === SAMLFlowStatus.SAML_FLOW_STATUS_FAILED && (
+                      <Badge variant="destructive">Failed</Badge>
+                    )}
+                    {flow.status ===
+                      SAMLFlowStatus.SAML_FLOW_STATUS_SUCCEEDED && (
+                      <Badge>Succeeded</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>{flow.subjectIdpId}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
+
+        {hasNextPage && (
+          <Button variant="secondary" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

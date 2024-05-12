@@ -70,10 +70,6 @@ export function App() {
                     element={<ViewSAMLConnectionPage />}
                   />
                   <Route
-                    path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows"
-                    element={<ViewSAMLConnectionPage />}
-                  />
-                  <Route
                     path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/edit"
                     element={<EditSAMLConnectionPage />}
                   />

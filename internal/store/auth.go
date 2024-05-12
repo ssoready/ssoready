@@ -89,6 +89,16 @@ func (s *Store) AuthUpsertInitiateData(ctx context.Context, req *AuthUpsertIniti
 		return err
 	}
 
+	if _, err := q.UpdateSAMLFlowStatus(ctx, queries.UpdateSAMLFlowStatusParams{
+		ID: samlFlowID,
+		Status: queries.NullSamlFlowStatus{
+			Valid:          true,
+			SamlFlowStatus: queries.SamlFlowStatusInProgress,
+		},
+	}); err != nil {
+		return err
+	}
+
 	if err := commit(); err != nil {
 		return err
 	}
@@ -140,11 +150,15 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 }
 
 type AuthUpsertSAMLLoginEventRequest struct {
-	SAMLConnectionID     string
-	SAMLFlowID           string
-	SubjectID            string
-	SubjectIDPAttributes map[string]string
-	SAMLAssertion        string
+	SAMLConnectionID                     string
+	SAMLFlowID                           string
+	SubjectID                            string
+	SubjectIDPAttributes                 map[string]string
+	SAMLAssertion                        string
+	ErrorBadIssuer                       *string
+	ErrorBadAudience                     *string
+	ErrorBadSubjectID                    *string
+	ErrorEmailOutsideOrganizationDomains *string
 }
 
 type AuthUpsertSAMLLoginEventResponse struct {
@@ -177,16 +191,33 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	// create a new flow
 	now := time.Now()
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
-		ID:                   samlFlowID,
-		SamlConnectionID:     samlConnID,
-		AccessCode:           uuid.New(),
-		ExpireTime:           time.Now().Add(time.Hour),
-		CreateTime:           time.Now(),
-		UpdateTime:           time.Now(),
-		Assertion:            &req.SAMLAssertion,
-		ReceiveAssertionTime: &now,
+		ID:                                   samlFlowID,
+		SamlConnectionID:                     samlConnID,
+		AccessCode:                           uuid.New(),
+		ExpireTime:                           time.Now().Add(time.Hour),
+		State:                                "",
+		CreateTime:                           time.Now(),
+		UpdateTime:                           time.Now(),
+		Assertion:                            &req.SAMLAssertion,
+		ReceiveAssertionTime:                 &now,
+		ErrorBadIssuer:                       req.ErrorBadIssuer,
+		ErrorBadAudience:                     req.ErrorBadAudience,
+		ErrorBadSubjectID:                    req.ErrorBadSubjectID,
+		ErrorEmailOutsideOrganizationDomains: req.ErrorEmailOutsideOrganizationDomains,
 	})
 	if err != nil {
+		return nil, err
+	}
+
+	status := queries.SamlFlowStatusFailed
+	if req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
+		status = queries.SamlFlowStatusInProgress
+	}
+
+	if _, err := q.UpdateSAMLFlowStatus(ctx, queries.UpdateSAMLFlowStatusParams{
+		ID:     samlFlowID,
+		Status: queries.NullSamlFlowStatus{Valid: true, SamlFlowStatus: status},
+	}); err != nil {
 		return nil, err
 	}
 

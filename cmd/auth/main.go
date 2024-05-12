@@ -111,6 +111,9 @@ func main() {
 			panic(err)
 		}
 
+		// assess the validity of the response; note that invalid requests may still have a nil err; the problem details
+		// are stored in validateRes
+		// todo maybe split out validateRes, validateProblems, err as the signature instead?
 		validateRes, err := saml.Validate(&saml.ValidateRequest{
 			SAMLResponse:   r.FormValue("SAMLResponse"),
 			IDPCertificate: cert,
@@ -122,35 +125,60 @@ func main() {
 			panic(err)
 		}
 
-		// check that the subject IDP ID is an email, and that email belongs to one of the org's domains
+		var badSubjectID *string
 		subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+			badSubjectID = &validateRes.SubjectID
 		}
 
-		var domainOk bool
-		for _, domain := range dataRes.OrganizationDomains {
-			if domain == subjectEmailDomain {
-				domainOk = true
+		var domainMismatchEmail *string
+		if badSubjectID == nil {
+			var domainOk bool
+			for _, domain := range dataRes.OrganizationDomains {
+				if domain == subjectEmailDomain {
+					domainOk = true
+				}
+			}
+			if !domainOk {
+				domainMismatchEmail = &subjectEmailDomain
 			}
 		}
 
-		if !domainOk {
-			http.Error(w, "unauthorized subject email address domain", http.StatusBadRequest)
-			return
-		}
-
 		createSAMLLoginRes, err := store_.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
-			SAMLConnectionID:     samlConnID,
-			SubjectID:            validateRes.SubjectID,
-			SubjectIDPAttributes: validateRes.SubjectAttributes,
-			SAMLFlowID:           validateRes.RequestID,
-			SAMLAssertion:        validateRes.Assertion,
+			SAMLConnectionID:                     samlConnID,
+			SAMLFlowID:                           validateRes.RequestID,
+			SubjectID:                            validateRes.SubjectID,
+			SubjectIDPAttributes:                 validateRes.SubjectAttributes,
+			SAMLAssertion:                        validateRes.Assertion,
+			ErrorBadIssuer:                       validateRes.BadIssuer,
+			ErrorBadAudience:                     validateRes.BadAudience,
+			ErrorBadSubjectID:                    badSubjectID,
+			ErrorEmailOutsideOrganizationDomains: domainMismatchEmail,
 		})
 		if err != nil {
 			panic(err)
 		}
+
+		// present an error to the end user depending on their settings
+		// todo make this pretty html
+		if validateRes.BadIssuer != nil {
+			http.Error(w, "bad issuer", http.StatusBadRequest)
+			return
+		}
+		if validateRes.BadAudience != nil {
+			http.Error(w, "bad audience", http.StatusBadRequest)
+			return
+		}
+		if badSubjectID != nil {
+			http.Error(w, "bad subject id", http.StatusBadRequest)
+			return
+		}
+		if domainMismatchEmail != nil {
+			http.Error(w, "bad email domain", http.StatusBadRequest)
+			return
+		}
+
+		// past this point, we presume the request is valid
 
 		redirectURL, err := url.Parse(dataRes.EnvironmentRedirectURL)
 		if err != nil {

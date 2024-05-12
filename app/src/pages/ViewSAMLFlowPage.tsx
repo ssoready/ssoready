@@ -26,6 +26,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
+import { SAMLFlowStatus } from "@/gen/ssoready/v1/ssoready_pb";
+import { Badge } from "@/components/ui/badge";
 
 export function ViewSAMLFlowPage() {
   const { environmentId, organizationId, samlConnectionId, samlFlowId } =
@@ -104,6 +106,23 @@ export function ViewSAMLFlowPage() {
             </div>
 
             <div className="text-sm col-span-1 text-muted-foreground">
+              Status
+            </div>
+            <div className="text-sm col-span-3">
+              {samlFlow?.status ===
+                SAMLFlowStatus.SAML_FLOW_STATUS_IN_PROGRESS && (
+                <Badge variant="secondary">In progress</Badge>
+              )}
+              {samlFlow?.status === SAMLFlowStatus.SAML_FLOW_STATUS_FAILED && (
+                <Badge variant="destructive">Failed</Badge>
+              )}
+              {samlFlow?.status ===
+                SAMLFlowStatus.SAML_FLOW_STATUS_SUCCEEDED && (
+                <Badge>Succeeded</Badge>
+              )}
+            </div>
+
+            <div className="text-sm col-span-1 text-muted-foreground">
               State
             </div>
             <div className="text-sm col-span-3">
@@ -147,7 +166,7 @@ export function ViewSAMLFlowPage() {
                   </span>
                 </div>
 
-                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
+                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
                   {samlFlow.authRedirectUrl}
                 </div>
               </div>
@@ -165,7 +184,7 @@ export function ViewSAMLFlowPage() {
                   </span>
                 </div>
 
-                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
+                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
                   <code>
                     <pre
                       dangerouslySetInnerHTML={{

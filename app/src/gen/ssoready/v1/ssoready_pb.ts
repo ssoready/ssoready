@@ -7,6 +7,38 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
 
 /**
+ * @generated from enum ssoready.v1.SAMLFlowStatus
+ */
+export enum SAMLFlowStatus {
+  /**
+   * @generated from enum value: SAML_FLOW_STATUS_UNSPECIFIED = 0;
+   */
+  SAML_FLOW_STATUS_UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: SAML_FLOW_STATUS_IN_PROGRESS = 1;
+   */
+  SAML_FLOW_STATUS_IN_PROGRESS = 1,
+
+  /**
+   * @generated from enum value: SAML_FLOW_STATUS_FAILED = 2;
+   */
+  SAML_FLOW_STATUS_FAILED = 2,
+
+  /**
+   * @generated from enum value: SAML_FLOW_STATUS_SUCCEEDED = 3;
+   */
+  SAML_FLOW_STATUS_SUCCEEDED = 3,
+}
+// Retrieve enum metadata with: proto3.getEnumType(SAMLFlowStatus)
+proto3.util.setEnumType(SAMLFlowStatus, "ssoready.v1.SAMLFlowStatus", [
+  { no: 0, name: "SAML_FLOW_STATUS_UNSPECIFIED" },
+  { no: 1, name: "SAML_FLOW_STATUS_IN_PROGRESS" },
+  { no: 2, name: "SAML_FLOW_STATUS_FAILED" },
+  { no: 3, name: "SAML_FLOW_STATUS_SUCCEEDED" },
+]);
+
+/**
  * @generated from message ssoready.v1.AppUser
  */
 export class AppUser extends Message<AppUser> {
@@ -302,6 +334,40 @@ export class SAMLFlow extends Message<SAMLFlow> {
   samlConnectionId = "";
 
   /**
+   * @generated from field: ssoready.v1.SAMLFlowStatus status = 17;
+   */
+  status = SAMLFlowStatus.SAML_FLOW_STATUS_UNSPECIFIED;
+
+  /**
+   * @generated from oneof ssoready.v1.SAMLFlow.error
+   */
+  error: {
+    /**
+     * @generated from field: string bad_issuer = 18;
+     */
+    value: string;
+    case: "badIssuer";
+  } | {
+    /**
+     * @generated from field: string bad_audience = 19;
+     */
+    value: string;
+    case: "badAudience";
+  } | {
+    /**
+     * @generated from field: string bad_subject_id = 20;
+     */
+    value: string;
+    case: "badSubjectId";
+  } | {
+    /**
+     * @generated from field: string email_outside_organization_domains = 21;
+     */
+    value: string;
+    case: "emailOutsideOrganizationDomains";
+  } | { case: undefined; value?: undefined } = { case: undefined };
+
+  /**
    * @generated from field: string state = 3;
    */
   state = "";
@@ -381,6 +447,11 @@ export class SAMLFlow extends Message<SAMLFlow> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 17, name: "status", kind: "enum", T: proto3.getEnumType(SAMLFlowStatus) },
+    { no: 18, name: "bad_issuer", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 19, name: "bad_audience", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 20, name: "bad_subject_id", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 21, name: "email_outside_organization_domains", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 3, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },

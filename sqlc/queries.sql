@@ -48,11 +48,22 @@ returning *;
 
 -- name: UpsertSAMLFlowReceiveAssertion :one
 insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
-                        assertion, receive_assertion_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-on conflict (id) do update set update_time            = excluded.update_time,
-                               assertion              = excluded.assertion,
-                               receive_assertion_time = excluded.receive_assertion_time
+                        assertion, receive_assertion_time, error_bad_issuer, error_bad_audience, error_bad_subject_id,
+                        error_email_outside_organization_domains)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+on conflict (id) do update set update_time                              = excluded.update_time,
+                               assertion                                = excluded.assertion,
+                               receive_assertion_time                   = excluded.receive_assertion_time,
+                               error_bad_issuer                         = excluded.error_bad_issuer,
+                               error_bad_audience                       = excluded.error_bad_audience,
+                               error_bad_subject_id                     = excluded.error_bad_subject_id,
+                               error_email_outside_organization_domains = excluded.error_email_outside_organization_domains
+returning *;
+
+-- name: UpdateSAMLFlowStatus :one
+update saml_flows
+set status = $1
+where id = $2
 returning *;
 
 -- name: UpdateSAMLFlowAppRedirectURL :one
@@ -287,13 +298,20 @@ set idp_entity_id        = $1,
 where id = $4
 returning *;
 
--- name: ListSAMLFlows :many
+-- name: ListSAMLFlowsFirstPage :many
 select *
 from saml_flows
 where saml_connection_id = $1
-  and id > $2
-order by id
-limit $3;
+order by (create_time, id) desc
+limit $2;
+
+-- name: ListSAMLFlowsNextPage :many
+select *
+from saml_flows
+where saml_connection_id = $1
+  and (create_time, id) < (@create_time, @id::uuid)
+order by (create_time, id) desc
+limit $2;
 
 -- name: GetSAMLFlow :one
 select saml_flows.*

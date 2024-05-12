@@ -5,10 +5,55 @@
 package queries
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type SamlFlowStatus string
+
+const (
+	SamlFlowStatusInProgress SamlFlowStatus = "in_progress"
+	SamlFlowStatusFailed     SamlFlowStatus = "failed"
+	SamlFlowStatusSucceeded  SamlFlowStatus = "succeeded"
+)
+
+func (e *SamlFlowStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = SamlFlowStatus(s)
+	case string:
+		*e = SamlFlowStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for SamlFlowStatus: %T", src)
+	}
+	return nil
+}
+
+type NullSamlFlowStatus struct {
+	SamlFlowStatus SamlFlowStatus
+	Valid          bool // Valid is true if SamlFlowStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullSamlFlowStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.SamlFlowStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.SamlFlowStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullSamlFlowStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.SamlFlowStatus), nil
+}
 
 type ApiKey struct {
 	ID            uuid.UUID
@@ -73,24 +118,29 @@ type SamlConnection struct {
 }
 
 type SamlFlow struct {
-	ID                   uuid.UUID
-	SamlConnectionID     uuid.UUID
-	AccessCode           uuid.UUID
-	State                string
-	CreateTime           time.Time
-	ExpireTime           time.Time
-	SubjectIdpID         *string
-	SubjectIdpAttributes []byte
-	UpdateTime           time.Time
-	AuthRedirectUrl      *string
-	GetRedirectTime      *time.Time
-	InitiateRequest      *string
-	InitiateTime         *time.Time
-	Assertion            *string
-	AppRedirectUrl       *string
-	ReceiveAssertionTime *time.Time
-	RedeemTime           *time.Time
-	RedeemResponse       []byte
+	ID                                   uuid.UUID
+	SamlConnectionID                     uuid.UUID
+	AccessCode                           uuid.UUID
+	State                                string
+	CreateTime                           time.Time
+	ExpireTime                           time.Time
+	SubjectIdpID                         *string
+	SubjectIdpAttributes                 []byte
+	UpdateTime                           time.Time
+	AuthRedirectUrl                      *string
+	GetRedirectTime                      *time.Time
+	InitiateRequest                      *string
+	InitiateTime                         *time.Time
+	Assertion                            *string
+	AppRedirectUrl                       *string
+	ReceiveAssertionTime                 *time.Time
+	RedeemTime                           *time.Time
+	RedeemResponse                       []byte
+	ErrorBadIssuer                       *string
+	ErrorBadAudience                     *string
+	ErrorBadSubjectID                    *string
+	ErrorEmailOutsideOrganizationDomains *string
+	Status                               NullSamlFlowStatus
 }
 
 type SchemaMigration struct {

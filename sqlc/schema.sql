@@ -16,6 +16,19 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: saml_flow_status; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.saml_flow_status AS ENUM (
+    'in_progress',
+    'failed',
+    'succeeded'
+);
+
+
+ALTER TYPE public.saml_flow_status OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -167,7 +180,12 @@ CREATE TABLE public.saml_flows (
     app_redirect_url character varying,
     receive_assertion_time timestamp with time zone,
     redeem_time timestamp with time zone,
-    redeem_response jsonb
+    redeem_response jsonb,
+    error_bad_issuer character varying,
+    error_bad_audience character varying,
+    error_bad_subject_id character varying,
+    error_email_outside_organization_domains character varying,
+    status public.saml_flow_status
 );
 
 
@@ -199,6 +217,14 @@ ALTER TABLE ONLY public.api_keys
 
 ALTER TABLE ONLY public.app_organizations
     ADD CONSTRAINT app_organizations_google_hosted_domain_key UNIQUE (google_hosted_domain);
+
+
+--
+-- Name: app_organizations app_organizations_google_hosted_domain_key1; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_organizations
+    ADD CONSTRAINT app_organizations_google_hosted_domain_key1 UNIQUE (google_hosted_domain);
 
 
 --

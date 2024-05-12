@@ -91,6 +91,15 @@ message SAMLConnection {
 message SAMLFlow {
   string id = 1;
   string saml_connection_id = 2;
+  SAMLFlowStatus status = 17;
+
+  oneof error {
+    string bad_issuer = 18;
+    string bad_audience = 19;
+    string bad_subject_id = 20;
+    string email_outside_organization_domains = 21;
+  }
+
   string state = 3;
   string subject_idp_id = 4;
   map<string, string> subject_idp_attributes = 5;
@@ -110,6 +119,13 @@ message SAMLFlow {
 
   google.protobuf.Timestamp redeem_time = 15;
   string redeem_response = 16;
+}
+
+enum SAMLFlowStatus {
+  SAML_FLOW_STATUS_UNSPECIFIED = 0;
+  SAML_FLOW_STATUS_IN_PROGRESS = 1;
+  SAML_FLOW_STATUS_FAILED = 2;
+  SAML_FLOW_STATUS_SUCCEEDED = 3;
 }
 
 message GetSAMLRedirectURLRequest {

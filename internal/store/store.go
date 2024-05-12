@@ -49,11 +49,12 @@ func (s *Store) tx(ctx context.Context) (tx pgx.Tx, q *queries.Queries, commit f
 	return tx, queries.New(tx), commit, rollback, nil
 }
 
-func derefOrEmpty(s *string) string {
-	if s == nil {
-		return ""
+func derefOrEmpty[T any](t *T) T {
+	var z T
+	if t == nil {
+		return z
 	}
-	return *s
+	return *t
 }
 
 func ptrTimeToTimestamp(t *time.Time) *timestamppb.Timestamp {

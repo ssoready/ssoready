@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/appauth"
@@ -32,19 +33,36 @@ func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlows
 		return nil, err
 	}
 
-	var startID uuid.UUID
-	if err := s.pageEncoder.Unmarshal(req.PageToken, &startID); err != nil {
+	type pageData struct {
+		CreateTime time.Time
+		ID         uuid.UUID
+	}
+
+	var startPageData pageData
+	if err := s.pageEncoder.Unmarshal(req.PageToken, &startPageData); err != nil {
 		return nil, err
 	}
 
 	limit := 10
-	qSAMLFlows, err := q.ListSAMLFlows(ctx, queries.ListSAMLFlowsParams{
-		SamlConnectionID: samlConnectionID,
-		ID:               startID,
-		Limit:            int32(limit + 1),
-	})
-	if err != nil {
-		return nil, err
+	var qSAMLFlows []queries.SamlFlow
+	if req.PageToken == "" {
+		qSAMLFlows, err = q.ListSAMLFlowsFirstPage(ctx, queries.ListSAMLFlowsFirstPageParams{
+			SamlConnectionID: samlConnectionID,
+			Limit:            int32(limit + 1),
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		qSAMLFlows, err = q.ListSAMLFlowsNextPage(ctx, queries.ListSAMLFlowsNextPageParams{
+			SamlConnectionID: samlConnectionID,
+			Limit:            int32(limit + 1),
+			CreateTime:       startPageData.CreateTime,
+			ID:               startPageData.ID,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var flows []*ssoreadyv1.SAMLFlow
@@ -54,7 +72,10 @@ func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlows
 
 	var nextPageToken string
 	if len(flows) == limit+1 {
-		nextPageToken = s.pageEncoder.Marshal(flows[limit].Id)
+		nextPageToken = s.pageEncoder.Marshal(pageData{
+			CreateTime: qSAMLFlows[limit].CreateTime,
+			ID:         qSAMLFlows[limit].ID,
+		})
 		flows = flows[:limit]
 	}
 
@@ -95,9 +116,22 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		}
 	}
 
-	return &ssoreadyv1.SAMLFlow{
+	var status ssoreadyv1.SAMLFlowStatus
+	if qSAMLFlow.Status.Valid {
+		switch qSAMLFlow.Status.SamlFlowStatus {
+		case queries.SamlFlowStatusInProgress:
+			status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_IN_PROGRESS
+		case queries.SamlFlowStatusFailed:
+			status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_FAILED
+		case queries.SamlFlowStatusSucceeded:
+			status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_SUCCEEDED
+		}
+	}
+
+	res := ssoreadyv1.SAMLFlow{
 		Id:                   idformat.SAMLFlow.Format(qSAMLFlow.ID),
 		SamlConnectionId:     idformat.SAMLConnection.Format(qSAMLFlow.SamlConnectionID),
+		Status:               status,
 		State:                qSAMLFlow.State,
 		SubjectIdpId:         derefOrEmpty(qSAMLFlow.SubjectIdpID),
 		SubjectIdpAttributes: attrs,
@@ -113,4 +147,19 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		RedeemTime:           ptrTimeToTimestamp(qSAMLFlow.RedeemTime),
 		RedeemResponse:       string(qSAMLFlow.RedeemResponse),
 	}
+
+	if qSAMLFlow.ErrorBadIssuer != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_BadIssuer{BadIssuer: *qSAMLFlow.ErrorBadIssuer}
+	}
+	if qSAMLFlow.ErrorBadAudience != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_BadAudience{BadAudience: *qSAMLFlow.ErrorBadAudience}
+	}
+	if qSAMLFlow.ErrorBadSubjectID != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_BadSubjectId{BadSubjectId: *qSAMLFlow.ErrorBadSubjectID}
+	}
+	if qSAMLFlow.ErrorEmailOutsideOrganizationDomains != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_EmailOutsideOrganizationDomains{EmailOutsideOrganizationDomains: *qSAMLFlow.ErrorEmailOutsideOrganizationDomains}
+	}
+
+	return &res
 }
