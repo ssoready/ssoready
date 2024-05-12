@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   createConnectQueryKey,
+  useInfiniteQuery,
   useMutation,
   useQuery,
 } from "@connectrpc/connect-query";
@@ -13,6 +14,7 @@ import {
   getSAMLConnection,
   listOrganizations,
   listSAMLConnections,
+  listSAMLFlows,
   updateEnvironment,
   updateOrganization,
   updateSAMLConnection,
@@ -81,9 +83,18 @@ export function ViewOrganizationPage() {
   const { data: organization } = useQuery(getOrganization, {
     id: organizationId,
   });
-  const { data: listSAMLConnectionsRes } = useQuery(listSAMLConnections, {
-    organizationId,
-  });
+  const {
+    data: listSAMLConnectionResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    listSAMLConnections,
+    { organizationId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
 
   const createSAMLConnectionMutation = useMutation(createSAMLConnection);
   const navigate = useNavigate();
@@ -182,26 +193,34 @@ export function ViewOrganizationPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listSAMLConnectionsRes?.samlConnections?.map((samlConn) => (
-                <TableRow key={samlConn.id}>
-                  <TableCell>
-                    <Link
-                      to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/saml-connections/${samlConn.id}`}
-                      className="underline underline-offset-4 decoration-muted-foreground"
-                    >
-                      {samlConn.id}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="max-w-[300px] truncate">
-                    {samlConn.idpRedirectUrl}
-                  </TableCell>
-                  <TableCell className="max-w-[300px] truncate">
-                    {samlConn.idpEntityId}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {listSAMLConnectionResponses?.pages
+                .flatMap((page) => page.samlConnections)
+                ?.map((samlConn) => (
+                  <TableRow key={samlConn.id}>
+                    <TableCell>
+                      <Link
+                        to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/saml-connections/${samlConn.id}`}
+                        className="underline underline-offset-4 decoration-muted-foreground"
+                      >
+                        {samlConn.id}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="max-w-[300px] truncate">
+                      {samlConn.idpRedirectUrl}
+                    </TableCell>
+                    <TableCell className="max-w-[300px] truncate">
+                      {samlConn.idpEntityId}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+
+          {hasNextPage && (
+            <Button variant="secondary" onClick={() => fetchNextPage()}>
+              Load more
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

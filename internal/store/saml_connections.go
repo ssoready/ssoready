@@ -55,7 +55,7 @@ func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAM
 
 	var nextPageToken string
 	if len(samlConns) == limit+1 {
-		nextPageToken = s.pageEncoder.Marshal(samlConns[limit].Id)
+		nextPageToken = s.pageEncoder.Marshal(qSAMLConns[limit].ID)
 		samlConns = samlConns[:limit]
 	}
 

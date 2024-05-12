@@ -165,7 +165,7 @@ ALTER TABLE public.saml_connections OWNER TO postgres;
 CREATE TABLE public.saml_flows (
     id uuid NOT NULL,
     saml_connection_id uuid NOT NULL,
-    access_code uuid NOT NULL,
+    access_code uuid,
     state character varying NOT NULL,
     create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL,

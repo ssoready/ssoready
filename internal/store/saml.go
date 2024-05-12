@@ -62,7 +62,6 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	if _, err := q.CreateSAMLFlowGetRedirect(ctx, queries.CreateSAMLFlowGetRedirectParams{
 		ID:               samlFlowID,
 		SamlConnectionID: samlConnID,
-		AccessCode:       uuid.New(),
 		ExpireTime:       time.Now().Add(time.Hour),
 		State:            req.State,
 		CreateTime:       time.Now(),
@@ -102,10 +101,12 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, err
 	}
 
+	samlAccessCodeUUID := uuid.UUID(samlAccessCode) // can't do &uuid.UUID(...) in one go, so break this out
+
 	samlAccessTokenData, err := q.GetSAMLAccessCodeData(ctx, queries.GetSAMLAccessCodeDataParams{
 		AppOrganizationID: apikeyauth.AppOrgID(ctx),
 		EnvironmentID:     apikeyauth.EnvID(ctx),
-		AccessCode:        samlAccessCode,
+		AccessCode:        &samlAccessCodeUUID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("get saml access code data: %w", err)

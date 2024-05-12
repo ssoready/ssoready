@@ -120,7 +120,7 @@ type SamlConnection struct {
 type SamlFlow struct {
 	ID                                   uuid.UUID
 	SamlConnectionID                     uuid.UUID
-	AccessCode                           uuid.UUID
+	AccessCode                           *uuid.UUID
 	State                                string
 	CreateTime                           time.Time
 	ExpireTime                           time.Time

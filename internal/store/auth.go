@@ -78,7 +78,6 @@ func (s *Store) AuthUpsertInitiateData(ctx context.Context, req *AuthUpsertIniti
 	if _, err := q.UpsertSAMLFlowInitiate(ctx, queries.UpsertSAMLFlowInitiateParams{
 		ID:               samlFlowID,
 		SamlConnectionID: qSAMLFlow.SamlConnectionID,
-		AccessCode:       uuid.New(),
 		ExpireTime:       time.Now().Add(time.Hour),
 		State:            stateData.State,
 		CreateTime:       time.Now(),
@@ -188,12 +187,26 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		samlFlowID = uuid.New()
 	}
 
+	var assertionOk bool
+	if req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
+		assertionOk = true
+	}
+
 	// create a new flow
 	now := time.Now()
+
+	var accessCode *uuid.UUID
+	if assertionOk {
+		id := uuid.New()
+		accessCode = &id
+	}
+
+	fmt.Println("upsert saml flow, access code", accessCode == nil)
+
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
 		ID:                                   samlFlowID,
 		SamlConnectionID:                     samlConnID,
-		AccessCode:                           uuid.New(),
+		AccessCode:                           accessCode,
 		ExpireTime:                           time.Now().Add(time.Hour),
 		State:                                "",
 		CreateTime:                           time.Now(),
@@ -210,7 +223,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	status := queries.SamlFlowStatusFailed
-	if req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
+	if assertionOk {
 		status = queries.SamlFlowStatusInProgress
 	}
 
@@ -242,9 +255,16 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		return nil, err
 	}
 
+	var token string
+	if qSAMLFlow.AccessCode != nil {
+		token = idformat.SAMLAccessCode.Format(*qSAMLFlow.AccessCode)
+	}
+
+	fmt.Println("return token", token)
+
 	return &AuthUpsertSAMLLoginEventResponse{
 		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),
-		Token:      idformat.SAMLAccessCode.Format(qSAMLFlow.AccessCode),
+		Token:      token,
 	}, nil
 }
 

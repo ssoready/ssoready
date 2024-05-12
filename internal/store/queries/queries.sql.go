@@ -363,16 +363,15 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 }
 
 const createSAMLFlowGetRedirect = `-- name: CreateSAMLFlowGetRedirect :one
-insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
 returning id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 `
 
 type CreateSAMLFlowGetRedirectParams struct {
 	ID               uuid.UUID
 	SamlConnectionID uuid.UUID
-	AccessCode       uuid.UUID
 	ExpireTime       time.Time
 	State            string
 	CreateTime       time.Time
@@ -385,7 +384,6 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 	row := q.db.QueryRow(ctx, createSAMLFlowGetRedirect,
 		arg.ID,
 		arg.SamlConnectionID,
-		arg.AccessCode,
 		arg.ExpireTime,
 		arg.State,
 		arg.CreateTime,
@@ -690,7 +688,7 @@ where environments.app_organization_id = $1
 
 type GetSAMLAccessCodeDataParams struct {
 	AppOrganizationID uuid.UUID
-	AccessCode        uuid.UUID
+	AccessCode        *uuid.UUID
 	EnvironmentID     uuid.UUID
 }
 
@@ -1409,9 +1407,9 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 }
 
 const upsertSAMLFlowInitiate = `-- name: UpsertSAMLFlowInitiate :one
-insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         initiate_request, initiate_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
 on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
                                initiate_time    = excluded.initiate_time
@@ -1421,7 +1419,6 @@ returning id, saml_connection_id, access_code, state, create_time, expire_time, 
 type UpsertSAMLFlowInitiateParams struct {
 	ID               uuid.UUID
 	SamlConnectionID uuid.UUID
-	AccessCode       uuid.UUID
 	ExpireTime       time.Time
 	State            string
 	CreateTime       time.Time
@@ -1434,7 +1431,6 @@ func (q *Queries) UpsertSAMLFlowInitiate(ctx context.Context, arg UpsertSAMLFlow
 	row := q.db.QueryRow(ctx, upsertSAMLFlowInitiate,
 		arg.ID,
 		arg.SamlConnectionID,
-		arg.AccessCode,
 		arg.ExpireTime,
 		arg.State,
 		arg.CreateTime,
@@ -1476,7 +1472,8 @@ insert into saml_flows (id, saml_connection_id, access_code, expire_time, state,
                         assertion, receive_assertion_time, error_bad_issuer, error_bad_audience, error_bad_subject_id,
                         error_email_outside_organization_domains)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-on conflict (id) do update set update_time                              = excluded.update_time,
+on conflict (id) do update set access_code                              = excluded.access_code,
+                               update_time                              = excluded.update_time,
                                assertion                                = excluded.assertion,
                                receive_assertion_time                   = excluded.receive_assertion_time,
                                error_bad_issuer                         = excluded.error_bad_issuer,
@@ -1489,7 +1486,7 @@ returning id, saml_connection_id, access_code, state, create_time, expire_time, 
 type UpsertSAMLFlowReceiveAssertionParams struct {
 	ID                                   uuid.UUID
 	SamlConnectionID                     uuid.UUID
-	AccessCode                           uuid.UUID
+	AccessCode                           *uuid.UUID
 	ExpireTime                           time.Time
 	State                                string
 	CreateTime                           time.Time

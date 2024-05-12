@@ -32,15 +32,15 @@ from saml_connections
 where saml_connections.id = $1;
 
 -- name: CreateSAMLFlowGetRedirect :one
-insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
-insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         initiate_request, initiate_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
 on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
                                initiate_time    = excluded.initiate_time
@@ -51,7 +51,8 @@ insert into saml_flows (id, saml_connection_id, access_code, expire_time, state,
                         assertion, receive_assertion_time, error_bad_issuer, error_bad_audience, error_bad_subject_id,
                         error_email_outside_organization_domains)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-on conflict (id) do update set update_time                              = excluded.update_time,
+on conflict (id) do update set access_code                              = excluded.access_code,
+                               update_time                              = excluded.update_time,
                                assertion                                = excluded.assertion,
                                receive_assertion_time                   = excluded.receive_assertion_time,
                                error_bad_issuer                         = excluded.error_bad_issuer,
