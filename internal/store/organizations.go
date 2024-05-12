@@ -63,7 +63,7 @@ func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrgan
 
 	var nextPageToken string
 	if len(orgs) == limit+1 {
-		nextPageToken = s.pageEncoder.Marshal(orgs[limit].Id)
+		nextPageToken = s.pageEncoder.Marshal(qOrgs[limit].ID)
 		orgs = orgs[:limit]
 	}
 

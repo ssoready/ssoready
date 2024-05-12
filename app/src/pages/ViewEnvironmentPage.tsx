@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   createConnectQueryKey,
+  useInfiniteQuery,
   useMutation,
   useQuery,
 } from "@connectrpc/connect-query";
@@ -11,6 +12,7 @@ import {
   getEnvironment,
   listAPIKeys,
   listOrganizations,
+  listSAMLConnections,
   updateEnvironment,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
@@ -78,9 +80,18 @@ export function ViewEnvironmentPage() {
   const { data: listAPIKeysRes } = useQuery(listAPIKeys, {
     environmentId,
   });
-  const { data: listOrgsRes } = useQuery(listOrganizations, {
-    environmentId,
-  });
+  const {
+    data: listOrganizationsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    listOrganizations,
+    { environmentId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
 
   const [apiKeySecret, setApiKeySecret] = useState("");
   const [apiKeyAlertOpen, setApiKeyAlertOpen] = useState(false);
@@ -244,28 +255,36 @@ export function ViewEnvironmentPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listOrgsRes?.organizations?.map((org) => (
-                <TableRow key={org.id}>
-                  <TableCell>
-                    <Link
-                      to={`/environments/${environmentId}/organizations/${org?.id}`}
-                      className="underline underline-offset-4 decoration-muted-foreground"
-                    >
-                      {org.id}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{org.externalId}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      {org.domains.map((domain, i) => (
-                        <Badge key={i}>{domain}</Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {listOrganizationsResponses?.pages
+                .flatMap((page) => page.organizations)
+                .map((org) => (
+                  <TableRow key={org.id}>
+                    <TableCell>
+                      <Link
+                        to={`/environments/${environmentId}/organizations/${org?.id}`}
+                        className="underline underline-offset-4 decoration-muted-foreground"
+                      >
+                        {org.id}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{org.externalId}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {org.domains.map((domain, i) => (
+                          <Badge key={i}>{domain}</Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+
+          {hasNextPage && (
+            <Button variant="secondary" onClick={() => fetchNextPage()}>
+              Load more
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

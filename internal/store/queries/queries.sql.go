@@ -951,7 +951,7 @@ const listOrganizations = `-- name: ListOrganizations :many
 select id, environment_id, external_id
 from organizations
 where environment_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3
 `
@@ -986,7 +986,7 @@ const listSAMLConnections = `-- name: ListSAMLConnections :many
 select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
 from saml_connections
 where organization_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3
 `
@@ -1085,7 +1085,7 @@ const listSAMLFlowsNextPage = `-- name: ListSAMLFlowsNextPage :many
 select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status
 from saml_flows
 where saml_connection_id = $1
-  and (create_time, id) < ($3, $4::uuid)
+  and (create_time, id) <= ($3, $4::uuid)
 order by (create_time, id) desc
 limit $2
 `

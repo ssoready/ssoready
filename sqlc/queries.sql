@@ -236,7 +236,7 @@ where id = $1;
 select *
 from organizations
 where environment_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3;
 
@@ -277,7 +277,7 @@ where organization_id = $1;
 select *
 from saml_connections
 where organization_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3;
 
@@ -313,7 +313,7 @@ limit $2;
 select *
 from saml_flows
 where saml_connection_id = $1
-  and (create_time, id) < (@create_time, @id::uuid)
+  and (create_time, id) <= (@create_time, @id::uuid)
 order by (create_time, id) desc
 limit $2;
 
