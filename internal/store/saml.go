@@ -22,9 +22,33 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	}
 	defer rollback()
 
-	samlConnID, err := idformat.SAMLConnection.Parse(req.SamlConnectionId)
-	if err != nil {
-		return nil, err
+	var samlConnID uuid.UUID
+	if req.SamlConnectionId != "" {
+		samlConnID, err = idformat.SAMLConnection.Parse(req.SamlConnectionId)
+		if err != nil {
+			return nil, err
+		}
+	} else if req.OrganizationId != "" {
+		orgID, err := idformat.Organization.Parse(req.OrganizationId)
+		if err != nil {
+			return nil, err
+		}
+
+		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationIDParams{
+			EnvironmentID: apikeyauth.EnvID(ctx),
+			ID:            orgID,
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else if req.OrganizationExternalId != "" {
+		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationExternalID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationExternalIDParams{
+			EnvironmentID: apikeyauth.EnvID(ctx),
+			ExternalID:    &req.OrganizationExternalId,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	envAuthURL, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{

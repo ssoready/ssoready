@@ -131,7 +131,9 @@ enum SAMLFlowStatus {
 
 message GetSAMLRedirectURLRequest {
   string saml_connection_id = 1;
-  string state = 2;
+  string organization_id = 2;
+  string organization_external_id = 3;
+  string state = 4;
 }
 
 message GetSAMLRedirectURLResponse {

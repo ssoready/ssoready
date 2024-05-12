@@ -684,6 +684,48 @@ func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organi
 	return i, err
 }
 
+const getPrimarySAMLConnectionIDByOrganizationExternalID = `-- name: GetPrimarySAMLConnectionIDByOrganizationExternalID :one
+select saml_connections.id
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.external_id = $2
+  and saml_connections.is_primary = true
+`
+
+type GetPrimarySAMLConnectionIDByOrganizationExternalIDParams struct {
+	EnvironmentID uuid.UUID
+	ExternalID    *string
+}
+
+func (q *Queries) GetPrimarySAMLConnectionIDByOrganizationExternalID(ctx context.Context, arg GetPrimarySAMLConnectionIDByOrganizationExternalIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getPrimarySAMLConnectionIDByOrganizationExternalID, arg.EnvironmentID, arg.ExternalID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getPrimarySAMLConnectionIDByOrganizationID = `-- name: GetPrimarySAMLConnectionIDByOrganizationID :one
+select saml_connections.id
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.id = $2
+  and saml_connections.is_primary = true
+`
+
+type GetPrimarySAMLConnectionIDByOrganizationIDParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetPrimarySAMLConnectionIDByOrganizationID(ctx context.Context, arg GetPrimarySAMLConnectionIDByOrganizationIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getPrimarySAMLConnectionIDByOrganizationID, arg.EnvironmentID, arg.ID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
 select saml_flows.id             as saml_flow_id,
        saml_flows.subject_idp_id,

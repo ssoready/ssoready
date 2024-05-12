@@ -501,7 +501,17 @@ export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest
   samlConnectionId = "";
 
   /**
-   * @generated from field: string state = 2;
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: string organization_external_id = 3;
+   */
+  organizationExternalId = "";
+
+  /**
+   * @generated from field: string state = 4;
    */
   state = "";
 
@@ -514,7 +524,9 @@ export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest
   static readonly typeName = "ssoready.v1.GetSAMLRedirectURLRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLRedirectURLRequest {

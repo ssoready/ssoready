@@ -96,6 +96,22 @@ set subject_idp_id         = $1,
 where id = $3
 returning *;
 
+-- name: GetPrimarySAMLConnectionIDByOrganizationID :one
+select saml_connections.id
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.id = $2
+  and saml_connections.is_primary = true;
+
+-- name: GetPrimarySAMLConnectionIDByOrganizationExternalID :one
+select saml_connections.id
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.external_id = $2
+  and saml_connections.is_primary = true;
+
 -- name: GetSAMLRedirectURLData :one
 select environments.auth_url
 from saml_connections
