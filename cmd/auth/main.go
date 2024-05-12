@@ -125,6 +125,16 @@ func main() {
 			panic(err)
 		}
 
+		alreadyProcessed, err := store_.AuthCheckAssertionAlreadyProcessed(ctx, validateRes.RequestID)
+		if err != nil {
+			panic(err)
+		}
+
+		if alreadyProcessed {
+			http.Error(w, "assertion previously processed", http.StatusBadRequest)
+			return
+		}
+
 		var badSubjectID *string
 		subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 		if err != nil {

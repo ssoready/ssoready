@@ -148,6 +148,24 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 	}, nil
 }
 
+func (s *Store) AuthCheckAssertionAlreadyProcessed(ctx context.Context, samlFlowID string) (bool, error) {
+	if samlFlowID == "" {
+		return false, nil
+	}
+
+	id, err := idformat.SAMLFlow.Parse(samlFlowID)
+	if err != nil {
+		return false, err
+	}
+
+	ok, err := s.q.AuthCheckAssertionAlreadyProcessed(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return ok, nil
+}
+
 type AuthUpsertSAMLLoginEventRequest struct {
 	SAMLConnectionID                     string
 	SAMLFlowID                           string
@@ -200,8 +218,6 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		id := uuid.New()
 		accessCode = &id
 	}
-
-	fmt.Println("upsert saml flow, access code", accessCode == nil)
 
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
 		ID:                                   samlFlowID,
@@ -259,8 +275,6 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	if qSAMLFlow.AccessCode != nil {
 		token = idformat.SAMLAccessCode.Format(*qSAMLFlow.AccessCode)
 	}
-
-	fmt.Println("return token", token)
 
 	return &AuthUpsertSAMLLoginEventResponse{
 		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),

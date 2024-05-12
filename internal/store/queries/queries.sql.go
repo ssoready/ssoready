@@ -12,6 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
+select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, subject_idp_id, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status from saml_flows where id = $1 and access_code is not null)
+`
+
+func (q *Queries) AuthCheckAssertionAlreadyProcessed(ctx context.Context, id uuid.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, authCheckAssertionAlreadyProcessed, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const authGetInitData = `-- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections

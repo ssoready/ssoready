@@ -24,6 +24,9 @@ from saml_connections
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1;
 
+-- name: AuthCheckAssertionAlreadyProcessed :one
+select exists(select * from saml_flows where id = $1 and access_code is not null);
+
 -- name: AuthGetSAMLConnectionDomains :many
 select organization_domains.domain
 from saml_connections
