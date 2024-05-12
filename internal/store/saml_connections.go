@@ -139,6 +139,7 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 	qSAMLConn, err := q.CreateSAMLConnection(ctx, queries.CreateSAMLConnectionParams{
 		ID:                 id,
 		OrganizationID:     orgID,
+		IsPrimary:          req.SamlConnection.Primary,
 		SpEntityID:         &entityID,
 		IdpEntityID:        &req.SamlConnection.IdpEntityId,
 		IdpRedirectUrl:     &req.SamlConnection.IdpRedirectUrl,
@@ -146,6 +147,15 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if qSAMLConn.IsPrimary {
+		if err := q.UpdatePrimarySAMLConnection(ctx, queries.UpdatePrimarySAMLConnectionParams{
+			OrganizationID: qSAMLConn.OrganizationID,
+			ID:             qSAMLConn.ID,
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := commit(); err != nil {
@@ -189,12 +199,22 @@ func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.Update
 
 	qSAMLConn, err := q.UpdateSAMLConnection(ctx, queries.UpdateSAMLConnectionParams{
 		ID:                 id,
+		IsPrimary:          req.SamlConnection.Primary,
 		IdpEntityID:        &req.SamlConnection.IdpEntityId,
 		IdpRedirectUrl:     &req.SamlConnection.IdpRedirectUrl,
 		IdpX509Certificate: idpCert,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("update saml connection: %w", err)
+	}
+
+	if qSAMLConn.IsPrimary {
+		if err := q.UpdatePrimarySAMLConnection(ctx, queries.UpdatePrimarySAMLConnectionParams{
+			OrganizationID: qSAMLConn.OrganizationID,
+			ID:             qSAMLConn.ID,
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := commit(); err != nil {
@@ -227,6 +247,7 @@ func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConne
 	return &ssoreadyv1.SAMLConnection{
 		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
 		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
+		Primary:        qSAMLConn.IsPrimary,
 		IdpRedirectUrl: derefOrEmpty(qSAMLConn.IdpRedirectUrl),
 		IdpCertificate: certPEM,
 		IdpEntityId:    derefOrEmpty(qSAMLConn.IdpEntityID),

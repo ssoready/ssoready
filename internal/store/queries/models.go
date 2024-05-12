@@ -115,6 +115,7 @@ type SamlConnection struct {
 	IdpX509Certificate []byte
 	IdpEntityID        *string
 	SpEntityID         *string
+	IsPrimary          bool
 }
 
 type SamlFlow struct {

@@ -152,7 +152,8 @@ CREATE TABLE public.saml_connections (
     idp_redirect_url character varying,
     idp_x509_certificate bytea,
     idp_entity_id character varying,
-    sp_entity_id character varying
+    sp_entity_id character varying,
+    is_primary boolean DEFAULT false NOT NULL
 );
 
 

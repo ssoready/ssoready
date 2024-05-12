@@ -81,6 +81,7 @@ message Organization {
 message SAMLConnection {
   string id = 1;
   string organization_id = 2;
+  bool primary = 8;
   string idp_redirect_url = 3;
   string idp_certificate = 4;
   string idp_entity_id = 5;

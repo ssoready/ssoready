@@ -102,6 +102,10 @@ export function ViewOrganizationPage() {
     const samlConnection = await createSAMLConnectionMutation.mutateAsync({
       samlConnection: {
         organizationId,
+        primary:
+          listSAMLConnectionResponses?.pages.flatMap(
+            (page) => page.samlConnections,
+          ).length === 0,
       },
     });
 
@@ -109,7 +113,13 @@ export function ViewOrganizationPage() {
     navigate(
       `/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnection.id}`,
     );
-  }, [environmentId, organizationId, createSAMLConnectionMutation, navigate]);
+  }, [
+    listSAMLConnectionResponses,
+    environmentId,
+    organizationId,
+    createSAMLConnectionMutation,
+    navigate,
+  ]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -204,6 +214,9 @@ export function ViewOrganizationPage() {
                       >
                         {samlConn.id}
                       </Link>
+                      {samlConn.primary && (
+                        <Badge className="ml-2">Primary</Badge>
+                      )}
                     </TableCell>
                     <TableCell className="max-w-[300px] truncate">
                       {samlConn.idpRedirectUrl}

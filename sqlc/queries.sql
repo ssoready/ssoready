@@ -290,17 +290,24 @@ where environments.app_organization_id = $1
   and saml_connections.id = $2;
 
 -- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate)
-values ($1, $2, $3, $4, $5, $6)
+insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate,
+                              is_primary)
+values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
 
 -- name: UpdateSAMLConnection :one
 update saml_connections
 set idp_entity_id        = $1,
     idp_redirect_url     = $2,
-    idp_x509_certificate = $3
-where id = $4
+    idp_x509_certificate = $3,
+    is_primary           = $4
+where id = $5
 returning *;
+
+-- name: UpdatePrimarySAMLConnection :exec
+update saml_connections
+set is_primary = (id = $1)
+where organization_id = $2;
 
 -- name: ListSAMLFlowsFirstPage :many
 select *

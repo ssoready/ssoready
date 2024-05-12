@@ -9,6 +9,7 @@ import {
   listSAMLConnections,
   listSAMLFlows,
   parseSAMLMetadata,
+  updateOrganization,
   updateSAMLConnection,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
@@ -38,7 +39,11 @@ import {
 } from "@/components/ui/collapsible";
 import moment from "moment";
 import { z } from "zod";
-import { SAMLConnection, SAMLFlowStatus } from "@/gen/ssoready/v1/ssoready_pb";
+import {
+  Organization,
+  SAMLConnection,
+  SAMLFlowStatus,
+} from "@/gen/ssoready/v1/ssoready_pb";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
@@ -72,6 +77,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Label } from "@/components/ui/label";
+import { InputTags } from "@/components/InputTags";
+import { Switch } from "@/components/ui/switch";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -119,8 +126,27 @@ export function ViewSAMLConnectionPage() {
                 customer's Identity Provider.
               </CardDescription>
             </div>
+
+            <div>
+              {samlConnection && (
+                <EditSAMLConnectionAlertDialog
+                  samlConnection={samlConnection}
+                />
+              )}
+            </div>
           </div>
         </CardHeader>
+
+        <CardContent>
+          <div className="grid grid-cols-4 gap-y-2">
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Primary
+            </div>
+            <div className="text-sm col-span-3">
+              {samlConnection?.primary ? "Yes" : "No"}
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
       <Tabs defaultValue={flowsPathMatch ? "flows" : "config"}>
@@ -181,7 +207,7 @@ export function ViewSAMLConnectionPage() {
                 </div>
 
                 {samlConnection && (
-                  <EditSAMLConnectionAlertDialog
+                  <EditSAMLConnectionIDPSettingsAlertDialog
                     samlConnection={samlConnection}
                   />
                 )}
@@ -223,6 +249,97 @@ export function ViewSAMLConnectionPage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+const FormSchema = z.object({
+  primary: z.boolean(),
+});
+
+function EditSAMLConnectionAlertDialog({
+  samlConnection,
+}: {
+  samlConnection: SAMLConnection;
+}) {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      primary: samlConnection.primary,
+    },
+  });
+
+  const [open, setOpen] = useState(false);
+  const updateSAMLConnectionMutation = useMutation(updateSAMLConnection);
+  const queryClient = useQueryClient();
+  const handleSubmit = useCallback(
+    async (values: z.infer<typeof FormSchema>, e: any) => {
+      e.preventDefault();
+      await updateSAMLConnectionMutation.mutateAsync({
+        samlConnection: {
+          id: samlConnection.id,
+          primary: values.primary,
+          idpEntityId: samlConnection.idpEntityId,
+          idpRedirectUrl: samlConnection.idpRedirectUrl,
+          idpCertificate: samlConnection.idpCertificate,
+        },
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getSAMLConnection, {
+          id: samlConnection.id,
+        }),
+      });
+
+      setOpen(false);
+    },
+    [setOpen, samlConnection, updateSAMLConnectionMutation, queryClient],
+  );
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Edit</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Edit SAML connection</AlertDialogTitle>
+            </AlertDialogHeader>
+
+            <div className="my-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="primary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary</FormLabel>
+                    <FormControl className="block">
+                      <Switch
+                        name={field.name}
+                        id={field.name}
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Every organization can have one primary SAML connection.
+                      If you start a SAML login and provide only an
+                      organization, SSOReady uses the primary connection.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit">Save</Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -305,7 +422,7 @@ function ListLoginFlowsTabContent() {
   );
 }
 
-const FormSchema = z.object({
+const IDPSettingsFormSchema = z.object({
   idpEntityId: z.string().min(1, {
     message: "IDP Entity ID must be non-empty.",
   }),
@@ -317,13 +434,13 @@ const FormSchema = z.object({
   }),
 });
 
-function EditSAMLConnectionAlertDialog({
+function EditSAMLConnectionIDPSettingsAlertDialog({
   samlConnection,
 }: {
   samlConnection: SAMLConnection;
 }) {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof IDPSettingsFormSchema>>({
+    resolver: zodResolver(IDPSettingsFormSchema),
     defaultValues: {
       idpEntityId: samlConnection.idpEntityId,
       idpRedirectUrl: samlConnection.idpRedirectUrl,
@@ -336,11 +453,12 @@ function EditSAMLConnectionAlertDialog({
   const queryClient = useQueryClient();
 
   const handleSubmit = useCallback(
-    async (data: z.infer<typeof FormSchema>, e: any) => {
+    async (data: z.infer<typeof IDPSettingsFormSchema>, e: any) => {
       e.preventDefault();
       await updateSAMLConnectionMutation.mutateAsync({
         samlConnection: {
           id: samlConnection.id,
+          primary: samlConnection.primary,
           idpEntityId: data.idpEntityId,
           idpRedirectUrl: data.idpRedirectUrl,
           idpCertificate: data.idpCertificate,

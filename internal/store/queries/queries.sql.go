@@ -338,9 +338,10 @@ func (q *Queries) CreateOrganizationDomain(ctx context.Context, arg CreateOrgani
 }
 
 const createSAMLConnection = `-- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate)
-values ($1, $2, $3, $4, $5, $6)
-returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
+insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate,
+                              is_primary)
+values ($1, $2, $3, $4, $5, $6, $7)
+returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id, is_primary
 `
 
 type CreateSAMLConnectionParams struct {
@@ -350,6 +351,7 @@ type CreateSAMLConnectionParams struct {
 	IdpEntityID        *string
 	IdpRedirectUrl     *string
 	IdpX509Certificate []byte
+	IsPrimary          bool
 }
 
 func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnectionParams) (SamlConnection, error) {
@@ -360,6 +362,7 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 		arg.IdpEntityID,
 		arg.IdpRedirectUrl,
 		arg.IdpX509Certificate,
+		arg.IsPrimary,
 	)
 	var i SamlConnection
 	err := row.Scan(
@@ -369,6 +372,7 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
 		&i.SpEntityID,
+		&i.IsPrimary,
 	)
 	return i, err
 }
@@ -729,7 +733,7 @@ func (q *Queries) GetSAMLAccessCodeData(ctx context.Context, arg GetSAMLAccessCo
 }
 
 const getSAMLConnection = `-- name: GetSAMLConnection :one
-select saml_connections.id, saml_connections.organization_id, saml_connections.idp_redirect_url, saml_connections.idp_x509_certificate, saml_connections.idp_entity_id, saml_connections.sp_entity_id
+select saml_connections.id, saml_connections.organization_id, saml_connections.idp_redirect_url, saml_connections.idp_x509_certificate, saml_connections.idp_entity_id, saml_connections.sp_entity_id, saml_connections.is_primary
 from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
@@ -752,12 +756,13 @@ func (q *Queries) GetSAMLConnection(ctx context.Context, arg GetSAMLConnectionPa
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
 		&i.SpEntityID,
+		&i.IsPrimary,
 	)
 	return i, err
 }
 
 const getSAMLConnectionByID = `-- name: GetSAMLConnectionByID :one
-select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id, is_primary
 from saml_connections
 where id = $1
 `
@@ -772,6 +777,7 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
 		&i.SpEntityID,
+		&i.IsPrimary,
 	)
 	return i, err
 }
@@ -983,7 +989,7 @@ func (q *Queries) ListOrganizations(ctx context.Context, arg ListOrganizationsPa
 }
 
 const listSAMLConnections = `-- name: ListSAMLConnections :many
-select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id, is_primary
 from saml_connections
 where organization_id = $1
   and id >= $2
@@ -1013,6 +1019,7 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 			&i.IdpX509Certificate,
 			&i.IdpEntityID,
 			&i.SpEntityID,
+			&i.IsPrimary,
 		); err != nil {
 			return nil, err
 		}
@@ -1199,19 +1206,37 @@ func (q *Queries) UpdateOrganization(ctx context.Context, arg UpdateOrganization
 	return i, err
 }
 
+const updatePrimarySAMLConnection = `-- name: UpdatePrimarySAMLConnection :exec
+update saml_connections
+set is_primary = (id = $1)
+where organization_id = $2
+`
+
+type UpdatePrimarySAMLConnectionParams struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+}
+
+func (q *Queries) UpdatePrimarySAMLConnection(ctx context.Context, arg UpdatePrimarySAMLConnectionParams) error {
+	_, err := q.db.Exec(ctx, updatePrimarySAMLConnection, arg.ID, arg.OrganizationID)
+	return err
+}
+
 const updateSAMLConnection = `-- name: UpdateSAMLConnection :one
 update saml_connections
 set idp_entity_id        = $1,
     idp_redirect_url     = $2,
-    idp_x509_certificate = $3
-where id = $4
-returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id
+    idp_x509_certificate = $3,
+    is_primary           = $4
+where id = $5
+returning id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id, is_primary
 `
 
 type UpdateSAMLConnectionParams struct {
 	IdpEntityID        *string
 	IdpRedirectUrl     *string
 	IdpX509Certificate []byte
+	IsPrimary          bool
 	ID                 uuid.UUID
 }
 
@@ -1220,6 +1245,7 @@ func (q *Queries) UpdateSAMLConnection(ctx context.Context, arg UpdateSAMLConnec
 		arg.IdpEntityID,
 		arg.IdpRedirectUrl,
 		arg.IdpX509Certificate,
+		arg.IsPrimary,
 		arg.ID,
 	)
 	var i SamlConnection
@@ -1230,6 +1256,7 @@ func (q *Queries) UpdateSAMLConnection(ctx context.Context, arg UpdateSAMLConnec
 		&i.IdpX509Certificate,
 		&i.IdpEntityID,
 		&i.SpEntityID,
+		&i.IsPrimary,
 	)
 	return i, err
 }

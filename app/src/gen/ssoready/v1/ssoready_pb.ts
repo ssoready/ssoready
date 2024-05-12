@@ -261,6 +261,11 @@ export class SAMLConnection extends Message<SAMLConnection> {
   organizationId = "";
 
   /**
+   * @generated from field: bool primary = 8;
+   */
+  primary = false;
+
+  /**
    * @generated from field: string idp_redirect_url = 3;
    */
   idpRedirectUrl = "";
@@ -295,6 +300,7 @@ export class SAMLConnection extends Message<SAMLConnection> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "primary", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "idp_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
