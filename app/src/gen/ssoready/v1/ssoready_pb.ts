@@ -625,22 +625,22 @@ export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeReq
  */
 export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeResponse> {
   /**
-   * @generated from field: string subject_idp_id = 1;
+   * @generated from field: string email = 1;
    */
-  subjectIdpId = "";
+  email = "";
 
   /**
-   * @generated from field: map<string, string> subject_idp_attributes = 2;
-   */
-  subjectIdpAttributes: { [key: string]: string } = {};
-
-  /**
-   * @generated from field: string state = 6;
+   * @generated from field: string state = 2;
    */
   state = "";
 
   /**
-   * @generated from field: string organization_id = 3;
+   * @generated from field: map<string, string> attributes = 3;
+   */
+  attributes: { [key: string]: string } = {};
+
+  /**
+   * @generated from field: string organization_id = 4;
    */
   organizationId = "";
 
@@ -650,9 +650,9 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
   organizationExternalId = "";
 
   /**
-   * @generated from field: string environment_id = 4;
+   * @generated from field: string saml_flow_id = 6;
    */
-  environmentId = "";
+  samlFlowId = "";
 
   constructor(data?: PartialMessage<RedeemSAMLAccessCodeResponse>) {
     super();
@@ -662,12 +662,12 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.RedeemSAMLAccessCodeResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
-    { no: 6, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 4, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "saml_flow_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeResponse {

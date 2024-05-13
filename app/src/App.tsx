@@ -19,6 +19,7 @@ import { ViewAPIKeyPage } from "@/pages/ViewAPIKeyPage";
 import { VerifyEmailPage } from "@/pages/VerifyEmailPage";
 import { API_URL } from "@/config";
 import { Toaster } from "@/components/ui/sonner";
+import { RedirectSAMLFlowPage } from "@/pages/RedirectSAMLFlowPage";
 
 const queryClient = new QueryClient();
 

@@ -145,12 +145,12 @@ message RedeemSAMLAccessCodeRequest {
 }
 
 message RedeemSAMLAccessCodeResponse {
-  string subject_idp_id = 1;
-  map<string, string> subject_idp_attributes = 2;
-  string state = 6;
-  string organization_id = 3;
+  string email = 1;
+  string state = 2;
+  map<string, string> attributes = 3;
+  string organization_id = 4;
   string organization_external_id = 5;
-  string environment_id = 4;
+  string saml_flow_id = 6;
 }
 
 message VerifyEmailRequest {
