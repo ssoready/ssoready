@@ -78,7 +78,7 @@ type AppUser struct {
 	ID                uuid.UUID
 	AppOrganizationID uuid.UUID
 	DisplayName       string
-	Email             *string
+	Email             string
 }
 
 type EmailVerificationChallenge struct {
@@ -114,8 +114,9 @@ type SamlConnection struct {
 	IdpRedirectUrl     *string
 	IdpX509Certificate []byte
 	IdpEntityID        *string
-	SpEntityID         *string
+	SpEntityID         string
 	IsPrimary          bool
+	SpAcsUrl           string
 }
 
 type SamlFlow struct {
@@ -125,7 +126,7 @@ type SamlFlow struct {
 	State                                string
 	CreateTime                           time.Time
 	ExpireTime                           time.Time
-	SubjectIdpID                         *string
+	Email                                *string
 	SubjectIdpAttributes                 []byte
 	UpdateTime                           time.Time
 	AuthRedirectUrl                      *string
@@ -141,7 +142,7 @@ type SamlFlow struct {
 	ErrorBadAudience                     *string
 	ErrorBadSubjectID                    *string
 	ErrorEmailOutsideOrganizationDomains *string
-	Status                               NullSamlFlowStatus
+	Status                               SamlFlowStatus
 }
 
 type SchemaMigration struct {

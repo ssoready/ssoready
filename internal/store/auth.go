@@ -43,7 +43,7 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 	return &AuthGetInitDataResponse{
 		RequestID:      stateData.SAMLFlowID,
 		IDPRedirectURL: *res.IdpRedirectUrl,
-		SPEntityID:     *res.SpEntityID,
+		SPEntityID:     res.SpEntityID,
 	}, nil
 }
 
@@ -84,16 +84,7 @@ func (s *Store) AuthUpsertInitiateData(ctx context.Context, req *AuthUpsertIniti
 		UpdateTime:       time.Now(),
 		InitiateRequest:  &req.InitiateRequest,
 		InitiateTime:     &now,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := q.UpdateSAMLFlowStatus(ctx, queries.UpdateSAMLFlowStatusParams{
-		ID: samlFlowID,
-		Status: queries.NullSamlFlowStatus{
-			Valid:          true,
-			SamlFlowStatus: queries.SamlFlowStatusInProgress,
-		},
+		Status:           queries.SamlFlowStatusInProgress,
 	}); err != nil {
 		return err
 	}
@@ -140,7 +131,7 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 	}
 
 	return &AuthGetValidateDataResponse{
-		SPEntityID:             *res.SpEntityID,
+		SPEntityID:             res.SpEntityID,
 		IDPEntityID:            *res.IdpEntityID,
 		IDPX509Certificate:     res.IdpX509Certificate,
 		OrganizationDomains:    domains,
@@ -169,7 +160,7 @@ func (s *Store) AuthCheckAssertionAlreadyProcessed(ctx context.Context, samlFlow
 type AuthUpsertSAMLLoginEventRequest struct {
 	SAMLConnectionID                     string
 	SAMLFlowID                           string
-	SubjectID                            string
+	Email                                string
 	SubjectIDPAttributes                 map[string]string
 	SAMLAssertion                        string
 	ErrorBadIssuer                       *string
@@ -214,9 +205,11 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	now := time.Now()
 
 	var accessCode *uuid.UUID
+	status := queries.SamlFlowStatusFailed
 	if assertionOk {
 		id := uuid.New()
 		accessCode = &id
+		status = queries.SamlFlowStatusInProgress
 	}
 
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
@@ -233,20 +226,9 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		ErrorBadAudience:                     req.ErrorBadAudience,
 		ErrorBadSubjectID:                    req.ErrorBadSubjectID,
 		ErrorEmailOutsideOrganizationDomains: req.ErrorEmailOutsideOrganizationDomains,
+		Status:                               status,
 	})
 	if err != nil {
-		return nil, err
-	}
-
-	status := queries.SamlFlowStatusFailed
-	if assertionOk {
-		status = queries.SamlFlowStatusInProgress
-	}
-
-	if _, err := q.UpdateSAMLFlowStatus(ctx, queries.UpdateSAMLFlowStatusParams{
-		ID:     samlFlowID,
-		Status: queries.NullSamlFlowStatus{Valid: true, SamlFlowStatus: status},
-	}); err != nil {
 		return nil, err
 	}
 
@@ -261,7 +243,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 
 	if _, err := q.UpdateSAMLFlowSubjectData(ctx, queries.UpdateSAMLFlowSubjectDataParams{
 		ID:                   samlFlowID,
-		SubjectIdpID:         &req.SubjectID,
+		Email:                &req.Email,
 		SubjectIdpAttributes: attrs,
 	}); err != nil {
 		return nil, err

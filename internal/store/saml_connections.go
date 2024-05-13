@@ -136,11 +136,13 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 
 	id := uuid.New()
 	entityID := fmt.Sprintf("%s/saml/%s", authURL, idformat.SAMLConnection.Format(id))
+	acsURL := fmt.Sprintf("%s/saml/%s/acs", authURL, idformat.SAMLConnection.Format(id))
 	qSAMLConn, err := q.CreateSAMLConnection(ctx, queries.CreateSAMLConnectionParams{
 		ID:                 id,
 		OrganizationID:     orgID,
 		IsPrimary:          req.SamlConnection.Primary,
-		SpEntityID:         &entityID,
+		SpAcsUrl:           acsURL,
+		SpEntityID:         entityID,
 		IdpEntityID:        &req.SamlConnection.IdpEntityId,
 		IdpRedirectUrl:     &req.SamlConnection.IdpRedirectUrl,
 		IdpX509Certificate: idpCert,
@@ -238,12 +240,6 @@ func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConne
 		}))
 	}
 
-	// todo make sp entity id not null so that this if goes away
-	var acsURL string
-	if qSAMLConn.SpEntityID != nil {
-		acsURL = fmt.Sprintf("%s/acs", *qSAMLConn.SpEntityID)
-	}
-
 	return &ssoreadyv1.SAMLConnection{
 		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
 		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
@@ -251,7 +247,7 @@ func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConne
 		IdpRedirectUrl: derefOrEmpty(qSAMLConn.IdpRedirectUrl),
 		IdpCertificate: certPEM,
 		IdpEntityId:    derefOrEmpty(qSAMLConn.IdpEntityID),
-		SpEntityId:     derefOrEmpty(qSAMLConn.SpEntityID),
-		SpAcsUrl:       acsURL,
+		SpEntityId:     qSAMLConn.SpEntityID,
+		SpAcsUrl:       qSAMLConn.SpAcsUrl,
 	}
 }

@@ -102,8 +102,8 @@ message SAMLFlow {
   }
 
   string state = 3;
-  string subject_idp_id = 4;
-  map<string, string> subject_idp_attributes = 5;
+  string email = 4;
+  map<string, string> attributes = 5;
 
   google.protobuf.Timestamp create_time = 6;
   google.protobuf.Timestamp update_time = 7;

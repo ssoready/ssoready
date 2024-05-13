@@ -135,23 +135,23 @@ export function ViewSAMLFlowPage() {
             </div>
 
             <div className="text-sm col-span-1 text-muted-foreground">
-              User ID
+              User Email
             </div>
-            <div className="text-sm col-span-3">{samlFlow?.subjectIdpId}</div>
+            <div className="text-sm col-span-3">{samlFlow?.email}</div>
 
             <div className="text-sm col-span-1 text-muted-foreground">
               User Attributes
             </div>
             <div className="text-sm col-span-3">
               <span className="font-mono bg-gray-100 py-1 px-2 rounded-sm">
-                {JSON.stringify(samlFlow?.subjectIdpAttributes)}
+                {JSON.stringify(samlFlow?.attributes)}
               </span>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {samlFlow?.error && (
+      {samlFlow?.error.case && (
         <Alert variant="destructive">
           <OctagonX className="h-4 w-4" />
           <AlertTitle>This SAML flow was rejected by SSOReady</AlertTitle>

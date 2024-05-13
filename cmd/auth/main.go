@@ -136,9 +136,13 @@ func main() {
 		}
 
 		var badSubjectID *string
+		var email string
 		subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 		if err != nil {
 			badSubjectID = &validateRes.SubjectID
+		}
+		if badSubjectID == nil {
+			email = validateRes.SubjectID
 		}
 
 		var domainMismatchEmail *string
@@ -157,7 +161,7 @@ func main() {
 		createSAMLLoginRes, err := store_.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
 			SAMLConnectionID:                     samlConnID,
 			SAMLFlowID:                           validateRes.RequestID,
-			SubjectID:                            validateRes.SubjectID,
+			Email:                                email,
 			SubjectIDPAttributes:                 validateRes.SubjectAttributes,
 			SAMLAssertion:                        validateRes.Assertion,
 			ErrorBadIssuer:                       validateRes.BadIssuer,

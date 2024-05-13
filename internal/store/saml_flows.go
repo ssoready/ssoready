@@ -117,15 +117,13 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 	}
 
 	var status ssoreadyv1.SAMLFlowStatus
-	if qSAMLFlow.Status.Valid {
-		switch qSAMLFlow.Status.SamlFlowStatus {
-		case queries.SamlFlowStatusInProgress:
-			status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_IN_PROGRESS
-		case queries.SamlFlowStatusFailed:
-			status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_FAILED
-		case queries.SamlFlowStatusSucceeded:
-			status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_SUCCEEDED
-		}
+	switch qSAMLFlow.Status {
+	case queries.SamlFlowStatusInProgress:
+		status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_IN_PROGRESS
+	case queries.SamlFlowStatusFailed:
+		status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_FAILED
+	case queries.SamlFlowStatusSucceeded:
+		status = ssoreadyv1.SAMLFlowStatus_SAML_FLOW_STATUS_SUCCEEDED
 	}
 
 	res := ssoreadyv1.SAMLFlow{
@@ -133,8 +131,8 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		SamlConnectionId:     idformat.SAMLConnection.Format(qSAMLFlow.SamlConnectionID),
 		Status:               status,
 		State:                qSAMLFlow.State,
-		SubjectIdpId:         derefOrEmpty(qSAMLFlow.SubjectIdpID),
-		SubjectIdpAttributes: attrs,
+		Email:                derefOrEmpty(qSAMLFlow.Email),
+		Attributes:           attrs,
 		CreateTime:           timestamppb.New(qSAMLFlow.CreateTime),
 		UpdateTime:           timestamppb.New(qSAMLFlow.UpdateTime),
 		AuthRedirectUrl:      derefOrEmpty(qSAMLFlow.AuthRedirectUrl),

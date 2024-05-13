@@ -81,7 +81,7 @@ CREATE TABLE public.app_users (
     id uuid NOT NULL,
     app_organization_id uuid NOT NULL,
     display_name character varying NOT NULL,
-    email character varying
+    email character varying NOT NULL
 );
 
 
@@ -152,8 +152,9 @@ CREATE TABLE public.saml_connections (
     idp_redirect_url character varying,
     idp_x509_certificate bytea,
     idp_entity_id character varying,
-    sp_entity_id character varying,
-    is_primary boolean DEFAULT false NOT NULL
+    sp_entity_id character varying NOT NULL,
+    is_primary boolean DEFAULT false NOT NULL,
+    sp_acs_url character varying NOT NULL
 );
 
 
@@ -170,7 +171,7 @@ CREATE TABLE public.saml_flows (
     state character varying NOT NULL,
     create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL,
-    subject_idp_id character varying,
+    email character varying,
     subject_idp_attributes jsonb,
     update_time timestamp with time zone NOT NULL,
     auth_redirect_url character varying,
@@ -186,7 +187,7 @@ CREATE TABLE public.saml_flows (
     error_bad_audience character varying,
     error_bad_subject_id character varying,
     error_email_outside_organization_domains character varying,
-    status public.saml_flow_status
+    status public.saml_flow_status NOT NULL
 );
 
 

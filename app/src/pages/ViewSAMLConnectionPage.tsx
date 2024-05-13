@@ -373,7 +373,7 @@ function ListLoginFlowsTabContent() {
               <TableHead>ID</TableHead>
               <TableHead>Timestamp</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>User ID</TableHead>
+              <TableHead>User Email</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -406,7 +406,7 @@ function ListLoginFlowsTabContent() {
                       <Badge>Succeeded</Badge>
                     )}
                   </TableCell>
-                  <TableCell>{flow.subjectIdpId}</TableCell>
+                  <TableCell>{flow.email}</TableCell>
                 </TableRow>
               ))}
           </TableBody>

@@ -92,16 +92,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		UpdateTime:       time.Now(),
 		AuthRedirectUrl:  &redirect,
 		GetRedirectTime:  &now,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err := q.UpdateSAMLFlowStatus(ctx, queries.UpdateSAMLFlowStatusParams{
-		ID: samlFlowID,
-		Status: queries.NullSamlFlowStatus{
-			Valid:          true,
-			SamlFlowStatus: queries.SamlFlowStatusInProgress,
-		},
+		Status:           queries.SamlFlowStatusInProgress,
 	}); err != nil {
 		return nil, err
 	}
@@ -142,7 +133,7 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	}
 
 	res := &ssoreadyv1.RedeemSAMLAccessCodeResponse{
-		Email:                  *samlAccessTokenData.SubjectIdpID,
+		Email:                  *samlAccessTokenData.Email,
 		Attributes:             attrs,
 		State:                  samlAccessTokenData.State,
 		OrganizationId:         idformat.Organization.Format(samlAccessTokenData.OrganizationID),
@@ -161,13 +152,7 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		UpdateTime:     time.Now(),
 		RedeemTime:     &now,
 		RedeemResponse: resJSON,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err := q.UpdateSAMLFlowStatus(ctx, queries.UpdateSAMLFlowStatusParams{
-		ID:     samlAccessTokenData.SamlFlowID,
-		Status: queries.NullSamlFlowStatus{Valid: true, SamlFlowStatus: queries.SamlFlowStatusSucceeded},
+		Status:         queries.SamlFlowStatusSucceeded,
 	}); err != nil {
 		return nil, err
 	}

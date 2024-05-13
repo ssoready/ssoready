@@ -379,14 +379,14 @@ export class SAMLFlow extends Message<SAMLFlow> {
   state = "";
 
   /**
-   * @generated from field: string subject_idp_id = 4;
+   * @generated from field: string email = 4;
    */
-  subjectIdpId = "";
+  email = "";
 
   /**
-   * @generated from field: map<string, string> subject_idp_attributes = 5;
+   * @generated from field: map<string, string> attributes = 5;
    */
-  subjectIdpAttributes: { [key: string]: string } = {};
+  attributes: { [key: string]: string } = {};
 
   /**
    * @generated from field: google.protobuf.Timestamp create_time = 6;
@@ -459,8 +459,8 @@ export class SAMLFlow extends Message<SAMLFlow> {
     { no: 20, name: "bad_subject_id", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 21, name: "email_outside_organization_domains", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 3, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "subject_idp_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "subject_idp_attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 4, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
     { no: 6, name: "create_time", kind: "message", T: Timestamp },
     { no: 7, name: "update_time", kind: "message", T: Timestamp },
     { no: 8, name: "auth_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },

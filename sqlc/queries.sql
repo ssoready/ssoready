@@ -36,24 +36,25 @@ where saml_connections.id = $1;
 
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8)
+                        auth_redirect_url, get_redirect_time, status)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        initiate_request, initiate_time)
-values ($1, $2, $3, $4, $5, $6, $7, $8)
+                        initiate_request, initiate_time, status)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
-                               initiate_time    = excluded.initiate_time
+                               initiate_time    = excluded.initiate_time,
+                               status           = excluded.status
 returning *;
 
 -- name: UpsertSAMLFlowReceiveAssertion :one
 insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
                         assertion, receive_assertion_time, error_bad_issuer, error_bad_audience, error_bad_subject_id,
-                        error_email_outside_organization_domains)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+                        error_email_outside_organization_domains, status)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 on conflict (id) do update set access_code                              = excluded.access_code,
                                update_time                              = excluded.update_time,
                                assertion                                = excluded.assertion,
@@ -61,13 +62,8 @@ on conflict (id) do update set access_code                              = exclud
                                error_bad_issuer                         = excluded.error_bad_issuer,
                                error_bad_audience                       = excluded.error_bad_audience,
                                error_bad_subject_id                     = excluded.error_bad_subject_id,
-                               error_email_outside_organization_domains = excluded.error_email_outside_organization_domains
-returning *;
-
--- name: UpdateSAMLFlowStatus :one
-update saml_flows
-set status = $1
-where id = $2
+                               error_email_outside_organization_domains = excluded.error_email_outside_organization_domains,
+                               status                                   = excluded.status
 returning *;
 
 -- name: UpdateSAMLFlowAppRedirectURL :one
@@ -80,8 +76,9 @@ returning *;
 update saml_flows
 set update_time     = $1,
     redeem_time     = $2,
-    redeem_response = $3
-where id = $4
+    redeem_response = $3,
+    status          = $4
+where id = $5
 returning *;
 
 -- name: AuthGetSAMLFlow :one
@@ -91,7 +88,7 @@ where id = $1;
 
 -- name: UpdateSAMLFlowSubjectData :one
 update saml_flows
-set subject_idp_id         = $1,
+set email                  = $1,
     subject_idp_attributes = $2
 where id = $3
 returning *;
@@ -144,7 +141,7 @@ where secret_value = $1;
 
 -- name: GetSAMLAccessCodeData :one
 select saml_flows.id             as saml_flow_id,
-       saml_flows.subject_idp_id,
+       saml_flows.email,
        saml_flows.subject_idp_attributes,
        saml_flows.state,
        organizations.id          as organization_id,
@@ -306,9 +303,10 @@ where environments.app_organization_id = $1
   and saml_connections.id = $2;
 
 -- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id, idp_entity_id, idp_redirect_url, idp_x509_certificate,
+insert into saml_connections (id, organization_id, sp_entity_id, sp_acs_url, idp_entity_id, idp_redirect_url,
+                              idp_x509_certificate,
                               is_primary)
-values ($1, $2, $3, $4, $5, $6, $7)
+values ($1, $2, $3, $4, $5, $6, $7, $8)
 returning *;
 
 -- name: UpdateSAMLConnection :one

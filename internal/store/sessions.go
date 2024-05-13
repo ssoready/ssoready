@@ -86,7 +86,7 @@ func (s *Store) CreateGoogleSession(ctx context.Context, req *CreateGoogleSessio
 }
 
 func (s *Store) upsertGoogleAppUser(ctx context.Context, q *queries.Queries, req *CreateGoogleSessionRequest) (*queries.AppUser, error) {
-	appUser, err := q.GetAppUserByEmail(ctx, &req.Email)
+	appUser, err := q.GetAppUserByEmail(ctx, req.Email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			appOrg, err := s.upsertGoogleAppOrg(ctx, q, req)
@@ -98,7 +98,7 @@ func (s *Store) upsertGoogleAppUser(ctx context.Context, q *queries.Queries, req
 				ID:                uuid.New(),
 				AppOrganizationID: appOrg.ID,
 				DisplayName:       req.DisplayName,
-				Email:             &req.Email,
+				Email:             req.Email,
 			})
 			if err != nil {
 				return nil, err
@@ -229,7 +229,7 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 }
 
 func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queries, email string) (*queries.AppUser, error) {
-	appUser, err := q.GetAppUserByEmail(ctx, &email)
+	appUser, err := q.GetAppUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			appOrg, err := q.CreateAppOrganization(ctx, queries.CreateAppOrganizationParams{
@@ -242,7 +242,7 @@ func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queri
 			appUser, err := q.CreateAppUser(ctx, queries.CreateAppUserParams{
 				ID:                uuid.New(),
 				AppOrganizationID: appOrg.ID,
-				Email:             &email,
+				Email:             email,
 			})
 			if err != nil {
 				return nil, err

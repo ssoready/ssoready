@@ -27,6 +27,6 @@ func (s *Store) Whoami(ctx context.Context, req *ssoreadyv1.WhoamiRequest) (*sso
 	return &ssoreadyv1.WhoamiResponse{
 		AppUserId:   idformat.AppUser.Format(appUser.ID),
 		DisplayName: appUser.DisplayName,
-		Email:       *appUser.Email,
+		Email:       appUser.Email,
 	}, nil
 }
