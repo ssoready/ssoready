@@ -1,9 +1,8 @@
-import { useMatch, useParams } from "react-router";
-import { useQuery } from "@connectrpc/connect-query";
+import { useParams } from "react-router";
+import { disableQuery, useQuery } from "@connectrpc/connect-query";
 import {
   getSAMLConnection,
   getSAMLFlow,
-  listSAMLFlows,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import React from "react";
 import {
@@ -18,7 +17,6 @@ import formatXml from "xml-formatter";
 import hljs from "highlight.js/lib/core";
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -28,12 +26,17 @@ import {
 import { Link } from "react-router-dom";
 import { SAMLFlowStatus } from "@/gen/ssoready/v1/ssoready_pb";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { OctagonX } from "lucide-react";
 
 export function ViewSAMLFlowPage() {
   const { environmentId, organizationId, samlConnectionId, samlFlowId } =
     useParams();
   const { data: samlFlow } = useQuery(getSAMLFlow, {
     id: samlFlowId,
+  });
+  const { data: samlConnection } = useQuery(getSAMLConnection, {
+    id: samlConnectionId,
   });
 
   return (
@@ -147,6 +150,65 @@ export function ViewSAMLFlowPage() {
           </div>
         </CardContent>
       </Card>
+
+      {samlFlow?.error && (
+        <Alert variant="destructive">
+          <OctagonX className="h-4 w-4" />
+          <AlertTitle>This SAML flow was rejected by SSOReady</AlertTitle>
+
+          {samlFlow.error.case === "badIssuer" && (
+            <AlertDescription>
+              <p>
+                You've configured the Identity Provider Entity ID as{" "}
+                <span className="font-semibold">
+                  {samlConnection?.idpEntityId}
+                </span>
+                , but your customer's identity provider provided{" "}
+                <span className="font-semibold">{samlFlow?.error?.value}</span>.
+              </p>
+
+              <p className="mt-4">
+                If you believe this login is legitimate, you need to update{" "}
+                <Link
+                  className="underline underline-offset-4"
+                  to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
+                >
+                  the SAML connection's
+                </Link>{" "}
+                Identity Provider Entity ID to{" "}
+                <span className="font-semibold">{samlFlow.error.value}</span>.
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.error.case === "badAudience" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider provided a Service Provider
+                Entity ID of{" "}
+                <span className="font-semibold">{samlFlow.error.value}</span>,
+                which is not the correct value.
+              </p>
+
+              <p className="mt-4">
+                Your customer's IT admin needs to change the value to{" "}
+                <span className="font-semibold">
+                  {samlConnection?.spEntityId}
+                </span>
+                .
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.error.case === "emailOutsideOrganizationDomains" && (
+            <AlertDescription>
+              Your customer's identity provider returned a{" "}
+              <span className="font-semibold">{samlFlow.error.value}</span>{" "}
+              email, which is outside of the organization allowed domains.
+            </AlertDescription>
+          )}
+        </Alert>
+      )}
 
       <div className="relative">
         <span
