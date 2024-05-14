@@ -67,12 +67,17 @@ func (s *Store) CreateEnvironment(ctx context.Context, req *ssoreadyv1.CreateEnv
 	}
 	defer rollback()
 
+	var authURL *string
+	if req.Environment.AuthUrl != "" {
+		authURL = &req.Environment.AuthUrl
+	}
+
 	qEnv, err := q.CreateEnvironment(ctx, queries.CreateEnvironmentParams{
 		AppOrganizationID: appauth.OrgID(ctx),
 		ID:                uuid.New(),
 		RedirectUrl:       &req.Environment.RedirectUrl,
 		DisplayName:       &req.Environment.DisplayName,
-		AuthUrl:           &req.Environment.AuthUrl,
+		AuthUrl:           authURL,
 	})
 	if err != nil {
 		return nil, err

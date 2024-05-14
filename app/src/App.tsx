@@ -20,6 +20,7 @@ import { VerifyEmailPage } from "@/pages/VerifyEmailPage";
 import { API_URL } from "@/config";
 import { Toaster } from "@/components/ui/sonner";
 import { RedirectSAMLFlowPage } from "@/pages/RedirectSAMLFlowPage";
+import { OnboardingPage } from "@/pages/OnboardingPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,8 @@ export function App() {
               <Route path="/verify-email" element={<VerifyEmailPage />} />
 
               <Route path="/" element={<LoginGate />}>
+                <Route path="/onboarding" element={<OnboardingPage />} />
+
                 <Route path="/" element={<Page />}>
                   <Route path="/" element={<HomePage />} />
                   <Route
