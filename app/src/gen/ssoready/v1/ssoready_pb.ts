@@ -885,6 +885,233 @@ export class WhoamiResponse extends Message<WhoamiResponse> {
 }
 
 /**
+ * @generated from message ssoready.v1.GetOnboardingStateRequest
+ */
+export class GetOnboardingStateRequest extends Message<GetOnboardingStateRequest> {
+  constructor(data?: PartialMessage<GetOnboardingStateRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetOnboardingStateRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOnboardingStateRequest {
+    return new GetOnboardingStateRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOnboardingStateRequest {
+    return new GetOnboardingStateRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOnboardingStateRequest {
+    return new GetOnboardingStateRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetOnboardingStateRequest | PlainMessage<GetOnboardingStateRequest> | undefined, b: GetOnboardingStateRequest | PlainMessage<GetOnboardingStateRequest> | undefined): boolean {
+    return proto3.util.equals(GetOnboardingStateRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetOnboardingStateResponse
+ */
+export class GetOnboardingStateResponse extends Message<GetOnboardingStateResponse> {
+  /**
+   * @generated from field: string dummyidp_app_id = 1;
+   */
+  dummyidpAppId = "";
+
+  /**
+   * @generated from field: string onboarding_environment_id = 2;
+   */
+  onboardingEnvironmentId = "";
+
+  /**
+   * @generated from field: string onboarding_organization_id = 3;
+   */
+  onboardingOrganizationId = "";
+
+  /**
+   * @generated from field: string onboarding_saml_connection_id = 4;
+   */
+  onboardingSamlConnectionId = "";
+
+  constructor(data?: PartialMessage<GetOnboardingStateResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetOnboardingStateResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "dummyidp_app_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "onboarding_environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "onboarding_organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "onboarding_saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOnboardingStateResponse {
+    return new GetOnboardingStateResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOnboardingStateResponse {
+    return new GetOnboardingStateResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOnboardingStateResponse {
+    return new GetOnboardingStateResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetOnboardingStateResponse | PlainMessage<GetOnboardingStateResponse> | undefined, b: GetOnboardingStateResponse | PlainMessage<GetOnboardingStateResponse> | undefined): boolean {
+    return proto3.util.equals(GetOnboardingStateResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateOnboardingStateRequest
+ */
+export class UpdateOnboardingStateRequest extends Message<UpdateOnboardingStateRequest> {
+  /**
+   * @generated from field: string dummyidp_app_id = 1;
+   */
+  dummyidpAppId = "";
+
+  /**
+   * @generated from field: string onboarding_environment_id = 2;
+   */
+  onboardingEnvironmentId = "";
+
+  /**
+   * @generated from field: string onboarding_organization_id = 3;
+   */
+  onboardingOrganizationId = "";
+
+  /**
+   * @generated from field: string onboarding_saml_connection_id = 4;
+   */
+  onboardingSamlConnectionId = "";
+
+  constructor(data?: PartialMessage<UpdateOnboardingStateRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateOnboardingStateRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "dummyidp_app_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "onboarding_environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "onboarding_organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "onboarding_saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOnboardingStateRequest {
+    return new UpdateOnboardingStateRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOnboardingStateRequest {
+    return new UpdateOnboardingStateRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOnboardingStateRequest {
+    return new UpdateOnboardingStateRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateOnboardingStateRequest | PlainMessage<UpdateOnboardingStateRequest> | undefined, b: UpdateOnboardingStateRequest | PlainMessage<UpdateOnboardingStateRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateOnboardingStateRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.OnboardingGetSAMLRedirectURLRequest
+ */
+export class OnboardingGetSAMLRedirectURLRequest extends Message<OnboardingGetSAMLRedirectURLRequest> {
+  /**
+   * @generated from field: string api_key_secret_token = 1;
+   */
+  apiKeySecretToken = "";
+
+  /**
+   * @generated from field: string saml_connection_id = 2;
+   */
+  samlConnectionId = "";
+
+  constructor(data?: PartialMessage<OnboardingGetSAMLRedirectURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.OnboardingGetSAMLRedirectURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "api_key_secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OnboardingGetSAMLRedirectURLRequest {
+    return new OnboardingGetSAMLRedirectURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OnboardingGetSAMLRedirectURLRequest {
+    return new OnboardingGetSAMLRedirectURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OnboardingGetSAMLRedirectURLRequest {
+    return new OnboardingGetSAMLRedirectURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: OnboardingGetSAMLRedirectURLRequest | PlainMessage<OnboardingGetSAMLRedirectURLRequest> | undefined, b: OnboardingGetSAMLRedirectURLRequest | PlainMessage<OnboardingGetSAMLRedirectURLRequest> | undefined): boolean {
+    return proto3.util.equals(OnboardingGetSAMLRedirectURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.OnboardingRedeemSAMLAccessTokenRequest
+ */
+export class OnboardingRedeemSAMLAccessTokenRequest extends Message<OnboardingRedeemSAMLAccessTokenRequest> {
+  /**
+   * @generated from field: string api_key_secret_token = 1;
+   */
+  apiKeySecretToken = "";
+
+  /**
+   * @generated from field: string access_code = 2;
+   */
+  accessCode = "";
+
+  constructor(data?: PartialMessage<OnboardingRedeemSAMLAccessTokenRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.OnboardingRedeemSAMLAccessTokenRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "api_key_secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OnboardingRedeemSAMLAccessTokenRequest {
+    return new OnboardingRedeemSAMLAccessTokenRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessTokenRequest {
+    return new OnboardingRedeemSAMLAccessTokenRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessTokenRequest {
+    return new OnboardingRedeemSAMLAccessTokenRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: OnboardingRedeemSAMLAccessTokenRequest | PlainMessage<OnboardingRedeemSAMLAccessTokenRequest> | undefined, b: OnboardingRedeemSAMLAccessTokenRequest | PlainMessage<OnboardingRedeemSAMLAccessTokenRequest> | undefined): boolean {
+    return proto3.util.equals(OnboardingRedeemSAMLAccessTokenRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListEnvironmentsRequest
  */
 export class ListEnvironmentsRequest extends Message<ListEnvironmentsRequest> {

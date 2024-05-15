@@ -9,6 +9,22 @@ from email_verification_challenges
 where secret_token = $1
   and expire_time > $2;
 
+-- name: GetOnboardingState :one
+select *
+from onboarding_states
+where app_organization_id = $1;
+
+-- name: UpdateOnboardingState :one
+insert into onboarding_states (app_organization_id, dummyidp_app_id, onboarding_environment_id,
+                               onboarding_organization_id,
+                               onboarding_saml_connection_id)
+values ($1, $2, $3, $4, $5)
+on conflict (app_organization_id) do update set dummyidp_app_id               = excluded.dummyidp_app_id,
+                                                onboarding_environment_id     = excluded.onboarding_environment_id,
+                                                onboarding_organization_id    = excluded.onboarding_organization_id,
+                                                onboarding_saml_connection_id = excluded.onboarding_saml_connection_id
+returning *;
+
 -- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections

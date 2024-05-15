@@ -25,6 +25,10 @@ service SSOReadyService {
   rpc VerifyEmail(VerifyEmailRequest) returns (google.protobuf.Empty);
   rpc SignIn(SignInRequest) returns (SignInResponse);
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
+  rpc GetOnboardingState(GetOnboardingStateRequest) returns (GetOnboardingStateResponse);
+  rpc UpdateOnboardingState(UpdateOnboardingStateRequest) returns (google.protobuf.Empty);
+  rpc OnboardingGetSAMLRedirectURL(OnboardingGetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse);
+  rpc OnboardingRedeemSAMLAccessToken(OnboardingRedeemSAMLAccessTokenRequest) returns (RedeemSAMLAccessCodeResponse);
 
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
   rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
@@ -173,6 +177,33 @@ message WhoamiResponse {
   string app_user_id = 1;
   string display_name = 2;
   string email = 3;
+}
+
+message GetOnboardingStateRequest {
+}
+
+message GetOnboardingStateResponse {
+  string dummyidp_app_id = 1;
+  string onboarding_environment_id = 2;
+  string onboarding_organization_id = 3;
+  string onboarding_saml_connection_id = 4;
+}
+
+message UpdateOnboardingStateRequest {
+  string dummyidp_app_id = 1;
+  string onboarding_environment_id = 2;
+  string onboarding_organization_id = 3;
+  string onboarding_saml_connection_id = 4;
+}
+
+message OnboardingGetSAMLRedirectURLRequest {
+  string api_key_secret_token = 1;
+  string saml_connection_id = 2;
+}
+
+message OnboardingRedeemSAMLAccessTokenRequest {
+  string api_key_secret_token = 1;
+  string access_code = 2;
 }
 
 message ListEnvironmentsRequest {

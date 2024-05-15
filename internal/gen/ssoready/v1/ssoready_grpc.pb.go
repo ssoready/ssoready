@@ -20,30 +20,34 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SSOReadyService_GetSAMLRedirectURL_FullMethodName   = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	SSOReadyService_RedeemSAMLAccessCode_FullMethodName = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
-	SSOReadyService_VerifyEmail_FullMethodName          = "/ssoready.v1.SSOReadyService/VerifyEmail"
-	SSOReadyService_SignIn_FullMethodName               = "/ssoready.v1.SSOReadyService/SignIn"
-	SSOReadyService_Whoami_FullMethodName               = "/ssoready.v1.SSOReadyService/Whoami"
-	SSOReadyService_ListEnvironments_FullMethodName     = "/ssoready.v1.SSOReadyService/ListEnvironments"
-	SSOReadyService_GetEnvironment_FullMethodName       = "/ssoready.v1.SSOReadyService/GetEnvironment"
-	SSOReadyService_CreateEnvironment_FullMethodName    = "/ssoready.v1.SSOReadyService/CreateEnvironment"
-	SSOReadyService_UpdateEnvironment_FullMethodName    = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
-	SSOReadyService_ListAPIKeys_FullMethodName          = "/ssoready.v1.SSOReadyService/ListAPIKeys"
-	SSOReadyService_GetAPIKey_FullMethodName            = "/ssoready.v1.SSOReadyService/GetAPIKey"
-	SSOReadyService_CreateAPIKey_FullMethodName         = "/ssoready.v1.SSOReadyService/CreateAPIKey"
-	SSOReadyService_DeleteAPIKey_FullMethodName         = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
-	SSOReadyService_ListOrganizations_FullMethodName    = "/ssoready.v1.SSOReadyService/ListOrganizations"
-	SSOReadyService_GetOrganization_FullMethodName      = "/ssoready.v1.SSOReadyService/GetOrganization"
-	SSOReadyService_CreateOrganization_FullMethodName   = "/ssoready.v1.SSOReadyService/CreateOrganization"
-	SSOReadyService_UpdateOrganization_FullMethodName   = "/ssoready.v1.SSOReadyService/UpdateOrganization"
-	SSOReadyService_ListSAMLConnections_FullMethodName  = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
-	SSOReadyService_GetSAMLConnection_FullMethodName    = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
-	SSOReadyService_CreateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
-	SSOReadyService_UpdateSAMLConnection_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
-	SSOReadyService_ListSAMLFlows_FullMethodName        = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
-	SSOReadyService_GetSAMLFlow_FullMethodName          = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
-	SSOReadyService_ParseSAMLMetadata_FullMethodName    = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	SSOReadyService_GetSAMLRedirectURL_FullMethodName              = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
+	SSOReadyService_RedeemSAMLAccessCode_FullMethodName            = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_VerifyEmail_FullMethodName                     = "/ssoready.v1.SSOReadyService/VerifyEmail"
+	SSOReadyService_SignIn_FullMethodName                          = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_Whoami_FullMethodName                          = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_GetOnboardingState_FullMethodName              = "/ssoready.v1.SSOReadyService/GetOnboardingState"
+	SSOReadyService_UpdateOnboardingState_FullMethodName           = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
+	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName    = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
+	SSOReadyService_OnboardingRedeemSAMLAccessToken_FullMethodName = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessToken"
+	SSOReadyService_ListEnvironments_FullMethodName                = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_CreateEnvironment_FullMethodName               = "/ssoready.v1.SSOReadyService/CreateEnvironment"
+	SSOReadyService_UpdateEnvironment_FullMethodName               = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
+	SSOReadyService_ListAPIKeys_FullMethodName                     = "/ssoready.v1.SSOReadyService/ListAPIKeys"
+	SSOReadyService_GetAPIKey_FullMethodName                       = "/ssoready.v1.SSOReadyService/GetAPIKey"
+	SSOReadyService_CreateAPIKey_FullMethodName                    = "/ssoready.v1.SSOReadyService/CreateAPIKey"
+	SSOReadyService_DeleteAPIKey_FullMethodName                    = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
+	SSOReadyService_ListOrganizations_FullMethodName               = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_GetOrganization_FullMethodName                 = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_CreateOrganization_FullMethodName              = "/ssoready.v1.SSOReadyService/CreateOrganization"
+	SSOReadyService_UpdateOrganization_FullMethodName              = "/ssoready.v1.SSOReadyService/UpdateOrganization"
+	SSOReadyService_ListSAMLConnections_FullMethodName             = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
+	SSOReadyService_GetSAMLConnection_FullMethodName               = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName            = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
+	SSOReadyService_UpdateSAMLConnection_FullMethodName            = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
+	SSOReadyService_ListSAMLFlows_FullMethodName                   = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
+	SSOReadyService_GetSAMLFlow_FullMethodName                     = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
+	SSOReadyService_ParseSAMLMetadata_FullMethodName               = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -55,6 +59,10 @@ type SSOReadyServiceClient interface {
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
+	GetOnboardingState(ctx context.Context, in *GetOnboardingStateRequest, opts ...grpc.CallOption) (*GetOnboardingStateResponse, error)
+	UpdateOnboardingState(ctx context.Context, in *UpdateOnboardingStateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	OnboardingGetSAMLRedirectURL(ctx context.Context, in *OnboardingGetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
+	OnboardingRedeemSAMLAccessToken(ctx context.Context, in *OnboardingRedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
 	GetEnvironment(ctx context.Context, in *GetEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	CreateEnvironment(ctx context.Context, in *CreateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
@@ -123,6 +131,42 @@ func (c *sSOReadyServiceClient) SignIn(ctx context.Context, in *SignInRequest, o
 func (c *sSOReadyServiceClient) Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error) {
 	out := new(WhoamiResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_Whoami_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) GetOnboardingState(ctx context.Context, in *GetOnboardingStateRequest, opts ...grpc.CallOption) (*GetOnboardingStateResponse, error) {
+	out := new(GetOnboardingStateResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetOnboardingState_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) UpdateOnboardingState(ctx context.Context, in *UpdateOnboardingStateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SSOReadyService_UpdateOnboardingState_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) OnboardingGetSAMLRedirectURL(ctx context.Context, in *OnboardingGetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error) {
+	out := new(GetSAMLRedirectURLResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) OnboardingRedeemSAMLAccessToken(ctx context.Context, in *OnboardingRedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error) {
+	out := new(RedeemSAMLAccessCodeResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_OnboardingRedeemSAMLAccessToken_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -309,6 +353,10 @@ type SSOReadyServiceServer interface {
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
+	GetOnboardingState(context.Context, *GetOnboardingStateRequest) (*GetOnboardingStateResponse, error)
+	UpdateOnboardingState(context.Context, *UpdateOnboardingStateRequest) (*emptypb.Empty, error)
+	OnboardingGetSAMLRedirectURL(context.Context, *OnboardingGetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
+	OnboardingRedeemSAMLAccessToken(context.Context, *OnboardingRedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessCodeResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
 	GetEnvironment(context.Context, *GetEnvironmentRequest) (*Environment, error)
 	CreateEnvironment(context.Context, *CreateEnvironmentRequest) (*Environment, error)
@@ -349,6 +397,18 @@ func (UnimplementedSSOReadyServiceServer) SignIn(context.Context, *SignInRequest
 }
 func (UnimplementedSSOReadyServiceServer) Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Whoami not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetOnboardingState(context.Context, *GetOnboardingStateRequest) (*GetOnboardingStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnboardingState not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) UpdateOnboardingState(context.Context, *UpdateOnboardingStateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOnboardingState not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) OnboardingGetSAMLRedirectURL(context.Context, *OnboardingGetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OnboardingGetSAMLRedirectURL not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) OnboardingRedeemSAMLAccessToken(context.Context, *OnboardingRedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OnboardingRedeemSAMLAccessToken not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEnvironments not implemented")
@@ -506,6 +566,78 @@ func _SSOReadyService_Whoami_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).Whoami(ctx, req.(*WhoamiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_GetOnboardingState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnboardingStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetOnboardingState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetOnboardingState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetOnboardingState(ctx, req.(*GetOnboardingStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_UpdateOnboardingState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOnboardingStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).UpdateOnboardingState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_UpdateOnboardingState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).UpdateOnboardingState(ctx, req.(*UpdateOnboardingStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_OnboardingGetSAMLRedirectURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OnboardingGetSAMLRedirectURLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).OnboardingGetSAMLRedirectURL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).OnboardingGetSAMLRedirectURL(ctx, req.(*OnboardingGetSAMLRedirectURLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_OnboardingRedeemSAMLAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OnboardingRedeemSAMLAccessTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_OnboardingRedeemSAMLAccessToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessToken(ctx, req.(*OnboardingRedeemSAMLAccessTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -878,6 +1010,22 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Whoami",
 			Handler:    _SSOReadyService_Whoami_Handler,
+		},
+		{
+			MethodName: "GetOnboardingState",
+			Handler:    _SSOReadyService_GetOnboardingState_Handler,
+		},
+		{
+			MethodName: "UpdateOnboardingState",
+			Handler:    _SSOReadyService_UpdateOnboardingState_Handler,
+		},
+		{
+			MethodName: "OnboardingGetSAMLRedirectURL",
+			Handler:    _SSOReadyService_OnboardingGetSAMLRedirectURL_Handler,
+		},
+		{
+			MethodName: "OnboardingRedeemSAMLAccessToken",
+			Handler:    _SSOReadyService_OnboardingRedeemSAMLAccessToken_Handler,
 		},
 		{
 			MethodName: "ListEnvironments",

@@ -117,6 +117,21 @@ CREATE TABLE public.environments (
 ALTER TABLE public.environments OWNER TO postgres;
 
 --
+-- Name: onboarding_states; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.onboarding_states (
+    app_organization_id uuid NOT NULL,
+    onboarding_environment_id uuid NOT NULL,
+    onboarding_organization_id uuid NOT NULL,
+    onboarding_saml_connection_id uuid NOT NULL,
+    dummyidp_app_id character varying NOT NULL
+);
+
+
+ALTER TABLE public.onboarding_states OWNER TO postgres;
+
+--
 -- Name: organization_domains; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -286,6 +301,14 @@ ALTER TABLE ONLY public.environments
 
 
 --
+-- Name: onboarding_states onboarding_states_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.onboarding_states
+    ADD CONSTRAINT onboarding_states_pkey PRIMARY KEY (app_organization_id);
+
+
+--
 -- Name: organization_domains organization_domains_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -371,6 +394,14 @@ ALTER TABLE ONLY public.app_users
 
 ALTER TABLE ONLY public.environments
     ADD CONSTRAINT environments_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
+
+
+--
+-- Name: onboarding_states onboarding_states_app_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.onboarding_states
+    ADD CONSTRAINT onboarding_states_app_organization_id_fkey FOREIGN KEY (app_organization_id) REFERENCES public.app_organizations(id);
 
 
 --

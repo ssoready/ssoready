@@ -657,6 +657,25 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 	return i, err
 }
 
+const getOnboardingState = `-- name: GetOnboardingState :one
+select app_organization_id, onboarding_environment_id, onboarding_organization_id, onboarding_saml_connection_id, dummyidp_app_id
+from onboarding_states
+where app_organization_id = $1
+`
+
+func (q *Queries) GetOnboardingState(ctx context.Context, appOrganizationID uuid.UUID) (OnboardingState, error) {
+	row := q.db.QueryRow(ctx, getOnboardingState, appOrganizationID)
+	var i OnboardingState
+	err := row.Scan(
+		&i.AppOrganizationID,
+		&i.OnboardingEnvironmentID,
+		&i.OnboardingOrganizationID,
+		&i.OnboardingSamlConnectionID,
+		&i.DummyidpAppID,
+	)
+	return i, err
+}
+
 const getOrganization = `-- name: GetOrganization :one
 select organizations.id, organizations.environment_id, organizations.external_id
 from organizations
@@ -1234,6 +1253,45 @@ func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentPa
 		&i.AppOrganizationID,
 		&i.DisplayName,
 		&i.AuthUrl,
+	)
+	return i, err
+}
+
+const updateOnboardingState = `-- name: UpdateOnboardingState :one
+insert into onboarding_states (app_organization_id, dummyidp_app_id, onboarding_environment_id,
+                               onboarding_organization_id,
+                               onboarding_saml_connection_id)
+values ($1, $2, $3, $4, $5)
+on conflict (app_organization_id) do update set dummyidp_app_id               = excluded.dummyidp_app_id,
+                                                onboarding_environment_id     = excluded.onboarding_environment_id,
+                                                onboarding_organization_id    = excluded.onboarding_organization_id,
+                                                onboarding_saml_connection_id = excluded.onboarding_saml_connection_id
+returning app_organization_id, onboarding_environment_id, onboarding_organization_id, onboarding_saml_connection_id, dummyidp_app_id
+`
+
+type UpdateOnboardingStateParams struct {
+	AppOrganizationID          uuid.UUID
+	DummyidpAppID              string
+	OnboardingEnvironmentID    uuid.UUID
+	OnboardingOrganizationID   uuid.UUID
+	OnboardingSamlConnectionID uuid.UUID
+}
+
+func (q *Queries) UpdateOnboardingState(ctx context.Context, arg UpdateOnboardingStateParams) (OnboardingState, error) {
+	row := q.db.QueryRow(ctx, updateOnboardingState,
+		arg.AppOrganizationID,
+		arg.DummyidpAppID,
+		arg.OnboardingEnvironmentID,
+		arg.OnboardingOrganizationID,
+		arg.OnboardingSamlConnectionID,
+	)
+	var i OnboardingState
+	err := row.Scan(
+		&i.AppOrganizationID,
+		&i.OnboardingEnvironmentID,
+		&i.OnboardingOrganizationID,
+		&i.OnboardingSamlConnectionID,
+		&i.DummyidpAppID,
 	)
 	return i, err
 }

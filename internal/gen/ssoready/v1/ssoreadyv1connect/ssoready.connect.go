@@ -47,6 +47,18 @@ const (
 	SSOReadyServiceSignInProcedure = "/ssoready.v1.SSOReadyService/SignIn"
 	// SSOReadyServiceWhoamiProcedure is the fully-qualified name of the SSOReadyService's Whoami RPC.
 	SSOReadyServiceWhoamiProcedure = "/ssoready.v1.SSOReadyService/Whoami"
+	// SSOReadyServiceGetOnboardingStateProcedure is the fully-qualified name of the SSOReadyService's
+	// GetOnboardingState RPC.
+	SSOReadyServiceGetOnboardingStateProcedure = "/ssoready.v1.SSOReadyService/GetOnboardingState"
+	// SSOReadyServiceUpdateOnboardingStateProcedure is the fully-qualified name of the
+	// SSOReadyService's UpdateOnboardingState RPC.
+	SSOReadyServiceUpdateOnboardingStateProcedure = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
+	// SSOReadyServiceOnboardingGetSAMLRedirectURLProcedure is the fully-qualified name of the
+	// SSOReadyService's OnboardingGetSAMLRedirectURL RPC.
+	SSOReadyServiceOnboardingGetSAMLRedirectURLProcedure = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
+	// SSOReadyServiceOnboardingRedeemSAMLAccessTokenProcedure is the fully-qualified name of the
+	// SSOReadyService's OnboardingRedeemSAMLAccessToken RPC.
+	SSOReadyServiceOnboardingRedeemSAMLAccessTokenProcedure = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessToken"
 	// SSOReadyServiceListEnvironmentsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListEnvironments RPC.
 	SSOReadyServiceListEnvironmentsProcedure = "/ssoready.v1.SSOReadyService/ListEnvironments"
@@ -113,6 +125,10 @@ type SSOReadyServiceClient interface {
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
+	GetOnboardingState(context.Context, *connect.Request[v1.GetOnboardingStateRequest]) (*connect.Response[v1.GetOnboardingStateResponse], error)
+	UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error)
+	OnboardingGetSAMLRedirectURL(context.Context, *connect.Request[v1.OnboardingGetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
+	OnboardingRedeemSAMLAccessToken(context.Context, *connect.Request[v1.OnboardingRedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
@@ -167,6 +183,26 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		whoami: connect.NewClient[v1.WhoamiRequest, v1.WhoamiResponse](
 			httpClient,
 			baseURL+SSOReadyServiceWhoamiProcedure,
+			opts...,
+		),
+		getOnboardingState: connect.NewClient[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse](
+			httpClient,
+			baseURL+SSOReadyServiceGetOnboardingStateProcedure,
+			opts...,
+		),
+		updateOnboardingState: connect.NewClient[v1.UpdateOnboardingStateRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceUpdateOnboardingStateProcedure,
+			opts...,
+		),
+		onboardingGetSAMLRedirectURL: connect.NewClient[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse](
+			httpClient,
+			baseURL+SSOReadyServiceOnboardingGetSAMLRedirectURLProcedure,
+			opts...,
+		),
+		onboardingRedeemSAMLAccessToken: connect.NewClient[v1.OnboardingRedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessCodeResponse](
+			httpClient,
+			baseURL+SSOReadyServiceOnboardingRedeemSAMLAccessTokenProcedure,
 			opts...,
 		),
 		listEnvironments: connect.NewClient[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse](
@@ -269,30 +305,34 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
-	getSAMLRedirectURL   *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	redeemSAMLAccessCode *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	verifyEmail          *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
-	signIn               *connect.Client[v1.SignInRequest, v1.SignInResponse]
-	whoami               *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
-	listEnvironments     *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
-	getEnvironment       *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
-	createEnvironment    *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
-	updateEnvironment    *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
-	listAPIKeys          *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
-	getAPIKey            *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
-	createAPIKey         *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
-	deleteAPIKey         *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
-	listOrganizations    *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
-	getOrganization      *connect.Client[v1.GetOrganizationRequest, v1.Organization]
-	createOrganization   *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
-	updateOrganization   *connect.Client[v1.UpdateOrganizationRequest, v1.Organization]
-	listSAMLConnections  *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
-	getSAMLConnection    *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
-	createSAMLConnection *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
-	updateSAMLConnection *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
-	listSAMLFlows        *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
-	getSAMLFlow          *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
-	parseSAMLMetadata    *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
+	getSAMLRedirectURL              *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	redeemSAMLAccessCode            *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	verifyEmail                     *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
+	signIn                          *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	whoami                          *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
+	getOnboardingState              *connect.Client[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse]
+	updateOnboardingState           *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
+	onboardingGetSAMLRedirectURL    *connect.Client[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	onboardingRedeemSAMLAccessToken *connect.Client[v1.OnboardingRedeemSAMLAccessTokenRequest, v1.RedeemSAMLAccessCodeResponse]
+	listEnvironments                *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
+	getEnvironment                  *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
+	createEnvironment               *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
+	updateEnvironment               *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
+	listAPIKeys                     *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
+	getAPIKey                       *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
+	createAPIKey                    *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
+	deleteAPIKey                    *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
+	listOrganizations               *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
+	getOrganization                 *connect.Client[v1.GetOrganizationRequest, v1.Organization]
+	createOrganization              *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
+	updateOrganization              *connect.Client[v1.UpdateOrganizationRequest, v1.Organization]
+	listSAMLConnections             *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
+	getSAMLConnection               *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
+	createSAMLConnection            *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
+	updateSAMLConnection            *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
+	listSAMLFlows                   *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
+	getSAMLFlow                     *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
+	parseSAMLMetadata               *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -318,6 +358,27 @@ func (c *sSOReadyServiceClient) SignIn(ctx context.Context, req *connect.Request
 // Whoami calls ssoready.v1.SSOReadyService.Whoami.
 func (c *sSOReadyServiceClient) Whoami(ctx context.Context, req *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error) {
 	return c.whoami.CallUnary(ctx, req)
+}
+
+// GetOnboardingState calls ssoready.v1.SSOReadyService.GetOnboardingState.
+func (c *sSOReadyServiceClient) GetOnboardingState(ctx context.Context, req *connect.Request[v1.GetOnboardingStateRequest]) (*connect.Response[v1.GetOnboardingStateResponse], error) {
+	return c.getOnboardingState.CallUnary(ctx, req)
+}
+
+// UpdateOnboardingState calls ssoready.v1.SSOReadyService.UpdateOnboardingState.
+func (c *sSOReadyServiceClient) UpdateOnboardingState(ctx context.Context, req *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.updateOnboardingState.CallUnary(ctx, req)
+}
+
+// OnboardingGetSAMLRedirectURL calls ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL.
+func (c *sSOReadyServiceClient) OnboardingGetSAMLRedirectURL(ctx context.Context, req *connect.Request[v1.OnboardingGetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error) {
+	return c.onboardingGetSAMLRedirectURL.CallUnary(ctx, req)
+}
+
+// OnboardingRedeemSAMLAccessToken calls
+// ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessToken.
+func (c *sSOReadyServiceClient) OnboardingRedeemSAMLAccessToken(ctx context.Context, req *connect.Request[v1.OnboardingRedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
+	return c.onboardingRedeemSAMLAccessToken.CallUnary(ctx, req)
 }
 
 // ListEnvironments calls ssoready.v1.SSOReadyService.ListEnvironments.
@@ -422,6 +483,10 @@ type SSOReadyServiceHandler interface {
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
+	GetOnboardingState(context.Context, *connect.Request[v1.GetOnboardingStateRequest]) (*connect.Response[v1.GetOnboardingStateResponse], error)
+	UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error)
+	OnboardingGetSAMLRedirectURL(context.Context, *connect.Request[v1.OnboardingGetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
+	OnboardingRedeemSAMLAccessToken(context.Context, *connect.Request[v1.OnboardingRedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
@@ -472,6 +537,26 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceWhoamiHandler := connect.NewUnaryHandler(
 		SSOReadyServiceWhoamiProcedure,
 		svc.Whoami,
+		opts...,
+	)
+	sSOReadyServiceGetOnboardingStateHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetOnboardingStateProcedure,
+		svc.GetOnboardingState,
+		opts...,
+	)
+	sSOReadyServiceUpdateOnboardingStateHandler := connect.NewUnaryHandler(
+		SSOReadyServiceUpdateOnboardingStateProcedure,
+		svc.UpdateOnboardingState,
+		opts...,
+	)
+	sSOReadyServiceOnboardingGetSAMLRedirectURLHandler := connect.NewUnaryHandler(
+		SSOReadyServiceOnboardingGetSAMLRedirectURLProcedure,
+		svc.OnboardingGetSAMLRedirectURL,
+		opts...,
+	)
+	sSOReadyServiceOnboardingRedeemSAMLAccessTokenHandler := connect.NewUnaryHandler(
+		SSOReadyServiceOnboardingRedeemSAMLAccessTokenProcedure,
+		svc.OnboardingRedeemSAMLAccessToken,
 		opts...,
 	)
 	sSOReadyServiceListEnvironmentsHandler := connect.NewUnaryHandler(
@@ -581,6 +666,14 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceSignInHandler.ServeHTTP(w, r)
 		case SSOReadyServiceWhoamiProcedure:
 			sSOReadyServiceWhoamiHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetOnboardingStateProcedure:
+			sSOReadyServiceGetOnboardingStateHandler.ServeHTTP(w, r)
+		case SSOReadyServiceUpdateOnboardingStateProcedure:
+			sSOReadyServiceUpdateOnboardingStateHandler.ServeHTTP(w, r)
+		case SSOReadyServiceOnboardingGetSAMLRedirectURLProcedure:
+			sSOReadyServiceOnboardingGetSAMLRedirectURLHandler.ServeHTTP(w, r)
+		case SSOReadyServiceOnboardingRedeemSAMLAccessTokenProcedure:
+			sSOReadyServiceOnboardingRedeemSAMLAccessTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListEnvironmentsProcedure:
 			sSOReadyServiceListEnvironmentsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetEnvironmentProcedure:
@@ -646,6 +739,22 @@ func (UnimplementedSSOReadyServiceHandler) SignIn(context.Context, *connect.Requ
 
 func (UnimplementedSSOReadyServiceHandler) Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.Whoami is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetOnboardingState(context.Context, *connect.Request[v1.GetOnboardingStateRequest]) (*connect.Response[v1.GetOnboardingStateResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetOnboardingState is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.UpdateOnboardingState is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) OnboardingGetSAMLRedirectURL(context.Context, *connect.Request[v1.OnboardingGetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) OnboardingRedeemSAMLAccessToken(context.Context, *connect.Request[v1.OnboardingRedeemSAMLAccessTokenRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessToken is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error) {

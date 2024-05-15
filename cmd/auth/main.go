@@ -200,7 +200,7 @@ func main() {
 		}
 
 		redirectQuery := url.Values{}
-		redirectQuery.Set("access_token", createSAMLLoginRes.Token)
+		redirectQuery.Set("saml_access_code", createSAMLLoginRes.Token)
 		redirectURL.RawQuery = redirectQuery.Encode()
 		redirect := redirectURL.String()
 

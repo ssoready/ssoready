@@ -96,6 +96,14 @@ type Environment struct {
 	AuthUrl           *string
 }
 
+type OnboardingState struct {
+	AppOrganizationID          uuid.UUID
+	OnboardingEnvironmentID    uuid.UUID
+	OnboardingOrganizationID   uuid.UUID
+	OnboardingSamlConnectionID uuid.UUID
+	DummyidpAppID              string
+}
+
 type Organization struct {
 	ID            uuid.UUID
 	EnvironmentID uuid.UUID
