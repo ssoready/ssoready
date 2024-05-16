@@ -58,8 +58,12 @@ export function OnboardingPage() {
   const onboardingInitialDemo =
     localStorage.getItem("onboarding_initial_demo") === "true";
   const hasSAMLAccessToken = !!searchParams.get("saml_access_code");
+
   const [step, setStep] = useState(
     hasSAMLAccessToken && !onboardingInitialDemo ? 3 : 0,
+  );
+  const [disclaimer, setDisclaimer] = useState(
+    step === 0 && !hasSAMLAccessToken,
   );
   const [apiKeySecretToken, setAPIKeySecretToken] = useState("");
 
@@ -77,6 +81,8 @@ export function OnboardingPage() {
       <DemoCard
         done={step > 0}
         open={step >= 0}
+        disclaimered={disclaimer}
+        onClickDisclaimer={() => setDisclaimer(false)}
         onClickNext={() => setStep(1)}
         setAPIKeySecretToken={setAPIKeySecretToken}
       />
@@ -102,11 +108,15 @@ export function OnboardingPage() {
 function DemoCard({
   done,
   open,
+  disclaimered,
+  onClickDisclaimer,
   onClickNext,
   setAPIKeySecretToken,
 }: {
   done: boolean;
   open: boolean;
+  disclaimered: boolean;
+  onClickDisclaimer: () => void;
   onClickNext: () => void;
   setAPIKeySecretToken: (_: string) => void;
 }) {
@@ -119,6 +129,7 @@ function DemoCard({
   const createSAMLConnectionMutation = useMutation(createSAMLConnection);
   const createAPIKeyMutation = useMutation(createAPIKey);
   const updateOnboardingStateMutation = useMutation(updateOnboardingState);
+  const [email, setEmail] = useState("youruser");
 
   async function onClickLogin() {
     // upsert onboarding state if required
@@ -172,7 +183,7 @@ function DemoCard({
     redirect.searchParams.set("appId", freshOnboardingState.dummyidpAppId);
     redirect.searchParams.set("spAcsUrl", samlConnection.spAcsUrl);
     redirect.searchParams.set("spEntityId", samlConnection.spEntityId);
-    redirect.searchParams.set("email", "youruser@yourcustomer.com");
+    redirect.searchParams.set("email", `${email}@yourcustomer.com`);
     redirect.searchParams.set("firstName", "Testy");
     redirect.searchParams.set("lastName", "McTestFace");
 
@@ -228,6 +239,10 @@ function DemoCard({
       {open && (
         <CardContent>
           <DemoLogin
+            disclaimered={disclaimered}
+            onClickDisclaimer={onClickDisclaimer}
+            email={email}
+            onChangeEmail={setEmail}
             onClickLogin={onClickLogin}
             redeemResponse={redeemResponse}
           />
@@ -256,9 +271,17 @@ function DemoCard({
 }
 
 function DemoLogin({
+  disclaimered,
+  onClickDisclaimer,
+  email,
+  onChangeEmail,
   onClickLogin,
   redeemResponse,
 }: {
+  disclaimered: boolean;
+  onClickDisclaimer: () => void;
+  email: string;
+  onChangeEmail: (_: string) => void;
   onClickLogin: () => void;
   redeemResponse?: RedeemSAMLAccessCodeResponse;
 }) {
@@ -272,7 +295,29 @@ function DemoLogin({
   });
 
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden relative">
+      {disclaimered && (
+        <div className="absolute bg-black/80 inset-0 flex justify-center items-center z-10 dark text-white">
+          <div className="max-w-[400px]">
+            <div className="text-xl font-semibold">This is a demo app</div>
+            <div className="text-sm mt-2">
+              Testing SAML "for real" requires setting up something like Okta,
+              Google Workspace, or Microsoft Entra. For demo purposes, we at
+              SSOReady designed a fake alternative to those products. It speaks
+              the same SAML protocols, but it's much easier to test with.
+            </div>
+            <div className="text-sm mt-2">
+              It's called DummyIDP, and this demo uses it instead of making you
+              buy a "real" IDP just to test with.
+            </div>
+
+            <Button className="mt-8" onClick={onClickDisclaimer}>
+              DummyIDP is just a stand-in for Okta/Entra/etc. Got it.
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="px-12 py-16 bg-gradient-to-b from-[#49CBF3] to-[#F0361C]">
         <div className="rounded-lg overflow-hidden shadow-lg">
           <header className="flex items-center h-12 px-4 border-b bg-gray-100 dark:bg-gray-900 dark:border-gray-800">
@@ -331,13 +376,19 @@ function DemoLogin({
                     <div className="grid gap-4">
                       <div className="grid gap-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value="youruser@yourcustomer.com"
-                          required
-                          disabled
-                        />
+                        <div className="flex">
+                          <Input
+                            className="rounded-r-none"
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => onChangeEmail(e.target.value)}
+                            required
+                          />
+                          <span className="inline-flex text-sm items-center rounded-r-md border border-l-0 border-input px-3 text-muted-foreground">
+                            @yourcustomer.com
+                          </span>
+                        </div>
                       </div>
                       <Button
                         type="submit"
