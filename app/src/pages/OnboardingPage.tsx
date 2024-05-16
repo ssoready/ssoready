@@ -183,7 +183,8 @@ function DemoCard({
     redirect.searchParams.set("appId", freshOnboardingState.dummyidpAppId);
     redirect.searchParams.set("spAcsUrl", samlConnection.spAcsUrl);
     redirect.searchParams.set("spEntityId", samlConnection.spEntityId);
-    redirect.searchParams.set("email", `${email}@yourcustomer.com`);
+    redirect.searchParams.set("requiredDomain", "yourcustomer.com");
+    redirect.searchParams.set("email", email);
     redirect.searchParams.set("firstName", "Testy");
     redirect.searchParams.set("lastName", "McTestFace");
 
