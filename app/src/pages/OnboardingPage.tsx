@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -51,6 +51,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import hljs from "highlight.js/lib/core";
 import formatXml from "xml-formatter";
 import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import { GoogleLogin } from "@react-oauth/google";
 
 export function OnboardingPage() {
   const [searchParams] = useSearchParams();
@@ -66,7 +67,7 @@ export function OnboardingPage() {
     if (step === 0) {
       localStorage.setItem("onboarding_initial_demo", "true");
     }
-    if (step === 2) {
+    if (step === 1) {
       localStorage.removeItem("onboarding_initial_demo");
     }
   }, [step]);
@@ -75,25 +76,25 @@ export function OnboardingPage() {
     <div className="max-w-6xl mx-auto p-8 flex flex-col gap-y-8">
       <DemoCard
         done={step > 0}
-        open={step === 0}
+        open={step >= 0}
         onClickNext={() => setStep(1)}
         setAPIKeySecretToken={setAPIKeySecretToken}
       />
-      <WhatJustHappenedCard
-        done={step > 1}
-        open={step === 1}
-        onClickNext={() => setStep(2)}
-      />
-      <StartLoginCard
-        done={step > 2}
-        open={step === 2}
-        apiKeySecretToken={apiKeySecretToken}
-      />
-      <HandleLoginCard
-        done={false}
-        open={step === 3}
-        apiKeySecretToken={apiKeySecretToken}
-      />
+      {step >= 1 && (
+        <StartLoginCard
+          done={step > 1}
+          open={step >= 1}
+          apiKeySecretToken={apiKeySecretToken}
+        />
+      )}
+      {step >= 2 && (
+        <HandleLoginCard
+          done={false}
+          open={step >= 2}
+          apiKeySecretToken={apiKeySecretToken}
+        />
+      )}
+      <div className="h-[500px]" />
     </div>
   );
 }
@@ -357,139 +358,6 @@ function DemoLogin({
   );
 }
 
-function WhatJustHappenedCard({
-  open,
-  done,
-  onClickNext,
-}: {
-  open: boolean;
-  done: boolean;
-  onClickNext: () => void;
-}) {
-  const { data: onboardingState } = useQuery(getOnboardingState, {});
-
-  return (
-    onboardingState && (
-      <Card className={clsx(done && "border-green-700")}>
-        <CardHeader>
-          <CardTitle>
-            <div className="flex gap-x-4 items-center">
-              <span>What just happened</span>
-              {done && <CheckCircleIcon className="h-6 w-6 text-green-700" />}
-            </div>
-          </CardTitle>
-
-          <CardDescription>
-            What we did to make that demo work, and how you'll do it too.
-          </CardDescription>
-        </CardHeader>
-
-        {open && (
-          <CardContent className="text-sm">
-            <div className="grid grid-cols-3 items-center gap-x-8">
-              <div className="col-start-1 col-span-2">
-                <p>The core thing you do with SSOReady is you:</p>
-                <ol className="my-6 ml-6 list-decimal [&>li]:mt-2">
-                  <li>
-                    <span className="font-semibold">Start SAML Logins.</span>{" "}
-                    You do that by asking us for a SAML redirect URL.
-                  </li>
-                  <li>
-                    <span className="font-semibold">
-                      Get details on SAML logins.
-                    </span>{" "}
-                    After your user does a SAML login, we redirect them back to
-                    your app with a SAML access code. You exchange that code
-                    with SSOReady for information about your user.
-                  </li>
-                </ol>
-              </div>
-              <div className="col-start-1 col-span-2">
-                <p className="mb-6">
-                  To make that happen, you need to set up three things in
-                  SSOReady:
-                </p>
-              </div>
-              <div className="col-start-1 col-span-2">
-                <ol start={1} className="ml-6 list-decimal py-1">
-                  <li>
-                    An <span className="font-semibold">environment</span> tells
-                    us where to redirect users back to.
-                  </li>
-                </ol>
-              </div>
-              <div className="col-span-1 py-1 text-muted-foreground text-xs">
-                The demo-generated environment is{" "}
-                <Link
-                  className="underline underline-offset-2"
-                  to={`/environments/${onboardingState.onboardingEnvironmentId}`}
-                >
-                  here
-                </Link>
-                .
-              </div>
-              <div className="col-start-1 col-span-2">
-                <ol start={2} className="ml-6 list-decimal py-1">
-                  <li>
-                    Within an environment, an{" "}
-                    <span className="font-semibold">organization</span> tells us
-                    which tenant in your system a SAML login is for.
-                  </li>
-                </ol>
-              </div>
-              <div className="col-span-1 py-1 text-muted-foreground text-xs">
-                The demo-generated organization is{" "}
-                <Link
-                  className="underline underline-offset-2"
-                  to={`/environments/${onboardingState.onboardingEnvironmentId}/organizations/${onboardingState.onboardingOrganizationId}`}
-                >
-                  here
-                </Link>
-                .
-              </div>
-              <div className="col-start-1 col-span-2">
-                <ol start={3} className="ml-6 list-decimal py-1">
-                  <li>
-                    Within an organization, a{" "}
-                    <span className="font-semibold">SAML connection</span> tells
-                    us about your customer's IDP, so we can carry out the SAML
-                    flow.
-                  </li>
-                </ol>
-              </div>
-              <div className="col-span-1 py-1 text-muted-foreground text-xs">
-                The demo-generated connection is{" "}
-                <Link
-                  className="underline underline-offset-2"
-                  to={`/environments/${onboardingState.onboardingEnvironmentId}/organizations/${onboardingState.onboardingOrganizationId}/saml-connections/${onboardingState.onboardingSamlConnectionId}`}
-                >
-                  here
-                </Link>
-                .
-              </div>
-              <div className="col-start-1 col-span-2">
-                <p className="mt-6">
-                  You'll typically SAML connections and organizations whenever
-                  you onboard a new enterprise-tier customer. You'll typically
-                  create environments once, and then never touch them again.
-                </p>
-                <p className="mt-6">OK, enough concepts. Let's see the code.</p>
-              </div>
-            </div>
-
-            <div className="mt-4 flex gap-x-2">
-              <Button onClick={onClickNext}>
-                Start a SAML login with SSOReady's SDK
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        )}
-      </Card>
-    )
-  );
-}
-
 function StartLoginCard({
   open,
   done,
@@ -506,9 +374,17 @@ function StartLoginCard({
   const [redirectURL, setRedirectURL] = useState("");
   const getSAMLRedirectURLMutation = useMutation(onboardingGetSAMLRedirectURL);
 
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current && !done) {
+      console.log("scroll to StartLoginCard");
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [done]);
+
   return (
     onboardingState && (
-      <Card className={clsx(done && "border-green-700")}>
+      <Card className={clsx(done && "border-green-700")} ref={ref}>
         <CardHeader>
           <CardTitle>
             <div className="flex gap-x-4 items-center">
@@ -525,9 +401,9 @@ function StartLoginCard({
         {open && (
           <CardContent>
             <p className="mb-4 text-sm">
-              The demo generated an API key scoped to a throwaway demo
-              environment. Let's use it to request a "start a SAML login"
-              redirect URL from the REST API.
+              In the demo above, the "Log in with SSO" button redirected your
+              user to their company's Identity Provider. You get that URL by
+              calling SSOReady's "get SAML redirect URL" endpoint.
             </p>
 
             <div className="rounded-lg overflow-hidden border">
@@ -551,6 +427,10 @@ function StartLoginCard({
                 </code>
               </div>
             </div>
+
+            <p className="mt-4 text-sm">
+              (How you get an organization ID is covered in our docs.)
+            </p>
 
             <Button
               disabled={redirectURL !== ""}
@@ -628,9 +508,15 @@ function HandleLoginCard({
     onboardingRedeemSAMLAccessToken,
   );
 
+  const scrollTo = useCallback((node: any) => {
+    if (node !== null) {
+      node.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   return (
     onboardingState && (
-      <Card className={clsx(redeemData && "border-green-700")}>
+      <Card className={clsx(redeemData && "border-green-700")} ref={scrollTo}>
         <CardHeader>
           <CardTitle>
             <div className="flex gap-x-4 items-center">
