@@ -176,7 +176,7 @@ function DemoCard({
     window.location.href = redirect.toString();
   }
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const samlAccessCode = searchParams.get("saml_access_code");
   const onboardingRedeeemSAMLAccessToken = useMutation(
     onboardingRedeemSAMLAccessToken,
@@ -619,12 +619,14 @@ function HandleLoginCard({
 
   return (
     onboardingState && (
-      <Card className={clsx(done && "border-green-700")}>
+      <Card className={clsx(redeemData && "border-green-700")}>
         <CardHeader>
           <CardTitle>
             <div className="flex gap-x-4 items-center">
               <span>Handle a SAML Login</span>
-              {done && <CheckCircleIcon className="h-6 w-6 text-green-700" />}
+              {redeemData && (
+                <CheckCircleIcon className="h-6 w-6 text-green-700" />
+              )}
             </div>
           </CardTitle>
 
