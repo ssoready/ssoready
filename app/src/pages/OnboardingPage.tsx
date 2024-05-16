@@ -227,7 +227,7 @@ function DemoCard({
       <CardHeader>
         <CardTitle>
           <div className="flex gap-x-4 items-center">
-            <span>Sign in using SSOReady</span>
+            <span>Try a SSOReady-powered SAML login</span>
             {done && <CheckCircleIcon className="h-6 w-6 text-green-700" />}
           </div>
         </CardTitle>
