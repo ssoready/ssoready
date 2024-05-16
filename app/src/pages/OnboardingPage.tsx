@@ -48,13 +48,15 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import hljs from "highlight.js/lib/core";
+import formatXml from "xml-formatter";
+import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
 
 export function OnboardingPage() {
   const [searchParams] = useSearchParams();
   const onboardingInitialDemo =
     localStorage.getItem("onboarding_initial_demo") === "true";
   const hasSAMLAccessToken = !!searchParams.get("saml_access_code");
-  console.log("initial step", hasSAMLAccessToken, onboardingInitialDemo);
   const [step, setStep] = useState(
     hasSAMLAccessToken && !onboardingInitialDemo ? 3 : 0,
   );
@@ -498,7 +500,8 @@ function StartLoginCard({
   apiKeySecretToken: string;
 }) {
   const { data: onboardingState } = useQuery(getOnboardingState, {});
-  const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "organization_id": "${onboardingState?.onboardingOrganizationId}" }'`;
+  const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "organization_id": "${onboardingState?.onboardingOrganizationId}" }'`;
+  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "organization_id": "${onboardingState?.onboardingOrganizationId}" }'`;
 
   const [redirectURL, setRedirectURL] = useState("");
   const getSAMLRedirectURLMutation = useMutation(onboardingGetSAMLRedirectURL);
@@ -522,33 +525,29 @@ function StartLoginCard({
         {open && (
           <CardContent>
             <p className="mb-4 text-sm">
-              The demo generated an API key{" "}
-              <span className="rounded border overflow-hidden inline-flex items-center">
-                <code className="bg-black text-white px-1 py-0.5">
-                  ssoready_sk_•••••
-                </code>
-                <span
-                  className="p-1 cursor-pointer"
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(apiKeySecretToken);
-                  }}
-                >
-                  <CopyIcon className="h-4 w-4 text-muted-foreground" />
-                </span>
-              </span>{" "}
-              scoped to a throwaway demo environment. Let's use it to request a
-              "start a SAML login" redirect URL from the REST API.
+              The demo generated an API key scoped to a throwaway demo
+              environment. Let's use it to request a "start a SAML login"
+              redirect URL from the REST API.
             </p>
 
             <div className="rounded-lg overflow-hidden border">
-              <div className="flex items-center">
-                <span className="rounded px-2 py-1 m-2 bg-muted text-sm">
-                  cURL
-                </span>
+              <div className="m-2 flex items-center justify-between">
+                <div>
+                  <span className="rounded px-2 py-1 bg-muted text-sm">
+                    cURL
+                  </span>
+                </div>
+                <CopyButton copyText={copyCode} />
               </div>
-              <div className="w-full bg-black px-6 py-4 inline-block">
-                <code className="text-sm text-white">
-                  <pre>{code}</pre>
+              <div className="text-xs font-mono bg-gray-100 py-2 px-4 max-w-full overflow-auto">
+                <code>
+                  <pre
+                    dangerouslySetInnerHTML={{
+                      __html: hljs.highlight(code, {
+                        language: "bash",
+                      }).value,
+                    }}
+                  />
                 </code>
               </div>
             </div>
@@ -573,8 +572,19 @@ function StartLoginCard({
 
             {redirectURL !== "" && (
               <>
-                <div className="mt-4 rounded bg-black px-6 py-4 inline-block">
-                  <code className="text-sm text-white">{redirectURL}</code>
+                <div className="mt-4 rounded text-xs font-mono bg-gray-100 py-2 px-4 max-w-full overflow-auto">
+                  <code>
+                    <pre
+                      dangerouslySetInnerHTML={{
+                        __html: hljs.highlight(
+                          JSON.stringify({ redirectUrl: redirectURL }, null, 4),
+                          {
+                            language: "json",
+                          },
+                        ).value,
+                      }}
+                    />
+                  </code>
                 </div>
 
                 <div className="mt-4 flex gap-x-4 items-center">
@@ -607,7 +617,8 @@ function HandleLoginCard({
 }) {
   const [searchParams] = useSearchParams();
   const samlAccessCode = searchParams.get("saml_access_code");
-  const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "saml_access_token": "${samlAccessCode}" }'`;
+  const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "access_code": "${samlAccessCode}" }'`;
+  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "access_code": "${samlAccessCode}" }'`;
   const { data: onboardingState } = useQuery(getOnboardingState, {});
 
   const [redeemData, setRedeemData] = useState<
@@ -639,38 +650,33 @@ function HandleLoginCard({
           <CardContent>
             <p className="mb-4 text-sm">
               Once a SAML login happens, we redirect your user back to your app,
-              with something we call a "SAML Access Token" in the query param
+              with something we call a "SAML Access Code" in the query param
               (you can see it in the address bar right now).
             </p>
 
             <p className="mb-4 text-sm">
-              You can use your API key again&mdash;
-              <span className="rounded border overflow-hidden inline-flex items-center">
-                <code className="bg-black text-white px-1 py-0.5">
-                  ssoready_sk_•••••
-                </code>
-                <span
-                  className="p-1 cursor-pointer"
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(apiKeySecretToken);
-                  }}
-                >
-                  <CopyIcon className="h-4 w-4 text-muted-foreground" />
-                </span>
-              </span>
-              &mdash;to exchange that access token for details about the
-              just-logged-in user.
+              You can use your API key again to exchange that access code for
+              details about the just-logged-in user.
             </p>
 
             <div className="rounded-lg overflow-hidden border">
-              <div className="flex items-center">
-                <span className="rounded px-2 py-1 m-2 bg-muted text-sm">
-                  cURL
-                </span>
+              <div className="m-2 flex items-center justify-between">
+                <div>
+                  <span className="rounded px-2 py-1 bg-muted text-sm">
+                    cURL
+                  </span>
+                </div>
+                <CopyButton copyText={copyCode} />
               </div>
-              <div className="w-full bg-black px-6 py-4 inline-block">
-                <code className="text-sm text-white">
-                  <pre>{code}</pre>
+              <div className="text-xs font-mono bg-gray-100 py-2 px-4 max-w-full overflow-auto">
+                <code>
+                  <pre
+                    dangerouslySetInnerHTML={{
+                      __html: hljs.highlight(code, {
+                        language: "bash",
+                      }).value,
+                    }}
+                  />
                 </code>
               </div>
             </div>
@@ -694,9 +700,27 @@ function HandleLoginCard({
 
             {redeemData !== undefined && (
               <>
-                <div className="mt-4 rounded bg-black px-6 py-4 block">
-                  <code className="text-sm text-white">
-                    <pre>{JSON.stringify(redeemData, null, 2)}</pre>
+                <div className="mt-4 rounded text-xs font-mono bg-gray-100 py-2 px-4 max-w-full overflow-auto">
+                  <code>
+                    <pre
+                      dangerouslySetInnerHTML={{
+                        __html: hljs.highlight(
+                          JSON.stringify(
+                            {
+                              email: redeemData.email,
+                              attributes: redeemData.attributes,
+                              organizationId: redeemData.organizationId,
+                              samlFlowId: redeemData.samlFlowId,
+                            },
+                            null,
+                            4,
+                          ),
+                          {
+                            language: "json",
+                          },
+                        ).value,
+                      }}
+                    />
                   </code>
                 </div>
 
@@ -722,5 +746,50 @@ function HandleLoginCard({
         )}
       </Card>
     )
+  );
+}
+
+function CopyButton({ copyText }: { copyText: string }) {
+  const [open, setOpen] = useState(false);
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: "top",
+    middleware: [offset(5)],
+  });
+  const { isMounted, styles } = useTransitionStyles(context);
+
+  useEffect(() => {
+    if (open) {
+      const timeoutId = setTimeout(() => {
+        setOpen(false);
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [open]);
+
+  return (
+    <div>
+      <CopyIcon
+        ref={refs.setReference}
+        className="h-4 w-4 cursor-pointer text-muted-foreground"
+        onClick={async () => {
+          await navigator.clipboard.writeText(copyText);
+          setOpen(true);
+        }}
+      />
+      {open && (
+        <div ref={refs.setFloating} style={floatingStyles}>
+          {isMounted && (
+            <div
+              style={styles}
+              className="bg-black text-white p-1 text-xs rounded"
+            >
+              Copied!
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
