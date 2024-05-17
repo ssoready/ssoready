@@ -498,7 +498,7 @@ function StartLoginCard({
                 setRedirectURL(redirectUrl);
               }}
             >
-              Generate SAML Redirect URL
+              Get SAML Redirect URL
               {redirectURL !== "" && <CheckIcon className="ml-2 h-4 w-4" />}
             </Button>
 
