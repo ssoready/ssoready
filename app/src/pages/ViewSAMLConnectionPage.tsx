@@ -179,7 +179,7 @@ export function ViewSAMLConnectionPage() {
             <CardContent>
               <div className="grid grid-cols-4 gap-y-2 items-center">
                 <div className="text-sm col-span-1 text-muted-foreground">
-                  Entity ID
+                  SP Entity ID
                 </div>
                 <div className="text-sm col-span-3">
                   {samlConnection?.spEntityId}
@@ -216,7 +216,7 @@ export function ViewSAMLConnectionPage() {
             <CardContent>
               <div className="grid grid-cols-4 gap-y-2 items-center">
                 <div className="text-sm col-span-1 text-muted-foreground">
-                  Entity ID
+                  IDP Entity ID
                 </div>
                 <div className="text-sm col-span-3">
                   {samlConnection?.idpEntityId}
