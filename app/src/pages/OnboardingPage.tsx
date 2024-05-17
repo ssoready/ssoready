@@ -304,16 +304,16 @@ function DemoLogin({
             <div className="text-sm mt-2">
               Testing SAML "for real" requires setting up something like Okta,
               Google Workspace, or Microsoft Entra. For demo purposes, we at
-              SSOReady designed a fake alternative to those products. It speaks
-              the same SAML protocols, but it's much easier to test with.
+              SSOReady designed a free, fake alternative to those products.
             </div>
             <div className="text-sm mt-2">
               It's called DummyIDP, and this demo uses it instead of making you
-              buy a "real" IDP just to test with.
+              buy Okta just to try our product. Your customers will never
+              interact with DummyIDP in any way.
             </div>
 
             <Button className="mt-8" onClick={onClickDisclaimer}>
-              DummyIDP is just a stand-in for Okta/Entra/etc. Got it.
+              DummyIDP is just a demo stand-in for Okta/Entra/etc. Got it.
             </Button>
           </div>
         </div>
