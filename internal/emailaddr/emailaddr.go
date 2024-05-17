@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-var pat = regexp.MustCompile(`^[a-zA-Z0-9_.]+@([a-zA-Z0-9_.]+)$`)
+var pat = regexp.MustCompile(`^[a-zA-Z0-9_.-]+@([a-zA-Z0-9_.-]+)$`)
 
 func Parse(s string) (string, error) {
 	match := pat.FindStringSubmatch(s)
