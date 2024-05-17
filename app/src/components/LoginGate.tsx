@@ -5,13 +5,20 @@ import { Outlet, useNavigate } from "react-router";
 import React from "react";
 
 export function LoginGate() {
-  const { data, error } = useQuery(whoami, {});
+  const { data, error } = useQuery(
+    whoami,
+    {},
+    {
+      retry: false,
+    },
+  );
+
   const navigate = useNavigate();
   useEffect(() => {
     if (error) {
       navigate("/login");
     }
-  }, [error]);
+  }, [error, navigate]);
 
   return data ? <Outlet /> : <></>;
 }
