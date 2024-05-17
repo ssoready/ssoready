@@ -81,7 +81,7 @@ func (s *Store) OnboardingGetSAMLRedirectURL(ctx context.Context, req *ssoreadyv
 	return res, nil
 }
 
-func (s *Store) OnboardingRedeemSAMLAccessToken(ctx context.Context, req *ssoreadyv1.OnboardingRedeemSAMLAccessTokenRequest) (*ssoreadyv1.RedeemSAMLAccessCodeResponse, error) {
+func (s *Store) OnboardingRedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.OnboardingRedeemSAMLAccessCodeRequest) (*ssoreadyv1.RedeemSAMLAccessCodeResponse, error) {
 	apiKey, err := s.q.GetAPIKeyBySecretValue(ctx, req.ApiKeySecretToken)
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (s *Store) OnboardingRedeemSAMLAccessToken(ctx context.Context, req *ssorea
 
 	ctx = apikeyauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.EnvironmentID)
 
-	res, err := s.RedeemSAMLAccessCode(ctx, &ssoreadyv1.RedeemSAMLAccessCodeRequest{AccessCode: req.AccessCode})
+	res, err := s.RedeemSAMLAccessCode(ctx, &ssoreadyv1.RedeemSAMLAccessCodeRequest{SamlAccessCode: req.SamlAccessCode})
 	if err != nil {
 		return nil, err
 	}

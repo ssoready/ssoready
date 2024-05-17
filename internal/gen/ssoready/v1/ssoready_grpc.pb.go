@@ -20,34 +20,34 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SSOReadyService_GetSAMLRedirectURL_FullMethodName              = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	SSOReadyService_RedeemSAMLAccessCode_FullMethodName            = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
-	SSOReadyService_VerifyEmail_FullMethodName                     = "/ssoready.v1.SSOReadyService/VerifyEmail"
-	SSOReadyService_SignIn_FullMethodName                          = "/ssoready.v1.SSOReadyService/SignIn"
-	SSOReadyService_Whoami_FullMethodName                          = "/ssoready.v1.SSOReadyService/Whoami"
-	SSOReadyService_GetOnboardingState_FullMethodName              = "/ssoready.v1.SSOReadyService/GetOnboardingState"
-	SSOReadyService_UpdateOnboardingState_FullMethodName           = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
-	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName    = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
-	SSOReadyService_OnboardingRedeemSAMLAccessToken_FullMethodName = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessToken"
-	SSOReadyService_ListEnvironments_FullMethodName                = "/ssoready.v1.SSOReadyService/ListEnvironments"
-	SSOReadyService_GetEnvironment_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetEnvironment"
-	SSOReadyService_CreateEnvironment_FullMethodName               = "/ssoready.v1.SSOReadyService/CreateEnvironment"
-	SSOReadyService_UpdateEnvironment_FullMethodName               = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
-	SSOReadyService_ListAPIKeys_FullMethodName                     = "/ssoready.v1.SSOReadyService/ListAPIKeys"
-	SSOReadyService_GetAPIKey_FullMethodName                       = "/ssoready.v1.SSOReadyService/GetAPIKey"
-	SSOReadyService_CreateAPIKey_FullMethodName                    = "/ssoready.v1.SSOReadyService/CreateAPIKey"
-	SSOReadyService_DeleteAPIKey_FullMethodName                    = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
-	SSOReadyService_ListOrganizations_FullMethodName               = "/ssoready.v1.SSOReadyService/ListOrganizations"
-	SSOReadyService_GetOrganization_FullMethodName                 = "/ssoready.v1.SSOReadyService/GetOrganization"
-	SSOReadyService_CreateOrganization_FullMethodName              = "/ssoready.v1.SSOReadyService/CreateOrganization"
-	SSOReadyService_UpdateOrganization_FullMethodName              = "/ssoready.v1.SSOReadyService/UpdateOrganization"
-	SSOReadyService_ListSAMLConnections_FullMethodName             = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
-	SSOReadyService_GetSAMLConnection_FullMethodName               = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
-	SSOReadyService_CreateSAMLConnection_FullMethodName            = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
-	SSOReadyService_UpdateSAMLConnection_FullMethodName            = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
-	SSOReadyService_ListSAMLFlows_FullMethodName                   = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
-	SSOReadyService_GetSAMLFlow_FullMethodName                     = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
-	SSOReadyService_ParseSAMLMetadata_FullMethodName               = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	SSOReadyService_GetSAMLRedirectURL_FullMethodName             = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
+	SSOReadyService_RedeemSAMLAccessCode_FullMethodName           = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_VerifyEmail_FullMethodName                    = "/ssoready.v1.SSOReadyService/VerifyEmail"
+	SSOReadyService_SignIn_FullMethodName                         = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_Whoami_FullMethodName                         = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_GetOnboardingState_FullMethodName             = "/ssoready.v1.SSOReadyService/GetOnboardingState"
+	SSOReadyService_UpdateOnboardingState_FullMethodName          = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
+	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName   = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
+	SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
+	SSOReadyService_ListEnvironments_FullMethodName               = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName                 = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_CreateEnvironment_FullMethodName              = "/ssoready.v1.SSOReadyService/CreateEnvironment"
+	SSOReadyService_UpdateEnvironment_FullMethodName              = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
+	SSOReadyService_ListAPIKeys_FullMethodName                    = "/ssoready.v1.SSOReadyService/ListAPIKeys"
+	SSOReadyService_GetAPIKey_FullMethodName                      = "/ssoready.v1.SSOReadyService/GetAPIKey"
+	SSOReadyService_CreateAPIKey_FullMethodName                   = "/ssoready.v1.SSOReadyService/CreateAPIKey"
+	SSOReadyService_DeleteAPIKey_FullMethodName                   = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
+	SSOReadyService_ListOrganizations_FullMethodName              = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_GetOrganization_FullMethodName                = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_CreateOrganization_FullMethodName             = "/ssoready.v1.SSOReadyService/CreateOrganization"
+	SSOReadyService_UpdateOrganization_FullMethodName             = "/ssoready.v1.SSOReadyService/UpdateOrganization"
+	SSOReadyService_ListSAMLConnections_FullMethodName            = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
+	SSOReadyService_GetSAMLConnection_FullMethodName              = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
+	SSOReadyService_UpdateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
+	SSOReadyService_ListSAMLFlows_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
+	SSOReadyService_GetSAMLFlow_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
+	SSOReadyService_ParseSAMLMetadata_FullMethodName              = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -62,7 +62,7 @@ type SSOReadyServiceClient interface {
 	GetOnboardingState(ctx context.Context, in *GetOnboardingStateRequest, opts ...grpc.CallOption) (*GetOnboardingStateResponse, error)
 	UpdateOnboardingState(ctx context.Context, in *UpdateOnboardingStateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	OnboardingGetSAMLRedirectURL(ctx context.Context, in *OnboardingGetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
-	OnboardingRedeemSAMLAccessToken(ctx context.Context, in *OnboardingRedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
+	OnboardingRedeemSAMLAccessCode(ctx context.Context, in *OnboardingRedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
 	GetEnvironment(ctx context.Context, in *GetEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	CreateEnvironment(ctx context.Context, in *CreateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
@@ -164,9 +164,9 @@ func (c *sSOReadyServiceClient) OnboardingGetSAMLRedirectURL(ctx context.Context
 	return out, nil
 }
 
-func (c *sSOReadyServiceClient) OnboardingRedeemSAMLAccessToken(ctx context.Context, in *OnboardingRedeemSAMLAccessTokenRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error) {
+func (c *sSOReadyServiceClient) OnboardingRedeemSAMLAccessCode(ctx context.Context, in *OnboardingRedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error) {
 	out := new(RedeemSAMLAccessCodeResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_OnboardingRedeemSAMLAccessToken_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -356,7 +356,7 @@ type SSOReadyServiceServer interface {
 	GetOnboardingState(context.Context, *GetOnboardingStateRequest) (*GetOnboardingStateResponse, error)
 	UpdateOnboardingState(context.Context, *UpdateOnboardingStateRequest) (*emptypb.Empty, error)
 	OnboardingGetSAMLRedirectURL(context.Context, *OnboardingGetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
-	OnboardingRedeemSAMLAccessToken(context.Context, *OnboardingRedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessCodeResponse, error)
+	OnboardingRedeemSAMLAccessCode(context.Context, *OnboardingRedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
 	GetEnvironment(context.Context, *GetEnvironmentRequest) (*Environment, error)
 	CreateEnvironment(context.Context, *CreateEnvironmentRequest) (*Environment, error)
@@ -407,8 +407,8 @@ func (UnimplementedSSOReadyServiceServer) UpdateOnboardingState(context.Context,
 func (UnimplementedSSOReadyServiceServer) OnboardingGetSAMLRedirectURL(context.Context, *OnboardingGetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OnboardingGetSAMLRedirectURL not implemented")
 }
-func (UnimplementedSSOReadyServiceServer) OnboardingRedeemSAMLAccessToken(context.Context, *OnboardingRedeemSAMLAccessTokenRequest) (*RedeemSAMLAccessCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OnboardingRedeemSAMLAccessToken not implemented")
+func (UnimplementedSSOReadyServiceServer) OnboardingRedeemSAMLAccessCode(context.Context, *OnboardingRedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OnboardingRedeemSAMLAccessCode not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEnvironments not implemented")
@@ -624,20 +624,20 @@ func _SSOReadyService_OnboardingGetSAMLRedirectURL_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SSOReadyService_OnboardingRedeemSAMLAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OnboardingRedeemSAMLAccessTokenRequest)
+func _SSOReadyService_OnboardingRedeemSAMLAccessCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OnboardingRedeemSAMLAccessCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessToken(ctx, in)
+		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SSOReadyService_OnboardingRedeemSAMLAccessToken_FullMethodName,
+		FullMethod: SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessToken(ctx, req.(*OnboardingRedeemSAMLAccessTokenRequest))
+		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessCode(ctx, req.(*OnboardingRedeemSAMLAccessCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1024,8 +1024,8 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SSOReadyService_OnboardingGetSAMLRedirectURL_Handler,
 		},
 		{
-			MethodName: "OnboardingRedeemSAMLAccessToken",
-			Handler:    _SSOReadyService_OnboardingRedeemSAMLAccessToken_Handler,
+			MethodName: "OnboardingRedeemSAMLAccessCode",
+			Handler:    _SSOReadyService_OnboardingRedeemSAMLAccessCode_Handler,
 		},
 		{
 			MethodName: "ListEnvironments",

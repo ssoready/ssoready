@@ -588,9 +588,9 @@ export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLRespon
  */
 export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeRequest> {
   /**
-   * @generated from field: string access_code = 1;
+   * @generated from field: string saml_access_code = 1;
    */
-  accessCode = "";
+  samlAccessCode = "";
 
   constructor(data?: PartialMessage<RedeemSAMLAccessCodeRequest>) {
     super();
@@ -600,7 +600,7 @@ export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeReq
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.RedeemSAMLAccessCodeRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "saml_access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeRequest {
@@ -1069,45 +1069,45 @@ export class OnboardingGetSAMLRedirectURLRequest extends Message<OnboardingGetSA
 }
 
 /**
- * @generated from message ssoready.v1.OnboardingRedeemSAMLAccessTokenRequest
+ * @generated from message ssoready.v1.OnboardingRedeemSAMLAccessCodeRequest
  */
-export class OnboardingRedeemSAMLAccessTokenRequest extends Message<OnboardingRedeemSAMLAccessTokenRequest> {
+export class OnboardingRedeemSAMLAccessCodeRequest extends Message<OnboardingRedeemSAMLAccessCodeRequest> {
   /**
    * @generated from field: string api_key_secret_token = 1;
    */
   apiKeySecretToken = "";
 
   /**
-   * @generated from field: string access_code = 2;
+   * @generated from field: string saml_access_code = 2;
    */
-  accessCode = "";
+  samlAccessCode = "";
 
-  constructor(data?: PartialMessage<OnboardingRedeemSAMLAccessTokenRequest>) {
+  constructor(data?: PartialMessage<OnboardingRedeemSAMLAccessCodeRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.OnboardingRedeemSAMLAccessTokenRequest";
+  static readonly typeName = "ssoready.v1.OnboardingRedeemSAMLAccessCodeRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "api_key_secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OnboardingRedeemSAMLAccessTokenRequest {
-    return new OnboardingRedeemSAMLAccessTokenRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OnboardingRedeemSAMLAccessCodeRequest {
+    return new OnboardingRedeemSAMLAccessCodeRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessTokenRequest {
-    return new OnboardingRedeemSAMLAccessTokenRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessCodeRequest {
+    return new OnboardingRedeemSAMLAccessCodeRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessTokenRequest {
-    return new OnboardingRedeemSAMLAccessTokenRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessCodeRequest {
+    return new OnboardingRedeemSAMLAccessCodeRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: OnboardingRedeemSAMLAccessTokenRequest | PlainMessage<OnboardingRedeemSAMLAccessTokenRequest> | undefined, b: OnboardingRedeemSAMLAccessTokenRequest | PlainMessage<OnboardingRedeemSAMLAccessTokenRequest> | undefined): boolean {
-    return proto3.util.equals(OnboardingRedeemSAMLAccessTokenRequest, a, b);
+  static equals(a: OnboardingRedeemSAMLAccessCodeRequest | PlainMessage<OnboardingRedeemSAMLAccessCodeRequest> | undefined, b: OnboardingRedeemSAMLAccessCodeRequest | PlainMessage<OnboardingRedeemSAMLAccessCodeRequest> | undefined): boolean {
+    return proto3.util.equals(OnboardingRedeemSAMLAccessCodeRequest, a, b);
   }
 }
 

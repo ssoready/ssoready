@@ -135,8 +135,8 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 	}
 
 	id := uuid.New()
-	entityID := fmt.Sprintf("%s/saml/%s", authURL, idformat.SAMLConnection.Format(id))
-	acsURL := fmt.Sprintf("%s/saml/%s/acs", authURL, idformat.SAMLConnection.Format(id))
+	entityID := fmt.Sprintf("%s/v1/saml/%s", authURL, idformat.SAMLConnection.Format(id))
+	acsURL := fmt.Sprintf("%s/v1/saml/%s/acs", authURL, idformat.SAMLConnection.Format(id))
 	qSAMLConn, err := q.CreateSAMLConnection(ctx, queries.CreateSAMLConnectionParams{
 		ID:                 id,
 		OrganizationID:     orgID,

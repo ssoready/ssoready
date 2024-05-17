@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessTokenRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, DeleteAPIKeyRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SignInRequest, SignInResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
@@ -119,13 +119,13 @@ export const onboardingGetSAMLRedirectURL = {
 } as const;
 
 /**
- * @generated from rpc ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessToken
+ * @generated from rpc ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode
  */
-export const onboardingRedeemSAMLAccessToken = {
-  localName: "onboardingRedeemSAMLAccessToken",
-  name: "OnboardingRedeemSAMLAccessToken",
+export const onboardingRedeemSAMLAccessCode = {
+  localName: "onboardingRedeemSAMLAccessCode",
+  name: "OnboardingRedeemSAMLAccessCode",
   kind: MethodKind.Unary,
-  I: OnboardingRedeemSAMLAccessTokenRequest,
+  I: OnboardingRedeemSAMLAccessCodeRequest,
   O: RedeemSAMLAccessCodeResponse,
   service: {
     typeName: "ssoready.v1.SSOReadyService"

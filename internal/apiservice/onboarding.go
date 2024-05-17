@@ -36,8 +36,8 @@ func (s *Service) OnboardingGetSAMLRedirectURL(ctx context.Context, req *connect
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) OnboardingRedeemSAMLAccessToken(ctx context.Context, req *connect.Request[ssoreadyv1.OnboardingRedeemSAMLAccessTokenRequest]) (*connect.Response[ssoreadyv1.RedeemSAMLAccessCodeResponse], error) {
-	res, err := s.Store.OnboardingRedeemSAMLAccessToken(ctx, req.Msg)
+func (s *Service) OnboardingRedeemSAMLAccessCode(ctx context.Context, req *connect.Request[ssoreadyv1.OnboardingRedeemSAMLAccessCodeRequest]) (*connect.Response[ssoreadyv1.RedeemSAMLAccessCodeResponse], error) {
+	res, err := s.Store.OnboardingRedeemSAMLAccessCode(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}

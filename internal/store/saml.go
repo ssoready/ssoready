@@ -77,7 +77,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	if err != nil {
 		return nil, err
 	}
-	redirectURL = redirectURL.JoinPath(fmt.Sprintf("/saml/%s/init", idformat.SAMLConnection.Format(samlConnID)))
+	redirectURL = redirectURL.JoinPath(fmt.Sprintf("/v1/saml/%s/init", idformat.SAMLConnection.Format(samlConnID)))
 	redirectURL.RawQuery = redirectURLQuery.Encode()
 
 	redirect := redirectURL.String()
@@ -111,7 +111,7 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	}
 	defer rollback()
 
-	samlAccessCode, err := idformat.SAMLAccessCode.Parse(req.AccessCode)
+	samlAccessCode, err := idformat.SAMLAccessCode.Parse(req.SamlAccessCode)
 	if err != nil {
 		return nil, err
 	}

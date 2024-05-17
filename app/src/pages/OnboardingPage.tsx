@@ -30,13 +30,11 @@ import {
   getOnboardingState,
   getSAMLConnection,
   onboardingGetSAMLRedirectURL,
-  onboardingRedeemSAMLAccessToken,
-  redeemSAMLAccessCode,
+  onboardingRedeemSAMLAccessCode,
   updateOnboardingState,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { RedeemSAMLAccessCodeResponse } from "@/gen/ssoready/v1/ssoready_pb";
 import {
   ArrowRight,
@@ -47,11 +45,8 @@ import {
   RefreshCcw,
 } from "lucide-react";
 import { clsx } from "clsx";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import hljs from "highlight.js/lib/core";
-import formatXml from "xml-formatter";
 import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
-import { GoogleLogin } from "@react-oauth/google";
 
 export function OnboardingPage() {
   const [searchParams] = useSearchParams();
@@ -193,8 +188,8 @@ function DemoCard({
 
   const [searchParams] = useSearchParams();
   const samlAccessCode = searchParams.get("saml_access_code");
-  const onboardingRedeeemSAMLAccessToken = useMutation(
-    onboardingRedeemSAMLAccessToken,
+  const onboardingRedeeemSAMLAccessCodeMutation = useMutation(
+    onboardingRedeemSAMLAccessCode,
   );
   const [redeemResponse, setRedeemResponse] = useState<
     RedeemSAMLAccessCodeResponse | undefined
@@ -211,12 +206,11 @@ function DemoCard({
         },
       });
 
-      const redeemResponse = await onboardingRedeeemSAMLAccessToken.mutateAsync(
-        {
-          accessCode: samlAccessCode,
+      const redeemResponse =
+        await onboardingRedeeemSAMLAccessCodeMutation.mutateAsync({
+          samlAccessCode,
           apiKeySecretToken: apiKey.secretToken,
-        },
-      );
+        });
 
       setAPIKeySecretToken(apiKey.secretToken);
       setRedeemResponse(redeemResponse);
@@ -420,8 +414,8 @@ function StartLoginCard({
   apiKeySecretToken: string;
 }) {
   const { data: onboardingState } = useQuery(getOnboardingState, {});
-  const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "organization_id": "${onboardingState?.onboardingOrganizationId}" }'`;
-  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "organization_id": "${onboardingState?.onboardingOrganizationId}" }'`;
+  const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "saml_connection_id": "${onboardingState?.onboardingSamlConnectionId}" }'`;
+  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "saml_connection_id": "${onboardingState?.onboardingSamlConnectionId}" }'`;
 
   const [redirectURL, setRedirectURL] = useState("");
   const getSAMLRedirectURLMutation = useMutation(onboardingGetSAMLRedirectURL);
@@ -429,7 +423,6 @@ function StartLoginCard({
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (ref.current && !done) {
-      console.log("scroll to StartLoginCard");
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [done]);
@@ -481,7 +474,7 @@ function StartLoginCard({
             </div>
 
             <p className="mt-4 text-sm">
-              (How you get an organization ID is covered in our docs.)
+              (How you get a SAML Connection ID is covered in our docs.)
             </p>
 
             <Button
@@ -549,15 +542,15 @@ function HandleLoginCard({
 }) {
   const [searchParams] = useSearchParams();
   const samlAccessCode = searchParams.get("saml_access_code");
-  const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "access_code": "${samlAccessCode}" }'`;
-  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "access_code": "${samlAccessCode}" }'`;
+  const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "saml_access_code": "${samlAccessCode}" }'`;
+  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "saml_access_code": "${samlAccessCode}" }'`;
   const { data: onboardingState } = useQuery(getOnboardingState, {});
 
   const [redeemData, setRedeemData] = useState<
     RedeemSAMLAccessCodeResponse | undefined
   >(undefined);
-  const redeemSAMLAccessTokenMutation = useMutation(
-    onboardingRedeemSAMLAccessToken,
+  const onboardingRedeeemSAMLAccessCodeMutation = useMutation(
+    onboardingRedeemSAMLAccessCode,
   );
 
   const scrollTo = useCallback((node: any) => {
@@ -624,9 +617,9 @@ function HandleLoginCard({
               className="mt-4"
               onClick={async () => {
                 const redeemData =
-                  await redeemSAMLAccessTokenMutation.mutateAsync({
+                  await onboardingRedeeemSAMLAccessCodeMutation.mutateAsync({
                     apiKeySecretToken,
-                    accessCode: samlAccessCode!,
+                    samlAccessCode: samlAccessCode!,
                   });
 
                 setRedeemData(redeemData);

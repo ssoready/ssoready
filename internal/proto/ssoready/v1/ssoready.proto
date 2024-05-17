@@ -28,7 +28,7 @@ service SSOReadyService {
   rpc GetOnboardingState(GetOnboardingStateRequest) returns (GetOnboardingStateResponse);
   rpc UpdateOnboardingState(UpdateOnboardingStateRequest) returns (google.protobuf.Empty);
   rpc OnboardingGetSAMLRedirectURL(OnboardingGetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse);
-  rpc OnboardingRedeemSAMLAccessToken(OnboardingRedeemSAMLAccessTokenRequest) returns (RedeemSAMLAccessCodeResponse);
+  rpc OnboardingRedeemSAMLAccessCode(OnboardingRedeemSAMLAccessCodeRequest) returns (RedeemSAMLAccessCodeResponse);
 
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
   rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
@@ -145,7 +145,7 @@ message GetSAMLRedirectURLResponse {
 }
 
 message RedeemSAMLAccessCodeRequest {
-  string access_code = 1;
+  string saml_access_code = 1;
 }
 
 message RedeemSAMLAccessCodeResponse {
@@ -201,9 +201,9 @@ message OnboardingGetSAMLRedirectURLRequest {
   string saml_connection_id = 2;
 }
 
-message OnboardingRedeemSAMLAccessTokenRequest {
+message OnboardingRedeemSAMLAccessCodeRequest {
   string api_key_secret_token = 1;
-  string access_code = 2;
+  string saml_access_code = 2;
 }
 
 message ListEnvironmentsRequest {

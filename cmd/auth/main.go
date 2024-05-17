@@ -61,7 +61,7 @@ func main() {
 	})
 
 	r := mux.NewRouter()
-	r.HandleFunc("/saml/{saml_conn_id}/init", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/v1/saml/{saml_conn_id}/init", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		samlConnID := mux.Vars(r)["saml_conn_id"]
@@ -94,7 +94,7 @@ func main() {
 		http.Redirect(w, r, initRes.URL, http.StatusSeeOther)
 	}).Methods("GET")
 
-	r.HandleFunc("/saml/{saml_conn_id}/acs", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		samlConnID := mux.Vars(r)["saml_conn_id"]
 
