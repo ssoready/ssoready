@@ -1,31 +1,31 @@
-version: v1
+version: v2
 managed:
   enabled: true
-  go_package_prefix:
-    default: github.com/ssoready/ssoready/internal/gen
-    except:
-      - buf.build/googleapis/googleapis
+  disable:
+    - file_option: go_package
+      module: buf.build/googleapis/googleapis
+  override:
+    - file_option: go_package_prefix
+      value: github.com/ssoready/ssoready/internal/gen
 plugins:
-  - plugin: buf.build/protocolbuffers/go
+  - remote: buf.build/protocolbuffers/go
     out: internal/gen
     opt: paths=source_relative
-  - plugin: buf.build/grpc/go
+  - remote: buf.build/grpc/go
     out: internal/gen
     opt: paths=source_relative
-  - plugin: buf.build/grpc-ecosystem/gateway
+  - remote: buf.build/grpc-ecosystem/gateway
     out: internal/gen
     opt: paths=source_relative
-  - plugin: buf.build/connectrpc/go:v1.12.0
+  - remote: buf.build/connectrpc/go:v1.12.0
     out: internal/gen
     opt: paths=source_relative
-  - plugin: es
+  - local: protoc-gen-es
     out: app/src/gen
-    opt:
-      - target=ts
-  - plugin: connect-es
+    opt: target=ts
+  - local: protoc-gen-connect-es
     out: app/src/gen
-    opt:
-      - target=ts
-  - name: connect-query
+    opt: target=ts
+  - local: protoc-gen-connect-query
     out: app/src/gen
     opt: target=ts
