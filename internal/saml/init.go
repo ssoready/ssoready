@@ -4,29 +4,25 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"net/url"
+	"time"
 )
 
 type InitRequest struct {
-	RequestID      string
-	IDPRedirectURL string
-	SPEntityID     string
-	RelayState     string
+	RequestID  string
+	SPEntityID string
+	Now        time.Time
 }
 
 type InitResponse struct {
-	URL             string
+	SAMLRequest     string
 	InitiateRequest string
 }
 
 func Init(req *InitRequest) *InitResponse {
-	redirectURL, err := url.Parse(req.IDPRedirectURL)
-	if err != nil {
-		panic(fmt.Errorf("parse idp redirect url: %w", err))
-	}
-
 	var samlReq samlRequest
 	samlReq.ID = req.RequestID
+	samlReq.Version = "2.0"
+	samlReq.IssueInstant = req.Now.UTC()
 	samlReq.Issuer.Name = req.SPEntityID
 	samlReqData, err := xml.Marshal(samlReq)
 
@@ -34,18 +30,18 @@ func Init(req *InitRequest) *InitResponse {
 		panic(fmt.Errorf("marshal AuthnRequest: %w", err))
 	}
 
-	query := redirectURL.Query()
-	query.Set("SAMLRequest", base64.URLEncoding.EncodeToString(samlReqData))
-	query.Set("RelayState", req.RelayState)
-	redirectURL.RawQuery = query.Encode()
-
-	return &InitResponse{URL: redirectURL.String(), InitiateRequest: string(samlReqData)}
+	return &InitResponse{
+		SAMLRequest:     base64.StdEncoding.EncodeToString(samlReqData),
+		InitiateRequest: string(samlReqData),
+	}
 }
 
 type samlRequest struct {
-	XMLName xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:protocol AuthnRequest"`
-	ID      string   `xml:"ID,attr"`
-	Issuer  struct {
+	XMLName      xml.Name  `xml:"urn:oasis:names:tc:SAML:2.0:protocol AuthnRequest"`
+	ID           string    `xml:"ID,attr"`
+	Version      string    `xml:"Version,attr"`
+	IssueInstant time.Time `xml:"IssueInstant,attr"`
+	Issuer       struct {
 		XMLName xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion Issuer"`
 		Name    string   `xml:",chardata"`
 	} `xml:"Issuer"`

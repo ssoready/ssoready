@@ -77,7 +77,7 @@ func responseDigestData(res samltypes.Response, data []byte) ([]byte, error) {
 	}
 
 	// todo hoist here, and get rid of onlyPath?
-	assertion, _ := onlyPath(path{
+	assertion, _ := onlyPathHoistNames(path{
 		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
 		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
 	}, doc.Root)
@@ -89,7 +89,9 @@ func responseDigestData(res samltypes.Response, data []byte) ([]byte, error) {
 
 	var inclusiveNamespaces []string
 	for _, t := range res.Assertion.Signature.SignedInfo.Reference.Transforms.Transform {
-		if t.Algorithm == "http://www.w3.org/2001/10/xml-exc-c14n#" {
+		// ensure inclusiveNamespaces remains empty if PrefixList is empty
+		// ("empty" here likely just means the assertion XML lacks InclusiveNamespaces at all)
+		if t.Algorithm == "http://www.w3.org/2001/10/xml-exc-c14n#" && t.InclusiveNamespaces.PrefixList != "" {
 			inclusiveNamespaces = strings.Split(t.InclusiveNamespaces.PrefixList, " ")
 		}
 	}

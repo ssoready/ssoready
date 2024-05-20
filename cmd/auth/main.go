@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -19,6 +20,26 @@ import (
 	"github.com/ssoready/ssoready/internal/saml"
 	"github.com/ssoready/ssoready/internal/store"
 )
+
+type acsTemplateData struct {
+	SignOnURL   string
+	SAMLRequest string
+	RelayState  string
+}
+
+var acsTemplate = template.Must(template.New("acs").Parse(`
+<html>
+	<body>
+		<form method="POST" action="{{ .SignOnURL }}">
+			<input type="hidden" name="SAMLRequest" value="{{ .SAMLRequest }}"></input>
+			<input type="hidden" name="RelayState" value="{{ .RelayState }}"></input>
+		</form>
+		<script>
+			document.forms[0].submit();
+		</script>
+	</body>
+</html>
+`))
 
 func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
@@ -67,6 +88,8 @@ func main() {
 		samlConnID := mux.Vars(r)["saml_conn_id"]
 		state := r.URL.Query().Get("state")
 
+		slog.InfoContext(ctx, "init", "saml_connection_id", samlConnID, "state", state)
+
 		dataRes, err := store_.AuthGetInitData(ctx, &store.AuthGetInitDataRequest{
 			SAMLConnectionID: samlConnID,
 			State:            state,
@@ -77,10 +100,9 @@ func main() {
 		}
 
 		initRes := saml.Init(&saml.InitRequest{
-			RequestID:      dataRes.RequestID,
-			IDPRedirectURL: dataRes.IDPRedirectURL,
-			SPEntityID:     dataRes.SPEntityID,
-			RelayState:     state,
+			RequestID:  dataRes.RequestID,
+			SPEntityID: dataRes.SPEntityID,
+			Now:        time.Now(),
 		})
 
 		if err := store_.AuthUpsertInitiateData(ctx, &store.AuthUpsertInitiateDataRequest{
@@ -91,7 +113,13 @@ func main() {
 			return
 		}
 
-		http.Redirect(w, r, initRes.URL, http.StatusSeeOther)
+		if err := acsTemplate.Execute(w, &acsTemplateData{
+			SignOnURL:   dataRes.IDPRedirectURL,
+			SAMLRequest: initRes.SAMLRequest,
+			RelayState:  state,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
 	}).Methods("GET")
 
 	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", func(w http.ResponseWriter, r *http.Request) {

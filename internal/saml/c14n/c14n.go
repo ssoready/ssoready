@@ -51,7 +51,8 @@ func canonicalize(buf *bytes.Buffer, knownNames, renderedNames stack.Stack, n ux
 
 	visiblyUsedNames[n.Element.Name.Qual] = struct{}{}
 	for _, a := range n.Element.Attrs {
-		if _, ok := a.Name.Space(); !ok {
+		// only count this attr if it's not namespace-declaring and it's "qualified", i.e. it's of the form "a:b=...", not just "b=...".
+		if _, ok := a.Name.Space(); !ok && a.Name.Qual != "" {
 			visiblyUsedNames[a.Name.Qual] = struct{}{}
 		}
 	}
