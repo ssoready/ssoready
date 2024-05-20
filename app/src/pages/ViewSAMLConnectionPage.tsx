@@ -179,17 +179,17 @@ export function ViewSAMLConnectionPage() {
             <CardContent>
               <div className="grid grid-cols-4 gap-y-2 items-center">
                 <div className="text-sm col-span-1 text-muted-foreground">
-                  SP Entity ID
-                </div>
-                <div className="text-sm col-span-3">
-                  {samlConnection?.spEntityId}
-                </div>
-
-                <div className="text-sm col-span-1 text-muted-foreground">
                   Assertion Consumer Service (ACS) URL
                 </div>
                 <div className="text-sm col-span-3">
                   {samlConnection?.spAcsUrl}
+                </div>
+
+                <div className="text-sm col-span-1 text-muted-foreground">
+                  SP Entity ID
+                </div>
+                <div className="text-sm col-span-3">
+                  {samlConnection?.spEntityId}
                 </div>
               </div>
             </CardContent>
