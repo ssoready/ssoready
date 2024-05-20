@@ -98,13 +98,17 @@ func main() {
 		ctx := r.Context()
 		samlConnID := mux.Vars(r)["saml_conn_id"]
 
-		dataRes, err := store_.AuthGetValidateData(ctx, &store.AuthGetValidateDataRequest{
-			SAMLConnectionID: samlConnID,
-		})
+		slog.InfoContext(ctx, "acs", "saml_connection_id", samlConnID)
 
 		if err := r.ParseForm(); err != nil {
 			panic(err)
 		}
+
+		slog.InfoContext(ctx, "acs_form", "form", r.Form)
+
+		dataRes, err := store_.AuthGetValidateData(ctx, &store.AuthGetValidateDataRequest{
+			SAMLConnectionID: samlConnID,
+		})
 
 		cert, err := x509.ParseCertificate(dataRes.IDPX509Certificate)
 		if err != nil {
