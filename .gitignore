@@ -4,3 +4,4 @@
 /app/public/index.js
 /app/public/index.js.map
 /app/.idea/
+/internal/authservice/templates/node_modules
