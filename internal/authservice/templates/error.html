@@ -1,11 +1,62 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="/static/index.css">
+    <link rel="stylesheet" href="/internal/static/index.css">
 </head>
-<body class="bg-blue-500">
-something went wrong
+<body class="bg-gray-100 w-screen h-screen flex items-center justify-center">
+    <div class="w-[800px] bg-white shadow-lg rounded-lg flex flex-col px-8 py-4">
+        <div class="w-full flex flex-col items-center gap-y-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 h-12 w-12"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            <div class="text-2xl font-bold tracking-tight text-gray-900">
+                Oops, something went wrong!
+            </div>
 
-<pre>{{ .ErrorMessage }}</pre>
+            <div class="text-gray-500">
+                An error occurred while logging you in.
+            </div>
+        </div>
+
+        <div class="text-center text-gray-500 text-xs mt-4">
+            Error code: {{ .SAMLFlowID }}
+        </div>
+
+        <div id="toggle-group" data-state="closed" class="group">
+            <div id="toggle" class="mt-4 cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-gray-100 h-10 px-4 py-2 w-full">
+                Advanced Details
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 h-4 w-4 transition-transform group-data-[state=open]:rotate-180"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+
+            <div class="group-data-[state=closed]:hidden space-y-4 pt-4">
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Error Message</p>
+                    <p class="text-sm text-gray-500">{{ .ErrorMessage }}</p>
+                </div>
+                {{ if .WantAudienceRestriction }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Expected SP Entity ID</p>
+                    <p class="text-sm text-gray-500">{{ .WantAudienceRestriction }}</p>
+                </div>
+                {{ end }}
+                {{ if .GotAudienceRestriction }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Actual SP Entity ID</p>
+                    <p class="text-sm text-gray-500">{{ .GotAudienceRestriction }}</p>
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
 </body>
+<script>
+    const toggleGroup = document.getElementById("toggle-group")
+    const toggle = document.getElementById("toggle")
+    toggle.addEventListener("click", () => {
+        console.log()
+        if (toggleGroup.dataset.state === "open") {
+            toggleGroup.dataset.state = "closed"
+        } else {
+            toggleGroup.dataset.state = "open"
+        }
+    })
+</script>
 </html>

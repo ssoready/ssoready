@@ -39,7 +39,10 @@ var acsTemplate = template.Must(template.New("acs").Parse(`
 `))
 
 type errorTemplateData struct {
-	ErrorMessage string
+	ErrorMessage            string
+	SAMLFlowID              string
+	WantAudienceRestriction string
+	GotAudienceRestriction  string
 }
 
 //go:embed templates/static
@@ -57,18 +60,7 @@ type Service struct {
 func (s *Service) NewHandler() http.Handler {
 	r := mux.NewRouter()
 
-	fs.WalkDir(staticFS, ".", func(path string, d fs.DirEntry, err error) error {
-		fmt.Println(path, d)
-		return nil
-	})
-
-	r.Handle("/internal/static/", http.StripPrefix("/internal/static/", http.FileServer(http.FS(staticFS))))
-
-	//r.HandleFunc("/internal/static/index.css", func(w http.ResponseWriter, r *http.Request) {
-	//	if _, err := w.Write(staticIndexCSS); err != nil {
-	//		panic(err)
-	//	}
-	//})
+	r.PathPrefix("/internal/static/").Handler(http.StripPrefix("/internal/static/", http.FileServer(http.FS(staticFS))))
 	r.HandleFunc("/v1/saml/{saml_conn_id}/init", s.samlInit).Methods("GET")
 	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", s.samlAcs).Methods("POST")
 	return r
@@ -206,7 +198,10 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	}
 	if validateRes.BadAudience != nil {
 		if err := errorTemplate.Execute(w, &errorTemplateData{
-			ErrorMessage: "bad audience",
+			ErrorMessage:            "Incorrect SP Entity ID in AudienceRestriction",
+			SAMLFlowID:              createSAMLLoginRes.SAMLFlowID,
+			WantAudienceRestriction: dataRes.SPEntityID,
+			GotAudienceRestriction:  *validateRes.BadAudience,
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}
