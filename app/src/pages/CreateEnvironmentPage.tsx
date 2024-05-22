@@ -41,9 +41,7 @@ const FormSchema = z.object({
   redirectUrl: z.string().url({
     message: "Redirect URL must be a valid URL.",
   }),
-  authUrl: z.string().url({
-    message: "Auth URL must be a valid URL.",
-  }),
+  authUrl: z.string(),
 });
 
 export function CreateEnvironmentPage() {
@@ -52,7 +50,7 @@ export function CreateEnvironmentPage() {
     defaultValues: {
       displayName: "",
       redirectUrl: "",
-      authUrl: "https://auth.ssoready.com",
+      authUrl: "",
     },
   });
 
@@ -118,26 +116,6 @@ export function CreateEnvironmentPage() {
                       After a SAML login, your users get redirected to this
                       address. You usually want to point this at an
                       SSOReady-specific page on your web application.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="authUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Auth URL</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      The base of the URL that your customer's IT admins put
-                      into their Identity Provider. This should either be
-                      https://auth.ssoready.com or a custom domain that CNAMEs
-                      there.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
