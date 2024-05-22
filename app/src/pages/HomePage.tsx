@@ -1,8 +1,9 @@
 import React from "react";
-import { useQuery } from "@connectrpc/connect-query";
+import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
   getOnboardingState,
   listEnvironments,
+  listOrganizations,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Table,
@@ -32,7 +33,18 @@ import {
 
 export function HomePage() {
   const { data: onboardingState } = useQuery(getOnboardingState, {});
-  const { data: listEnvsRes } = useQuery(listEnvironments, {});
+  const {
+    data: listEnvironmentsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    listEnvironments,
+    { pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
   return (
     <div className="flex flex-col gap-y-8">
       {onboardingState && onboardingState.onboardingEnvironmentId === "" ? (
@@ -113,22 +125,29 @@ export function HomePage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listEnvsRes?.environments?.map((environment) => (
-                <TableRow key={environment.id}>
-                  <TableCell>
-                    <Link
-                      to={`/environments/${environment.id}`}
-                      className="underline underline-offset-4 decoration-muted-foreground"
-                    >
-                      {environment.id}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{environment.displayName}</TableCell>
-                  <TableCell>{environment.redirectUrl}</TableCell>
-                </TableRow>
-              ))}
+              {listEnvironmentsResponses?.pages
+                .flatMap((page) => page.environments)
+                .map((environment) => (
+                  <TableRow key={environment.id}>
+                    <TableCell>
+                      <Link
+                        to={`/environments/${environment.id}`}
+                        className="underline underline-offset-4 decoration-muted-foreground"
+                      >
+                        {environment.id}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{environment.displayName}</TableCell>
+                    <TableCell>{environment.redirectUrl}</TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+          {hasNextPage && (
+            <Button variant="secondary" onClick={() => fetchNextPage()}>
+              Load more
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

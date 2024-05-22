@@ -33,7 +33,7 @@ func (s *Store) ListEnvironments(ctx context.Context, req *ssoreadyv1.ListEnviro
 
 	var nextPageToken string
 	if len(envs) == limit+1 {
-		nextPageToken = s.pageEncoder.Marshal(envs[limit].Id)
+		nextPageToken = s.pageEncoder.Marshal(qEnvs[limit].ID)
 		envs = envs[:limit]
 	}
 
