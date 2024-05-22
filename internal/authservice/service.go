@@ -2,9 +2,11 @@ package authservice
 
 import (
 	"crypto/x509"
+	"embed"
 	_ "embed"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -40,8 +42,13 @@ type errorTemplateData struct {
 	ErrorMessage string
 }
 
+//go:embed templates/static
+var staticData embed.FS
+var staticFS, _ = fs.Sub(staticData, "templates/static")
+
 //go:embed templates/error.html
 var errorTemplateContent string
+var errorTemplate = template.Must(template.New("error").Parse(errorTemplateContent))
 
 type Service struct {
 	Store *store.Store
@@ -49,6 +56,19 @@ type Service struct {
 
 func (s *Service) NewHandler() http.Handler {
 	r := mux.NewRouter()
+
+	fs.WalkDir(staticFS, ".", func(path string, d fs.DirEntry, err error) error {
+		fmt.Println(path, d)
+		return nil
+	})
+
+	r.Handle("/internal/static/", http.StripPrefix("/internal/static/", http.FileServer(http.FS(staticFS))))
+
+	//r.HandleFunc("/internal/static/index.css", func(w http.ResponseWriter, r *http.Request) {
+	//	if _, err := w.Write(staticIndexCSS); err != nil {
+	//		panic(err)
+	//	}
+	//})
 	r.HandleFunc("/v1/saml/{saml_conn_id}/init", s.samlInit).Methods("GET")
 	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", s.samlAcs).Methods("POST")
 	return r
@@ -178,11 +198,18 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	// present an error to the end user depending on their settings
 	// todo make this pretty html
 	if validateRes.BadIssuer != nil {
-		http.Error(w, "bad issuer", http.StatusBadRequest)
-		return
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage: "bad issuer",
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
 	}
 	if validateRes.BadAudience != nil {
-		http.Error(w, "bad audience", http.StatusBadRequest)
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage: "bad audience",
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
 		return
 	}
 	if badSubjectID != nil {

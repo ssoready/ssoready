@@ -67,13 +67,6 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	}).Methods("GET")
 
-	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
-		tpl, err1 := route.GetPathTemplate()
-		met, err2 := route.GetMethods()
-		fmt.Println(tpl, err1, met, err2)
-		return nil
-	})
-
 	slog.Info("serve")
 	if err := http.ListenAndServe(config.ServeAddr, r); err != nil {
 		panic(err)
