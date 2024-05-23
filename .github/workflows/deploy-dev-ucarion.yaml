@@ -41,7 +41,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: cmd/${{ env.SERVICE }}/task-definition-$DEPLOYMENT_ENVIRONMENT.json
+          task-definition: cmd/${{ env.SERVICE }}/task-definition-${{ env.DEPLOYMENT_ENVIRONMENT }}.json
           container-name: ${{ env.SERVICE }}
           image: ${{ env.ECR_REGISTRY_URL }}/${{ env.SERVICE }}:${{ env.TAG }}
 
