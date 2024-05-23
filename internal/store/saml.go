@@ -3,11 +3,14 @@ package store
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"time"
 
+	"connectrpc.com/connect"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/ssoready/ssoready/internal/apikeyauth"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/statesign"
@@ -47,8 +50,13 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 			ExternalID:    &req.OrganizationExternalId,
 		})
 		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad organization_external_id: organization not found, or organization does not have a primary SAML connection"))
+			}
 			return nil, err
 		}
+	} else {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("one of saml_connection_id, organization_id, or organization_external_id must be provided"))
 	}
 
 	envAuthURL, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{
@@ -113,7 +121,7 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 
 	samlAccessCode, err := idformat.SAMLAccessCode.Parse(req.SamlAccessCode)
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad saml_access_code: %w", err))
 	}
 
 	samlAccessCodeUUID := uuid.UUID(samlAccessCode) // can't do &uuid.UUID(...) in one go, so break this out

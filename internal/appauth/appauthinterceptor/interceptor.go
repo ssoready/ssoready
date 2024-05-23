@@ -28,7 +28,7 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 
 			authorization := req.Header().Get("Authorization")
 			if authorization == "" {
-				return nil, connect.NewError(connect.CodeUnauthenticated, nil)
+				return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("authorization header is required"))
 			}
 
 			secretValue, ok := strings.CutPrefix(authorization, "Bearer ")
