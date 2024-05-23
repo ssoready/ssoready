@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev-ucarion
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Define environment variables
         run: |
           echo "SERVICE=api" >> $GITHUB_ENV
           echo "TAG=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
-
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
