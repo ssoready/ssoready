@@ -152,7 +152,7 @@ export function ViewSAMLFlowPage() {
       </Card>
 
       {samlFlow?.error.case && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="bg-white shadow-sm">
           <OctagonX className="h-4 w-4" />
           <AlertTitle>This SAML flow was rejected by SSOReady</AlertTitle>
 
