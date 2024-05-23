@@ -1,0 +1,52 @@
+name: Deploy to dev-ucarion
+on:
+  push:
+    branches:
+      - dev-ucarion
+env:
+  AWS_REGION: us-east-2
+  ECR_REGISTRY_URL: 256685175853.dkr.ecr.us-east-2.amazonaws.com
+  ECS_CLUSTER: main
+jobs:
+  deploy-api:
+    name: Deploy api
+    runs-on: ubuntu-latest
+    environment: dev-ucarion
+    steps:
+      - name: Define environment variables
+        run: |
+          echo "SERVICE=api" >> $GITHUB_ENVIRONMENT
+          echo "TAG=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENVIRONMENT
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image to ECR
+        run: |
+          docker build -f ./cmd/$SERVICE/Dockerfile -t $ECR_REGISTRY_URL/$SERVICE:$TAG
+          docker push $ECR_REGISTRY_URL/$SERVICE:$TAG
+
+      - name: Create ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: cmd/${{ steps.vars.outputs.service }}/task-definition.json
+          container-name: ${{ steps.vars.outputs.service }}
+          image: ${{ env.ECR_REGISTRY_URL }}/${{ env.SERVICE }}:${{ env.TAG }}
+
+      - name: Deploy ECS service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
