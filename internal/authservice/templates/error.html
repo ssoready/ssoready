@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="/internal/static/index.css">
+    <link rel="stylesheet" type="text/css" href="/internal/static/index.css">
 </head>
 <body class="bg-gray-100 w-screen h-screen flex items-center justify-center">
-    <div class="w-[800px] bg-white shadow-lg rounded-lg flex flex-col px-8 py-4">
+    <div class="w-[800px] bg-white shadow-lg rounded-lg flex flex-col p-8">
         <div class="w-full flex flex-col items-center gap-y-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 h-12 w-12"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
             <div class="text-2xl font-bold tracking-tight text-gray-900">
@@ -12,7 +12,7 @@
             </div>
 
             <div class="text-gray-500">
-                An error occurred while logging you in.
+                An error occurred while logging you in. Contact your IT admin.
             </div>
         </div>
 
@@ -31,6 +31,18 @@
                     <p class="font-medium text-gray-900">Error Message</p>
                     <p class="text-sm text-gray-500">{{ .ErrorMessage }}</p>
                 </div>
+                {{ if .WantIDPEntityID }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Expected IDP Entity ID</p>
+                    <p class="text-sm text-gray-500">{{ .WantIDPEntityID }}</p>
+                </div>
+                {{ end }}
+                {{ if .GotIDPEntityID }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Actual IDP Entity ID</p>
+                    <p class="text-sm text-gray-500">{{ .GotIDPEntityID }}</p>
+                </div>
+                {{ end }}
                 {{ if .WantAudienceRestriction }}
                 <div class="grid gap-2">
                     <p class="font-medium text-gray-900">Expected SP Entity ID</p>
@@ -41,6 +53,18 @@
                 <div class="grid gap-2">
                     <p class="font-medium text-gray-900">Actual SP Entity ID</p>
                     <p class="text-sm text-gray-500">{{ .GotAudienceRestriction }}</p>
+                </div>
+                {{ end }}
+                {{ if .GotSubjectID }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Received Subject ID</p>
+                    <p class="text-sm text-gray-500">{{ .GotSubjectID }}</p>
+                </div>
+                {{ end }}
+                {{ if .WantEmailDomains }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Allowed Email Domains</p>
+                    <p class="text-sm text-gray-500">{{ .WantEmailDomains }}</p>
                 </div>
                 {{ end }}
             </div>

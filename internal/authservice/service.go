@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -41,8 +42,12 @@ var acsTemplate = template.Must(template.New("acs").Parse(`
 type errorTemplateData struct {
 	ErrorMessage            string
 	SAMLFlowID              string
+	WantIDPEntityID         string
+	GotIDPEntityID          string
 	WantAudienceRestriction string
 	GotAudienceRestriction  string
+	GotSubjectID            string
+	WantEmailDomains        string
 }
 
 //go:embed templates/static
@@ -189,16 +194,21 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 	// present an error to the end user depending on their settings
 	// todo make this pretty html
+	// todo unsigned assertions
 	if validateRes.BadIssuer != nil {
 		if err := errorTemplate.Execute(w, &errorTemplateData{
-			ErrorMessage: "bad issuer",
+			ErrorMessage:    "Incorrect IDP Entity ID. This needs to be fixed in the Service Provider.",
+			SAMLFlowID:      createSAMLLoginRes.SAMLFlowID,
+			WantIDPEntityID: dataRes.IDPEntityID,
+			GotIDPEntityID:  *validateRes.BadIssuer,
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}
+		return
 	}
 	if validateRes.BadAudience != nil {
 		if err := errorTemplate.Execute(w, &errorTemplateData{
-			ErrorMessage:            "Incorrect SP Entity ID in AudienceRestriction",
+			ErrorMessage:            "Incorrect SP Entity ID. This needs to be fixed in the Identity Provider.",
 			SAMLFlowID:              createSAMLLoginRes.SAMLFlowID,
 			WantAudienceRestriction: dataRes.SPEntityID,
 			GotAudienceRestriction:  *validateRes.BadAudience,
@@ -208,11 +218,24 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if badSubjectID != nil {
-		http.Error(w, "bad subject id", http.StatusBadRequest)
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage: "Subject ID must be an email address. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:   createSAMLLoginRes.SAMLFlowID,
+			GotSubjectID: *badSubjectID,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
 		return
 	}
 	if domainMismatchEmail != nil {
-		http.Error(w, "bad email domain", http.StatusBadRequest)
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:     "Subject ID email address is not from the list of allowed domains. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:       createSAMLLoginRes.SAMLFlowID,
+			GotSubjectID:     validateRes.SubjectID,
+			WantEmailDomains: strings.Join(dataRes.OrganizationDomains, ", "),
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
 		return
 	}
 
