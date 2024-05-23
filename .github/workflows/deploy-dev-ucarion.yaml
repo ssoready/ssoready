@@ -7,6 +7,7 @@ env:
   AWS_REGION: us-east-2
   ECR_REGISTRY_URL: 256685175853.dkr.ecr.us-east-2.amazonaws.com
   ECS_CLUSTER: main
+  DEPLOYMENT_ENVIRONMENT: dev-ucarion
 jobs:
   deploy-api:
     name: Deploy api
@@ -40,7 +41,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: cmd/${{ env.SERVICE }}/task-definition.json
+          task-definition: cmd/${{ env.SERVICE }}/task-definition-$DEPLOYMENT_ENVIRONMENT.json
           container-name: ${{ env.SERVICE }}
           image: ${{ env.ECR_REGISTRY_URL }}/${{ env.SERVICE }}:${{ env.TAG }}
 
