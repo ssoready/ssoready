@@ -43,6 +43,8 @@ jobs:
           task-definition: cmd/${{ steps.vars.outputs.service }}/task-definition.json
           container-name: ${{ env.SERVICE }}
           image: ${{ env.ECR_REGISTRY_URL }}/${{ env.SERVICE }}:${{ env.TAG }}
+        env:
+          SERVICE: ${{ env.SERVICE }}
 
       - name: Deploy ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
