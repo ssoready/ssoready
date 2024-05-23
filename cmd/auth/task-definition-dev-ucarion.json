@@ -2,12 +2,12 @@
   "taskDefinitionArn": "",
   "containerDefinitions": [
     {
-      "name": "api",
+      "name": "auth",
       "image": "",
       "cpu": 0,
       "portMappings": [
         {
-          "name": "api-8080-tcp",
+          "name": "auth-8080-tcp",
           "containerPort": 8080,
           "hostPort": 8080,
           "protocol": "tcp",
@@ -17,16 +17,8 @@
       "essential": true,
       "environment": [
         {
-          "name": "API_SERVE_ADDR",
+          "name": "AUTH_SERVE_ADDR",
           "value": ":8080"
-        },
-        {
-          "name": "API_GOOGLE_OAUTH_CLIENT_ID",
-          "value": "171906208332-m8dg2p6av2f0aa7lliaj6oo0grct57p1.apps.googleusercontent.com"
-        },
-        {
-          "name": "API_GLOBAL_DEFAULT_AUTH_URL",
-          "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
         }
       ],
       "environmentFiles": [],
@@ -37,7 +29,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/api",
+          "awslogs-group": "/ecs/auth",
           "awslogs-region": "us-east-2",
           "awslogs-stream-prefix": "ecs"
         },
@@ -46,8 +38,8 @@
       "systemControls": []
     }
   ],
-  "family": "api",
-  "taskRoleArn": "arn:aws:iam::256685175853:role/api",
+  "family": "auth",
+  "taskRoleArn": "arn:aws:iam::256685175853:role/auth",
   "executionRoleArn": "arn:aws:iam::256685175853:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "revision": 0,
@@ -93,7 +85,7 @@
   "cpu": "256",
   "memory": "512",
   "runtimePlatform": {
-    "cpuArchitecture": "ARM64",
+    "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
   "registeredAt": "",
