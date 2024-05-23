@@ -15,8 +15,8 @@ jobs:
     steps:
       - name: Define environment variables
         run: |
-          echo "SERVICE=api" >> $GITHUB_ENVIRONMENT
-          echo "TAG=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENVIRONMENT
+          echo "SERVICE=api" >> $GITHUB_ENV
+          echo "TAG=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
