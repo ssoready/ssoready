@@ -10,6 +10,7 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -146,6 +147,9 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		RedeemResponse:       string(qSAMLFlow.RedeemResponse),
 	}
 
+	if qSAMLFlow.ErrorUnsignedAssertion {
+		res.Error = &ssoreadyv1.SAMLFlow_UnsignedAssertion{UnsignedAssertion: &emptypb.Empty{}}
+	}
 	if qSAMLFlow.ErrorBadIssuer != nil {
 		res.Error = &ssoreadyv1.SAMLFlow_BadIssuer{BadIssuer: *qSAMLFlow.ErrorBadIssuer}
 	}

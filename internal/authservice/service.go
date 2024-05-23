@@ -133,7 +133,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	// assess the validity of the response; note that invalid requests may still have a nil err; the problem details
 	// are stored in validateRes
 	// todo maybe split out validateRes, validateProblems, err as the signature instead?
-	validateRes, err := saml.Validate(&saml.ValidateRequest{
+	validateRes, validateProblems, err := saml.Validate(&saml.ValidateRequest{
 		SAMLResponse:   r.FormValue("SAMLResponse"),
 		IDPCertificate: cert,
 		IDPEntityID:    dataRes.IDPEntityID,
@@ -154,12 +154,28 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var unsignedAssertion bool
+	if validateProblems != nil {
+		unsignedAssertion = validateProblems.UnsignedAssertion
+	}
+
+	var badIssuer *string
+	if validateProblems != nil {
+		badIssuer = validateProblems.BadIDPEntityID
+	}
+
+	var badAudience *string
+	if validateProblems != nil {
+		badAudience = validateProblems.BadSPEntityID
+	}
+
 	var badSubjectID *string
-	var email string
 	subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 	if err != nil {
 		badSubjectID = &validateRes.SubjectID
 	}
+
+	var email string
 	if badSubjectID == nil {
 		email = validateRes.SubjectID
 	}
@@ -183,8 +199,9 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		Email:                                email,
 		SubjectIDPAttributes:                 validateRes.SubjectAttributes,
 		SAMLAssertion:                        validateRes.Assertion,
-		ErrorBadIssuer:                       validateRes.BadIssuer,
-		ErrorBadAudience:                     validateRes.BadAudience,
+		ErrorUnsignedAssertion:               unsignedAssertion,
+		ErrorBadIssuer:                       badIssuer,
+		ErrorBadAudience:                     badAudience,
 		ErrorBadSubjectID:                    badSubjectID,
 		ErrorEmailOutsideOrganizationDomains: domainMismatchEmail,
 	})
@@ -193,25 +210,32 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// present an error to the end user depending on their settings
-	// todo make this pretty html
-	// todo unsigned assertions
-	if validateRes.BadIssuer != nil {
+	if unsignedAssertion {
 		if err := errorTemplate.Execute(w, &errorTemplateData{
-			ErrorMessage:    "Incorrect IDP Entity ID. This needs to be fixed in the Service Provider.",
-			SAMLFlowID:      createSAMLLoginRes.SAMLFlowID,
-			WantIDPEntityID: dataRes.IDPEntityID,
-			GotIDPEntityID:  *validateRes.BadIssuer,
+			ErrorMessage: "SAML assertion is unsigned. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:   createSAMLLoginRes.SAMLFlowID,
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}
 		return
 	}
-	if validateRes.BadAudience != nil {
+	if badIssuer != nil {
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:    "Incorrect IDP Entity ID. This needs to be fixed in the Service Provider.",
+			SAMLFlowID:      createSAMLLoginRes.SAMLFlowID,
+			WantIDPEntityID: dataRes.IDPEntityID,
+			GotIDPEntityID:  *badIssuer,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
+		return
+	}
+	if badAudience != nil {
 		if err := errorTemplate.Execute(w, &errorTemplateData{
 			ErrorMessage:            "Incorrect SP Entity ID. This needs to be fixed in the Identity Provider.",
 			SAMLFlowID:              createSAMLLoginRes.SAMLFlowID,
 			WantAudienceRestriction: dataRes.SPEntityID,
-			GotAudienceRestriction:  *validateRes.BadAudience,
+			GotAudienceRestriction:  *badAudience,
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}
@@ -239,7 +263,10 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// past this point, we presume the request is valid
+	// past this point, we will presume the request is valid; panic to ensure we haven't missed problems
+	if validateProblems != nil {
+		panic(fmt.Errorf("unhandled saml.ValidateProblems: %v", validateProblems))
+	}
 
 	redirectURL, err := url.Parse(dataRes.EnvironmentRedirectURL)
 	if err != nil {

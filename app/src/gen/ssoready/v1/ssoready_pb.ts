@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
+import { Empty, Message, proto3, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from enum ssoready.v1.SAMLFlowStatus
@@ -349,6 +349,12 @@ export class SAMLFlow extends Message<SAMLFlow> {
    */
   error: {
     /**
+     * @generated from field: google.protobuf.Empty unsigned_assertion = 22;
+     */
+    value: Empty;
+    case: "unsignedAssertion";
+  } | {
+    /**
      * @generated from field: string bad_issuer = 18;
      */
     value: string;
@@ -454,6 +460,7 @@ export class SAMLFlow extends Message<SAMLFlow> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 17, name: "status", kind: "enum", T: proto3.getEnumType(SAMLFlowStatus) },
+    { no: 22, name: "unsigned_assertion", kind: "message", T: Empty, oneof: "error" },
     { no: 18, name: "bad_issuer", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 19, name: "bad_audience", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 20, name: "bad_subject_id", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },

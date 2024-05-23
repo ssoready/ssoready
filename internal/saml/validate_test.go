@@ -38,7 +38,7 @@ func TestValidate(t *testing.T) {
 			err = json.Unmarshal(params, &paramData)
 			require.NoError(t, err)
 
-			_, err = saml.Validate(&saml.ValidateRequest{
+			_, problems, err := saml.Validate(&saml.ValidateRequest{
 				SAMLResponse:   base64.StdEncoding.EncodeToString(assertion),
 				IDPCertificate: parseMetadataRes.IDPCertificate,
 				IDPEntityID:    parseMetadataRes.IDPEntityID,
@@ -46,6 +46,7 @@ func TestValidate(t *testing.T) {
 				Now:            paramData.Now,
 			})
 			assert.NoError(t, err)
+			assert.Nil(t, problems)
 		})
 	}
 

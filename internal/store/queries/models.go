@@ -151,6 +151,7 @@ type SamlFlow struct {
 	ErrorBadSubjectID                    *string
 	ErrorEmailOutsideOrganizationDomains *string
 	Status                               SamlFlowStatus
+	ErrorUnsignedAssertion               bool
 }
 
 type SchemaMigration struct {

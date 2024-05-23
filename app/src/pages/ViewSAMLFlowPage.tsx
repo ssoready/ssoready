@@ -156,6 +156,21 @@ export function ViewSAMLFlowPage() {
           <OctagonX className="h-4 w-4" />
           <AlertTitle>This SAML flow was rejected by SSOReady</AlertTitle>
 
+          {samlFlow.error.case === "unsignedAssertion" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider provided a SAML assertion that
+                doesn't have a signature.
+              </p>
+
+              <p className="mt-4">
+                Your customer's IT admin needs to enable assertion signing. They
+                may have enable signing of the entire SAML response; SSOReady
+                requires specifically the assertion be signed.
+              </p>
+            </AlertDescription>
+          )}
+
           {samlFlow.error.case === "badIssuer" && (
             <AlertDescription>
               <p>

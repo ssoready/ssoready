@@ -202,7 +202,8 @@ CREATE TABLE public.saml_flows (
     error_bad_audience character varying,
     error_bad_subject_id character varying,
     error_email_outside_organization_domains character varying,
-    status public.saml_flow_status NOT NULL
+    status public.saml_flow_status NOT NULL,
+    error_unsigned_assertion boolean DEFAULT false NOT NULL
 );
 
 

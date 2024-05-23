@@ -99,6 +99,7 @@ message SAMLFlow {
   SAMLFlowStatus status = 17;
 
   oneof error {
+    google.protobuf.Empty unsigned_assertion = 22;
     string bad_issuer = 18;
     string bad_audience = 19;
     string bad_subject_id = 20;
