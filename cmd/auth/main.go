@@ -60,12 +60,13 @@ func main() {
 	service := authservice.Service{Store: store_}
 
 	r := mux.NewRouter()
-	r.PathPrefix("/").Handler(service.NewHandler())
 
 	r.HandleFunc("/internal/health", func(w http.ResponseWriter, r *http.Request) {
 		slog.InfoContext(r.Context(), "health")
 		w.WriteHeader(http.StatusOK)
 	}).Methods("GET")
+
+	r.PathPrefix("/").Handler(service.NewHandler())
 
 	slog.Info("serve")
 	if err := http.ListenAndServe(config.ServeAddr, r); err != nil {

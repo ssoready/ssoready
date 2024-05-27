@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GOOGLE_OAUTH_CLIENT_ID } from "@/config";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -43,11 +44,7 @@ export function LoginPage() {
   );
 
   return (
-    <GoogleOAuthProvider
-      clientId={
-        "171906208332-m8dg2p6av2f0aa7lliaj6oo0grct57p1.apps.googleusercontent.com"
-      }
-    >
+    <GoogleOAuthProvider clientId={GOOGLE_OAUTH_CLIENT_ID}>
       {showEmailWait ? (
         <div className="h-screen flex items-center">
           <Card className="max-w-[400px] mx-auto">

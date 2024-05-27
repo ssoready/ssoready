@@ -14,6 +14,7 @@ import {
   API_URL,
   APP_URL,
   DUMMYIDP_CERTIFICATE,
+  DUMMYIDP_SSO_URL,
   DUMMYIDP_URL,
   PUBLIC_API_URL,
 } from "@/config";
@@ -148,7 +149,7 @@ function DemoCard({
         samlConnection: {
           organizationId: organization.id,
           idpEntityId: `https://dummyidp.com/apps/${dummyIdpAppId}`,
-          idpRedirectUrl: `${DUMMYIDP_URL}/apps/${dummyIdpAppId}/sso`,
+          idpRedirectUrl: `${DUMMYIDP_SSO_URL}/${dummyIdpAppId}`,
           idpCertificate: DUMMYIDP_CERTIFICATE,
           primary: true,
         },
