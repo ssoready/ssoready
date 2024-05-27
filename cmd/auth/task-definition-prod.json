@@ -39,8 +39,8 @@
     }
   ],
   "family": "auth",
-  "taskRoleArn": "arn:aws:iam::058264401581:role/auth",
-  "executionRoleArn": "arn:aws:iam::058264401581:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::381491982249:role/auth",
+  "executionRoleArn": "arn:aws:iam::381491982249:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "volumes": [],
   "status": "ACTIVE",
