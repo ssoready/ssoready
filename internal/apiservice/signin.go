@@ -3,6 +3,7 @@ package apiservice
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"connectrpc.com/connect"
 	"github.com/resend/resend-go/v2"
@@ -33,10 +34,13 @@ func (s *Service) VerifyEmail(ctx context.Context, req *connect.Request[ssoready
 }
 
 func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.SignInRequest]) (*connect.Response[ssoreadyv1.SignInResponse], error) {
+	slog.InfoContext(ctx, "sign_in", "google_credential", req.Msg.GoogleCredential, "email_verify_token", req.Msg.EmailVerifyToken)
+
 	if req.Msg.GoogleCredential != "" {
 		credRes, err := s.GoogleClient.ParseCredential(ctx, &google.ParseCredentialRequest{
 			Credential: req.Msg.GoogleCredential,
 		})
+		slog.InfoContext(ctx, "parse_credential", "res", credRes, "err", err)
 
 		if err != nil {
 			return nil, fmt.Errorf("google: parse credential: %w", err)
