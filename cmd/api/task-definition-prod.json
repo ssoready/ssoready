@@ -27,6 +27,14 @@
         {
           "name": "API_GLOBAL_DEFAULT_AUTH_URL",
           "value": "https://auth.ssoready.com"
+        },
+        {
+          "name": "API_EMAIL_CHALLENGE_FROM",
+          "value": "noreply@mail.ssoready.com"
+        },
+        {
+          "name": "API_EMAIL_VERIFICATION_ENDPOINT",
+          "value": "https://app.ssoready.com/verify-email"
         }
       ],
       "environmentFiles": [],
