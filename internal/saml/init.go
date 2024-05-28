@@ -22,7 +22,7 @@ func Init(req *InitRequest) *InitResponse {
 	var samlReq samlRequest
 	samlReq.ID = req.RequestID
 	samlReq.Version = "2.0"
-	samlReq.IssueInstant = req.Now.UTC()
+	samlReq.IssueInstant = req.Now.UTC().Truncate(time.Millisecond)
 	samlReq.Issuer.Name = req.SPEntityID
 	samlReqData, err := xml.Marshal(samlReq)
 
