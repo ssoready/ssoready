@@ -110,11 +110,16 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 		return nil, err
 	}
 
+	var authURL *string
+	if req.Environment.AuthUrl != "" {
+		authURL = &req.Environment.AuthUrl
+	}
+
 	qEnv, err := q.UpdateEnvironment(ctx, queries.UpdateEnvironmentParams{
 		ID:          id,
 		DisplayName: &req.Environment.DisplayName,
 		RedirectUrl: &req.Environment.RedirectUrl,
-		AuthUrl:     &req.Environment.AuthUrl,
+		AuthUrl:     authURL,
 	})
 	if err != nil {
 		return nil, err
