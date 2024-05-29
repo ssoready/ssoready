@@ -41,7 +41,7 @@ from saml_connections
 where saml_connections.id = $1;
 
 -- name: AuthCheckAssertionAlreadyProcessed :one
-select exists(select * from saml_flows where id = $1 and access_code is not null);
+select exists(select * from saml_flows where id = $1 and access_code_sha256 is not null);
 
 -- name: AuthGetSAMLConnectionDomains :many
 select organization_domains.domain
@@ -67,11 +67,11 @@ on conflict (id) do update set update_time      = excluded.update_time,
 returning *;
 
 -- name: UpsertSAMLFlowReceiveAssertion :one
-insert into saml_flows (id, saml_connection_id, access_code, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, access_code_sha256, expire_time, state, create_time, update_time,
                         assertion, receive_assertion_time, error_unsigned_assertion, error_bad_issuer,
                         error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-on conflict (id) do update set access_code                              = excluded.access_code,
+on conflict (id) do update set access_code_sha256                       = excluded.access_code_sha256,
                                update_time                              = excluded.update_time,
                                assertion                                = excluded.assertion,
                                receive_assertion_time                   = excluded.receive_assertion_time,
@@ -83,18 +83,13 @@ on conflict (id) do update set access_code                              = exclud
                                status                                   = excluded.status
 returning *;
 
--- name: UpdateSAMLFlowAppRedirectURL :one
-update saml_flows
-set app_redirect_url = $1
-where id = $2
-returning *;
-
 -- name: UpdateSAMLFlowRedeem :one
 update saml_flows
-set update_time     = $1,
-    redeem_time     = $2,
-    redeem_response = $3,
-    status          = $4
+set update_time        = $1,
+    redeem_time        = $2,
+    redeem_response    = $3,
+    status             = $4,
+    access_code_sha256 = null
 where id = $5
 returning *;
 
@@ -170,7 +165,7 @@ from saml_flows
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and environments.id = @environment_id
-  and saml_flows.access_code = $2;
+  and saml_flows.access_code_sha256 = $2;
 
 -- name: GetAppUserByEmail :one
 select *

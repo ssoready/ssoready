@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -124,12 +125,12 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad saml_access_code: %w", err))
 	}
 
-	samlAccessCodeUUID := uuid.UUID(samlAccessCode) // can't do &uuid.UUID(...) in one go, so break this out
+	samlAccessCodeSHA := sha256.Sum256(samlAccessCode[:])
 
 	samlAccessTokenData, err := q.GetSAMLAccessCodeData(ctx, queries.GetSAMLAccessCodeDataParams{
 		AppOrganizationID: apikeyauth.AppOrgID(ctx),
 		EnvironmentID:     apikeyauth.EnvID(ctx),
-		AccessCode:        &samlAccessCodeUUID,
+		AccessCodeSha256:  samlAccessCodeSHA[:],
 	})
 	if err != nil {
 		return nil, fmt.Errorf("get saml access code data: %w", err)

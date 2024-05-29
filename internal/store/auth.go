@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -206,17 +207,21 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	now := time.Now()
 
 	var accessCode *uuid.UUID
+	var accessCodeSHA []byte
 	status := queries.SamlFlowStatusFailed
 	if assertionOk {
 		id := uuid.New()
+		sha := sha256.Sum256(id[:])
+
 		accessCode = &id
+		accessCodeSHA = sha[:]
 		status = queries.SamlFlowStatusInProgress
 	}
 
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
 		ID:                                   samlFlowID,
 		SamlConnectionID:                     samlConnID,
-		AccessCode:                           accessCode,
+		AccessCodeSha256:                     accessCodeSHA,
 		ExpireTime:                           time.Now().Add(time.Hour),
 		State:                                "",
 		CreateTime:                           time.Now(),
@@ -256,33 +261,12 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	var token string
-	if qSAMLFlow.AccessCode != nil {
-		token = idformat.SAMLAccessCode.Format(*qSAMLFlow.AccessCode)
+	if accessCode != nil {
+		token = idformat.SAMLAccessCode.Format(*accessCode)
 	}
 
 	return &AuthUpsertSAMLLoginEventResponse{
 		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),
 		Token:      token,
 	}, nil
-}
-
-type AuthUpdateAppRedirectURLRequest struct {
-	SAMLFlowID     string
-	AppRedirectURL string
-}
-
-func (s *Store) AuthUpdateAppRedirectURL(ctx context.Context, req *AuthUpdateAppRedirectURLRequest) error {
-	samlFlowID, err := idformat.SAMLFlow.Parse(req.SAMLFlowID)
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.q.UpdateSAMLFlowAppRedirectURL(ctx, queries.UpdateSAMLFlowAppRedirectURLParams{
-		ID:             samlFlowID,
-		AppRedirectUrl: &req.AppRedirectURL,
-	}); err != nil {
-		return err
-	}
-
-	return nil
 }
