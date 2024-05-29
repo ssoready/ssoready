@@ -29,30 +29,6 @@ CREATE TYPE public.saml_flow_status AS ENUM (
 
 ALTER TYPE public.saml_flow_status OWNER TO postgres;
 
---
--- Name: river_job_notify(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.river_job_notify() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  payload json;
-BEGIN
-  IF NEW.state = 'available' THEN
-    -- Notify will coalesce duplicate notificiations within a transaction, so
-    -- keep these payloads generalized:
-    payload = json_build_object('queue', NEW.queue);
-    PERFORM
-      pg_notify('river_insert', payload::text);
-  END IF;
-  RETURN NULL;
-END;
-$$;
-
-
-ALTER FUNCTION public.river_job_notify() OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
