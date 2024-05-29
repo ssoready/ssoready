@@ -278,12 +278,5 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	redirectURL.RawQuery = redirectQuery.Encode()
 	redirect := redirectURL.String()
 
-	if err := s.Store.AuthUpdateAppRedirectURL(ctx, &store.AuthUpdateAppRedirectURLRequest{
-		SAMLFlowID:     createSAMLLoginRes.SAMLFlowID,
-		AppRedirectURL: redirect,
-	}); err != nil {
-		panic(err)
-	}
-
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }

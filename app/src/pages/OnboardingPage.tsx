@@ -80,6 +80,7 @@ export function OnboardingPage() {
         disclaimered={disclaimer}
         onClickDisclaimer={() => setDisclaimer(false)}
         onClickNext={() => setStep(1)}
+        apiKeySecretToken={apiKeySecretToken}
         setAPIKeySecretToken={setAPIKeySecretToken}
       />
       {step >= 1 && (
@@ -107,6 +108,7 @@ function DemoCard({
   disclaimered,
   onClickDisclaimer,
   onClickNext,
+  apiKeySecretToken,
   setAPIKeySecretToken,
 }: {
   done: boolean;
@@ -114,6 +116,7 @@ function DemoCard({
   disclaimered: boolean;
   onClickDisclaimer: () => void;
   onClickNext: () => void;
+  apiKeySecretToken: string;
   setAPIKeySecretToken: (_: string) => void;
 }) {
   const queryClient = useQueryClient();
@@ -196,6 +199,8 @@ function DemoCard({
     RedeemSAMLAccessCodeResponse | undefined
   >(undefined);
   useEffect(() => {
+    // later, we will skip on `done`, but later steps still depend on the api key created here
+    // this is all a bit of a hack, but since it's localized to just this onboarding flow we can live with it
     if (!samlAccessCode || !onboardingState) {
       return;
     }
@@ -207,16 +212,26 @@ function DemoCard({
         },
       });
 
+      setAPIKeySecretToken(apiKey.secretToken);
+    })();
+  }, [samlAccessCode, onboardingState, createAPIKeyMutation.mutateAsync, done]);
+
+  useEffect(() => {
+    // we skip if `done` to avoid redeeming tokens meant for a later step
+    if (!samlAccessCode || !apiKeySecretToken || done) {
+      return;
+    }
+
+    (async () => {
       const redeemResponse =
         await onboardingRedeeemSAMLAccessCodeMutation.mutateAsync({
           samlAccessCode,
-          apiKeySecretToken: apiKey.secretToken,
+          apiKeySecretToken,
         });
 
-      setAPIKeySecretToken(apiKey.secretToken);
       setRedeemResponse(redeemResponse);
     })();
-  }, [samlAccessCode, onboardingState, createAPIKeyMutation.mutateAsync]);
+  }, [samlAccessCode, apiKeySecretToken]);
 
   return (
     <Card className={clsx(done && "border-green-700")}>
@@ -415,8 +430,8 @@ function StartLoginCard({
   apiKeySecretToken: string;
 }) {
   const { data: onboardingState } = useQuery(getOnboardingState, {});
-  const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "saml_connection_id": "${onboardingState?.onboardingSamlConnectionId}" }'`;
-  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "saml_connection_id": "${onboardingState?.onboardingSamlConnectionId}" }'`;
+  const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "samlConnectionId": "${onboardingState?.onboardingSamlConnectionId}" }'`;
+  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "samlConnectionId": "${onboardingState?.onboardingSamlConnectionId}" }'`;
 
   const [redirectURL, setRedirectURL] = useState("");
   const getSAMLRedirectURLMutation = useMutation(onboardingGetSAMLRedirectURL);
@@ -543,14 +558,16 @@ function HandleLoginCard({
 }) {
   const [searchParams] = useSearchParams();
   const samlAccessCode = searchParams.get("saml_access_code");
-  const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "saml_access_code": "${samlAccessCode}" }'`;
-  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "saml_access_code": "${samlAccessCode}" }'`;
+  const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "samlAccessCode": "${samlAccessCode}" }'`;
+  const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "samlAccessCode": "${samlAccessCode}" }'`;
   const { data: onboardingState } = useQuery(getOnboardingState, {});
+
+  const [showExit, setShowExit] = useState(false);
 
   const [redeemData, setRedeemData] = useState<
     RedeemSAMLAccessCodeResponse | undefined
   >(undefined);
-  const onboardingRedeeemSAMLAccessCodeMutation = useMutation(
+  const onboardingRedeemSAMLAccessCodeMutation = useMutation(
     onboardingRedeemSAMLAccessCode,
   );
 
@@ -613,22 +630,36 @@ function HandleLoginCard({
               </div>
             </div>
 
-            <Button
-              disabled={!!redeemData}
-              className="mt-4"
-              onClick={async () => {
-                const redeemData =
-                  await onboardingRedeeemSAMLAccessCodeMutation.mutateAsync({
-                    apiKeySecretToken,
-                    samlAccessCode: samlAccessCode!,
-                  });
+            <div className="mt-4 flex gap-x-4 items-center">
+              <Button
+                disabled={!!redeemData}
+                onClick={async () => {
+                  const redeemData =
+                    await onboardingRedeemSAMLAccessCodeMutation.mutateAsync({
+                      apiKeySecretToken,
+                      samlAccessCode: samlAccessCode!,
+                    });
 
-                setRedeemData(redeemData);
-              }}
-            >
-              Redeem SAML Access Code
-              {!!redeemData && <CheckIcon className="ml-2 h-4 w-4" />}
-            </Button>
+                  setRedeemData(redeemData);
+                  setShowExit(true);
+                }}
+              >
+                Redeem SAML Access Code
+                {!!redeemData && <CheckIcon className="ml-2 h-4 w-4" />}
+              </Button>
+
+              <span className="text-sm text-muted-foreground">
+                If you redeemed the SAML access token yourself in a terminal,
+                then click{" "}
+                <span
+                  className="text-foreground cursor-pointer"
+                  onClick={() => setShowExit(true)}
+                >
+                  here
+                </span>{" "}
+                instead.
+              </span>
+            </div>
 
             {redeemData !== undefined && (
               <>
@@ -663,16 +694,30 @@ function HandleLoginCard({
                   </code>
                   . That's all there is to it!
                 </p>
-
-                <div className="mt-4 flex justify-end gap-x-2">
-                  <Button variant="secondary" asChild>
-                    <Link to="/">Exit this onboarding flow</Link>
-                  </Button>
-                  <Button asChild>
-                    <a href="https://ssoready.com/docs">Check out the docs</a>
-                  </Button>
-                </div>
               </>
+            )}
+
+            {showExit && !redeemData && (
+              <p className="mt-4 text-sm">
+                In your terminal output, you saw a JSON object with an{" "}
+                <code className="rounded bg-black text-white px-1 py-0.5">
+                  email
+                </code>
+                . That's the user who just logged in. From here, it's your job
+                to create a session for the user with that email. That's all
+                there is to it!
+              </p>
+            )}
+
+            {showExit && (
+              <div className="mt-4 flex justify-end gap-x-2">
+                <Button variant="secondary" asChild>
+                  <Link to="/">Exit this onboarding flow</Link>
+                </Button>
+                <Button asChild>
+                  <a href="https://ssoready.com/docs">Check out the docs</a>
+                </Button>
+              </div>
             )}
           </CardContent>
         )}

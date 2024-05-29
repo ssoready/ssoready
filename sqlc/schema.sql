@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.3 (Debian 15.3-1.pgdg120+1)
--- Dumped by pg_dump version 16.0
+-- Dumped by pg_dump version 16.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -203,7 +203,8 @@ CREATE TABLE public.saml_flows (
     error_bad_subject_id character varying,
     error_email_outside_organization_domains character varying,
     status public.saml_flow_status NOT NULL,
-    error_unsigned_assertion boolean DEFAULT false NOT NULL
+    error_unsigned_assertion boolean DEFAULT false NOT NULL,
+    access_code_sha256 bytea
 );
 
 
@@ -347,6 +348,14 @@ ALTER TABLE ONLY public.saml_connections
 
 ALTER TABLE ONLY public.saml_flows
     ADD CONSTRAINT saml_flows_access_code_key UNIQUE (access_code);
+
+
+--
+-- Name: saml_flows saml_flows_access_code_sha256_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_flows
+    ADD CONSTRAINT saml_flows_access_code_sha256_key UNIQUE (access_code_sha256);
 
 
 --

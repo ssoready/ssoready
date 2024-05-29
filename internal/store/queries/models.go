@@ -152,6 +152,7 @@ type SamlFlow struct {
 	ErrorEmailOutsideOrganizationDomains *string
 	Status                               SamlFlowStatus
 	ErrorUnsignedAssertion               bool
+	AccessCodeSha256                     []byte
 }
 
 type SchemaMigration struct {

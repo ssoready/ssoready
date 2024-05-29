@@ -301,10 +301,6 @@ export function ViewSAMLFlowPage() {
                     />
                   </code>
                 </div>
-
-                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
-                  {samlFlow.appRedirectUrl}
-                </div>
               </div>
             </Card>
           )}
