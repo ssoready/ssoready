@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/resend/resend-go/v2"
+	"github.com/segmentio/analytics-go/v3"
+	"github.com/ssoready/ssoready/internal/appanalytics"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/store"
@@ -14,6 +17,8 @@ import (
 )
 
 func (s *Service) VerifyEmail(ctx context.Context, req *connect.Request[ssoreadyv1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error) {
+	slog.InfoContext(ctx, "verify_email", "email", req.Msg.Email)
+
 	challengeRes, err := s.Store.CreateEmailVerificationChallenge(ctx, &store.CreateEmailVerificationChallengeRequest{
 		Email: req.Msg.Email,
 	})
@@ -56,6 +61,31 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 			return nil, fmt.Errorf("store: %w", err)
 		}
 
+		sessionRes, err := s.Store.GetAppSession(ctx, &store.GetAppSessionRequest{
+			SessionToken: createSessionRes.SessionToken,
+			Now:          time.Now(),
+		})
+		if err != nil {
+			return nil, fmt.Errorf("store: %w", err)
+		}
+
+		if err := appanalytics.FromContext(ctx).Enqueue(analytics.Group{
+			UserId:  sessionRes.AppUserID,
+			GroupId: sessionRes.AppOrganizationID.String(),
+		}); err != nil {
+			return nil, err
+		}
+
+		if err := appanalytics.FromContext(ctx).Enqueue(analytics.Track{
+			Event:  "User Signed In",
+			UserId: sessionRes.AppUserID,
+			Properties: analytics.Properties{
+				"method": "google",
+			},
+		}); err != nil {
+			return nil, err
+		}
+
 		return connect.NewResponse(&ssoreadyv1.SignInResponse{
 			SessionToken: createSessionRes.SessionToken,
 		}), nil
@@ -66,6 +96,31 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 	})
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	sessionRes, err := s.Store.GetAppSession(ctx, &store.GetAppSessionRequest{
+		SessionToken: verifyRes.SessionToken,
+		Now:          time.Now(),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	if err := appanalytics.FromContext(ctx).Enqueue(analytics.Group{
+		UserId:  sessionRes.AppUserID,
+		GroupId: sessionRes.AppOrganizationID.String(),
+	}); err != nil {
+		return nil, err
+	}
+
+	if err := appanalytics.FromContext(ctx).Enqueue(analytics.Track{
+		Event:  "User Signed In",
+		UserId: sessionRes.AppUserID,
+		Properties: analytics.Properties{
+			"method": "email",
+		},
+	}); err != nil {
+		return nil, err
 	}
 
 	return connect.NewResponse(&ssoreadyv1.SignInResponse{

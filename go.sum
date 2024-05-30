@@ -78,6 +78,10 @@ github.com/rogpeppe/go-internal v1.8.0 h1:FCbCCtXNOY3UtUuHUYaghJg4y7Fd14rXifAYUA
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=
 github.com/rs/cors v1.11.0 h1:0B9GE/r9Bc2UxRMMtymBkHTenPkHDv0CW4Y98GBY+po=
 github.com/rs/cors v1.11.0/go.mod h1:XyqrcTp5zjWr1wsJ8PIRZssZ8b/WMcMf71DJnit4EMU=
+github.com/segmentio/analytics-go/v3 v3.3.0 h1:8VOMaVGBW03pdBrj1CMFfY9o/rnjJC+1wyQHlVxjw5o=
+github.com/segmentio/analytics-go/v3 v3.3.0/go.mod h1:p8owAF8X+5o27jmvUognuXxdtqvSGtD0ZrfY2kcS9bE=
+github.com/segmentio/backo-go v1.0.0 h1:kbOAtGJY2DqOR0jfRkYEorx/b18RgtepGtY3+Cpe6qA=
+github.com/segmentio/backo-go v1.0.0/go.mod h1:kJ9mm9YmoWSkk+oQ+5Cj8DEoRCX2JT6As4kEtIIOp1M=
 github.com/ssoready/conf v0.0.0-20240508183332-dbc356674c9e h1:HGv623enEZ6punSNtGN6b3OeBwVBMpMnYie2xk9HlnE=
 github.com/ssoready/conf v0.0.0-20240508183332-dbc356674c9e/go.mod h1:oOONPDIKXlG7GzuEei63WLmLAgmeyNTxQgo44sybMrQ=
 github.com/ssoready/prettyuuid v0.0.0-20240423172315-97d04d6848dd h1:biiF7e4C6B210/GFoNXkEDTiYHJwpzEXWKsIJf/ZDa8=
