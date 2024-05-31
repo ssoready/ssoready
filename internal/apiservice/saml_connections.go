@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"connectrpc.com/connect"
+	"github.com/segmentio/analytics-go/v3"
+	"github.com/ssoready/ssoready/internal/appanalytics"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 )
 
@@ -32,6 +34,13 @@ func (s *Service) CreateSAMLConnection(ctx context.Context, req *connect.Request
 		return nil, fmt.Errorf("store: %w", err)
 	}
 
+	if err := appanalytics.Track(ctx, "SAML Connection Created", analytics.Properties{
+		"organization_id":    res.OrganizationId,
+		"saml_connection_id": res.Id,
+	}); err != nil {
+		return nil, err
+	}
+
 	return connect.NewResponse(res), nil
 }
 
@@ -39,6 +48,13 @@ func (s *Service) UpdateSAMLConnection(ctx context.Context, req *connect.Request
 	res, err := s.Store.UpdateSAMLConnection(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	if err := appanalytics.Track(ctx, "SAML Connection Updated", analytics.Properties{
+		"organization_id":    res.OrganizationId,
+		"saml_connection_id": res.Id,
+	}); err != nil {
+		return nil, err
 	}
 
 	return connect.NewResponse(res), nil

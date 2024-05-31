@@ -13,8 +13,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/resend/resend-go/v2"
 	"github.com/rs/cors"
+	"github.com/segmentio/analytics-go/v3"
 	"github.com/ssoready/conf"
 	"github.com/ssoready/ssoready/internal/apiservice"
+	"github.com/ssoready/ssoready/internal/appanalytics"
 	"github.com/ssoready/ssoready/internal/appauth/appauthinterceptor"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
@@ -35,6 +37,7 @@ func main() {
 		ResendAPIKey              string `conf:"resend-api-key"`
 		EmailChallengeFrom        string `conf:"email-challenge-from,noredact"`
 		EmailVerificationEndpoint string `conf:"email-verification-endpoint,noredact"`
+		SegmentWriteKey           string `conf:"segment-write-key"`
 	}{
 		ServeAddr:                 "localhost:8081",
 		DB:                        "postgres://postgres:password@localhost/postgres",
@@ -68,6 +71,11 @@ func main() {
 		SAMLStateSigningKey:  samlStateSigningKey,
 	})
 
+	var analyticsClient analytics.Client = appanalytics.NoopClient{}
+	if config.SegmentWriteKey != "" {
+		analyticsClient = analytics.New(config.SegmentWriteKey)
+	}
+
 	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
 		&apiservice.Service{
 			Store: store_,
@@ -80,7 +88,10 @@ func main() {
 			EmailVerificationEndpoint: config.EmailVerificationEndpoint,
 			SAMLMetadataHTTPClient:    http.DefaultClient,
 		},
-		connect.WithInterceptors(appauthinterceptor.New(store_)),
+		connect.WithInterceptors(
+			appauthinterceptor.New(store_),
+			appanalytics.NewInterceptor(analyticsClient),
+		),
 	)
 
 	service := vanguard.NewService(connectPath, connectHandler)
