@@ -32,6 +32,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@react-oauth/google": "^0.12.1",
+    "@sentry/react": "^8.7.0",
     "@tailwindcss/forms": "^0.5.7",
     "@tanstack/react-query": "^5.32.0",
     "@types/node": "^20.12.7",
