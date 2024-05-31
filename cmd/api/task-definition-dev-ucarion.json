@@ -43,7 +43,7 @@
         {
           "name": "API_EMAIL_VERIFICATION_ENDPOINT",
           "value": "https://app.dev-ucarion.ssoready-nonprod.com/verify-email"
-        }
+        },
       ],
       "environmentFiles": [],
       "mountPoints": [],
