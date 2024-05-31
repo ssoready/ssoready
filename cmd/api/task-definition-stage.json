@@ -27,6 +27,14 @@
         {
           "name": "API_GLOBAL_DEFAULT_AUTH_URL",
           "value": "https://auth.stage.ssoready-nonprod.com"
+        },
+        {
+          "name": "API_EMAIL_CHALLENGE_FROM",
+          "value": "noreply-stage@mail.ssoready.com"
+        },
+        {
+          "name": "API_EMAIL_VERIFICATION_ENDPOINT",
+          "value": "https://app.stage.ssoready-nonprod.com/verify-email"
         }
       ],
       "environmentFiles": [],

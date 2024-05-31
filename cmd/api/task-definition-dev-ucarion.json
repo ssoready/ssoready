@@ -27,6 +27,14 @@
         {
           "name": "API_GLOBAL_DEFAULT_AUTH_URL",
           "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
+        },
+        {
+          "name": "API_EMAIL_CHALLENGE_FROM",
+          "value": "noreply-dev-ucarion@mail.ssoready.com"
+        },
+        {
+          "name": "API_EMAIL_VERIFICATION_ENDPOINT",
+          "value": "https://app.dev-ucarion.ssoready-nonprod.com/verify-email"
         }
       ],
       "environmentFiles": [],
