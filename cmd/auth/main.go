@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ssoready/conf"
@@ -21,6 +23,8 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
 
 	config := struct {
+		SentryDSN            string `conf:"sentry-dsn,noredact"`
+		SentryEnvironment    string `conf:"sentry-environment,noredact"`
 		ServeAddr            string `conf:"serve-addr,noredact"`
 		DB                   string `conf:"db"`
 		GlobalDefaultAuthURL string `conf:"global-default-auth-url,noredact"`
@@ -34,6 +38,14 @@ func main() {
 
 	conf.Load(&config)
 	slog.Info("config", "config", conf.Redact(config))
+
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.SentryDSN,
+		Environment:      config.SentryEnvironment,
+		TracesSampleRate: 1.0,
+	}); err != nil {
+		panic(err)
+	}
 
 	db, err := pgxpool.New(context.Background(), config.DB)
 	if err != nil {
@@ -68,8 +80,13 @@ func main() {
 
 	r.PathPrefix("/").Handler(service.NewHandler())
 
+	sentryHandler := sentryhttp.New(sentryhttp.Options{
+		Repanic: true,
+	})
+	sentryMux := sentryHandler.Handle(r)
+
 	slog.Info("serve")
-	if err := http.ListenAndServe(config.ServeAddr, r); err != nil {
+	if err := http.ListenAndServe(config.ServeAddr, sentryMux); err != nil {
 		panic(err)
 	}
 }
