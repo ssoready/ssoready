@@ -194,15 +194,15 @@ values ($1, $2, $3, $4)
 returning *;
 
 -- name: CreateAppSession :one
-insert into app_sessions (id, app_user_id, create_time, expire_time, token)
-values ($1, $2, $3, $4, $5)
+insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256)
+values ($1, $2, $3, $4, '', $5)
 returning *;
 
--- name: GetAppSessionByToken :one
+-- name: GetAppSessionByTokenSHA256 :one
 select app_sessions.app_user_id, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
-where token = $1
+where token_sha256 = $1
   and expire_time > $2;
 
 -- name: ListEnvironments :many
