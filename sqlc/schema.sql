@@ -40,7 +40,8 @@ SET default_table_access_method = heap;
 CREATE TABLE public.api_keys (
     id uuid NOT NULL,
     secret_value character varying NOT NULL,
-    environment_id uuid NOT NULL
+    environment_id uuid NOT NULL,
+    secret_value_sha256 bytea
 );
 
 
@@ -232,6 +233,14 @@ ALTER TABLE ONLY public.api_keys
 
 
 --
+-- Name: api_keys api_keys_secret_value_sha256_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.api_keys
+    ADD CONSTRAINT api_keys_secret_value_sha256_key UNIQUE (secret_value_sha256);
+
+
+--
 -- Name: app_organizations app_organizations_google_hosted_domain_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -261,14 +270,6 @@ ALTER TABLE ONLY public.app_organizations
 
 ALTER TABLE ONLY public.app_sessions
     ADD CONSTRAINT app_sessions_pkey PRIMARY KEY (id);
-
-
---
--- Name: app_sessions app_sessions_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.app_sessions
-    ADD CONSTRAINT app_sessions_token_key UNIQUE (token);
 
 
 --

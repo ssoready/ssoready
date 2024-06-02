@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -23,7 +24,14 @@ type GetAPIKeyBySecretTokenResponse struct {
 }
 
 func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecretTokenRequest) (*GetAPIKeyBySecretTokenResponse, error) {
-	apiKey, err := s.q.GetAPIKeyBySecretValue(ctx, req.Token)
+	secretValue, err := idformat.APISecretKey.Parse(req.Token)
+	if err != nil {
+		return nil, fmt.Errorf("parse api secret key: %w", err)
+	}
+
+	secretValueSHA := sha256.Sum256(secretValue[:])
+
+	apiKey, err := s.q.GetAPIKeyBySecretValueSHA256(ctx, secretValueSHA[:])
 	if err != nil {
 		return nil, fmt.Errorf("get api key by secret value: %w", err)
 	}
@@ -131,10 +139,13 @@ func (s *Store) CreateAPIKey(ctx context.Context, req *ssoreadyv1.CreateAPIKeyRe
 		return nil, err
 	}
 
+	secretValue := uuid.New()
+	secretValueSHA := sha256.Sum256(secretValue[:])
+
 	qAPIKey, err := q.CreateAPIKey(ctx, queries.CreateAPIKeyParams{
-		EnvironmentID: envID,
-		ID:            uuid.New(),
-		SecretValue:   idformat.APISecretKey.Format(uuid.New()),
+		EnvironmentID:     envID,
+		ID:                uuid.New(),
+		SecretValueSha256: secretValueSHA[:],
 	})
 	if err != nil {
 		return nil, err
@@ -145,7 +156,7 @@ func (s *Store) CreateAPIKey(ctx context.Context, req *ssoreadyv1.CreateAPIKeyRe
 	}
 
 	apiKey := parseAPIKey(qAPIKey)
-	apiKey.SecretToken = qAPIKey.SecretValue
+	apiKey.SecretToken = idformat.APISecretKey.Format(secretValue)
 	return apiKey, nil
 }
 

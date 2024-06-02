@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 
@@ -62,7 +63,14 @@ func (s *Store) UpdateOnboardingState(ctx context.Context, req *ssoreadyv1.Updat
 }
 
 func (s *Store) OnboardingGetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.OnboardingGetSAMLRedirectURLRequest) (*ssoreadyv1.GetSAMLRedirectURLResponse, error) {
-	apiKey, err := s.q.GetAPIKeyBySecretValue(ctx, req.ApiKeySecretToken)
+	secretValue, err := idformat.APISecretKey.Parse(req.ApiKeySecretToken)
+	if err != nil {
+		return nil, fmt.Errorf("parse api secret key: %w", err)
+	}
+
+	secretValueSHA := sha256.Sum256(secretValue[:])
+
+	apiKey, err := s.q.GetAPIKeyBySecretValueSHA256(ctx, secretValueSHA[:])
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +90,14 @@ func (s *Store) OnboardingGetSAMLRedirectURL(ctx context.Context, req *ssoreadyv
 }
 
 func (s *Store) OnboardingRedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.OnboardingRedeemSAMLAccessCodeRequest) (*ssoreadyv1.RedeemSAMLAccessCodeResponse, error) {
-	apiKey, err := s.q.GetAPIKeyBySecretValue(ctx, req.ApiKeySecretToken)
+	secretValue, err := idformat.APISecretKey.Parse(req.ApiKeySecretToken)
+	if err != nil {
+		return nil, fmt.Errorf("parse api secret key: %w", err)
+	}
+
+	secretValueSHA := sha256.Sum256(secretValue[:])
+
+	apiKey, err := s.q.GetAPIKeyBySecretValueSHA256(ctx, secretValueSHA[:])
 	if err != nil {
 		return nil, err
 	}

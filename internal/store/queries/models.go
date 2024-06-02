@@ -56,9 +56,10 @@ func (ns NullSamlFlowStatus) Value() (driver.Value, error) {
 }
 
 type ApiKey struct {
-	ID            uuid.UUID
-	SecretValue   string
-	EnvironmentID uuid.UUID
+	ID                uuid.UUID
+	SecretValue       string
+	EnvironmentID     uuid.UUID
+	SecretValueSha256 []byte
 }
 
 type AppOrganization struct {
