@@ -43,7 +43,7 @@
         {
           "name": "API_EMAIL_VERIFICATION_ENDPOINT",
           "value": "https://dev-ucarion--ssoready.netlify.app//verify-email"
-        },
+        }
       ],
       "environmentFiles": [],
       "mountPoints": [],
