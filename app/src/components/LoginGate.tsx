@@ -3,6 +3,7 @@ import { whoami } from "../gen/ssoready/v1/ssoready-SSOReadyService_connectquery
 import { ReactNode, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import React from "react";
+import * as Sentry from "@sentry/react";
 
 export function LoginGate() {
   const { data, error } = useQuery(
@@ -18,7 +19,15 @@ export function LoginGate() {
     if (error) {
       navigate("/login");
     }
-  }, [error, navigate]);
+
+    if (data) {
+      Sentry.setUser({
+        id: data.appUserId,
+        email: data.email,
+        username: data.displayName,
+      });
+    }
+  }, [data, error, navigate]);
 
   return data ? <Outlet /> : <></>;
 }

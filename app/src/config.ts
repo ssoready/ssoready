@@ -1,3 +1,5 @@
+export const SENTRY_DSN = process.env.APP_SENTRY_DSN!;
+export const SENTRY_ENVIRONMENT = process.env.APP_SENTRY_ENVIRONMENT!;
 export const API_URL = process.env.APP_API_URL!;
 export const APP_URL = process.env.APP_APP_URL;
 export const PUBLIC_API_URL = process.env.APP_PUBLIC_API_URL!;
