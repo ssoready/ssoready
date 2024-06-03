@@ -38,7 +38,15 @@ export function EnvironmentSwitcher() {
         >
           <span className="flex items-center gap-2">
             <Box className="h-4 w-4" />
-            <span className="font-medium">{currentEnv?.displayName}</span>
+            <span className="font-medium">
+              {currentEnv ? (
+                currentEnv.displayName
+              ) : (
+                <span className="font-normal text-gray-500">
+                  No environment selected
+                </span>
+              )}
+            </span>
           </span>
           <ChevronDown className="h-4 w-4" />
         </Button>

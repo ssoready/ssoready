@@ -18,13 +18,15 @@ export function Page() {
           <EnvironmentSwitcher />
 
           <div className="m-2">
-            <Link
-              to={`/environments/${environmentId}`}
-              className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
-            >
-              <LayoutGrid className="h-4 w-4" />
-              <span>Overview</span>
-            </Link>
+            {environmentId && (
+              <Link
+                to={`/environments/${environmentId}`}
+                className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                <span>Overview</span>
+              </Link>
+            )}
           </div>
         </div>
 
