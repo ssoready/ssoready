@@ -42,7 +42,7 @@
         },
         {
           "name": "API_EMAIL_VERIFICATION_ENDPOINT",
-          "value": "https://app.stage.ssoready-nonprod.com/verify-email"
+          "value": "https://stage--ssoready.netlify.app/verify-email"
         }
       ],
       "environmentFiles": [],

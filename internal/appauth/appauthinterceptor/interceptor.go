@@ -13,7 +13,7 @@ import (
 )
 
 var skipRPCs = []string{
-	"/ssoready.v1.SSOReadyService/EmailVerify",
+	"/ssoready.v1.SSOReadyService/VerifyEmail",
 	"/ssoready.v1.SSOReadyService/SignIn",
 }
 
