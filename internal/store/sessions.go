@@ -216,16 +216,16 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 	if _, err := rand.Read(tokenBytes[:]); err != nil {
 		return nil, err
 	}
+	tokenHex := hex.EncodeToString(tokenBytes[:])
 	tokenSHA := sha256.Sum256(tokenBytes[:])
 
-	appSession, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
+	if _, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
 		ID:          uuid.New(),
 		AppUserID:   appUser.ID,
 		CreateTime:  time.Now(),
 		ExpireTime:  time.Now().Add(time.Hour * 24 * 7),
 		TokenSha256: tokenSHA[:],
-	})
-	if err != nil {
+	}); err != nil {
 		return nil, err
 	}
 
@@ -233,7 +233,7 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 		return nil, err
 	}
 
-	return &VerifyEmailResponse{SessionToken: appSession.Token}, nil
+	return &VerifyEmailResponse{SessionToken: tokenHex}, nil
 }
 
 func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queries, email string) (*queries.AppUser, error) {

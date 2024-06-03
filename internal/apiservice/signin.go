@@ -95,7 +95,7 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 		Token: req.Msg.EmailVerifyToken,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("store: %w", err)
+		return nil, fmt.Errorf("store: verify email: %w", err)
 	}
 
 	sessionRes, err := s.Store.GetAppSession(ctx, &store.GetAppSessionRequest{
@@ -103,7 +103,7 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 		Now:          time.Now(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("store: %w", err)
+		return nil, fmt.Errorf("store: get app session: %w", err)
 	}
 
 	if err := appanalytics.FromContext(ctx).Enqueue(analytics.Group{
