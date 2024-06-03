@@ -67,11 +67,12 @@ type AppOrganization struct {
 }
 
 type AppSession struct {
-	ID         uuid.UUID
-	AppUserID  uuid.UUID
-	CreateTime time.Time
-	ExpireTime time.Time
-	Token      string
+	ID          uuid.UUID
+	AppUserID   uuid.UUID
+	CreateTime  time.Time
+	ExpireTime  time.Time
+	Token       string
+	TokenSha256 []byte
 }
 
 type AppUser struct {
@@ -98,10 +99,10 @@ type Environment struct {
 
 type OnboardingState struct {
 	AppOrganizationID          uuid.UUID
+	DummyidpAppID              string
 	OnboardingEnvironmentID    uuid.UUID
 	OnboardingOrganizationID   uuid.UUID
 	OnboardingSamlConnectionID uuid.UUID
-	DummyidpAppID              string
 }
 
 type Organization struct {

@@ -3,8 +3,10 @@ package store
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,9 +26,15 @@ type GetAppSessionResponse struct {
 }
 
 func (s *Store) GetAppSession(ctx context.Context, req *GetAppSessionRequest) (*GetAppSessionResponse, error) {
-	appSession, err := s.q.GetAppSessionByToken(ctx, queries.GetAppSessionByTokenParams{
-		Token:      req.SessionToken,
-		ExpireTime: req.Now,
+	token, err := hex.DecodeString(req.SessionToken)
+	if err != nil {
+		return nil, fmt.Errorf("parse session token: %w", err)
+	}
+
+	sha := sha256.Sum256(token)
+	appSession, err := s.q.GetAppSessionByTokenSHA256(ctx, queries.GetAppSessionByTokenSHA256Params{
+		TokenSha256: sha[:],
+		ExpireTime:  req.Now,
 	})
 	if err != nil {
 		return nil, err
@@ -60,21 +68,21 @@ func (s *Store) CreateGoogleSession(ctx context.Context, req *CreateGoogleSessio
 		return nil, err
 	}
 
-	// generate token as 32-byte random string, hex-encoded
+	// generate token as 32-byte random string
 	var tokenBytes [32]byte
 	if _, err := rand.Read(tokenBytes[:]); err != nil {
 		return nil, err
 	}
-	token := hex.EncodeToString(tokenBytes[:])
+	tokenHex := hex.EncodeToString(tokenBytes[:])
+	tokenSHA := sha256.Sum256(tokenBytes[:])
 
-	appSession, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
-		ID:         uuid.New(),
-		AppUserID:  appUser.ID,
-		CreateTime: time.Now(),
-		ExpireTime: time.Now().Add(time.Hour * 24 * 7),
-		Token:      token,
-	})
-	if err != nil {
+	if _, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
+		ID:          uuid.New(),
+		AppUserID:   appUser.ID,
+		CreateTime:  time.Now(),
+		ExpireTime:  time.Now().Add(time.Hour * 24 * 7),
+		TokenSha256: tokenSHA[:],
+	}); err != nil {
 		return nil, err
 	}
 
@@ -82,7 +90,7 @@ func (s *Store) CreateGoogleSession(ctx context.Context, req *CreateGoogleSessio
 		return nil, err
 	}
 
-	return &CreateGoogleSessionResponse{SessionToken: appSession.Token}, nil
+	return &CreateGoogleSessionResponse{SessionToken: tokenHex}, nil
 }
 
 func (s *Store) upsertGoogleAppUser(ctx context.Context, q *queries.Queries, req *CreateGoogleSessionRequest) (*queries.AppUser, error) {
@@ -203,21 +211,21 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 		return nil, err
 	}
 
-	// generate token as 32-byte random string, hex-encoded
+	// generate token as 32-byte random string
 	var tokenBytes [32]byte
 	if _, err := rand.Read(tokenBytes[:]); err != nil {
 		return nil, err
 	}
-	token := hex.EncodeToString(tokenBytes[:])
+	tokenHex := hex.EncodeToString(tokenBytes[:])
+	tokenSHA := sha256.Sum256(tokenBytes[:])
 
-	appSession, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
-		ID:         uuid.New(),
-		AppUserID:  appUser.ID,
-		CreateTime: time.Now(),
-		ExpireTime: time.Now().Add(time.Hour * 24 * 7),
-		Token:      token,
-	})
-	if err != nil {
+	if _, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
+		ID:          uuid.New(),
+		AppUserID:   appUser.ID,
+		CreateTime:  time.Now(),
+		ExpireTime:  time.Now().Add(time.Hour * 24 * 7),
+		TokenSha256: tokenSHA[:],
+	}); err != nil {
 		return nil, err
 	}
 
@@ -225,7 +233,7 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 		return nil, err
 	}
 
-	return &VerifyEmailResponse{SessionToken: appSession.Token}, nil
+	return &VerifyEmailResponse{SessionToken: tokenHex}, nil
 }
 
 func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queries, email string) (*queries.AppUser, error) {

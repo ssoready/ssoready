@@ -176,17 +176,17 @@ func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrgani
 }
 
 const createAppSession = `-- name: CreateAppSession :one
-insert into app_sessions (id, app_user_id, create_time, expire_time, token)
-values ($1, $2, $3, $4, $5)
-returning id, app_user_id, create_time, expire_time, token
+insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256)
+values ($1, $2, $3, $4, '', $5)
+returning id, app_user_id, create_time, expire_time, token, token_sha256
 `
 
 type CreateAppSessionParams struct {
-	ID         uuid.UUID
-	AppUserID  uuid.UUID
-	CreateTime time.Time
-	ExpireTime time.Time
-	Token      string
+	ID          uuid.UUID
+	AppUserID   uuid.UUID
+	CreateTime  time.Time
+	ExpireTime  time.Time
+	TokenSha256 []byte
 }
 
 func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionParams) (AppSession, error) {
@@ -195,7 +195,7 @@ func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionPara
 		arg.AppUserID,
 		arg.CreateTime,
 		arg.ExpireTime,
-		arg.Token,
+		arg.TokenSha256,
 	)
 	var i AppSession
 	err := row.Scan(
@@ -204,6 +204,7 @@ func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionPara
 		&i.CreateTime,
 		&i.ExpireTime,
 		&i.Token,
+		&i.TokenSha256,
 	)
 	return i, err
 }
@@ -526,27 +527,27 @@ func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, go
 	return i, err
 }
 
-const getAppSessionByToken = `-- name: GetAppSessionByToken :one
+const getAppSessionByTokenSHA256 = `-- name: GetAppSessionByTokenSHA256 :one
 select app_sessions.app_user_id, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
-where token = $1
+where token_sha256 = $1
   and expire_time > $2
 `
 
-type GetAppSessionByTokenParams struct {
-	Token      string
-	ExpireTime time.Time
+type GetAppSessionByTokenSHA256Params struct {
+	TokenSha256 []byte
+	ExpireTime  time.Time
 }
 
-type GetAppSessionByTokenRow struct {
+type GetAppSessionByTokenSHA256Row struct {
 	AppUserID         uuid.UUID
 	AppOrganizationID uuid.UUID
 }
 
-func (q *Queries) GetAppSessionByToken(ctx context.Context, arg GetAppSessionByTokenParams) (GetAppSessionByTokenRow, error) {
-	row := q.db.QueryRow(ctx, getAppSessionByToken, arg.Token, arg.ExpireTime)
-	var i GetAppSessionByTokenRow
+func (q *Queries) GetAppSessionByTokenSHA256(ctx context.Context, arg GetAppSessionByTokenSHA256Params) (GetAppSessionByTokenSHA256Row, error) {
+	row := q.db.QueryRow(ctx, getAppSessionByTokenSHA256, arg.TokenSha256, arg.ExpireTime)
+	var i GetAppSessionByTokenSHA256Row
 	err := row.Scan(&i.AppUserID, &i.AppOrganizationID)
 	return i, err
 }
@@ -662,7 +663,7 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 }
 
 const getOnboardingState = `-- name: GetOnboardingState :one
-select app_organization_id, onboarding_environment_id, onboarding_organization_id, onboarding_saml_connection_id, dummyidp_app_id
+select app_organization_id, dummyidp_app_id, onboarding_environment_id, onboarding_organization_id, onboarding_saml_connection_id
 from onboarding_states
 where app_organization_id = $1
 `
@@ -672,10 +673,10 @@ func (q *Queries) GetOnboardingState(ctx context.Context, appOrganizationID uuid
 	var i OnboardingState
 	err := row.Scan(
 		&i.AppOrganizationID,
+		&i.DummyidpAppID,
 		&i.OnboardingEnvironmentID,
 		&i.OnboardingOrganizationID,
 		&i.OnboardingSamlConnectionID,
-		&i.DummyidpAppID,
 	)
 	return i, err
 }
@@ -1276,7 +1277,7 @@ on conflict (app_organization_id) do update set dummyidp_app_id               = 
                                                 onboarding_environment_id     = excluded.onboarding_environment_id,
                                                 onboarding_organization_id    = excluded.onboarding_organization_id,
                                                 onboarding_saml_connection_id = excluded.onboarding_saml_connection_id
-returning app_organization_id, onboarding_environment_id, onboarding_organization_id, onboarding_saml_connection_id, dummyidp_app_id
+returning app_organization_id, dummyidp_app_id, onboarding_environment_id, onboarding_organization_id, onboarding_saml_connection_id
 `
 
 type UpdateOnboardingStateParams struct {
@@ -1298,10 +1299,10 @@ func (q *Queries) UpdateOnboardingState(ctx context.Context, arg UpdateOnboardin
 	var i OnboardingState
 	err := row.Scan(
 		&i.AppOrganizationID,
+		&i.DummyidpAppID,
 		&i.OnboardingEnvironmentID,
 		&i.OnboardingOrganizationID,
 		&i.OnboardingSamlConnectionID,
-		&i.DummyidpAppID,
 	)
 	return i, err
 }

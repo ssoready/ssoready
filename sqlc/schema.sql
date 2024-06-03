@@ -67,7 +67,8 @@ CREATE TABLE public.app_sessions (
     app_user_id uuid NOT NULL,
     create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL,
-    token character varying NOT NULL
+    token character varying NOT NULL,
+    token_sha256 bytea
 );
 
 
@@ -122,10 +123,10 @@ ALTER TABLE public.environments OWNER TO postgres;
 
 CREATE TABLE public.onboarding_states (
     app_organization_id uuid NOT NULL,
+    dummyidp_app_id character varying NOT NULL,
     onboarding_environment_id uuid NOT NULL,
     onboarding_organization_id uuid NOT NULL,
-    onboarding_saml_connection_id uuid NOT NULL,
-    dummyidp_app_id character varying NOT NULL
+    onboarding_saml_connection_id uuid NOT NULL
 );
 
 
@@ -268,6 +269,14 @@ ALTER TABLE ONLY public.app_sessions
 
 ALTER TABLE ONLY public.app_sessions
     ADD CONSTRAINT app_sessions_token_key UNIQUE (token);
+
+
+--
+-- Name: app_sessions app_sessions_token_sha256_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_sessions
+    ADD CONSTRAINT app_sessions_token_sha256_key UNIQUE (token_sha256);
 
 
 --
