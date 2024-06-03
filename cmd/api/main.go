@@ -10,6 +10,8 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/vanguard"
+	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/resend/resend-go/v2"
 	"github.com/rs/cors"
@@ -21,6 +23,7 @@ import (
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/pagetoken"
+	"github.com/ssoready/ssoready/internal/sentryinterceptor"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
@@ -28,6 +31,8 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
 
 	config := struct {
+		SentryDSN                 string `conf:"sentry-dsn,noredact"`
+		SentryEnvironment         string `conf:"sentry-environment,noredact"`
 		ServeAddr                 string `conf:"serve-addr,noredact"`
 		DB                        string `conf:"db"`
 		GlobalDefaultAuthURL      string `conf:"global-default-auth-url,noredact"`
@@ -48,6 +53,14 @@ func main() {
 
 	conf.Load(&config)
 	slog.Info("config", "config", conf.Redact(config))
+
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.SentryDSN,
+		Environment:      config.SentryEnvironment,
+		TracesSampleRate: 1.0,
+	}); err != nil {
+		panic(err)
+	}
 
 	db, err := pgxpool.New(context.Background(), config.DB)
 	if err != nil {
@@ -89,19 +102,26 @@ func main() {
 			SAMLMetadataHTTPClient:    http.DefaultClient,
 		},
 		connect.WithInterceptors(
+			sentryinterceptor.NewPreAuthentication(),
 			appauthinterceptor.New(store_),
+			sentryinterceptor.NewPostAuthentication(),
 			appanalytics.NewInterceptor(analyticsClient),
 		),
 	)
 
-	service := vanguard.NewService(connectPath, connectHandler)
+	sentryHandler := sentryhttp.New(sentryhttp.Options{
+		Repanic: true,
+	})
+	sentryConnectHandler := sentryHandler.Handle(connectHandler)
+
+	service := vanguard.NewService(connectPath, sentryConnectHandler)
 	transcoder, err := vanguard.NewTranscoder([]*vanguard.Service{service})
 	if err != nil {
 		panic(err)
 	}
 
 	connectMux := http.NewServeMux()
-	connectMux.Handle(connectPath, cors.AllowAll().Handler(connectHandler))
+	connectMux.Handle(connectPath, cors.AllowAll().Handler(sentryConnectHandler))
 
 	mux := http.NewServeMux()
 	mux.Handle("/internal/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

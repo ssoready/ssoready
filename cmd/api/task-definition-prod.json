@@ -17,6 +17,14 @@
       "essential": true,
       "environment": [
         {
+          "name": "API_SENTRY_DSN",
+          "value": "https://75473530264a738cebffd3492b2553de@o4505847296557056.ingest.us.sentry.io/4507353223921664"
+        },
+        {
+          "name": "API_SENTRY_ENVIRONMENT",
+          "value": "prod"
+        },
+        {
           "name": "API_SERVE_ADDR",
           "value": ":8080"
         },

@@ -17,6 +17,14 @@
       "essential": true,
       "environment": [
         {
+          "name": "AUTH_SENTRY_DSN",
+          "value": "https://768b1ed331016a969472d275b1189fa8@o4505847296557056.ingest.us.sentry.io/4507353266192384"
+        },
+        {
+          "name": "AUTH_SENTRY_ENVIRONMENT",
+          "value": "prod"
+        },
+        {
           "name": "AUTH_SERVE_ADDR",
           "value": ":8080"
         }
