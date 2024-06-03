@@ -145,11 +145,11 @@ select *
 from environments
 where id = $1;
 
--- name: GetAPIKeyBySecretValue :one
+-- name: GetAPIKeyBySecretValueSHA256 :one
 select api_keys.*, environments.app_organization_id
 from api_keys
          join environments on api_keys.environment_id = environments.id
-where secret_value = $1;
+where secret_value_sha256 = $1;
 
 -- name: GetSAMLAccessCodeData :one
 select saml_flows.id             as saml_flow_id,
@@ -248,8 +248,8 @@ where environments.app_organization_id = $1
   and api_keys.id = $2;
 
 -- name: CreateAPIKey :one
-insert into api_keys (id, secret_value, environment_id)
-values ($1, $2, $3)
+insert into api_keys (id, secret_value, secret_value_sha256, environment_id)
+values ($1, '', $2, $3)
 returning *;
 
 -- name: DeleteAPIKey :exec

@@ -139,21 +139,26 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 }
 
 const createAPIKey = `-- name: CreateAPIKey :one
-insert into api_keys (id, secret_value, environment_id)
-values ($1, $2, $3)
-returning id, secret_value, environment_id
+insert into api_keys (id, secret_value, secret_value_sha256, environment_id)
+values ($1, '', $2, $3)
+returning id, secret_value, environment_id, secret_value_sha256
 `
 
 type CreateAPIKeyParams struct {
-	ID            uuid.UUID
-	SecretValue   string
-	EnvironmentID uuid.UUID
+	ID                uuid.UUID
+	SecretValueSha256 []byte
+	EnvironmentID     uuid.UUID
 }
 
 func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (ApiKey, error) {
-	row := q.db.QueryRow(ctx, createAPIKey, arg.ID, arg.SecretValue, arg.EnvironmentID)
+	row := q.db.QueryRow(ctx, createAPIKey, arg.ID, arg.SecretValueSha256, arg.EnvironmentID)
 	var i ApiKey
-	err := row.Scan(&i.ID, &i.SecretValue, &i.EnvironmentID)
+	err := row.Scan(
+		&i.ID,
+		&i.SecretValue,
+		&i.EnvironmentID,
+		&i.SecretValueSha256,
+	)
 	return i, err
 }
 
@@ -469,7 +474,7 @@ func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID 
 }
 
 const getAPIKey = `-- name: GetAPIKey :one
-select api_keys.id, api_keys.secret_value, api_keys.environment_id
+select api_keys.id, api_keys.secret_value, api_keys.environment_id, api_keys.secret_value_sha256
 from api_keys
          join environments on api_keys.environment_id = environments.id
 where environments.app_organization_id = $1
@@ -484,31 +489,38 @@ type GetAPIKeyParams struct {
 func (q *Queries) GetAPIKey(ctx context.Context, arg GetAPIKeyParams) (ApiKey, error) {
 	row := q.db.QueryRow(ctx, getAPIKey, arg.AppOrganizationID, arg.ID)
 	var i ApiKey
-	err := row.Scan(&i.ID, &i.SecretValue, &i.EnvironmentID)
-	return i, err
-}
-
-const getAPIKeyBySecretValue = `-- name: GetAPIKeyBySecretValue :one
-select api_keys.id, api_keys.secret_value, api_keys.environment_id, environments.app_organization_id
-from api_keys
-         join environments on api_keys.environment_id = environments.id
-where secret_value = $1
-`
-
-type GetAPIKeyBySecretValueRow struct {
-	ID                uuid.UUID
-	SecretValue       string
-	EnvironmentID     uuid.UUID
-	AppOrganizationID uuid.UUID
-}
-
-func (q *Queries) GetAPIKeyBySecretValue(ctx context.Context, secretValue string) (GetAPIKeyBySecretValueRow, error) {
-	row := q.db.QueryRow(ctx, getAPIKeyBySecretValue, secretValue)
-	var i GetAPIKeyBySecretValueRow
 	err := row.Scan(
 		&i.ID,
 		&i.SecretValue,
 		&i.EnvironmentID,
+		&i.SecretValueSha256,
+	)
+	return i, err
+}
+
+const getAPIKeyBySecretValueSHA256 = `-- name: GetAPIKeyBySecretValueSHA256 :one
+select api_keys.id, api_keys.secret_value, api_keys.environment_id, api_keys.secret_value_sha256, environments.app_organization_id
+from api_keys
+         join environments on api_keys.environment_id = environments.id
+where secret_value_sha256 = $1
+`
+
+type GetAPIKeyBySecretValueSHA256Row struct {
+	ID                uuid.UUID
+	SecretValue       string
+	EnvironmentID     uuid.UUID
+	SecretValueSha256 []byte
+	AppOrganizationID uuid.UUID
+}
+
+func (q *Queries) GetAPIKeyBySecretValueSHA256(ctx context.Context, secretValueSha256 []byte) (GetAPIKeyBySecretValueSHA256Row, error) {
+	row := q.db.QueryRow(ctx, getAPIKeyBySecretValueSHA256, secretValueSha256)
+	var i GetAPIKeyBySecretValueSHA256Row
+	err := row.Scan(
+		&i.ID,
+		&i.SecretValue,
+		&i.EnvironmentID,
+		&i.SecretValueSha256,
 		&i.AppOrganizationID,
 	)
 	return i, err
@@ -928,7 +940,7 @@ func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirec
 }
 
 const listAPIKeys = `-- name: ListAPIKeys :many
-select id, secret_value, environment_id
+select id, secret_value, environment_id, secret_value_sha256
 from api_keys
 where environment_id = $1
   and id > $2
@@ -951,7 +963,12 @@ func (q *Queries) ListAPIKeys(ctx context.Context, arg ListAPIKeysParams) ([]Api
 	var items []ApiKey
 	for rows.Next() {
 		var i ApiKey
-		if err := rows.Scan(&i.ID, &i.SecretValue, &i.EnvironmentID); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.SecretValue,
+			&i.EnvironmentID,
+			&i.SecretValueSha256,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
