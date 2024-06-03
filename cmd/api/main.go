@@ -48,7 +48,7 @@ func main() {
 		DB:                        "postgres://postgres:password@localhost/postgres",
 		GlobalDefaultAuthURL:      "http://localhost:8080",
 		EmailChallengeFrom:        "onboarding@resend.dev",
-		EmailVerificationEndpoint: "https://localhost:8082/verify-email",
+		EmailVerificationEndpoint: "http://localhost:8082/verify-email",
 	}
 
 	conf.Load(&config)
