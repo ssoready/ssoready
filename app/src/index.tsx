@@ -17,7 +17,7 @@ Sentry.init({
     Sentry.replayIntegration(),
     Sentry.httpClientIntegration(),
   ],
-  replaysSessionSampleRate: 1.0,
+  replaysSessionSampleRate: 0.0,
   replaysOnErrorSampleRate: 1.0,
   debug: true,
 });
