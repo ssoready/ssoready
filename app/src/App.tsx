@@ -28,7 +28,7 @@ const transport = createConnectTransport({
   baseUrl: API_URL,
   interceptors: [
     (next) => async (req) => {
-      req.header.set("Authorization", `Bearer ${getSessionToken()}`);
+      req.header.set("Authorization", `Bearer ${getSessionToken() ?? ""}`);
       return next(req);
     },
   ],
