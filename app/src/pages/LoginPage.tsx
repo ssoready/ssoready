@@ -57,7 +57,7 @@ export function LoginPage() {
           </Card>
         </div>
       ) : (
-        <div className="bg-white container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+        <div className="bg-white container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
           <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
             <div className="absolute inset-0 bg-zinc-900" />
             <div className="relative z-20 flex items-center text-lg font-medium">
@@ -65,11 +65,11 @@ export function LoginPage() {
               <span className="ml-2">SSOReady</span>
             </div>
           </div>
-          <div className="lg:p-8">
+          <div className="lg:p-8 h-full flex items-center">
             <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
               <div className="flex flex-col space-y-2 text-center">
                 <h1 className="text-2xl font-semibold tracking-tight">
-                  Continue to SSOReady
+                  Log in / sign up to SSOReady
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Enter your email below to continue
@@ -93,7 +93,7 @@ export function LoginPage() {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <Button onClick={handleEmail}>Sign In with Email</Button>
+                  <Button onClick={handleEmail}>Continue with Email</Button>
                 </div>
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
@@ -108,6 +108,13 @@ export function LoginPage() {
 
                 <div className="flex justify-center">
                   <GoogleLogin text="continue_with" onSuccess={handleGoogle} />
+                </div>
+
+                <div className="flex justify-center">
+                  <p className="text-sm text-muted-foreground text-center">
+                    If you haven't created an account yet, either option will
+                    create one for you.
+                  </p>
                 </div>
               </div>
             </div>
