@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import React from "react";
 import * as Sentry from "@sentry/react";
+import { analytics } from "@/analytics";
 
 export function LoginGate() {
   const { data, error } = useQuery(
@@ -26,6 +27,8 @@ export function LoginGate() {
         email: data.email,
         username: data.displayName,
       });
+
+      analytics.identify(data.appUserId);
     }
   }, [data, error, navigate]);
 
