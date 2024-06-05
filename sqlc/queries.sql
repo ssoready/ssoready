@@ -199,7 +199,7 @@ values ($1, $2, $3, $4, '', $5)
 returning *;
 
 -- name: GetAppSessionByTokenSHA256 :one
-select app_sessions.app_user_id, app_users.app_organization_id
+select app_sessions.app_user_id, app_users.display_name, app_users.email, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token_sha256 = $1

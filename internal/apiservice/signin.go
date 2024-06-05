@@ -61,29 +61,8 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 			return nil, fmt.Errorf("store: %w", err)
 		}
 
-		sessionRes, err := s.Store.GetAppSession(ctx, &store.GetAppSessionRequest{
-			SessionToken: createSessionRes.SessionToken,
-			Now:          time.Now(),
-		})
-		if err != nil {
-			return nil, fmt.Errorf("store: %w", err)
-		}
-
-		if err := appanalytics.FromContext(ctx).Enqueue(analytics.Group{
-			UserId:  sessionRes.AppUserID,
-			GroupId: sessionRes.AppOrganizationID.String(),
-		}); err != nil {
-			return nil, err
-		}
-
-		if err := appanalytics.FromContext(ctx).Enqueue(analytics.Track{
-			Event:  "User Signed In",
-			UserId: sessionRes.AppUserID,
-			Properties: analytics.Properties{
-				"method": "google",
-			},
-		}); err != nil {
-			return nil, err
+		if err := s.trackSignInAnalytics(ctx, "google", createSessionRes.SessionToken); err != nil {
+			return nil, fmt.Errorf("analytics: %w", err)
 		}
 
 		return connect.NewResponse(&ssoreadyv1.SignInResponse{
@@ -98,32 +77,50 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 		return nil, fmt.Errorf("store: verify email: %w", err)
 	}
 
-	sessionRes, err := s.Store.GetAppSession(ctx, &store.GetAppSessionRequest{
+	if err := s.trackSignInAnalytics(ctx, "email", verifyRes.SessionToken); err != nil {
+		return nil, fmt.Errorf("analytics: %w", err)
+	}
+
+	return connect.NewResponse(&ssoreadyv1.SignInResponse{
 		SessionToken: verifyRes.SessionToken,
+	}), nil
+}
+
+func (s *Service) trackSignInAnalytics(ctx context.Context, method string, sessionToken string) error {
+	sessionRes, err := s.Store.GetAppSession(ctx, &store.GetAppSessionRequest{
+		SessionToken: sessionToken,
 		Now:          time.Now(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("store: get app session: %w", err)
+		return fmt.Errorf("store: get app session: %w", err)
 	}
 
 	if err := appanalytics.FromContext(ctx).Enqueue(analytics.Group{
 		UserId:  sessionRes.AppUserID,
 		GroupId: sessionRes.AppOrganizationID.String(),
 	}); err != nil {
-		return nil, err
+		return err
+	}
+
+	if err := appanalytics.FromContext(ctx).Enqueue(analytics.Identify{
+		UserId: sessionRes.AppUserID,
+		Traits: analytics.Traits{
+			"email": sessionRes.AppUserEmail,
+			"name":  sessionRes.AppUserDisplayName,
+		},
+	}); err != nil {
+		return err
 	}
 
 	if err := appanalytics.FromContext(ctx).Enqueue(analytics.Track{
 		Event:  "User Signed In",
 		UserId: sessionRes.AppUserID,
 		Properties: analytics.Properties{
-			"method": "email",
+			"method": method,
 		},
 	}); err != nil {
-		return nil, err
+		return err
 	}
 
-	return connect.NewResponse(&ssoreadyv1.SignInResponse{
-		SessionToken: verifyRes.SessionToken,
-	}), nil
+	return nil
 }
