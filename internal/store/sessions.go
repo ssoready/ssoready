@@ -21,8 +21,10 @@ type GetAppSessionRequest struct {
 }
 
 type GetAppSessionResponse struct {
-	AppUserID         string
-	AppOrganizationID uuid.UUID
+	AppUserID          string
+	AppOrganizationID  uuid.UUID
+	AppUserDisplayName string
+	AppUserEmail       string
 }
 
 func (s *Store) GetAppSession(ctx context.Context, req *GetAppSessionRequest) (*GetAppSessionResponse, error) {
@@ -41,8 +43,10 @@ func (s *Store) GetAppSession(ctx context.Context, req *GetAppSessionRequest) (*
 	}
 
 	return &GetAppSessionResponse{
-		AppUserID:         idformat.AppUser.Format(appSession.AppUserID),
-		AppOrganizationID: appSession.AppOrganizationID,
+		AppUserID:          idformat.AppUser.Format(appSession.AppUserID),
+		AppOrganizationID:  appSession.AppOrganizationID,
+		AppUserDisplayName: appSession.DisplayName,
+		AppUserEmail:       appSession.Email,
 	}, nil
 }
 

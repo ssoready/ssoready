@@ -540,7 +540,7 @@ func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, go
 }
 
 const getAppSessionByTokenSHA256 = `-- name: GetAppSessionByTokenSHA256 :one
-select app_sessions.app_user_id, app_users.app_organization_id
+select app_sessions.app_user_id, app_users.display_name, app_users.email, app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token_sha256 = $1
@@ -554,13 +554,20 @@ type GetAppSessionByTokenSHA256Params struct {
 
 type GetAppSessionByTokenSHA256Row struct {
 	AppUserID         uuid.UUID
+	DisplayName       string
+	Email             string
 	AppOrganizationID uuid.UUID
 }
 
 func (q *Queries) GetAppSessionByTokenSHA256(ctx context.Context, arg GetAppSessionByTokenSHA256Params) (GetAppSessionByTokenSHA256Row, error) {
 	row := q.db.QueryRow(ctx, getAppSessionByTokenSHA256, arg.TokenSha256, arg.ExpireTime)
 	var i GetAppSessionByTokenSHA256Row
-	err := row.Scan(&i.AppUserID, &i.AppOrganizationID)
+	err := row.Scan(
+		&i.AppUserID,
+		&i.DisplayName,
+		&i.Email,
+		&i.AppOrganizationID,
+	)
 	return i, err
 }
 
