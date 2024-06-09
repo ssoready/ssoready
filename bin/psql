@@ -2,33 +2,43 @@
 
 set -e -o pipefail
 
+rds_iam_dsn() {
+  aws_profile="$1"
+  host="$2"
+
+  if ! password=$(AWS_PROFILE="$aws_profile" AWS_REGION=us-east-2 aws rds generate-db-auth-token --hostname "$host" --port 5432 --username db_user); then
+    exit 1
+  fi
+  echo "host=$host dbname=postgres user=db_user password=$password"
+}
+
 case $1 in
   local)
     dsn='postgres://postgres:password@localhost?sslmode=disable'
     ;;
 
   dev-ucarion)
-    dsn=$(AWS_REGION=us-east-2 AWS_PROFILE=dev-ucarion-admin aws secretsmanager get-secret-value --secret-id psql | jq -r .SecretString | jq -r .DATABASE_URL_READ)
+    dsn=$(rds_iam_dsn dev-ucarion-admin "ssoready.cluster-ro-cpmk86gsqqm1.us-east-2.rds.amazonaws.com")
     ;;
 
   dev-ucarion-write)
-    dsn=$(AWS_REGION=us-east-2 AWS_PROFILE=dev-ucarion-admin aws secretsmanager get-secret-value --secret-id psql | jq -r .SecretString | jq -r .DATABASE_URL_WRITE)
+    dsn=$(rds_iam_dsn dev-ucarion-admin "ssoready.cluster-cpmk86gsqqm1.us-east-2.rds.amazonaws.com")
     ;;
 
   stage)
-    dsn=$(AWS_REGION=us-east-2 AWS_PROFILE=stage-admin aws secretsmanager get-secret-value --secret-id psql | jq -r .SecretString | jq -r .DATABASE_URL_READ)
+    dsn=$(rds_iam_dsn stage-admin "ssoready.cluster-ro-clwskyw08lf9.us-east-2.rds.amazonaws.com")
     ;;
 
   stage-write)
-    dsn=$(AWS_REGION=us-east-2 AWS_PROFILE=stage-admin aws secretsmanager get-secret-value --secret-id psql | jq -r .SecretString | jq -r .DATABASE_URL_WRITE)
+    dsn=$(rds_iam_dsn stage-admin "ssoready.cluster-clwskyw08lf9.us-east-2.rds.amazonaws.com")
     ;;
 
   prod)
-    dsn=$(AWS_REGION=us-east-2 AWS_PROFILE=prod-admin aws secretsmanager get-secret-value --secret-id psql | jq -r .SecretString | jq -r .DATABASE_URL_READ)
+    dsn=$(rds_iam_dsn prod-admin "ssoready.cluster-ro-cv0amuqg0z0q.us-east-2.rds.amazonaws.com")
     ;;
 
   prod-write)
-    dsn=$(AWS_REGION=us-east-2 AWS_PROFILE=prod-admin aws secretsmanager get-secret-value --secret-id psql | jq -r .SecretString | jq -r .DATABASE_URL_WRITE)
+    dsn=$(rds_iam_dsn prod-admin "ssoready.cluster-cv0amuqg0z0q.us-east-2.rds.amazonaws.com")
     ;;
 
   *)
