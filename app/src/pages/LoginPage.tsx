@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GOOGLE_OAUTH_CLIENT_ID } from "@/config";
+import { analytics } from "@/analytics";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -107,7 +108,16 @@ export function LoginPage() {
                 </div>
 
                 <div className="flex justify-center">
-                  <GoogleLogin text="continue_with" onSuccess={handleGoogle} />
+                  <GoogleLogin
+                    click_listener={() =>
+                      analytics.track("Google Login Clicked")
+                    }
+                    onError={() => {
+                      throw new Error("Google login failed");
+                    }}
+                    text="continue_with"
+                    onSuccess={handleGoogle}
+                  />
                 </div>
 
                 <div className="flex justify-center">
