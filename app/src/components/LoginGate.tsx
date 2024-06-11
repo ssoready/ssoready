@@ -18,7 +18,9 @@ export function LoginGate() {
   const navigate = useNavigate();
   useEffect(() => {
     if (error) {
-      navigate("/login");
+      navigate("/login", {
+        replace: true,
+      });
     }
 
     if (data) {
