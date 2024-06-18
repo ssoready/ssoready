@@ -71,3 +71,9 @@ Also, we believe randomly pumping up prices on security software like this is
 totally unacceptable. MIT-licensing the software gives you insurance against us
 ever doing that. Do whatever you want with the code. Fork us if we ever
 misbehave.
+
+## Reporting problems
+
+Please feel welcome to use [GitHub issues](https://github.com/ssoready/ssoready/issues) or reach out directly at founders@ssoready.com. We want to know about any bugs you encounter, any features you'd like to request, or any questions you need answered. 
+
+We take security *extremely* seriously. If you become aware of any potential vulnerabilities, **please contact us immediately using security-contact@ssoready.com**. You will receive a response laying out next steps within 24 hours; in most cases, you should expect an immediate response. Do not open a GitHub issue. Do not post on any forums. If you feel unsure about whether something matters, know that we will be very grateful even for a false alarm. 
