@@ -112,7 +112,8 @@ CREATE TABLE public.environments (
     redirect_url character varying,
     app_organization_id uuid NOT NULL,
     display_name character varying,
-    auth_url character varying
+    auth_url character varying,
+    oauth_redirect_uri character varying
 );
 
 
@@ -206,7 +207,8 @@ CREATE TABLE public.saml_flows (
     error_email_outside_organization_domains character varying,
     status public.saml_flow_status NOT NULL,
     error_unsigned_assertion boolean DEFAULT false NOT NULL,
-    access_code_sha256 bytea
+    access_code_sha256 bytea,
+    is_oauth boolean
 );
 
 

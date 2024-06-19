@@ -1,6 +1,7 @@
 package authservice
 
 import (
+	"crypto/rsa"
 	"crypto/x509"
 	"embed"
 	_ "embed"
@@ -16,6 +17,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/ssoready/ssoready/internal/emailaddr"
 	"github.com/ssoready/ssoready/internal/saml"
+	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
@@ -59,7 +61,9 @@ var errorTemplateContent string
 var errorTemplate = template.Must(template.New("error").Parse(errorTemplateContent))
 
 type Service struct {
-	Store *store.Store
+	Store                  *store.Store
+	OAuthIDTokenPrivateKey *rsa.PrivateKey
+	StateSigner            statesign.Signer
 }
 
 func (s *Service) NewHandler() http.Handler {
@@ -68,6 +72,11 @@ func (s *Service) NewHandler() http.Handler {
 	r.PathPrefix("/internal/static/").Handler(http.StripPrefix("/internal/static/", http.FileServer(http.FS(staticFS))))
 	r.HandleFunc("/v1/saml/{saml_conn_id}/init", s.samlInit).Methods("GET")
 	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", s.samlAcs).Methods("POST")
+
+	r.HandleFunc("/v1/oauth/{org_id}/.well-known/openid-configuration", s.oauthOpenIDConfiguration).Methods("GET")
+	r.HandleFunc("/v1/oauth/{org_id}/authorize", s.oauthAuthorize).Methods("GET")
+	r.HandleFunc("/v1/oauth/{org_id}/token", s.oauthToken).Methods("POST")
+	r.HandleFunc("/v1/oauth/{org_id}/jwks", s.oauthJWKS).Methods("GET")
 	return r
 }
 
@@ -266,6 +275,23 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	// past this point, we will presume the request is valid; panic to ensure we haven't missed problems
 	if validateProblems != nil {
 		panic(fmt.Errorf("unhandled saml.ValidateProblems: %v", validateProblems))
+	}
+
+	// if the saml flow was created as part of the oauth-style flow, then redirect in the OAuth way
+	if createSAMLLoginRes.SAMLFlowIsOAuth {
+		redirectURL, err := url.Parse(dataRes.EnvironmentOAuthRedirectURI)
+		if err != nil {
+			panic(err)
+		}
+
+		redirectQuery := url.Values{}
+		redirectQuery.Set("code", createSAMLLoginRes.Token)
+		redirectQuery.Set("state", createSAMLLoginRes.State)
+		redirectURL.RawQuery = redirectQuery.Encode()
+		redirect := redirectURL.String()
+
+		http.Redirect(w, r, redirect, http.StatusSeeOther)
+		return
 	}
 
 	redirectURL, err := url.Parse(dataRes.EnvironmentRedirectURL)

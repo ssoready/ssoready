@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/rsa"
+	"crypto/x509"
 	_ "embed"
 	"encoding/hex"
+	"encoding/pem"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -23,13 +26,14 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
 
 	config := struct {
-		SentryDSN            string `conf:"sentry-dsn,noredact"`
-		SentryEnvironment    string `conf:"sentry-environment,noredact"`
-		ServeAddr            string `conf:"serve-addr,noredact"`
-		DB                   string `conf:"db"`
-		GlobalDefaultAuthURL string `conf:"global-default-auth-url,noredact"`
-		PageEncodingSecret   string `conf:"page-encoding-secret"`
-		SAMLStateSigningKey  string `conf:"saml-state-signing-key"`
+		SentryDSN              string `conf:"sentry-dsn,noredact"`
+		SentryEnvironment      string `conf:"sentry-environment,noredact"`
+		ServeAddr              string `conf:"serve-addr,noredact"`
+		DB                     string `conf:"db"`
+		GlobalDefaultAuthURL   string `conf:"global-default-auth-url,noredact"`
+		PageEncodingSecret     string `conf:"page-encoding-secret"`
+		SAMLStateSigningKey    string `conf:"saml-state-signing-key"`
+		OAuthIDTokenPrivateKey string `conf:"oauth-id-token-private-key"`
 	}{
 		ServeAddr:            "localhost:8080",
 		DB:                   "postgres://postgres:password@localhost/postgres",
@@ -69,7 +73,12 @@ func main() {
 		SAMLStateSigningKey:  samlStateSigningKey,
 	})
 
-	service := authservice.Service{Store: store_}
+	idTokenPrivateKey, err := parseRSAPrivateKey(config.OAuthIDTokenPrivateKey)
+	if err != nil {
+		panic(fmt.Errorf("parse oauth idtoken private key: %w", err))
+	}
+
+	service := authservice.Service{Store: store_, OAuthIDTokenPrivateKey: idTokenPrivateKey}
 
 	r := mux.NewRouter()
 
@@ -85,9 +94,19 @@ func main() {
 	})
 	sentryMux := sentryHandler.Handle(r)
 
+	logMux := logHTTP(sentryMux)
+
 	slog.Info("serve")
-	if err := http.ListenAndServe(config.ServeAddr, sentryMux); err != nil {
+	if err := http.ListenAndServe(config.ServeAddr, logMux); err != nil {
 		panic(err)
+	}
+}
+
+func logHTTP(h http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		slog.InfoContext(ctx, "http_request", "path", r.URL.Path)
+		h.ServeHTTP(w, r)
 	}
 }
 
@@ -104,4 +123,23 @@ func parseHexKey(s string) ([32]byte, error) {
 	var k [32]byte
 	copy(k[:], b)
 	return k, nil
+}
+
+func parseRSAPrivateKey(s string) (*rsa.PrivateKey, error) {
+	block, _ := pem.Decode([]byte(s))
+	if block == nil {
+		return nil, fmt.Errorf("invalid pem file")
+	}
+
+	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	rsaKey, ok := key.(*rsa.PrivateKey)
+	if !ok {
+		return nil, fmt.Errorf("key is not rsa private key")
+	}
+
+	return rsaKey, nil
 }

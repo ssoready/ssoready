@@ -102,11 +102,12 @@ type AuthGetValidateDataRequest struct {
 }
 
 type AuthGetValidateDataResponse struct {
-	SPEntityID             string
-	IDPEntityID            string
-	IDPX509Certificate     []byte
-	OrganizationDomains    []string
-	EnvironmentRedirectURL string
+	SPEntityID                  string
+	IDPEntityID                 string
+	IDPX509Certificate          []byte
+	OrganizationDomains         []string
+	EnvironmentRedirectURL      string
+	EnvironmentOAuthRedirectURI string
 }
 
 func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDataRequest) (*AuthGetValidateDataResponse, error) {
@@ -132,11 +133,12 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 	}
 
 	return &AuthGetValidateDataResponse{
-		SPEntityID:             res.SpEntityID,
-		IDPEntityID:            *res.IdpEntityID,
-		IDPX509Certificate:     res.IdpX509Certificate,
-		OrganizationDomains:    domains,
-		EnvironmentRedirectURL: *res.RedirectUrl,
+		SPEntityID:                  res.SpEntityID,
+		IDPEntityID:                 *res.IdpEntityID,
+		IDPX509Certificate:          res.IdpX509Certificate,
+		OrganizationDomains:         domains,
+		EnvironmentRedirectURL:      *res.RedirectUrl,
+		EnvironmentOAuthRedirectURI: derefOrEmpty(res.OauthRedirectUri),
 	}, nil
 }
 
@@ -172,8 +174,10 @@ type AuthUpsertSAMLLoginEventRequest struct {
 }
 
 type AuthUpsertSAMLLoginEventResponse struct {
-	SAMLFlowID string
-	Token      string
+	SAMLFlowID      string
+	SAMLFlowIsOAuth bool
+	Token           string
+	State           string // only useful for oauth flow, where state must be returned at same time as code
 }
 
 func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUpsertSAMLLoginEventRequest) (*AuthUpsertSAMLLoginEventResponse, error) {
@@ -266,7 +270,91 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	return &AuthUpsertSAMLLoginEventResponse{
-		SAMLFlowID: idformat.SAMLFlow.Format(qSAMLFlow.ID),
-		Token:      token,
+		SAMLFlowID:      idformat.SAMLFlow.Format(qSAMLFlow.ID),
+		SAMLFlowIsOAuth: qSAMLFlow.IsOauth != nil && *qSAMLFlow.IsOauth,
+		Token:           token,
+		State:           qSAMLFlow.State,
 	}, nil
+}
+
+type AuthGetOAuthAuthorizeDataRequest struct {
+	OrganizationID string
+}
+
+type AuthGetOAuthAuthorizeDataResponse struct {
+	IDPRedirectURL   string
+	SPEntityID       string
+	SAMLConnectionID string
+}
+
+func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuthAuthorizeDataRequest) (*AuthGetOAuthAuthorizeDataResponse, error) {
+	orgID, err := idformat.Organization.Parse(req.OrganizationID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	res, err := q.AuthOAuthGetAuthorizeData(ctx, orgID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AuthGetOAuthAuthorizeDataResponse{
+		IDPRedirectURL:   *res.IdpRedirectUrl,
+		SPEntityID:       res.SpEntityID,
+		SAMLConnectionID: idformat.SAMLConnection.Format(res.ID),
+	}, nil
+}
+
+type AuthUpsertOAuthAuthorizeDataRequest struct {
+	SAMLFlowID       string
+	SAMLConnectionID string
+	State            string
+	InitiateRequest  string
+}
+
+func (s *Store) AuthUpsertOAuthAuthorizeData(ctx context.Context, req *AuthUpsertOAuthAuthorizeDataRequest) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer rollback()
+
+	samlFlowID, err := idformat.SAMLFlow.Parse(req.SAMLFlowID)
+	if err != nil {
+		return err
+	}
+
+	samlConnectionID, err := idformat.SAMLConnection.Parse(req.SAMLConnectionID)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	isOAuth := true
+	if _, err := q.UpsertSAMLFlowInitiate(ctx, queries.UpsertSAMLFlowInitiateParams{
+		ID:               samlFlowID,
+		SamlConnectionID: samlConnectionID,
+		ExpireTime:       time.Now().Add(time.Hour),
+		State:            req.State,
+		CreateTime:       time.Now(),
+		UpdateTime:       time.Now(),
+		InitiateRequest:  &req.InitiateRequest,
+		InitiateTime:     &now,
+		Status:           queries.SamlFlowStatusInProgress,
+		IsOauth:          &isOAuth,
+	}); err != nil {
+		return err
+	}
+
+	if err := commit(); err != nil {
+		return err
+	}
+
+	return nil
 }

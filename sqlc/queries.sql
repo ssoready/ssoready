@@ -34,7 +34,8 @@ where saml_connections.id = $1;
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
        saml_connections.idp_x509_certificate,
-       environments.redirect_url
+       environments.redirect_url,
+       environments.oauth_redirect_uri
 from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
@@ -50,6 +51,13 @@ from saml_connections
          join organization_domains on organizations.id = organization_domains.organization_id
 where saml_connections.id = $1;
 
+-- name: AuthOAuthGetAuthorizeData :one
+select saml_connections.id, saml_connections.idp_redirect_url, saml_connections.sp_entity_id
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.id = $1
+  and saml_connections.is_primary = true;
+
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time, status)
@@ -58,8 +66,8 @@ returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        initiate_request, initiate_time, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                        initiate_request, initiate_time, status, is_oauth)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
                                initiate_time    = excluded.initiate_time,
