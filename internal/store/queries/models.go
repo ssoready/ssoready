@@ -96,6 +96,7 @@ type Environment struct {
 	AppOrganizationID uuid.UUID
 	DisplayName       *string
 	AuthUrl           *string
+	OauthRedirectUri  *string
 }
 
 type OnboardingState struct {
@@ -155,6 +156,7 @@ type SamlFlow struct {
 	Status                               SamlFlowStatus
 	ErrorUnsignedAssertion               bool
 	AccessCodeSha256                     []byte
+	IsOauth                              *bool
 }
 
 type SchemaMigration struct {
