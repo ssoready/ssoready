@@ -109,6 +109,64 @@ func (q *Queries) AuthGetSAMLFlow(ctx context.Context, id uuid.UUID) (SamlFlow, 
 	return i, err
 }
 
+const authGetSAMLOAuthClient = `-- name: AuthGetSAMLOAuthClient :one
+select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256, environments.app_organization_id
+from saml_oauth_clients
+         join environments on saml_oauth_clients.environment_id = environments.id
+where saml_oauth_clients.id = $1
+`
+
+type AuthGetSAMLOAuthClientRow struct {
+	ID                 uuid.UUID
+	EnvironmentID      uuid.UUID
+	ClientSecretSha256 []byte
+	AppOrganizationID  uuid.UUID
+}
+
+func (q *Queries) AuthGetSAMLOAuthClient(ctx context.Context, id uuid.UUID) (AuthGetSAMLOAuthClientRow, error) {
+	row := q.db.QueryRow(ctx, authGetSAMLOAuthClient, id)
+	var i AuthGetSAMLOAuthClientRow
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ClientSecretSha256,
+		&i.AppOrganizationID,
+	)
+	return i, err
+}
+
+const authGetSAMLOAuthClientWithSecret = `-- name: AuthGetSAMLOAuthClientWithSecret :one
+select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256, environments.app_organization_id
+from saml_oauth_clients
+         join environments on saml_oauth_clients.environment_id = environments.id
+where saml_oauth_clients.id = $1
+  and saml_oauth_clients.client_secret_sha256 = $2
+`
+
+type AuthGetSAMLOAuthClientWithSecretParams struct {
+	ID                 uuid.UUID
+	ClientSecretSha256 []byte
+}
+
+type AuthGetSAMLOAuthClientWithSecretRow struct {
+	ID                 uuid.UUID
+	EnvironmentID      uuid.UUID
+	ClientSecretSha256 []byte
+	AppOrganizationID  uuid.UUID
+}
+
+func (q *Queries) AuthGetSAMLOAuthClientWithSecret(ctx context.Context, arg AuthGetSAMLOAuthClientWithSecretParams) (AuthGetSAMLOAuthClientWithSecretRow, error) {
+	row := q.db.QueryRow(ctx, authGetSAMLOAuthClientWithSecret, arg.ID, arg.ClientSecretSha256)
+	var i AuthGetSAMLOAuthClientWithSecretRow
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ClientSecretSha256,
+		&i.AppOrganizationID,
+	)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
@@ -139,27 +197,6 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 		&i.RedirectUrl,
 		&i.OauthRedirectUri,
 	)
-	return i, err
-}
-
-const authOAuthGetAuthorizeData = `-- name: AuthOAuthGetAuthorizeData :one
-select saml_connections.id, saml_connections.idp_redirect_url, saml_connections.sp_entity_id
-from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
-where organizations.id = $1
-  and saml_connections.is_primary = true
-`
-
-type AuthOAuthGetAuthorizeDataRow struct {
-	ID             uuid.UUID
-	IdpRedirectUrl *string
-	SpEntityID     string
-}
-
-func (q *Queries) AuthOAuthGetAuthorizeData(ctx context.Context, id uuid.UUID) (AuthOAuthGetAuthorizeDataRow, error) {
-	row := q.db.QueryRow(ctx, authOAuthGetAuthorizeData, id)
-	var i AuthOAuthGetAuthorizeDataRow
-	err := row.Scan(&i.ID, &i.IdpRedirectUrl, &i.SpEntityID)
 	return i, err
 }
 
@@ -478,6 +515,25 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 	return i, err
 }
 
+const createSAMLOAuthClient = `-- name: CreateSAMLOAuthClient :one
+insert into saml_oauth_clients (id, environment_id, client_secret_sha256)
+values ($1, $2, $3)
+returning id, environment_id, client_secret_sha256
+`
+
+type CreateSAMLOAuthClientParams struct {
+	ID                 uuid.UUID
+	EnvironmentID      uuid.UUID
+	ClientSecretSha256 []byte
+}
+
+func (q *Queries) CreateSAMLOAuthClient(ctx context.Context, arg CreateSAMLOAuthClientParams) (SamlOauthClient, error) {
+	row := q.db.QueryRow(ctx, createSAMLOAuthClient, arg.ID, arg.EnvironmentID, arg.ClientSecretSha256)
+	var i SamlOauthClient
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ClientSecretSha256)
+	return i, err
+}
+
 const deleteAPIKey = `-- name: DeleteAPIKey :exec
 delete
 from api_keys
@@ -497,6 +553,17 @@ where organization_id = $1
 
 func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID uuid.UUID) error {
 	_, err := q.db.Exec(ctx, deleteOrganizationDomains, organizationID)
+	return err
+}
+
+const deleteSAMLOAuthClient = `-- name: DeleteSAMLOAuthClient :exec
+delete
+from saml_oauth_clients
+where id = $1
+`
+
+func (q *Queries) DeleteSAMLOAuthClient(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteSAMLOAuthClient, id)
 	return err
 }
 
@@ -567,7 +634,11 @@ func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, go
 }
 
 const getAppSessionByTokenSHA256 = `-- name: GetAppSessionByTokenSHA256 :one
-select app_sessions.app_user_id, app_users.display_name, app_users.email, app_users.app_organization_id
+select app_sessions.id,
+       app_sessions.app_user_id,
+       app_users.display_name,
+       app_users.email,
+       app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token_sha256 = $1
@@ -580,6 +651,7 @@ type GetAppSessionByTokenSHA256Params struct {
 }
 
 type GetAppSessionByTokenSHA256Row struct {
+	ID                uuid.UUID
 	AppUserID         uuid.UUID
 	DisplayName       string
 	Email             string
@@ -590,6 +662,7 @@ func (q *Queries) GetAppSessionByTokenSHA256(ctx context.Context, arg GetAppSess
 	row := q.db.QueryRow(ctx, getAppSessionByTokenSHA256, arg.TokenSha256, arg.ExpireTime)
 	var i GetAppSessionByTokenSHA256Row
 	err := row.Scan(
+		&i.ID,
 		&i.AppUserID,
 		&i.DisplayName,
 		&i.Email,
@@ -953,6 +1026,26 @@ func (q *Queries) GetSAMLFlow(ctx context.Context, arg GetSAMLFlowParams) (SamlF
 	return i, err
 }
 
+const getSAMLOAuthClient = `-- name: GetSAMLOAuthClient :one
+select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256
+from saml_oauth_clients
+         join environments on saml_oauth_clients.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_oauth_clients.id = $2
+`
+
+type GetSAMLOAuthClientParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetSAMLOAuthClient(ctx context.Context, arg GetSAMLOAuthClientParams) (SamlOauthClient, error) {
+	row := q.db.QueryRow(ctx, getSAMLOAuthClient, arg.AppOrganizationID, arg.ID)
+	var i SamlOauthClient
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ClientSecretSha256)
+	return i, err
+}
+
 const getSAMLRedirectURLData = `-- name: GetSAMLRedirectURLData :one
 select environments.auth_url
 from saml_connections
@@ -1281,6 +1374,41 @@ func (q *Queries) ListSAMLFlowsNextPage(ctx context.Context, arg ListSAMLFlowsNe
 			&i.AccessCodeSha256,
 			&i.IsOauth,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSAMLOAuthClients = `-- name: ListSAMLOAuthClients :many
+select id, environment_id, client_secret_sha256
+from saml_oauth_clients
+where environment_id = $1
+  and id > $2
+order by id
+limit $3
+`
+
+type ListSAMLOAuthClientsParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+	Limit         int32
+}
+
+func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthClientsParams) ([]SamlOauthClient, error) {
+	rows, err := q.db.Query(ctx, listSAMLOAuthClients, arg.EnvironmentID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SamlOauthClient
+	for rows.Next() {
+		var i SamlOauthClient
+		if err := rows.Scan(&i.ID, &i.EnvironmentID, &i.ClientSecretSha256); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

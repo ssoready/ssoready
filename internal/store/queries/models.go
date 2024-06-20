@@ -159,6 +159,12 @@ type SamlFlow struct {
 	IsOauth                              *bool
 }
 
+type SamlOauthClient struct {
+	ID                 uuid.UUID
+	EnvironmentID      uuid.UUID
+	ClientSecretSha256 []byte
+}
+
 type SchemaMigration struct {
 	Version int64
 	Dirty   bool

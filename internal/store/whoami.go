@@ -4,20 +4,25 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
 func (s *Store) Whoami(ctx context.Context, req *ssoreadyv1.WhoamiRequest) (*ssoreadyv1.WhoamiResponse, error) {
-	userID, err := idformat.AppUser.Parse(appauth.AppUserID(ctx))
+	authnData := authn.FullContextData(ctx)
+	if authnData.AppSession == nil {
+		return nil, fmt.Errorf("whoami must only be called when authenticated over an app session")
+	}
+
+	userID, err := idformat.AppUser.Parse(authnData.AppSession.AppUserID)
 	if err != nil {
 		return nil, err
 	}
 
 	appUser, err := s.q.GetAppUserByID(ctx, queries.GetAppUserByIDParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                userID,
 	})
 	if err != nil {

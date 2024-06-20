@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -18,9 +18,9 @@ type GetAPIKeyBySecretTokenRequest struct {
 }
 
 type GetAPIKeyBySecretTokenResponse struct {
-	ID                string
 	AppOrganizationID uuid.UUID
-	EnvironmentID     uuid.UUID
+	EnvironmentID     string
+	ID                string
 }
 
 func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecretTokenRequest) (*GetAPIKeyBySecretTokenResponse, error) {
@@ -37,9 +37,9 @@ func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecr
 	}
 
 	return &GetAPIKeyBySecretTokenResponse{
-		ID:                idformat.APIKey.Format(apiKey.ID),
 		AppOrganizationID: apiKey.AppOrganizationID,
-		EnvironmentID:     apiKey.EnvironmentID,
+		EnvironmentID:     idformat.Environment.Format(apiKey.EnvironmentID),
+		ID:                idformat.APIKey.Format(apiKey.ID),
 	}, nil
 }
 
@@ -57,7 +57,7 @@ func (s *Store) ListAPIKeys(ctx context.Context, req *ssoreadyv1.ListAPIKeysRequ
 
 	// idor check
 	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                envID,
 	}); err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func (s *Store) GetAPIKey(ctx context.Context, req *ssoreadyv1.GetAPIKeyRequest)
 
 	// idor check
 	qAPIKey, err := q.GetAPIKey(ctx, queries.GetAPIKeyParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	})
 	if err != nil {
@@ -133,7 +133,7 @@ func (s *Store) CreateAPIKey(ctx context.Context, req *ssoreadyv1.CreateAPIKeyRe
 
 	// idor check
 	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                envID,
 	}); err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func (s *Store) DeleteAPIKey(ctx context.Context, req *ssoreadyv1.DeleteAPIKeyRe
 
 	// authz check
 	if _, err := q.GetAPIKey(ctx, queries.GetAPIKeyParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	}); err != nil {
 		return nil, err

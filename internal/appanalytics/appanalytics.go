@@ -5,7 +5,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/segmentio/analytics-go/v3"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 )
 
 func NewInterceptor(client analytics.Client) connect.UnaryInterceptorFunc {
@@ -18,11 +18,16 @@ func NewInterceptor(client analytics.Client) connect.UnaryInterceptorFunc {
 }
 
 func Track(ctx context.Context, event string, properties analytics.Properties) error {
-	properties["app_organization_id"] = appauth.OrgID(ctx).String()
+	authnData := authn.FullContextData(ctx)
+	if authnData.AppSession == nil {
+		return nil // not a user session, so do no tracking
+	}
+
+	properties["app_organization_id"] = authn.AppOrgID(ctx).String()
 	return FromContext(ctx).Enqueue(analytics.Track{
 		Event:      event,
 		Properties: properties,
-		UserId:     appauth.AppUserID(ctx),
+		UserId:     authnData.AppSession.AppUserID,
 	})
 }
 

@@ -61,6 +61,7 @@ var errorTemplateContent string
 var errorTemplate = template.Must(template.New("error").Parse(errorTemplateContent))
 
 type Service struct {
+	BaseURL                string
 	Store                  *store.Store
 	OAuthIDTokenPrivateKey *rsa.PrivateKey
 	StateSigner            statesign.Signer
@@ -73,10 +74,10 @@ func (s *Service) NewHandler() http.Handler {
 	r.HandleFunc("/v1/saml/{saml_conn_id}/init", s.samlInit).Methods("GET")
 	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", s.samlAcs).Methods("POST")
 
-	r.HandleFunc("/v1/oauth/{org_id}/.well-known/openid-configuration", s.oauthOpenIDConfiguration).Methods("GET")
-	r.HandleFunc("/v1/oauth/{org_id}/authorize", s.oauthAuthorize).Methods("GET")
-	r.HandleFunc("/v1/oauth/{org_id}/token", s.oauthToken).Methods("POST")
-	r.HandleFunc("/v1/oauth/{org_id}/jwks", s.oauthJWKS).Methods("GET")
+	r.HandleFunc("/v1/oauth/.well-known/openid-configuration", s.oauthOpenIDConfiguration).Methods("GET")
+	r.HandleFunc("/v1/oauth/authorize", s.oauthAuthorize).Methods("GET")
+	r.HandleFunc("/v1/oauth/token", s.oauthToken).Methods("POST")
+	r.HandleFunc("/v1/oauth/jwks", s.oauthJWKS).Methods("GET")
 	return r
 }
 

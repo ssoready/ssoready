@@ -4,10 +4,14 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
+	"connectrpc.com/connect"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/ssoready/ssoready/internal/authn"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
@@ -278,7 +282,9 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 }
 
 type AuthGetOAuthAuthorizeDataRequest struct {
-	OrganizationID string
+	OrganizationID         string
+	OrganizationExternalID string
+	SAMLConnectionID       string
 }
 
 type AuthGetOAuthAuthorizeDataResponse struct {
@@ -288,26 +294,67 @@ type AuthGetOAuthAuthorizeDataResponse struct {
 }
 
 func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuthAuthorizeDataRequest) (*AuthGetOAuthAuthorizeDataResponse, error) {
-	orgID, err := idformat.Organization.Parse(req.OrganizationID)
-	if err != nil {
-		return nil, err
-	}
-
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	res, err := q.AuthOAuthGetAuthorizeData(ctx, orgID)
+	authnData := authn.FullContextData(ctx)
+	if authnData.SAMLOAuthClient == nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("oauth authentication is required"))
+	}
+
+	envID, err := idformat.Environment.Parse(authnData.SAMLOAuthClient.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
+	var samlConnID uuid.UUID
+	if req.SAMLConnectionID != "" {
+		samlConnID, err = idformat.SAMLConnection.Parse(req.SAMLConnectionID)
+		if err != nil {
+			return nil, err
+		}
+	} else if req.OrganizationID != "" {
+		orgID, err := idformat.Organization.Parse(req.OrganizationID)
+		if err != nil {
+			return nil, err
+		}
+
+		fmt.Println("get organization by id", uuid.UUID(envID), uuid.UUID(orgID))
+
+		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationIDParams{
+			EnvironmentID: envID,
+			ID:            orgID,
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else if req.OrganizationExternalID != "" {
+		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationExternalID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationExternalIDParams{
+			EnvironmentID: envID,
+			ExternalID:    &req.OrganizationExternalID,
+		})
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad organization_external_id: organization not found, or organization does not have a primary SAML connection"))
+			}
+			return nil, err
+		}
+	} else {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("one of saml_connection_id, organization_id, or organization_external_id must be provided"))
+	}
+
+	samlConn, err := q.GetSAMLConnectionByID(ctx, samlConnID)
 	if err != nil {
 		return nil, err
 	}
 
 	return &AuthGetOAuthAuthorizeDataResponse{
-		IDPRedirectURL:   *res.IdpRedirectUrl,
-		SPEntityID:       res.SpEntityID,
-		SAMLConnectionID: idformat.SAMLConnection.Format(res.ID),
+		IDPRedirectURL:   *samlConn.IdpRedirectUrl,
+		SPEntityID:       samlConn.SpEntityID,
+		SAMLConnectionID: idformat.SAMLConnection.Format(samlConn.ID),
 	}, nil
 }
 

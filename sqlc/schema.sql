@@ -215,6 +215,19 @@ CREATE TABLE public.saml_flows (
 ALTER TABLE public.saml_flows OWNER TO postgres;
 
 --
+-- Name: saml_oauth_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.saml_oauth_clients (
+    id uuid NOT NULL,
+    environment_id uuid NOT NULL,
+    client_secret_sha256 bytea NOT NULL
+);
+
+
+ALTER TABLE public.saml_oauth_clients OWNER TO postgres;
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -379,6 +392,22 @@ ALTER TABLE ONLY public.saml_flows
 
 
 --
+-- Name: saml_oauth_clients saml_oauth_clients_client_secret_sha256_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_oauth_clients
+    ADD CONSTRAINT saml_oauth_clients_client_secret_sha256_key UNIQUE (client_secret_sha256);
+
+
+--
+-- Name: saml_oauth_clients saml_oauth_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_oauth_clients
+    ADD CONSTRAINT saml_oauth_clients_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -456,6 +485,14 @@ ALTER TABLE ONLY public.saml_connections
 
 ALTER TABLE ONLY public.saml_flows
     ADD CONSTRAINT saml_flows_saml_connection_id_fkey FOREIGN KEY (saml_connection_id) REFERENCES public.saml_connections(id);
+
+
+--
+-- Name: saml_oauth_clients saml_oauth_clients_environment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_oauth_clients
+    ADD CONSTRAINT saml_oauth_clients_environment_id_fkey FOREIGN KEY (environment_id) REFERENCES public.environments(id);
 
 
 --

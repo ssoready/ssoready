@@ -12,7 +12,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/ssoready/ssoready/internal/apikeyauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store/idformat"
@@ -25,6 +25,16 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		return nil, err
 	}
 	defer rollback()
+
+	authnData := authn.FullContextData(ctx)
+	if authnData.APIKey == nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("api key authentication is required"))
+	}
+
+	envID, err := idformat.Environment.Parse(authnData.APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
 
 	var samlConnID uuid.UUID
 	if req.SamlConnectionId != "" {
@@ -39,7 +49,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		}
 
 		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationIDParams{
-			EnvironmentID: apikeyauth.EnvID(ctx),
+			EnvironmentID: envID,
 			ID:            orgID,
 		})
 		if err != nil {
@@ -47,7 +57,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		}
 	} else if req.OrganizationExternalId != "" {
 		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationExternalID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationExternalIDParams{
-			EnvironmentID: apikeyauth.EnvID(ctx),
+			EnvironmentID: envID,
 			ExternalID:    &req.OrganizationExternalId,
 		})
 		if err != nil {
@@ -61,8 +71,8 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	}
 
 	envAuthURL, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{
-		AppOrganizationID: apikeyauth.AppOrgID(ctx),
-		EnvironmentID:     apikeyauth.EnvID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
+		EnvironmentID:     envID,
 		SamlConnectionID:  samlConnID,
 	})
 	if err != nil {
@@ -120,6 +130,21 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	}
 	defer rollback()
 
+	var environmentID string
+	authnData := authn.FullContextData(ctx)
+	if authnData.APIKey != nil {
+		environmentID = authnData.APIKey.EnvID
+	} else if authnData.SAMLOAuthClient != nil {
+		environmentID = authnData.SAMLOAuthClient.EnvID
+	} else {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("api key or saml oauth client authentication is required"))
+	}
+
+	envID, err := idformat.Environment.Parse(environmentID)
+	if err != nil {
+		return nil, err
+	}
+
 	samlAccessCode, err := idformat.SAMLAccessCode.Parse(req.SamlAccessCode)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad saml_access_code: %w", err))
@@ -128,8 +153,8 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	samlAccessCodeSHA := sha256.Sum256(samlAccessCode[:])
 
 	samlAccessTokenData, err := q.GetSAMLAccessCodeData(ctx, queries.GetSAMLAccessCodeDataParams{
-		AppOrganizationID: apikeyauth.AppOrgID(ctx),
-		EnvironmentID:     apikeyauth.EnvID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
+		EnvironmentID:     envID,
 		AccessCodeSha256:  samlAccessCodeSHA[:],
 	})
 	if err != nil {

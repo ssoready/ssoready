@@ -7,7 +7,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/getsentry/sentry-go"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -65,12 +65,15 @@ func NewPreAuthentication() connect.UnaryInterceptorFunc {
 func NewPostAuthentication() connect.UnaryInterceptorFunc {
 	return func(f connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			appOrgID := appauth.MaybeOrgID(ctx)
-			appUserID := appauth.MaybeAppUserID(ctx)
+			authnData := authn.FullContextData(ctx)
+			var appUserID *string
+			if authnData.AppSession != nil {
+				appUserID = &authnData.AppSession.AppUserID
+			}
+
 			sentry.GetHubFromContext(ctx).ConfigureScope(func(scope *sentry.Scope) {
-				if appOrgID != nil {
-					scope.SetTag("org_id", appOrgID.String())
-				}
+				scope.SetTag("org_id", authn.AppOrgID(ctx).String())
+
 				if appUserID != nil {
 					scope.SetUser(sentry.User{
 						ID: *appUserID,

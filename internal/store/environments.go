@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -18,7 +18,7 @@ func (s *Store) ListEnvironments(ctx context.Context, req *ssoreadyv1.ListEnviro
 
 	limit := 10
 	qEnvs, err := s.q.ListEnvironments(ctx, queries.ListEnvironmentsParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                startID,
 		Limit:             int32(limit + 1),
 	})
@@ -50,7 +50,7 @@ func (s *Store) GetEnvironment(ctx context.Context, req *ssoreadyv1.GetEnvironme
 	}
 
 	qEnv, err := s.q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	})
 	if err != nil {
@@ -73,7 +73,7 @@ func (s *Store) CreateEnvironment(ctx context.Context, req *ssoreadyv1.CreateEnv
 	}
 
 	qEnv, err := q.CreateEnvironment(ctx, queries.CreateEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                uuid.New(),
 		RedirectUrl:       &req.Environment.RedirectUrl,
 		DisplayName:       &req.Environment.DisplayName,
@@ -104,7 +104,7 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 
 	// authz check
 	if _, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	}); err != nil {
 		return nil, err

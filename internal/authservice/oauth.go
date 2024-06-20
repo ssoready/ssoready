@@ -10,8 +10,7 @@ import (
 	"github.com/go-jose/go-jose/v3"
 	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-	"github.com/ssoready/ssoready/internal/apikeyauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/saml"
 	"github.com/ssoready/ssoready/internal/statesign"
@@ -28,13 +27,11 @@ type openidConfig struct {
 }
 
 func (s *Service) oauthOpenIDConfiguration(w http.ResponseWriter, r *http.Request) {
-	orgID := mux.Vars(r)["org_id"]
-
 	config := openidConfig{
-		Issuer:                            fmt.Sprintf("http://localhost:8080/v1/oauth/%s", orgID),
-		AuthorizationEndpoint:             fmt.Sprintf("http://localhost:8080/v1/oauth/%s/authorize", orgID),
-		TokenEndpoint:                     fmt.Sprintf("http://localhost:8080/v1/oauth/%s/token", orgID),
-		JWKSURI:                           fmt.Sprintf("http://localhost:8080/v1/oauth/%s/jwks", orgID),
+		Issuer:                            fmt.Sprintf("%s/v1/oauth", s.BaseURL),
+		AuthorizationEndpoint:             fmt.Sprintf("%s/v1/oauth/authorize", s.BaseURL),
+		TokenEndpoint:                     fmt.Sprintf("%s/v1/oauth/token", s.BaseURL),
+		JWKSURI:                           fmt.Sprintf("%s/v1/oauth/jwks", s.BaseURL),
 		TokenEndpointAuthMethodsSupported: []string{"client_secret_post"},
 	}
 	if err := json.NewEncoder(w).Encode(config); err != nil {
@@ -44,17 +41,40 @@ func (s *Service) oauthOpenIDConfiguration(w http.ResponseWriter, r *http.Reques
 
 func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	orgID := mux.Vars(r)["org_id"]
+
+	clientID := r.URL.Query().Get("client_id")
 	state := r.URL.Query().Get("state")
+	orgID := r.URL.Query().Get("organization_id")
+	orgExternalID := r.URL.Query().Get("organization_external_id")
+	samlConnID := r.URL.Query().Get("saml_connection_id")
 
-	slog.InfoContext(ctx, "oauth_authorize", "org_id", orgID)
+	slog.InfoContext(ctx, "oauth_authorize", "org_id", orgID, "org_external_id", orgExternalID, "saml_conn_id", samlConnID)
 
-	dataRes, err := s.Store.AuthGetOAuthAuthorizeData(ctx, &store.AuthGetOAuthAuthorizeDataRequest{
-		OrganizationID: orgID,
+	getClientRes, err := s.Store.AuthOAuthGetClient(ctx, &store.AuthOAuthGetClientRequest{
+		SAMLOAuthClientID: clientID,
 	})
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("get oauth client: %w", err))
 	}
+
+	ctx = authn.NewContext(ctx, authn.ContextData{
+		SAMLOAuthClient: &authn.SAMLOAuthClientData{
+			AppOrgID:      getClientRes.AppOrgID,
+			EnvID:         getClientRes.EnvID,
+			OAuthClientID: getClientRes.SAMLOAuthClientID,
+		},
+	})
+
+	dataRes, err := s.Store.AuthGetOAuthAuthorizeData(ctx, &store.AuthGetOAuthAuthorizeDataRequest{
+		OrganizationID:         orgID,
+		OrganizationExternalID: orgExternalID,
+		SAMLConnectionID:       samlConnID,
+	})
+	if err != nil {
+		panic(fmt.Errorf("get oauth authorize data: %w", err))
+	}
+
+	slog.InfoContext(ctx, "oauth_authorize_saml_connection", "saml_connection_id", dataRes.SAMLConnectionID)
 
 	// In the standard flow, samlFlowID is assigned by GetRedirectURL. In the OAuth flow it's assigned here because
 	// there is no "get redirect url" equivalent.
@@ -72,7 +92,7 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 		SAMLConnectionID: dataRes.SAMLConnectionID,
 		SAMLFlowID:       samlFlowID,
 	}); err != nil {
-		panic(err)
+		panic(fmt.Errorf("upsert oauth authorize data: %w", err))
 	}
 
 	if err := acsTemplate.Execute(w, &acsTemplateData{
@@ -80,7 +100,6 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 		SAMLRequest: initRes.SAMLRequest,
 		RelayState: s.StateSigner.Encode(statesign.Data{
 			SAMLFlowID: samlFlowID,
-			State:      r.FormValue("state"),
 		}),
 	}); err != nil {
 		panic(fmt.Errorf("acsTemplate.Execute: %w", err))
@@ -88,8 +107,14 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 }
 
 type tokenResponse struct {
-	//AccessToken string `json:"access_token"`
 	IDToken string `json:"id_token"`
+}
+
+type idTokenClaims struct {
+	jwt.Claims
+
+	OrganizationID         string `json:"organizationId"`
+	OrganizationExternalID string `json:"organizationExternalId"`
 }
 
 func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
@@ -99,12 +124,25 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	apiKey, err := s.Store.GetAPIKeyBySecretToken(ctx, &store.GetAPIKeyBySecretTokenRequest{Token: r.FormValue("client_secret")})
+	clientID := r.FormValue("client_id")
+	clientSecret := r.FormValue("client_secret")
+
+	getClientRes, err := s.Store.AuthOAuthGetClientWithSecret(ctx, &store.AuthOAuthGetClientWithSecretRequest{
+		SAMLOAuthClientID:     clientID,
+		SAMLOAuthClientSecret: clientSecret,
+	})
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("get oauth client: %w", err))
 	}
 
-	ctx = apikeyauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.EnvironmentID)
+	ctx = authn.NewContext(ctx, authn.ContextData{
+		SAMLOAuthClient: &authn.SAMLOAuthClientData{
+			AppOrgID:      getClientRes.AppOrgID,
+			EnvID:         getClientRes.EnvID,
+			OAuthClientID: getClientRes.SAMLOAuthClientID,
+		},
+	})
+
 	res, err := s.Store.RedeemSAMLAccessCode(ctx, &ssoreadyv1.RedeemSAMLAccessCodeRequest{
 		SamlAccessCode: r.FormValue("code"),
 	})
@@ -122,13 +160,17 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	now := time.Now()
-	claims := jwt.Claims{
-		IssuedAt: jwt.NewNumericDate(now),
-		Expiry:   jwt.NewNumericDate(now.Add(time.Hour)),
-		Issuer:   fmt.Sprintf("http://localhost:8080/v1/oauth/%s", res.OrganizationId),
-		Audience: jwt.Audience{r.FormValue("client_id")},
+	claims := idTokenClaims{
+		Claims: jwt.Claims{
+			IssuedAt: jwt.NewNumericDate(now),
+			Expiry:   jwt.NewNumericDate(now.Add(time.Hour)),
+			Issuer:   fmt.Sprintf("%s/v1/oauth", s.BaseURL),
+			Audience: jwt.Audience{getClientRes.SAMLOAuthClientID},
 
-		Subject: res.Email,
+			Subject: res.Email,
+		},
+		OrganizationID:         res.OrganizationId,
+		OrganizationExternalID: res.OrganizationExternalId,
 	}
 
 	idToken, err := jwt.Signed(signer).Claims(claims).CompactSerialize()

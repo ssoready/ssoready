@@ -19,7 +19,7 @@ import (
 	"github.com/ssoready/conf"
 	"github.com/ssoready/ssoready/internal/apiservice"
 	"github.com/ssoready/ssoready/internal/appanalytics"
-	"github.com/ssoready/ssoready/internal/appauth/appauthinterceptor"
+	"github.com/ssoready/ssoready/internal/authn/authninterceptor"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/pagetoken"
@@ -103,7 +103,7 @@ func main() {
 		},
 		connect.WithInterceptors(
 			sentryinterceptor.NewPreAuthentication(),
-			appauthinterceptor.New(store_),
+			authninterceptor.New(store_),
 			sentryinterceptor.NewPostAuthentication(),
 			appanalytics.NewInterceptor(analyticsClient),
 		),
