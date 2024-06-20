@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet, useParams } from "react-router";
 import { EnvironmentSwitcher } from "@/components/EnvironmentSwitcher";
 import {
-  Building2,
+  KeyRoundIcon,
   CalendarIcon,
   LayoutGrid,
   MailIcon,
@@ -32,6 +32,16 @@ export function Page() {
               >
                 <LayoutGrid className="h-4 w-4" />
                 <span>Overview</span>
+              </Link>
+            )}
+
+            {environmentId && (
+              <Link
+                to={`/environments/${environmentId}/api-keys`}
+                className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
+              >
+                <KeyRoundIcon className="h-4 w-4" />
+                <span>API Keys</span>
               </Link>
             )}
           </div>

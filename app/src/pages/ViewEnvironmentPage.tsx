@@ -77,9 +77,6 @@ export function ViewEnvironmentPage() {
   const { data: environment } = useQuery(getEnvironment, {
     id: environmentId,
   });
-  const { data: listAPIKeysRes } = useQuery(listAPIKeys, {
-    environmentId,
-  });
   const {
     data: listOrganizationsResponses,
     fetchNextPage,
@@ -93,63 +90,8 @@ export function ViewEnvironmentPage() {
     },
   );
 
-  const [apiKeySecret, setApiKeySecret] = useState("");
-  const [apiKeyAlertOpen, setApiKeyAlertOpen] = useState(false);
-  const createAPIKeyMutation = useMutation(createAPIKey);
-  const queryClient = useQueryClient();
-  const handleCreateAPIKey = useCallback(async () => {
-    const apiKey = await createAPIKeyMutation.mutateAsync({
-      apiKey: {
-        environmentId,
-      },
-    });
-
-    await queryClient.invalidateQueries({
-      queryKey: createConnectQueryKey(listAPIKeys, { environmentId }),
-    });
-
-    setApiKeySecret(apiKey.secretToken);
-    setApiKeyAlertOpen(true);
-  }, [
-    environmentId,
-    createAPIKeyMutation,
-    queryClient,
-    setApiKeySecret,
-    setApiKeyAlertOpen,
-  ]);
-
   return (
     <div className="flex flex-col gap-y-8">
-      <AlertDialog open={apiKeyAlertOpen} onOpenChange={setApiKeyAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>New API Key</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your new API key has been created.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <Alert>
-            <CircleAlert className="h-4 w-4" />
-            <AlertTitle>Copy this secret</AlertTitle>
-            <AlertDescription>
-              Store this secret in a password or secrets manager. You can't
-              retrieve it later.
-            </AlertDescription>
-          </Alert>
-
-          <div className="text-sm font-medium leading-none">API Key Secret</div>
-
-          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border">
-            {apiKeySecret}
-          </div>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Close</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -181,46 +123,6 @@ export function ViewEnvironmentPage() {
             </div>
             <div className="text-sm col-span-3">{environment?.redirectUrl}</div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col space-y-1.5">
-              <CardTitle>API Keys</CardTitle>
-
-              <CardDescription>API keys for this environment.</CardDescription>
-            </div>
-
-            <Button variant="outline" onClick={handleCreateAPIKey}>
-              Create API Key
-            </Button>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>API Key ID</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listAPIKeysRes?.apiKeys?.map((apiKey) => (
-                <TableRow key={apiKey.id}>
-                  <TableCell>
-                    <Link
-                      to={`/environments/${environmentId}/api-keys/${apiKey?.id}`}
-                      className="underline underline-offset-4 decoration-muted-foreground"
-                    >
-                      {apiKey.id}
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
         </CardContent>
       </Card>
 
