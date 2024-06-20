@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/ssoready/ssoready/internal/apikeyauth"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -16,7 +15,7 @@ import (
 )
 
 func (s *Store) GetOnboardingState(ctx context.Context) (*ssoreadyv1.GetOnboardingStateResponse, error) {
-	qOnboardingState, err := s.q.GetOnboardingState(ctx, appauth.OrgID(ctx))
+	qOnboardingState, err := s.q.GetOnboardingState(ctx, authn.AppOrgID(ctx))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return &ssoreadyv1.GetOnboardingStateResponse{}, nil
@@ -50,7 +49,7 @@ func (s *Store) UpdateOnboardingState(ctx context.Context, req *ssoreadyv1.Updat
 	}
 
 	if _, err := s.q.UpdateOnboardingState(ctx, queries.UpdateOnboardingStateParams{
-		AppOrganizationID:          appauth.OrgID(ctx),
+		AppOrganizationID:          authn.AppOrgID(ctx),
 		DummyidpAppID:              req.DummyidpAppId,
 		OnboardingEnvironmentID:    environmentID,
 		OnboardingOrganizationID:   organizationID,
@@ -75,11 +74,17 @@ func (s *Store) OnboardingGetSAMLRedirectURL(ctx context.Context, req *ssoreadyv
 		return nil, err
 	}
 
-	if apiKey.AppOrganizationID != appauth.OrgID(ctx) {
-		panic(fmt.Errorf("mismatch between apiKey.AppOrganizationID and appauth.OrgID: %v, %v", apiKey.AppOrganizationID, appauth.OrgID(ctx)))
+	if apiKey.AppOrganizationID != authn.AppOrgID(ctx) {
+		panic(fmt.Errorf("mismatch between apiKey.AppOrganizationID and appauth.OrgID: %v, %v", apiKey.AppOrganizationID, authn.AppOrgID(ctx)))
 	}
 
-	ctx = apikeyauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.EnvironmentID)
+	ctx = authn.NewContext(ctx, authn.ContextData{
+		APIKey: &authn.APIKeyData{
+			AppOrgID: apiKey.AppOrganizationID,
+			EnvID:    idformat.Environment.Format(apiKey.EnvironmentID),
+			APIKeyID: idformat.APIKey.Format(apiKey.ID),
+		},
+	})
 
 	res, err := s.GetSAMLRedirectURL(ctx, &ssoreadyv1.GetSAMLRedirectURLRequest{SamlConnectionId: req.SamlConnectionId})
 	if err != nil {
@@ -102,11 +107,17 @@ func (s *Store) OnboardingRedeemSAMLAccessCode(ctx context.Context, req *ssoread
 		return nil, err
 	}
 
-	if apiKey.AppOrganizationID != appauth.OrgID(ctx) {
-		panic(fmt.Errorf("mismatch between apiKey.AppOrganizationID and appauth.OrgID: %v, %v", apiKey.AppOrganizationID, appauth.OrgID(ctx)))
+	if apiKey.AppOrganizationID != authn.AppOrgID(ctx) {
+		panic(fmt.Errorf("mismatch between apiKey.AppOrganizationID and appauth.OrgID: %v, %v", apiKey.AppOrganizationID, authn.AppOrgID(ctx)))
 	}
 
-	ctx = apikeyauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.EnvironmentID)
+	ctx = authn.NewContext(ctx, authn.ContextData{
+		APIKey: &authn.APIKeyData{
+			AppOrgID: apiKey.AppOrganizationID,
+			EnvID:    idformat.Environment.Format(apiKey.EnvironmentID),
+			APIKeyID: idformat.APIKey.Format(apiKey.ID),
+		},
+	})
 
 	res, err := s.RedeemSAMLAccessCode(ctx, &ssoreadyv1.RedeemSAMLAccessCodeRequest{SamlAccessCode: req.SamlAccessCode})
 	if err != nil {

@@ -83,6 +83,18 @@ const (
 	// SSOReadyServiceDeleteAPIKeyProcedure is the fully-qualified name of the SSOReadyService's
 	// DeleteAPIKey RPC.
 	SSOReadyServiceDeleteAPIKeyProcedure = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
+	// SSOReadyServiceListSAMLOAuthClientsProcedure is the fully-qualified name of the SSOReadyService's
+	// ListSAMLOAuthClients RPC.
+	SSOReadyServiceListSAMLOAuthClientsProcedure = "/ssoready.v1.SSOReadyService/ListSAMLOAuthClients"
+	// SSOReadyServiceGetSAMLOAuthClientProcedure is the fully-qualified name of the SSOReadyService's
+	// GetSAMLOAuthClient RPC.
+	SSOReadyServiceGetSAMLOAuthClientProcedure = "/ssoready.v1.SSOReadyService/GetSAMLOAuthClient"
+	// SSOReadyServiceCreateSAMLOAuthClientProcedure is the fully-qualified name of the
+	// SSOReadyService's CreateSAMLOAuthClient RPC.
+	SSOReadyServiceCreateSAMLOAuthClientProcedure = "/ssoready.v1.SSOReadyService/CreateSAMLOAuthClient"
+	// SSOReadyServiceDeleteSAMLOAuthClientProcedure is the fully-qualified name of the
+	// SSOReadyService's DeleteSAMLOAuthClient RPC.
+	SSOReadyServiceDeleteSAMLOAuthClientProcedure = "/ssoready.v1.SSOReadyService/DeleteSAMLOAuthClient"
 	// SSOReadyServiceListOrganizationsProcedure is the fully-qualified name of the SSOReadyService's
 	// ListOrganizations RPC.
 	SSOReadyServiceListOrganizationsProcedure = "/ssoready.v1.SSOReadyService/ListOrganizations"
@@ -137,6 +149,10 @@ type SSOReadyServiceClient interface {
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
 	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
 	DeleteAPIKey(context.Context, *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error)
+	ListSAMLOAuthClients(context.Context, *connect.Request[v1.ListSAMLOAuthClientsRequest]) (*connect.Response[v1.ListSAMLOAuthClientsResponse], error)
+	GetSAMLOAuthClient(context.Context, *connect.Request[v1.GetSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error)
+	CreateSAMLOAuthClient(context.Context, *connect.Request[v1.CreateSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error)
+	DeleteSAMLOAuthClient(context.Context, *connect.Request[v1.DeleteSAMLOAuthClientRequest]) (*connect.Response[emptypb.Empty], error)
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
@@ -245,6 +261,26 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceDeleteAPIKeyProcedure,
 			opts...,
 		),
+		listSAMLOAuthClients: connect.NewClient[v1.ListSAMLOAuthClientsRequest, v1.ListSAMLOAuthClientsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListSAMLOAuthClientsProcedure,
+			opts...,
+		),
+		getSAMLOAuthClient: connect.NewClient[v1.GetSAMLOAuthClientRequest, v1.SAMLOAuthClient](
+			httpClient,
+			baseURL+SSOReadyServiceGetSAMLOAuthClientProcedure,
+			opts...,
+		),
+		createSAMLOAuthClient: connect.NewClient[v1.CreateSAMLOAuthClientRequest, v1.SAMLOAuthClient](
+			httpClient,
+			baseURL+SSOReadyServiceCreateSAMLOAuthClientProcedure,
+			opts...,
+		),
+		deleteSAMLOAuthClient: connect.NewClient[v1.DeleteSAMLOAuthClientRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceDeleteSAMLOAuthClientProcedure,
+			opts...,
+		),
 		listOrganizations: connect.NewClient[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceListOrganizationsProcedure,
@@ -322,6 +358,10 @@ type sSOReadyServiceClient struct {
 	getAPIKey                      *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
 	createAPIKey                   *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
 	deleteAPIKey                   *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
+	listSAMLOAuthClients           *connect.Client[v1.ListSAMLOAuthClientsRequest, v1.ListSAMLOAuthClientsResponse]
+	getSAMLOAuthClient             *connect.Client[v1.GetSAMLOAuthClientRequest, v1.SAMLOAuthClient]
+	createSAMLOAuthClient          *connect.Client[v1.CreateSAMLOAuthClientRequest, v1.SAMLOAuthClient]
+	deleteSAMLOAuthClient          *connect.Client[v1.DeleteSAMLOAuthClientRequest, emptypb.Empty]
 	listOrganizations              *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
 	getOrganization                *connect.Client[v1.GetOrganizationRequest, v1.Organization]
 	createOrganization             *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
@@ -420,6 +460,26 @@ func (c *sSOReadyServiceClient) DeleteAPIKey(ctx context.Context, req *connect.R
 	return c.deleteAPIKey.CallUnary(ctx, req)
 }
 
+// ListSAMLOAuthClients calls ssoready.v1.SSOReadyService.ListSAMLOAuthClients.
+func (c *sSOReadyServiceClient) ListSAMLOAuthClients(ctx context.Context, req *connect.Request[v1.ListSAMLOAuthClientsRequest]) (*connect.Response[v1.ListSAMLOAuthClientsResponse], error) {
+	return c.listSAMLOAuthClients.CallUnary(ctx, req)
+}
+
+// GetSAMLOAuthClient calls ssoready.v1.SSOReadyService.GetSAMLOAuthClient.
+func (c *sSOReadyServiceClient) GetSAMLOAuthClient(ctx context.Context, req *connect.Request[v1.GetSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error) {
+	return c.getSAMLOAuthClient.CallUnary(ctx, req)
+}
+
+// CreateSAMLOAuthClient calls ssoready.v1.SSOReadyService.CreateSAMLOAuthClient.
+func (c *sSOReadyServiceClient) CreateSAMLOAuthClient(ctx context.Context, req *connect.Request[v1.CreateSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error) {
+	return c.createSAMLOAuthClient.CallUnary(ctx, req)
+}
+
+// DeleteSAMLOAuthClient calls ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient.
+func (c *sSOReadyServiceClient) DeleteSAMLOAuthClient(ctx context.Context, req *connect.Request[v1.DeleteSAMLOAuthClientRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.deleteSAMLOAuthClient.CallUnary(ctx, req)
+}
+
 // ListOrganizations calls ssoready.v1.SSOReadyService.ListOrganizations.
 func (c *sSOReadyServiceClient) ListOrganizations(ctx context.Context, req *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error) {
 	return c.listOrganizations.CallUnary(ctx, req)
@@ -494,6 +554,10 @@ type SSOReadyServiceHandler interface {
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
 	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
 	DeleteAPIKey(context.Context, *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error)
+	ListSAMLOAuthClients(context.Context, *connect.Request[v1.ListSAMLOAuthClientsRequest]) (*connect.Response[v1.ListSAMLOAuthClientsResponse], error)
+	GetSAMLOAuthClient(context.Context, *connect.Request[v1.GetSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error)
+	CreateSAMLOAuthClient(context.Context, *connect.Request[v1.CreateSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error)
+	DeleteSAMLOAuthClient(context.Context, *connect.Request[v1.DeleteSAMLOAuthClientRequest]) (*connect.Response[emptypb.Empty], error)
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
@@ -598,6 +662,26 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.DeleteAPIKey,
 		opts...,
 	)
+	sSOReadyServiceListSAMLOAuthClientsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListSAMLOAuthClientsProcedure,
+		svc.ListSAMLOAuthClients,
+		opts...,
+	)
+	sSOReadyServiceGetSAMLOAuthClientHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetSAMLOAuthClientProcedure,
+		svc.GetSAMLOAuthClient,
+		opts...,
+	)
+	sSOReadyServiceCreateSAMLOAuthClientHandler := connect.NewUnaryHandler(
+		SSOReadyServiceCreateSAMLOAuthClientProcedure,
+		svc.CreateSAMLOAuthClient,
+		opts...,
+	)
+	sSOReadyServiceDeleteSAMLOAuthClientHandler := connect.NewUnaryHandler(
+		SSOReadyServiceDeleteSAMLOAuthClientProcedure,
+		svc.DeleteSAMLOAuthClient,
+		opts...,
+	)
 	sSOReadyServiceListOrganizationsHandler := connect.NewUnaryHandler(
 		SSOReadyServiceListOrganizationsProcedure,
 		svc.ListOrganizations,
@@ -689,6 +773,14 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceCreateAPIKeyHandler.ServeHTTP(w, r)
 		case SSOReadyServiceDeleteAPIKeyProcedure:
 			sSOReadyServiceDeleteAPIKeyHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListSAMLOAuthClientsProcedure:
+			sSOReadyServiceListSAMLOAuthClientsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetSAMLOAuthClientProcedure:
+			sSOReadyServiceGetSAMLOAuthClientHandler.ServeHTTP(w, r)
+		case SSOReadyServiceCreateSAMLOAuthClientProcedure:
+			sSOReadyServiceCreateSAMLOAuthClientHandler.ServeHTTP(w, r)
+		case SSOReadyServiceDeleteSAMLOAuthClientProcedure:
+			sSOReadyServiceDeleteSAMLOAuthClientHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListOrganizationsProcedure:
 			sSOReadyServiceListOrganizationsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetOrganizationProcedure:
@@ -786,6 +878,22 @@ func (UnimplementedSSOReadyServiceHandler) CreateAPIKey(context.Context, *connec
 
 func (UnimplementedSSOReadyServiceHandler) DeleteAPIKey(context.Context, *connect.Request[v1.DeleteAPIKeyRequest]) (*connect.Response[emptypb.Empty], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.DeleteAPIKey is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListSAMLOAuthClients(context.Context, *connect.Request[v1.ListSAMLOAuthClientsRequest]) (*connect.Response[v1.ListSAMLOAuthClientsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSAMLOAuthClients is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetSAMLOAuthClient(context.Context, *connect.Request[v1.GetSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSAMLOAuthClient is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) CreateSAMLOAuthClient(context.Context, *connect.Request[v1.CreateSAMLOAuthClientRequest]) (*connect.Response[v1.SAMLOAuthClient], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateSAMLOAuthClient is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) DeleteSAMLOAuthClient(context.Context, *connect.Request[v1.DeleteSAMLOAuthClientRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error) {

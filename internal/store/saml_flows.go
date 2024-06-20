@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -28,7 +28,7 @@ func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlows
 
 	// idor check
 	if _, err = q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                samlConnectionID,
 	}); err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func (s *Store) GetSAMLFlow(ctx context.Context, req *ssoreadyv1.GetSAMLFlowRequ
 	defer rollback()
 
 	qSAMLFlow, err := q.GetSAMLFlow(ctx, queries.GetSAMLFlowParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	})
 	if err != nil {

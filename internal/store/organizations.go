@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"github.com/google/uuid"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -25,7 +25,7 @@ func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrgan
 
 	// idor check
 	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                envID,
 	}); err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganiza
 	defer rollback()
 
 	qOrg, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	})
 	if err != nil {
@@ -115,7 +115,7 @@ func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOr
 
 	// idor check
 	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                envID,
 	}); err != nil {
 		return nil, err
@@ -169,7 +169,7 @@ func (s *Store) UpdateOrganization(ctx context.Context, req *ssoreadyv1.UpdateOr
 
 	// authz check
 	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	}); err != nil {
 		return nil, err

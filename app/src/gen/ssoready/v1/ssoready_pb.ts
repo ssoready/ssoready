@@ -192,6 +192,55 @@ export class APIKey extends Message<APIKey> {
 }
 
 /**
+ * @generated from message ssoready.v1.SAMLOAuthClient
+ */
+export class SAMLOAuthClient extends Message<SAMLOAuthClient> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string environment_id = 2;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string client_secret = 3;
+   */
+  clientSecret = "";
+
+  constructor(data?: PartialMessage<SAMLOAuthClient>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SAMLOAuthClient";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "client_secret", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLOAuthClient {
+    return new SAMLOAuthClient().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLOAuthClient {
+    return new SAMLOAuthClient().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLOAuthClient {
+    return new SAMLOAuthClient().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SAMLOAuthClient | PlainMessage<SAMLOAuthClient> | undefined, b: SAMLOAuthClient | PlainMessage<SAMLOAuthClient> | undefined): boolean {
+    return proto3.util.equals(SAMLOAuthClient, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.Organization
  */
 export class Organization extends Message<Organization> {
@@ -1503,6 +1552,203 @@ export class DeleteAPIKeyRequest extends Message<DeleteAPIKeyRequest> {
 
   static equals(a: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined, b: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined): boolean {
     return proto3.util.equals(DeleteAPIKeyRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLOAuthClientsRequest
+ */
+export class ListSAMLOAuthClientsRequest extends Message<ListSAMLOAuthClientsRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLOAuthClientsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLOAuthClientsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLOAuthClientsRequest {
+    return new ListSAMLOAuthClientsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsRequest {
+    return new ListSAMLOAuthClientsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsRequest {
+    return new ListSAMLOAuthClientsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLOAuthClientsRequest | PlainMessage<ListSAMLOAuthClientsRequest> | undefined, b: ListSAMLOAuthClientsRequest | PlainMessage<ListSAMLOAuthClientsRequest> | undefined): boolean {
+    return proto3.util.equals(ListSAMLOAuthClientsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLOAuthClientsResponse
+ */
+export class ListSAMLOAuthClientsResponse extends Message<ListSAMLOAuthClientsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SAMLOAuthClient saml_oauth_clients = 1;
+   */
+  samlOauthClients: SAMLOAuthClient[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLOAuthClientsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLOAuthClientsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_oauth_clients", kind: "message", T: SAMLOAuthClient, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLOAuthClientsResponse {
+    return new ListSAMLOAuthClientsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsResponse {
+    return new ListSAMLOAuthClientsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsResponse {
+    return new ListSAMLOAuthClientsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLOAuthClientsResponse | PlainMessage<ListSAMLOAuthClientsResponse> | undefined, b: ListSAMLOAuthClientsResponse | PlainMessage<ListSAMLOAuthClientsResponse> | undefined): boolean {
+    return proto3.util.equals(ListSAMLOAuthClientsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSAMLOAuthClientRequest
+ */
+export class GetSAMLOAuthClientRequest extends Message<GetSAMLOAuthClientRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSAMLOAuthClientRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLOAuthClientRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLOAuthClientRequest {
+    return new GetSAMLOAuthClientRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLOAuthClientRequest {
+    return new GetSAMLOAuthClientRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLOAuthClientRequest {
+    return new GetSAMLOAuthClientRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLOAuthClientRequest | PlainMessage<GetSAMLOAuthClientRequest> | undefined, b: GetSAMLOAuthClientRequest | PlainMessage<GetSAMLOAuthClientRequest> | undefined): boolean {
+    return proto3.util.equals(GetSAMLOAuthClientRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSAMLOAuthClientRequest
+ */
+export class CreateSAMLOAuthClientRequest extends Message<CreateSAMLOAuthClientRequest> {
+  /**
+   * @generated from field: ssoready.v1.SAMLOAuthClient saml_oauth_client = 1;
+   */
+  samlOauthClient?: SAMLOAuthClient;
+
+  constructor(data?: PartialMessage<CreateSAMLOAuthClientRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSAMLOAuthClientRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_oauth_client", kind: "message", T: SAMLOAuthClient },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLOAuthClientRequest {
+    return new CreateSAMLOAuthClientRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLOAuthClientRequest {
+    return new CreateSAMLOAuthClientRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLOAuthClientRequest {
+    return new CreateSAMLOAuthClientRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSAMLOAuthClientRequest | PlainMessage<CreateSAMLOAuthClientRequest> | undefined, b: CreateSAMLOAuthClientRequest | PlainMessage<CreateSAMLOAuthClientRequest> | undefined): boolean {
+    return proto3.util.equals(CreateSAMLOAuthClientRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.DeleteSAMLOAuthClientRequest
+ */
+export class DeleteSAMLOAuthClientRequest extends Message<DeleteSAMLOAuthClientRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<DeleteSAMLOAuthClientRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.DeleteSAMLOAuthClientRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteSAMLOAuthClientRequest {
+    return new DeleteSAMLOAuthClientRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteSAMLOAuthClientRequest {
+    return new DeleteSAMLOAuthClientRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteSAMLOAuthClientRequest {
+    return new DeleteSAMLOAuthClientRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteSAMLOAuthClientRequest | PlainMessage<DeleteSAMLOAuthClientRequest> | undefined, b: DeleteSAMLOAuthClientRequest | PlainMessage<DeleteSAMLOAuthClientRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteSAMLOAuthClientRequest, a, b);
   }
 }
 

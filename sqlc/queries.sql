@@ -51,13 +51,6 @@ from saml_connections
          join organization_domains on organizations.id = organization_domains.organization_id
 where saml_connections.id = $1;
 
--- name: AuthOAuthGetAuthorizeData :one
-select saml_connections.id, saml_connections.idp_redirect_url, saml_connections.sp_entity_id
-from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
-where organizations.id = $1
-  and saml_connections.is_primary = true;
-
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         auth_redirect_url, get_redirect_time, status)
@@ -207,7 +200,11 @@ values ($1, $2, $3, $4, '', $5)
 returning *;
 
 -- name: GetAppSessionByTokenSHA256 :one
-select app_sessions.app_user_id, app_users.display_name, app_users.email, app_users.app_organization_id
+select app_sessions.id,
+       app_sessions.app_user_id,
+       app_users.display_name,
+       app_users.email,
+       app_users.app_organization_id
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token_sha256 = $1
@@ -366,3 +363,41 @@ from saml_flows
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_flows.id = $2;
+
+-- name: ListSAMLOAuthClients :many
+select *
+from saml_oauth_clients
+where environment_id = $1
+  and id > $2
+order by id
+limit $3;
+
+-- name: GetSAMLOAuthClient :one
+select saml_oauth_clients.*
+from saml_oauth_clients
+         join environments on saml_oauth_clients.environment_id = environments.id
+where environments.app_organization_id = $1
+  and saml_oauth_clients.id = $2;
+
+-- name: CreateSAMLOAuthClient :one
+insert into saml_oauth_clients (id, environment_id, client_secret_sha256)
+values ($1, $2, $3)
+returning *;
+
+-- name: DeleteSAMLOAuthClient :exec
+delete
+from saml_oauth_clients
+where id = $1;
+
+-- name: AuthGetSAMLOAuthClient :one
+select saml_oauth_clients.*, environments.app_organization_id
+from saml_oauth_clients
+         join environments on saml_oauth_clients.environment_id = environments.id
+where saml_oauth_clients.id = $1;
+
+-- name: AuthGetSAMLOAuthClientWithSecret :one
+select saml_oauth_clients.*, environments.app_organization_id
+from saml_oauth_clients
+         join environments on saml_oauth_clients.environment_id = environments.id
+where saml_oauth_clients.id = $1
+  and saml_oauth_clients.client_secret_sha256 = $2;
