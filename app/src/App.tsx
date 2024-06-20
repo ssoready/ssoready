@@ -22,6 +22,9 @@ import { Toaster } from "@/components/ui/sonner";
 import { RedirectSAMLFlowPage } from "@/pages/RedirectSAMLFlowPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { analytics } from "@/analytics";
+import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
+import { NotFound } from "@/pages/NotFound";
+import { ViewSAMLOAuthClientPage } from "@/pages/ViewSAMLOAuthClientPage";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +64,14 @@ export function AppRoutes() {
             element={<ViewAPIKeyPage />}
           />
           <Route
+            path="/environments/:environmentId/saml-oauth-clients"
+            element={<ListSAMLOAuthClientsPage />}
+          />
+          <Route
+            path="/environments/:environmentId/saml-oauth-clients/:samlOAuthClientId"
+            element={<ViewSAMLOAuthClientPage />}
+          />
+          <Route
             path="/environments/:environmentId/organizations/:organizationId"
             element={<ViewOrganizationPage />}
           />
@@ -82,6 +93,8 @@ export function AppRoutes() {
           />
         </Route>
       </Route>
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

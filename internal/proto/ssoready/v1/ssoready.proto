@@ -40,6 +40,11 @@ service SSOReadyService {
   rpc CreateAPIKey(CreateAPIKeyRequest) returns (APIKey);
   rpc DeleteAPIKey(DeleteAPIKeyRequest) returns (google.protobuf.Empty);
 
+  rpc ListSAMLOAuthClients(ListSAMLOAuthClientsRequest) returns (ListSAMLOAuthClientsResponse);
+  rpc GetSAMLOAuthClient(GetSAMLOAuthClientRequest) returns (SAMLOAuthClient);
+  rpc CreateSAMLOAuthClient(CreateSAMLOAuthClientRequest) returns (SAMLOAuthClient);
+  rpc DeleteSAMLOAuthClient(DeleteSAMLOAuthClientRequest) returns (google.protobuf.Empty);
+
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
   rpc GetOrganization(GetOrganizationRequest) returns (Organization);
   rpc CreateOrganization(CreateOrganizationRequest) returns (Organization);
@@ -73,6 +78,12 @@ message APIKey {
   string id = 1;
   string environment_id = 2;
   string secret_token = 3;
+}
+
+message SAMLOAuthClient {
+  string id = 1;
+  string environment_id = 2;
+  string client_secret = 3;
 }
 
 message Organization {
@@ -247,6 +258,28 @@ message CreateAPIKeyRequest {
 }
 
 message DeleteAPIKeyRequest {
+  string id = 1;
+}
+
+message ListSAMLOAuthClientsRequest {
+  string environment_id = 1;
+  string page_token = 2;
+}
+
+message ListSAMLOAuthClientsResponse {
+  repeated SAMLOAuthClient saml_oauth_clients = 1;
+  string next_page_token = 2;
+}
+
+message GetSAMLOAuthClientRequest {
+  string id = 1;
+}
+
+message CreateSAMLOAuthClientRequest {
+  SAMLOAuthClient saml_oauth_client = 1;
+}
+
+message DeleteSAMLOAuthClientRequest {
   string id = 1;
 }
 

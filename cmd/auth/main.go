@@ -31,6 +31,7 @@ func main() {
 		ServeAddr              string `conf:"serve-addr,noredact"`
 		DB                     string `conf:"db"`
 		GlobalDefaultAuthURL   string `conf:"global-default-auth-url,noredact"`
+		BaseURL                string `conf:"base-url,noredact"`
 		PageEncodingSecret     string `conf:"page-encoding-secret"`
 		SAMLStateSigningKey    string `conf:"saml-state-signing-key"`
 		OAuthIDTokenPrivateKey string `conf:"oauth-id-token-private-key"`
@@ -78,7 +79,11 @@ func main() {
 		panic(fmt.Errorf("parse oauth idtoken private key: %w", err))
 	}
 
-	service := authservice.Service{Store: store_, OAuthIDTokenPrivateKey: idTokenPrivateKey}
+	service := authservice.Service{
+		Store:                  store_,
+		BaseURL:                config.BaseURL,
+		OAuthIDTokenPrivateKey: idTokenPrivateKey,
+	}
 
 	r := mux.NewRouter()
 

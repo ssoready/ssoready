@@ -1,4 +1,4 @@
-package appauthinterceptor
+package authninterceptor
 
 import (
 	"context"
@@ -7,8 +7,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	"github.com/ssoready/ssoready/internal/apikeyauth"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
@@ -43,14 +42,26 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 					return nil, err
 				}
 
-				ctx = apikeyauth.WithAPIKey(ctx, apiKey.AppOrganizationID, apiKey.EnvironmentID)
+				ctx = authn.NewContext(ctx, authn.ContextData{
+					APIKey: &authn.APIKeyData{
+						AppOrgID: apiKey.AppOrganizationID,
+						EnvID:    apiKey.EnvironmentID,
+						APIKeyID: apiKey.ID,
+					},
+				})
 			} else {
 				session, err := s.GetAppSession(ctx, &store.GetAppSessionRequest{SessionToken: secretValue, Now: time.Now()})
 				if err != nil {
 					return nil, fmt.Errorf("appauthinterceptor: store: get app session: %w", err)
 				}
 
-				ctx = appauth.WithAppUserID(ctx, session.AppOrganizationID, session.AppUserID)
+				ctx = authn.NewContext(ctx, authn.ContextData{
+					AppSession: &authn.AppSessionData{
+						AppOrgID:     session.AppOrganizationID,
+						AppUserID:    session.AppUserID,
+						AppSessionID: session.AppSessionID,
+					},
+				})
 			}
 
 			return next(ctx, req)

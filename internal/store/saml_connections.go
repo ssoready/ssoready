@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/ssoready/ssoready/internal/appauth"
+	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -27,7 +27,7 @@ func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAM
 
 	// idor check
 	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                orgID,
 	}); err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLCo
 	defer rollback()
 
 	qSAMLConn, err := q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	})
 	if err != nil {
@@ -102,7 +102,7 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 
 	// idor check
 	org, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                orgID,
 	})
 	if err != nil {
@@ -110,7 +110,7 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 	}
 
 	env, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                org.EnvironmentID,
 	})
 	if err != nil {
@@ -181,7 +181,7 @@ func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.Update
 
 	// idor check
 	if _, err = q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
-		AppOrganizationID: appauth.OrgID(ctx),
+		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                id,
 	}); err != nil {
 		return nil, fmt.Errorf("get saml connection: %w", err)
