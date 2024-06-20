@@ -25,6 +25,7 @@ import { analytics } from "@/analytics";
 import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
 import { NotFound } from "@/pages/NotFound";
 import { ViewSAMLOAuthClientPage } from "@/pages/ViewSAMLOAuthClientPage";
+import { ListAPIKeysPage } from "@/pages/ListAPIKeysPage";
 
 const queryClient = new QueryClient();
 
@@ -60,12 +61,12 @@ export function AppRoutes() {
             element={<ViewEnvironmentPage />}
           />
           <Route
-            path="/environments/:environmentId/api-keys/:apiKeyId"
-            element={<ViewAPIKeyPage />}
+            path="/environments/:environmentId/api-keys"
+            element={<ListAPIKeysPage />}
           />
           <Route
-            path="/environments/:environmentId/saml-oauth-clients"
-            element={<ListSAMLOAuthClientsPage />}
+            path="/environments/:environmentId/api-keys/:apiKeyId"
+            element={<ViewAPIKeyPage />}
           />
           <Route
             path="/environments/:environmentId/saml-oauth-clients/:samlOAuthClientId"

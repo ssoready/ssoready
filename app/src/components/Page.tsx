@@ -1,7 +1,13 @@
 import React from "react";
 import { Outlet, useParams } from "react-router";
 import { EnvironmentSwitcher } from "@/components/EnvironmentSwitcher";
-import { Building2, LayoutGrid, UserIcon } from "lucide-react";
+import {
+  Building2,
+  KeyIcon,
+  KeyRoundIcon,
+  LayoutGrid,
+  UserIcon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@connectrpc/connect-query";
 import { whoami } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -25,6 +31,16 @@ export function Page() {
               >
                 <LayoutGrid className="h-4 w-4" />
                 <span>Overview</span>
+              </Link>
+            )}
+
+            {environmentId && (
+              <Link
+                to={`/environments/${environmentId}/api-keys`}
+                className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
+              >
+                <KeyRoundIcon className="h-4 w-4" />
+                <span>API Keys</span>
               </Link>
             )}
           </div>
