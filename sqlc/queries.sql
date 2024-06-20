@@ -231,10 +231,11 @@ returning *;
 
 -- name: UpdateEnvironment :one
 update environments
-set display_name = $1,
-    redirect_url = $2,
-    auth_url     = $3
-where id = $4
+set display_name       = $1,
+    redirect_url       = $2,
+    auth_url           = $3,
+    oauth_redirect_uri = $4
+where id = $5
 returning *;
 
 -- name: ListAPIKeys :many

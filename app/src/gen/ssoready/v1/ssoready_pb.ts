@@ -111,6 +111,11 @@ export class Environment extends Message<Environment> {
    */
   authUrl = "";
 
+  /**
+   * @generated from field: string oauth_redirect_uri = 5;
+   */
+  oauthRedirectUri = "";
+
   constructor(data?: PartialMessage<Environment>) {
     super();
     proto3.util.initPartial(data, this);
@@ -123,6 +128,7 @@ export class Environment extends Message<Environment> {
     { no: 2, name: "redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "auth_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "oauth_redirect_uri", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Environment {
