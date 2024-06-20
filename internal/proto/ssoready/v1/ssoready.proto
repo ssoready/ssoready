@@ -72,6 +72,7 @@ message Environment {
   string redirect_url = 2;
   string display_name = 3;
   string auth_url = 4;
+  string oauth_redirect_uri = 5;
 }
 
 message APIKey {

@@ -116,10 +116,11 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 	}
 
 	qEnv, err := q.UpdateEnvironment(ctx, queries.UpdateEnvironmentParams{
-		ID:          id,
-		DisplayName: &req.Environment.DisplayName,
-		RedirectUrl: &req.Environment.RedirectUrl,
-		AuthUrl:     authURL,
+		ID:               id,
+		DisplayName:      &req.Environment.DisplayName,
+		RedirectUrl:      &req.Environment.RedirectUrl,
+		AuthUrl:          authURL,
+		OauthRedirectUri: &req.Environment.OauthRedirectUri,
 	})
 	if err != nil {
 		return nil, err
@@ -134,9 +135,10 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 
 func parseEnvironment(qEnv queries.Environment) *ssoreadyv1.Environment {
 	return &ssoreadyv1.Environment{
-		Id:          idformat.Environment.Format(qEnv.ID),
-		DisplayName: derefOrEmpty(qEnv.DisplayName),
-		RedirectUrl: derefOrEmpty(qEnv.RedirectUrl),
-		AuthUrl:     derefOrEmpty(qEnv.AuthUrl),
+		Id:               idformat.Environment.Format(qEnv.ID),
+		DisplayName:      derefOrEmpty(qEnv.DisplayName),
+		RedirectUrl:      derefOrEmpty(qEnv.RedirectUrl),
+		AuthUrl:          derefOrEmpty(qEnv.AuthUrl),
+		OauthRedirectUri: derefOrEmpty(qEnv.OauthRedirectUri),
 	}
 }

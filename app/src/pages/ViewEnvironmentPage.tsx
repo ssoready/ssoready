@@ -122,6 +122,16 @@ export function ViewEnvironmentPage() {
               Redirect URL
             </div>
             <div className="text-sm col-span-3">{environment?.redirectUrl}</div>
+            <div className="text-sm col-span-1 text-muted-foreground">
+              OAuth Redirect URI
+            </div>
+            <div className="text-sm col-span-3">
+              {environment?.oauthRedirectUri ? (
+                environment.oauthRedirectUri
+              ) : (
+                <span className="text-muted-foreground">Not configured</span>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -197,6 +207,9 @@ const FormSchema = z.object({
     message: "Redirect URL must be a valid URL.",
   }),
   authUrl: z.string(),
+  oauthRedirectUri: z.string().url({
+    message: "OAuth Redirect URI must be a valid URL.",
+  }),
 });
 
 function EditEnvironmentAlertDialog({
@@ -210,6 +223,7 @@ function EditEnvironmentAlertDialog({
       displayName: environment.displayName,
       redirectUrl: environment.redirectUrl,
       authUrl: environment.authUrl,
+      oauthRedirectUri: environment.oauthRedirectUri,
     },
   });
 
@@ -225,6 +239,7 @@ function EditEnvironmentAlertDialog({
           displayName: values.displayName,
           redirectUrl: values.redirectUrl,
           authUrl: values.authUrl,
+          oauthRedirectUri: values.oauthRedirectUri,
         },
       });
 
@@ -280,6 +295,28 @@ function EditEnvironmentAlertDialog({
                       After a SAML login, your users get redirected to this
                       address. You usually want to point this at an
                       SSOReady-specific page on your web application.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="oauthRedirectUri"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>OAuth Redirect URI</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="http://localhost:3000/api/auth/callback/ssoready"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      If you're using SAML OAuth clients to integrate with
+                      SSOReady, this is the URL your users get redirected to
+                      after signing in.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

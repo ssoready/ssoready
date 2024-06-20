@@ -1421,18 +1421,20 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 
 const updateEnvironment = `-- name: UpdateEnvironment :one
 update environments
-set display_name = $1,
-    redirect_url = $2,
-    auth_url     = $3
-where id = $4
+set display_name       = $1,
+    redirect_url       = $2,
+    auth_url           = $3,
+    oauth_redirect_uri = $4
+where id = $5
 returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri
 `
 
 type UpdateEnvironmentParams struct {
-	DisplayName *string
-	RedirectUrl *string
-	AuthUrl     *string
-	ID          uuid.UUID
+	DisplayName      *string
+	RedirectUrl      *string
+	AuthUrl          *string
+	OauthRedirectUri *string
+	ID               uuid.UUID
 }
 
 func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentParams) (Environment, error) {
@@ -1440,6 +1442,7 @@ func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentPa
 		arg.DisplayName,
 		arg.RedirectUrl,
 		arg.AuthUrl,
+		arg.OauthRedirectUri,
 		arg.ID,
 	)
 	var i Environment
