@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	_ "embed"
 	"encoding/hex"
+	"encoding/json"
 	"encoding/pem"
 	"fmt"
 	"log/slog"
@@ -130,8 +131,17 @@ func parseHexKey(s string) ([32]byte, error) {
 	return k, nil
 }
 
+// parseRSAPrivateKey parses a JSON-encoded string containing a PKCS8 RSA private key.
 func parseRSAPrivateKey(s string) (*rsa.PrivateKey, error) {
-	block, _ := pem.Decode([]byte(s))
+	// we json-encode the string to avoid having ASCII newlines in the secret value, because such values do not play
+	// nicely with e.g. AWS Secrets Manager.
+
+	var data string
+	if err := json.Unmarshal([]byte(s), &data); err != nil {
+		return nil, fmt.Errorf("parse json: %w", err)
+	}
+
+	block, _ := pem.Decode([]byte(data))
 	if block == nil {
 		return nil, fmt.Errorf("invalid pem file")
 	}
