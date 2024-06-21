@@ -44,9 +44,23 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 
 	clientID := r.URL.Query().Get("client_id")
 	state := r.URL.Query().Get("state")
+
+	// support both snake and camel case, because this makes passing "additional" parameters from libraries like
+	// NextAuth.js a bit more friendly, since camel-case is the JavaScript convention
 	orgID := r.URL.Query().Get("organization_id")
+	if orgID == "" {
+		orgID = r.URL.Query().Get("organizationId")
+	}
+
 	orgExternalID := r.URL.Query().Get("organization_external_id")
+	if orgExternalID == "" {
+		orgExternalID = r.URL.Query().Get("organizationExternalId")
+	}
+
 	samlConnID := r.URL.Query().Get("saml_connection_id")
+	if samlConnID == "" {
+		samlConnID = r.URL.Query().Get("samlConnectionId")
+	}
 
 	slog.InfoContext(ctx, "oauth_authorize", "org_id", orgID, "org_external_id", orgExternalID, "saml_conn_id", samlConnID)
 
