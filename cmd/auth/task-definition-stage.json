@@ -27,6 +27,10 @@
         {
           "name": "AUTH_SERVE_ADDR",
           "value": ":8080"
+        },
+        {
+          "name": "AUTH_BASE_URL",
+          "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
         }
       ],
       "environmentFiles": [],
