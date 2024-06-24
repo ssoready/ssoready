@@ -207,9 +207,12 @@ const FormSchema = z.object({
     message: "Redirect URL must be a valid URL.",
   }),
   authUrl: z.string(),
-  oauthRedirectUri: z.string().url({
-    message: "OAuth Redirect URI must be a valid URL.",
-  }),
+  oauthRedirectUri: z
+    .string()
+    .length(0, {
+      message: "OAuth Redirect URI must be empty or a valid URL.",
+    })
+    .or(z.string().url()),
 });
 
 function EditEnvironmentAlertDialog({
