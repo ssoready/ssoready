@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 
+	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -23,7 +24,7 @@ type AuthOAuthGetClientResponse struct {
 func (s *Store) AuthOAuthGetClient(ctx context.Context, req *AuthOAuthGetClientRequest) (*AuthOAuthGetClientResponse, error) {
 	clientID, err := idformat.SAMLOAuthClient.Parse(req.SAMLOAuthClientID)
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("parse saml oauth client id: %w", err))
 	}
 
 	client, err := s.q.AuthGetSAMLOAuthClient(ctx, clientID)
@@ -52,12 +53,12 @@ type AuthOAuthGetClientWithSecretResponse struct {
 func (s *Store) AuthOAuthGetClientWithSecret(ctx context.Context, req *AuthOAuthGetClientWithSecretRequest) (*AuthOAuthGetClientWithSecretResponse, error) {
 	clientID, err := idformat.SAMLOAuthClient.Parse(req.SAMLOAuthClientID)
 	if err != nil {
-		return nil, fmt.Errorf("parse client id: %w", err)
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("parse saml oauth client id: %w", err))
 	}
 
 	clientSecret, err := idformat.SAMLOAuthClientSecret.Parse(req.SAMLOAuthClientSecret)
 	if err != nil {
-		return nil, fmt.Errorf("parse client secret: %w", err)
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("parse saml oauth client secret: %w", err))
 	}
 
 	clientSecretSHA := sha256.Sum256(clientSecret[:])

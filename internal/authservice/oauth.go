@@ -2,11 +2,13 @@ package authservice
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
 
+	"connectrpc.com/connect"
 	"github.com/go-jose/go-jose/v3"
 	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/google/uuid"
@@ -68,6 +70,12 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 		SAMLOAuthClientID: clientID,
 	})
 	if err != nil {
+		var connectErr *connect.Error
+		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeInvalidArgument {
+			http.Error(w, connectErr.Error(), http.StatusBadRequest)
+			return
+		}
+
 		panic(fmt.Errorf("get oauth client: %w", err))
 	}
 
@@ -146,6 +154,12 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		SAMLOAuthClientSecret: clientSecret,
 	})
 	if err != nil {
+		var connectErr *connect.Error
+		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeInvalidArgument {
+			http.Error(w, connectErr.Error(), http.StatusBadRequest)
+			return
+		}
+
 		panic(fmt.Errorf("get oauth client: %w", err))
 	}
 
