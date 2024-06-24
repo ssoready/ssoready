@@ -30,7 +30,7 @@
         },
         {
           "name": "AUTH_BASE_URL",
-          "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
+          "value": "https://auth.stage.ssoready-nonprod.com"
         }
       ],
       "environmentFiles": [],
