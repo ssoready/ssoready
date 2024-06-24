@@ -7,6 +7,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/getsentry/sentry-go"
+	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -71,8 +72,19 @@ func NewPostAuthentication() connect.UnaryInterceptorFunc {
 				appUserID = &authnData.AppSession.AppUserID
 			}
 
+			var appOrgID *uuid.UUID
+			if authnData.AppSession != nil {
+				appOrgID = &authnData.AppSession.AppOrgID
+			} else if authnData.APIKey != nil {
+				appOrgID = &authnData.APIKey.AppOrgID
+			} else if authnData.SAMLOAuthClient != nil {
+				appOrgID = &authnData.SAMLOAuthClient.AppOrgID
+			}
+
 			sentry.GetHubFromContext(ctx).ConfigureScope(func(scope *sentry.Scope) {
-				scope.SetTag("org_id", authn.AppOrgID(ctx).String())
+				if appOrgID != nil {
+					scope.SetTag("org_id", appOrgID.String())
+				}
 
 				if appUserID != nil {
 					scope.SetUser(sentry.User{
