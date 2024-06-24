@@ -124,9 +124,9 @@ func (s *Store) CreateSAMLOAuthClient(ctx context.Context, req *ssoreadyv1.Creat
 		return nil, err
 	}
 
-	SAMLOAuthClient := parseSAMLOAuthClient(qSAMLOAuthClient)
-	SAMLOAuthClient.ClientSecret = idformat.SAMLOAuthClientSecret.Format(secretValue)
-	return SAMLOAuthClient, nil
+	samlOAuthClient := parseSAMLOAuthClient(qSAMLOAuthClient)
+	samlOAuthClient.ClientSecret = idformat.SAMLOAuthClientSecret.Format(secretValue)
+	return samlOAuthClient, nil
 }
 
 func (s *Store) DeleteSAMLOAuthClient(ctx context.Context, req *ssoreadyv1.DeleteSAMLOAuthClientRequest) (*emptypb.Empty, error) {
