@@ -53,7 +53,7 @@ func AppOrgID(ctx context.Context) uuid.UUID {
 func FullContextData(ctx context.Context) ContextData {
 	v, ok := ctx.Value(ctxKey{}).(ContextData)
 	if !ok {
-		panic("ctx does not carry ContextData")
+		return ContextData{}
 	}
 	return v
 }
