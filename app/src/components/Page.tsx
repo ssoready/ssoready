@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Outlet, useParams } from "react-router";
 import { EnvironmentSwitcher } from "@/components/EnvironmentSwitcher";
 import {
@@ -8,7 +8,6 @@ import {
   MailIcon,
   PhoneIcon,
   UserIcon,
-  Menu,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@connectrpc/connect-query";
@@ -19,27 +18,9 @@ export function Page() {
   const { environmentId } = useParams();
   const { data: whoamiData } = useQuery(whoami, {});
 
-  const [open, setopen] = useState(false);
-
-  const handleClick = () => {
-    setopen(!open);
-  };
-
   return (
     <div>
-      <div>
-        <button className="block md:hidden ml-2 mt-2" onClick={handleClick}>
-          {" "}
-          <Menu className="size-8" />
-        </button>
-        {open ? (
-          <div className="p-4">
-            <EnvironmentSwitcher />{" "}
-          </div>
-        ) : null}
-      </div>
-
-      <div className="invisible md:h-full border-r w-72 fixed bg-white flex flex-col justify-between md:visible">
+      <div className="h-full border-r w-72 fixed bg-white flex flex-col justify-between">
         <div className="p-2">
           <EnvironmentSwitcher />
 
@@ -117,7 +98,7 @@ export function Page() {
           </div>
         </div>
       </div>
-      <div className="md:ml-72 p-8">
+      <div className="ml-72 p-8">
         <div className="mx-auto max-w-6xl">
           <Outlet />
         </div>
