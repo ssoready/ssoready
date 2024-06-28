@@ -93,6 +93,12 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 		SAMLConnectionID:       samlConnID,
 	})
 	if err != nil {
+		var connectErr *connect.Error
+		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeInvalidArgument {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		panic(fmt.Errorf("get oauth authorize data: %w", err))
 	}
 
