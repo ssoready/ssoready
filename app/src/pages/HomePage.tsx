@@ -96,7 +96,7 @@ export function HomePage() {
 
       <Card>
         <CardHeader>
-          <div className="md:flex justify-between items-center">
+          <div className="lg:flex justify-between items-center">
             <div className="flex flex-col space-y-1.5">
               <CardTitle>Environments</CardTitle>
 
@@ -106,7 +106,7 @@ export function HomePage() {
               </CardDescription>
             </div>
 
-            <Button className="mt-5 sm:mt-5 md:mt-5" variant="outline" asChild>
+            <Button className="mt-5 sm:mt-5 lg:mt-5" variant="outline" asChild>
               <Link to="/environments/new">
                 <PlusIcon className="h-4 w-4 mr-2" />
                 Create environment
