@@ -22,7 +22,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { RedirectSAMLFlowPage } from "@/pages/RedirectSAMLFlowPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { analytics } from "@/analytics";
-import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
+// import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
 import { NotFound } from "@/pages/NotFound";
 import { ViewSAMLOAuthClientPage } from "@/pages/ViewSAMLOAuthClientPage";
 import { ListAPIKeysPage } from "@/pages/ListAPIKeysPage";
@@ -47,53 +47,53 @@ export function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      {/* <Route path="/login" element={<LoginPage />} /> */}
+      {/* <Route path="/verify-email" element={<VerifyEmailPage />} /> */}
 
-      <Route path="/" element={<LoginGate />}>
-        <Route path="/onboarding" element={<OnboardingPage />} />
+      {/* <Route path="/" element={<LoginGate />}> */}
+      <Route path="/onboarding" element={<OnboardingPage />} />
 
-        <Route path="/" element={<Page />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/environments/new" element={<CreateEnvironmentPage />} />
-          <Route
-            path="/environments/:environmentId"
-            element={<ViewEnvironmentPage />}
-          />
-          <Route
-            path="/environments/:environmentId/api-keys"
-            element={<ListAPIKeysPage />}
-          />
-          <Route
-            path="/environments/:environmentId/api-keys/:apiKeyId"
-            element={<ViewAPIKeyPage />}
-          />
-          <Route
-            path="/environments/:environmentId/saml-oauth-clients/:samlOAuthClientId"
-            element={<ViewSAMLOAuthClientPage />}
-          />
-          <Route
-            path="/environments/:environmentId/organizations/:organizationId"
-            element={<ViewOrganizationPage />}
-          />
-          <Route
-            path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId"
-            element={<ViewSAMLConnectionPage />}
-          />
-          <Route
-            path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows"
-            element={<ViewSAMLConnectionPage />}
-          />
-          <Route
-            path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/edit"
-            element={<EditSAMLConnectionPage />}
-          />
-          <Route
-            path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows/:samlFlowId"
-            element={<ViewSAMLFlowPage />}
-          />
-        </Route>
+      <Route path="/" element={<Page />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/environments/new" element={<CreateEnvironmentPage />} />
+        <Route
+          path="/environments/:environmentId"
+          element={<ViewEnvironmentPage />}
+        />
+        <Route
+          path="/environments/:environmentId/api-keys"
+          element={<ListAPIKeysPage />}
+        />
+        <Route
+          path="/environments/:environmentId/api-keys/:apiKeyId"
+          element={<ViewAPIKeyPage />}
+        />
+        <Route
+          path="/environments/:environmentId/saml-oauth-clients/:samlOAuthClientId"
+          element={<ViewSAMLOAuthClientPage />}
+        />
+        <Route
+          path="/environments/:environmentId/organizations/:organizationId"
+          element={<ViewOrganizationPage />}
+        />
+        <Route
+          path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId"
+          element={<ViewSAMLConnectionPage />}
+        />
+        <Route
+          path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows"
+          element={<ViewSAMLConnectionPage />}
+        />
+        <Route
+          path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/edit"
+          element={<EditSAMLConnectionPage />}
+        />
+        <Route
+          path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows/:samlFlowId"
+          element={<ViewSAMLFlowPage />}
+        />
       </Route>
+      {/* </Route> */}
 
       <Route path="*" element={<NotFound />} />
     </Routes>
