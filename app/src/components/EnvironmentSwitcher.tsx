@@ -33,10 +33,10 @@ export function EnvironmentSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className="flex justify-between items-center w-full"
+          className="flex justify-between items-center w-3/4 sm:w-full md:w-full"
           variant="outline"
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center overflow-x-hidden gap-2">
             <Box className="h-4 w-4" />
             <span className="font-medium">
               {currentEnv ? (
@@ -51,7 +51,7 @@ export function EnvironmentSwitcher() {
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-[360px]">
+      <DropdownMenuContent align="start" className="w-full md:w-full">
         <DropdownMenuLabel>Environments</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {listEnvsRes?.environments.map((env) => (

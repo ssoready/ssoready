@@ -78,14 +78,16 @@ export function CreateEnvironmentPage() {
   );
 
   return (
-    <Card>
+    <Card className="mt-16 md:mt-0">
       <CardHeader>
-        <CardTitle>Create environment</CardTitle>
+        <CardTitle className="text-xl md:text-2xl w-full ">
+          Create environment
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
-            <div className="space-y-4">
+            <div className="w-full space-y-4">
               <FormField
                 control={form.control}
                 name="displayName"

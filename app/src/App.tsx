@@ -22,7 +22,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { RedirectSAMLFlowPage } from "@/pages/RedirectSAMLFlowPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { analytics } from "@/analytics";
-import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
+// import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
 import { NotFound } from "@/pages/NotFound";
 import { ViewSAMLOAuthClientPage } from "@/pages/ViewSAMLOAuthClientPage";
 import { ListAPIKeysPage } from "@/pages/ListAPIKeysPage";
