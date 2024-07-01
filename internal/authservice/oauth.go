@@ -25,6 +25,7 @@ type openidConfig struct {
 	AuthorizationEndpoint             string   `json:"authorization_endpoint"`
 	TokenEndpoint                     string   `json:"token_endpoint"`
 	JWKSURI                           string   `json:"jwks_uri"`
+	UserinfoEndpoint                  string   `json:"userinfo_endpoint"`
 	TokenEndpointAuthMethodsSupported []string `json:"token_endpoint_auth_methods_supported"`
 }
 
@@ -34,6 +35,7 @@ func (s *Service) oauthOpenIDConfiguration(w http.ResponseWriter, r *http.Reques
 		AuthorizationEndpoint:             fmt.Sprintf("%s/v1/oauth/authorize", s.BaseURL),
 		TokenEndpoint:                     fmt.Sprintf("%s/v1/oauth/token", s.BaseURL),
 		JWKSURI:                           fmt.Sprintf("%s/v1/oauth/jwks", s.BaseURL),
+		UserinfoEndpoint:                  fmt.Sprintf("%s/v1/oauth/userinfo", s.BaseURL),
 		TokenEndpointAuthMethodsSupported: []string{"client_secret_post"},
 	}
 	if err := json.NewEncoder(w).Encode(config); err != nil {
@@ -135,7 +137,9 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 }
 
 type tokenResponse struct {
-	IDToken string `json:"id_token"`
+	IDToken     string `json:"id_token"`
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
 }
 
 type idTokenClaims struct {
@@ -212,7 +216,13 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if err := json.NewEncoder(w).Encode(tokenResponse{IDToken: idToken}); err != nil {
+	tokenRes := tokenResponse{
+		IDToken:     idToken,
+		AccessToken: "not_implemented_instead_see_id_token",
+		TokenType:   "Bearer",
+	}
+
+	if err := json.NewEncoder(w).Encode(tokenRes); err != nil {
 		panic(err)
 	}
 }
