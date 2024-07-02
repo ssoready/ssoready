@@ -1,3 +1,6 @@
+-- name: CheckExistsEmailVerificationChallenge :one
+select exists(select * from email_verification_challenges where email = $1 and expire_time > $2);
+
 -- name: CreateEmailVerificationChallenge :one
 insert into email_verification_challenges (id, email, expire_time, secret_token)
 values ($1, $2, $3, $4)

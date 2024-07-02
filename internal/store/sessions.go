@@ -172,6 +172,24 @@ type CreateEmailVerificationChallengeResponse struct {
 }
 
 func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *CreateEmailVerificationChallengeRequest) (*CreateEmailVerificationChallengeResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	alreadyExists, err := q.CheckExistsEmailVerificationChallenge(ctx, queries.CheckExistsEmailVerificationChallengeParams{
+		Email:      req.Email,
+		ExpireTime: time.Now(),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("check exists email verification challenge: %w", err)
+	}
+
+	if alreadyExists {
+		return nil, fmt.Errorf("outstanding email verification challenge already exists")
+	}
+
 	// generate token as 32-byte random string, hex-encoded
 	var tokenBytes [32]byte
 	if _, err := rand.Read(tokenBytes[:]); err != nil {
@@ -179,7 +197,7 @@ func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *Creat
 	}
 	token := hex.EncodeToString(tokenBytes[:])
 
-	qChallenge, err := s.q.CreateEmailVerificationChallenge(ctx, queries.CreateEmailVerificationChallengeParams{
+	qChallenge, err := q.CreateEmailVerificationChallenge(ctx, queries.CreateEmailVerificationChallengeParams{
 		ID:          uuid.New(),
 		Email:       req.Email,
 		ExpireTime:  time.Now().Add(24 * time.Hour),
@@ -187,6 +205,10 @@ func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *Creat
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
 	}
 
 	return &CreateEmailVerificationChallengeResponse{SecretToken: qChallenge.SecretToken}, nil

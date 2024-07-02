@@ -200,6 +200,22 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 	return i, err
 }
 
+const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
+select exists(select id, email, expire_time, secret_token from email_verification_challenges where email = $1 and expire_time > $2)
+`
+
+type CheckExistsEmailVerificationChallengeParams struct {
+	Email      string
+	ExpireTime time.Time
+}
+
+func (q *Queries) CheckExistsEmailVerificationChallenge(ctx context.Context, arg CheckExistsEmailVerificationChallengeParams) (bool, error) {
+	row := q.db.QueryRow(ctx, checkExistsEmailVerificationChallenge, arg.Email, arg.ExpireTime)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createAPIKey = `-- name: CreateAPIKey :one
 insert into api_keys (id, secret_value, secret_value_sha256, environment_id)
 values ($1, '', $2, $3)
