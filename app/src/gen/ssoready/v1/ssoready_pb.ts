@@ -867,6 +867,68 @@ export class SignInResponse extends Message<SignInResponse> {
 }
 
 /**
+ * @generated from message ssoready.v1.SignOutRequest
+ */
+export class SignOutRequest extends Message<SignOutRequest> {
+  constructor(data?: PartialMessage<SignOutRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SignOutRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignOutRequest {
+    return new SignOutRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignOutRequest {
+    return new SignOutRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignOutRequest {
+    return new SignOutRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SignOutRequest | PlainMessage<SignOutRequest> | undefined, b: SignOutRequest | PlainMessage<SignOutRequest> | undefined): boolean {
+    return proto3.util.equals(SignOutRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.SignOutResponse
+ */
+export class SignOutResponse extends Message<SignOutResponse> {
+  constructor(data?: PartialMessage<SignOutResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SignOutResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignOutResponse {
+    return new SignOutResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignOutResponse {
+    return new SignOutResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignOutResponse {
+    return new SignOutResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SignOutResponse | PlainMessage<SignOutResponse> | undefined, b: SignOutResponse | PlainMessage<SignOutResponse> | undefined): boolean {
+    return proto3.util.equals(SignOutResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.WhoamiRequest
  */
 export class WhoamiRequest extends Message<WhoamiRequest> {

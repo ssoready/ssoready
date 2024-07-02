@@ -24,6 +24,7 @@ const (
 	SSOReadyService_RedeemSAMLAccessCode_FullMethodName           = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
 	SSOReadyService_VerifyEmail_FullMethodName                    = "/ssoready.v1.SSOReadyService/VerifyEmail"
 	SSOReadyService_SignIn_FullMethodName                         = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_SignOut_FullMethodName                        = "/ssoready.v1.SSOReadyService/SignOut"
 	SSOReadyService_Whoami_FullMethodName                         = "/ssoready.v1.SSOReadyService/Whoami"
 	SSOReadyService_GetOnboardingState_FullMethodName             = "/ssoready.v1.SSOReadyService/GetOnboardingState"
 	SSOReadyService_UpdateOnboardingState_FullMethodName          = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
@@ -62,6 +63,7 @@ type SSOReadyServiceClient interface {
 	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	SignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*SignOutResponse, error)
 	Whoami(ctx context.Context, in *WhoamiRequest, opts ...grpc.CallOption) (*WhoamiResponse, error)
 	GetOnboardingState(ctx context.Context, in *GetOnboardingStateRequest, opts ...grpc.CallOption) (*GetOnboardingStateResponse, error)
 	UpdateOnboardingState(ctx context.Context, in *UpdateOnboardingStateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -134,6 +136,16 @@ func (c *sSOReadyServiceClient) SignIn(ctx context.Context, in *SignInRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SignInResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_SignIn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) SignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*SignOutResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignOutResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_SignOut_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -428,6 +440,7 @@ type SSOReadyServiceServer interface {
 	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	SignOut(context.Context, *SignOutRequest) (*SignOutResponse, error)
 	Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error)
 	GetOnboardingState(context.Context, *GetOnboardingStateRequest) (*GetOnboardingStateResponse, error)
 	UpdateOnboardingState(context.Context, *UpdateOnboardingStateRequest) (*emptypb.Empty, error)
@@ -474,6 +487,9 @@ func (UnimplementedSSOReadyServiceServer) VerifyEmail(context.Context, *VerifyEm
 }
 func (UnimplementedSSOReadyServiceServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) SignOut(context.Context, *SignOutRequest) (*SignOutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignOut not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) Whoami(context.Context, *WhoamiRequest) (*WhoamiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Whoami not implemented")
@@ -640,6 +656,24 @@ func _SSOReadyService_SignIn_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).SignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_SignOut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignOutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).SignOut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_SignOut_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).SignOut(ctx, req.(*SignOutRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1170,6 +1204,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignIn",
 			Handler:    _SSOReadyService_SignIn_Handler,
+		},
+		{
+			MethodName: "SignOut",
+			Handler:    _SSOReadyService_SignOut_Handler,
 		},
 		{
 			MethodName: "Whoami",
