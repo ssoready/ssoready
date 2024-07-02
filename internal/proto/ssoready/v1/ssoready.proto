@@ -24,6 +24,7 @@ service SSOReadyService {
 
   rpc VerifyEmail(VerifyEmailRequest) returns (google.protobuf.Empty);
   rpc SignIn(SignInRequest) returns (SignInResponse);
+  rpc SignOut(SignOutRequest) returns (SignOutResponse);
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
   rpc GetOnboardingState(GetOnboardingStateRequest) returns (GetOnboardingStateResponse);
   rpc UpdateOnboardingState(UpdateOnboardingStateRequest) returns (google.protobuf.Empty);
@@ -181,6 +182,12 @@ message SignInRequest {
 
 message SignInResponse {
   string session_token = 1;
+}
+
+message SignOutRequest {
+}
+
+message SignOutResponse {
 }
 
 message WhoamiRequest {
