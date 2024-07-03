@@ -8,11 +8,14 @@ require (
 	github.com/alecthomas/participle/v2 v2.1.1
 	github.com/aws/aws-sdk-go-v2/config v1.27.12
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.7
+	github.com/getsentry/sentry-go v0.28.0
 	github.com/go-jose/go-jose/v3 v3.0.3
+	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
 	github.com/jackc/pgx/v5 v5.5.5
+	github.com/lib/pq v1.10.9
 	github.com/resend/resend-go/v2 v2.6.0
 	github.com/rs/cors v1.11.0
 	github.com/segmentio/analytics-go/v3 v3.3.0
@@ -42,7 +45,8 @@ require (
 	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/getsentry/sentry-go v0.28.0 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
@@ -50,6 +54,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/segmentio/backo-go v1.0.0 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
