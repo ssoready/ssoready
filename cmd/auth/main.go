@@ -20,11 +20,16 @@ import (
 	"github.com/ssoready/conf"
 	"github.com/ssoready/ssoready/internal/authservice"
 	"github.com/ssoready/ssoready/internal/pagetoken"
+	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
 func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
+
+	if err := secretload.Load(context.Background()); err != nil {
+		panic(fmt.Errorf("load secrets: %w", err))
+	}
 
 	config := struct {
 		SentryDSN              string `conf:"sentry-dsn,noredact"`
