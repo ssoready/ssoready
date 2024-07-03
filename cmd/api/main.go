@@ -23,12 +23,17 @@ import (
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/pagetoken"
+	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/sentryinterceptor"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
 func main() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
+
+	if err := secretload.Load(context.Background()); err != nil {
+		panic(fmt.Errorf("load secrets: %w", err))
+	}
 
 	config := struct {
 		SentryDSN                 string `conf:"sentry-dsn,noredact"`
