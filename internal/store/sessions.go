@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/ssoready/ssoready/internal/authn"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
@@ -82,12 +83,14 @@ func (s *Store) CreateGoogleSession(ctx context.Context, req *CreateGoogleSessio
 	tokenHex := hex.EncodeToString(tokenBytes[:])
 	tokenSHA := sha256.Sum256(tokenBytes[:])
 
+	revoked := false
 	if _, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
 		ID:          uuid.New(),
 		AppUserID:   appUser.ID,
 		CreateTime:  time.Now(),
 		ExpireTime:  time.Now().Add(time.Hour * 24 * 7),
 		TokenSha256: tokenSHA[:],
+		Revoked:     &revoked,
 	}); err != nil {
 		return nil, err
 	}
@@ -169,6 +172,24 @@ type CreateEmailVerificationChallengeResponse struct {
 }
 
 func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *CreateEmailVerificationChallengeRequest) (*CreateEmailVerificationChallengeResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	alreadyExists, err := q.CheckExistsEmailVerificationChallenge(ctx, queries.CheckExistsEmailVerificationChallengeParams{
+		Email:      req.Email,
+		ExpireTime: time.Now(),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("check exists email verification challenge: %w", err)
+	}
+
+	if alreadyExists {
+		return nil, fmt.Errorf("outstanding email verification challenge already exists")
+	}
+
 	// generate token as 32-byte random string, hex-encoded
 	var tokenBytes [32]byte
 	if _, err := rand.Read(tokenBytes[:]); err != nil {
@@ -176,7 +197,7 @@ func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *Creat
 	}
 	token := hex.EncodeToString(tokenBytes[:])
 
-	qChallenge, err := s.q.CreateEmailVerificationChallenge(ctx, queries.CreateEmailVerificationChallengeParams{
+	qChallenge, err := q.CreateEmailVerificationChallenge(ctx, queries.CreateEmailVerificationChallengeParams{
 		ID:          uuid.New(),
 		Email:       req.Email,
 		ExpireTime:  time.Now().Add(24 * time.Hour),
@@ -184,6 +205,10 @@ func (s *Store) CreateEmailVerificationChallenge(ctx context.Context, req *Creat
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
 	}
 
 	return &CreateEmailVerificationChallengeResponse{SecretToken: qChallenge.SecretToken}, nil
@@ -225,12 +250,14 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 	tokenHex := hex.EncodeToString(tokenBytes[:])
 	tokenSHA := sha256.Sum256(tokenBytes[:])
 
+	revoked := false
 	if _, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
 		ID:          uuid.New(),
 		AppUserID:   appUser.ID,
 		CreateTime:  time.Now(),
 		ExpireTime:  time.Now().Add(time.Hour * 24 * 7),
 		TokenSha256: tokenSHA[:],
+		Revoked:     &revoked,
 	}); err != nil {
 		return nil, err
 	}
@@ -269,4 +296,22 @@ func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queri
 	}
 
 	return &appUser, nil
+}
+
+func (s *Store) RevokeSession(ctx context.Context) error {
+	authnData := authn.FullContextData(ctx)
+	if authnData.AppSession == nil {
+		panic("RevokeSession called on session with no AppSession")
+	}
+
+	id, err := idformat.AppSession.Parse(authnData.AppSession.AppSessionID)
+	if err != nil {
+		return fmt.Errorf("parse app session id: %w", err)
+	}
+
+	if _, err := s.q.RevokeAppSessionByID(ctx, id); err != nil {
+		return fmt.Errorf("revoke app session by id: %w", err)
+	}
+
+	return nil
 }

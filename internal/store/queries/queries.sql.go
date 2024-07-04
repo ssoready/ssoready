@@ -200,6 +200,22 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 	return i, err
 }
 
+const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
+select exists(select id, email, expire_time, secret_token from email_verification_challenges where email = $1 and expire_time > $2)
+`
+
+type CheckExistsEmailVerificationChallengeParams struct {
+	Email      string
+	ExpireTime time.Time
+}
+
+func (q *Queries) CheckExistsEmailVerificationChallenge(ctx context.Context, arg CheckExistsEmailVerificationChallengeParams) (bool, error) {
+	row := q.db.QueryRow(ctx, checkExistsEmailVerificationChallenge, arg.Email, arg.ExpireTime)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createAPIKey = `-- name: CreateAPIKey :one
 insert into api_keys (id, secret_value, secret_value_sha256, environment_id)
 values ($1, '', $2, $3)
@@ -243,9 +259,9 @@ func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrgani
 }
 
 const createAppSession = `-- name: CreateAppSession :one
-insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256)
-values ($1, $2, $3, $4, '', $5)
-returning id, app_user_id, create_time, expire_time, token, token_sha256
+insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256, revoked)
+values ($1, $2, $3, $4, '', $5, $6)
+returning id, app_user_id, create_time, expire_time, token, token_sha256, revoked
 `
 
 type CreateAppSessionParams struct {
@@ -254,6 +270,7 @@ type CreateAppSessionParams struct {
 	CreateTime  time.Time
 	ExpireTime  time.Time
 	TokenSha256 []byte
+	Revoked     *bool
 }
 
 func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionParams) (AppSession, error) {
@@ -263,6 +280,7 @@ func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionPara
 		arg.CreateTime,
 		arg.ExpireTime,
 		arg.TokenSha256,
+		arg.Revoked,
 	)
 	var i AppSession
 	err := row.Scan(
@@ -272,6 +290,7 @@ func (q *Queries) CreateAppSession(ctx context.Context, arg CreateAppSessionPara
 		&i.ExpireTime,
 		&i.Token,
 		&i.TokenSha256,
+		&i.Revoked,
 	)
 	return i, err
 }
@@ -643,6 +662,7 @@ from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token_sha256 = $1
   and expire_time > $2
+  and revoked = false
 `
 
 type GetAppSessionByTokenSHA256Params struct {
@@ -1417,6 +1437,28 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 		return nil, err
 	}
 	return items, nil
+}
+
+const revokeAppSessionByID = `-- name: RevokeAppSessionByID :one
+update app_sessions
+set revoked = true
+where id = $1
+returning id, app_user_id, create_time, expire_time, token, token_sha256, revoked
+`
+
+func (q *Queries) RevokeAppSessionByID(ctx context.Context, id uuid.UUID) (AppSession, error) {
+	row := q.db.QueryRow(ctx, revokeAppSessionByID, id)
+	var i AppSession
+	err := row.Scan(
+		&i.ID,
+		&i.AppUserID,
+		&i.CreateTime,
+		&i.ExpireTime,
+		&i.Token,
+		&i.TokenSha256,
+		&i.Revoked,
+	)
+	return i, err
 }
 
 const updateEnvironment = `-- name: UpdateEnvironment :one

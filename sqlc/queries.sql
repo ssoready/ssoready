@@ -1,3 +1,6 @@
+-- name: CheckExistsEmailVerificationChallenge :one
+select exists(select * from email_verification_challenges where email = $1 and expire_time > $2);
+
 -- name: CreateEmailVerificationChallenge :one
 insert into email_verification_challenges (id, email, expire_time, secret_token)
 values ($1, $2, $3, $4)
@@ -195,8 +198,14 @@ values ($1, $2, $3, $4)
 returning *;
 
 -- name: CreateAppSession :one
-insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256)
-values ($1, $2, $3, $4, '', $5)
+insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256, revoked)
+values ($1, $2, $3, $4, '', $5, $6)
+returning *;
+
+-- name: RevokeAppSessionByID :one
+update app_sessions
+set revoked = true
+where id = $1
 returning *;
 
 -- name: GetAppSessionByTokenSHA256 :one
@@ -208,7 +217,8 @@ select app_sessions.id,
 from app_sessions
          join app_users on app_sessions.app_user_id = app_users.id
 where token_sha256 = $1
-  and expire_time > $2;
+  and expire_time > $2
+  and revoked = false;
 
 -- name: ListEnvironments :many
 select *

@@ -322,8 +322,6 @@ func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuth
 			return nil, err
 		}
 
-		fmt.Println("get organization by id", uuid.UUID(envID), uuid.UUID(orgID))
-
 		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationIDParams{
 			EnvironmentID: envID,
 			ID:            orgID,

@@ -124,3 +124,11 @@ func (s *Service) trackSignInAnalytics(ctx context.Context, method string, sessi
 
 	return nil
 }
+
+func (s *Service) SignOut(ctx context.Context, req *connect.Request[ssoreadyv1.SignOutRequest]) (*connect.Response[ssoreadyv1.SignOutResponse], error) {
+	if err := s.Store.RevokeSession(ctx); err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(&ssoreadyv1.SignOutResponse{}), nil
+}

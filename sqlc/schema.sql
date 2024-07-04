@@ -69,7 +69,8 @@ CREATE TABLE public.app_sessions (
     create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL,
     token character varying NOT NULL,
-    token_sha256 bytea
+    token_sha256 bytea,
+    revoked boolean
 );
 
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, useParams } from "react-router";
+import { Outlet, useNavigate, useParams } from "react-router";
 import { EnvironmentSwitcher } from "@/components/EnvironmentSwitcher";
 import {
   KeyRoundIcon,
@@ -8,15 +8,36 @@ import {
   MailIcon,
   PhoneIcon,
   UserIcon,
+  EllipsisVerticalIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@connectrpc/connect-query";
-import { whoami } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import { useMutation, useQuery } from "@connectrpc/connect-query";
+import {
+  signOut,
+  whoami,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { DropdownMenu } from "./ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export function Page() {
   const { environmentId } = useParams();
   const { data: whoamiData } = useQuery(whoami, {});
+
+  const signOutMutation = useMutation(signOut);
+  const navigate = useNavigate();
+  const handleSignOut = async () => {
+    await signOutMutation.mutateAsync({});
+    toast("Signed out.");
+    navigate(`/login`);
+  };
 
   return (
     <div>
@@ -85,16 +106,38 @@ export function Page() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border-t border-gray-200 px-4 py-4">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback>
-                <UserIcon />
-              </AvatarFallback>
-            </Avatar>
-            <div className="grid gap-0.5 text-xs">
-              <div className="font-medium">{whoamiData?.displayName}</div>
-              <div className="text-gray-400">{whoamiData?.email}</div>
+          <div className="flex items-center gap-3 justify-between border-t border-gray-200 px-4 py-4">
+            <div className="flex items-center gap-3 max-w-[200px] overflow-hidden">
+              <Avatar className="h-9 w-9">
+                <AvatarFallback>
+                  <UserIcon />
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid gap-0.5 text-xs">
+                <div className="font-medium truncate">
+                  {whoamiData?.displayName}
+                </div>
+                <div className="text-gray-400 truncate">
+                  {whoamiData?.email}
+                </div>
+              </div>
             </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <EllipsisVerticalIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={handleSignOut}
+                >
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

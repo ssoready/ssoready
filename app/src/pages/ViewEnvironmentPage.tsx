@@ -400,7 +400,7 @@ function CreateOrganizationAlertDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
             <AlertDialogHeader>
-              <AlertDialogTitle>Edit environment</AlertDialogTitle>
+              <AlertDialogTitle>Create organization</AlertDialogTitle>
             </AlertDialogHeader>
 
             <div className="my-4 space-y-4">

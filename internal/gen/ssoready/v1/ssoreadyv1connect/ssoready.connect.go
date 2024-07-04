@@ -45,6 +45,8 @@ const (
 	SSOReadyServiceVerifyEmailProcedure = "/ssoready.v1.SSOReadyService/VerifyEmail"
 	// SSOReadyServiceSignInProcedure is the fully-qualified name of the SSOReadyService's SignIn RPC.
 	SSOReadyServiceSignInProcedure = "/ssoready.v1.SSOReadyService/SignIn"
+	// SSOReadyServiceSignOutProcedure is the fully-qualified name of the SSOReadyService's SignOut RPC.
+	SSOReadyServiceSignOutProcedure = "/ssoready.v1.SSOReadyService/SignOut"
 	// SSOReadyServiceWhoamiProcedure is the fully-qualified name of the SSOReadyService's Whoami RPC.
 	SSOReadyServiceWhoamiProcedure = "/ssoready.v1.SSOReadyService/Whoami"
 	// SSOReadyServiceGetOnboardingStateProcedure is the fully-qualified name of the SSOReadyService's
@@ -136,6 +138,7 @@ type SSOReadyServiceClient interface {
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
+	SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	GetOnboardingState(context.Context, *connect.Request[v1.GetOnboardingStateRequest]) (*connect.Response[v1.GetOnboardingStateResponse], error)
 	UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error)
@@ -194,6 +197,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		signIn: connect.NewClient[v1.SignInRequest, v1.SignInResponse](
 			httpClient,
 			baseURL+SSOReadyServiceSignInProcedure,
+			opts...,
+		),
+		signOut: connect.NewClient[v1.SignOutRequest, v1.SignOutResponse](
+			httpClient,
+			baseURL+SSOReadyServiceSignOutProcedure,
 			opts...,
 		),
 		whoami: connect.NewClient[v1.WhoamiRequest, v1.WhoamiResponse](
@@ -345,6 +353,7 @@ type sSOReadyServiceClient struct {
 	redeemSAMLAccessCode           *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
 	verifyEmail                    *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
 	signIn                         *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	signOut                        *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
 	whoami                         *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
 	getOnboardingState             *connect.Client[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse]
 	updateOnboardingState          *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
@@ -393,6 +402,11 @@ func (c *sSOReadyServiceClient) VerifyEmail(ctx context.Context, req *connect.Re
 // SignIn calls ssoready.v1.SSOReadyService.SignIn.
 func (c *sSOReadyServiceClient) SignIn(ctx context.Context, req *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {
 	return c.signIn.CallUnary(ctx, req)
+}
+
+// SignOut calls ssoready.v1.SSOReadyService.SignOut.
+func (c *sSOReadyServiceClient) SignOut(ctx context.Context, req *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error) {
+	return c.signOut.CallUnary(ctx, req)
 }
 
 // Whoami calls ssoready.v1.SSOReadyService.Whoami.
@@ -541,6 +555,7 @@ type SSOReadyServiceHandler interface {
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
+	SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error)
 	Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error)
 	GetOnboardingState(context.Context, *connect.Request[v1.GetOnboardingStateRequest]) (*connect.Response[v1.GetOnboardingStateResponse], error)
 	UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error)
@@ -595,6 +610,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceSignInHandler := connect.NewUnaryHandler(
 		SSOReadyServiceSignInProcedure,
 		svc.SignIn,
+		opts...,
+	)
+	sSOReadyServiceSignOutHandler := connect.NewUnaryHandler(
+		SSOReadyServiceSignOutProcedure,
+		svc.SignOut,
 		opts...,
 	)
 	sSOReadyServiceWhoamiHandler := connect.NewUnaryHandler(
@@ -747,6 +767,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceVerifyEmailHandler.ServeHTTP(w, r)
 		case SSOReadyServiceSignInProcedure:
 			sSOReadyServiceSignInHandler.ServeHTTP(w, r)
+		case SSOReadyServiceSignOutProcedure:
+			sSOReadyServiceSignOutHandler.ServeHTTP(w, r)
 		case SSOReadyServiceWhoamiProcedure:
 			sSOReadyServiceWhoamiHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetOnboardingStateProcedure:
@@ -826,6 +848,10 @@ func (UnimplementedSSOReadyServiceHandler) VerifyEmail(context.Context, *connect
 
 func (UnimplementedSSOReadyServiceHandler) SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.SignIn is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.SignOut is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) Whoami(context.Context, *connect.Request[v1.WhoamiRequest]) (*connect.Response[v1.WhoamiResponse], error) {

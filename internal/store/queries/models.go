@@ -74,6 +74,7 @@ type AppSession struct {
 	ExpireTime  time.Time
 	Token       string
 	TokenSha256 []byte
+	Revoked     *bool
 }
 
 type AppUser struct {
