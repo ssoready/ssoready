@@ -25,4 +25,4 @@ case $1 in
 esac
 
 # shellcheck disable=SC2068
-migrate -database "$dsn" -path migrate ${@:2}
+go run ./cmd/migrate --database "$dsn" ${@:2}
