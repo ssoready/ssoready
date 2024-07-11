@@ -11,14 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
 import {
-  API_URL,
-  APP_URL,
-  DUMMYIDP_CERTIFICATE,
-  DUMMYIDP_SSO_URL,
-  DUMMYIDP_URL,
-  PUBLIC_API_URL,
-} from "@/config";
-import {
   createConnectQueryKey,
   useMutation,
   useQuery,
@@ -48,6 +40,7 @@ import {
 import { clsx } from "clsx";
 import hljs from "highlight.js/lib/core";
 import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import { useConfig } from "@/config";
 
 export function OnboardingPage() {
   const [searchParams] = useSearchParams();
@@ -102,6 +95,26 @@ export function OnboardingPage() {
   );
 }
 
+const DUMMYIDP_CERTIFICATE = `-----BEGIN CERTIFICATE-----
+MIIDBzCCAe+gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
+BQAwEzERMA8GA1UEAwwIZHVtbXlpZHAwHhcNMjQwNTEzMjE1NDE2WhcNMzQwNTEx
+MjE1NDE2WjATMREwDwYDVQQDDAhkdW1teWlkcDCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAKhmgQmWb8NvGhz952XY4SlJlpWIK72RilhOZS9frDYhqWVJ
+HsGH9Z7sSzrM/0+YvCyEWuZV9gpMeIaHZxEPDqW3RJ7KG51fn/s/qFvwctf+CZDj
+yfGDzYs+XIgf7p56U48EmYeWpB/aUW64gSbnPqrtWmVFBisOfIx5aY3NubtTsn+g
+0XbdX0L57+NgSvPQHXh/GPXA7xCIWm54G5kqjozxbKEFA0DS3yb6oHRQWHqIAM/7
+mJMdUVZNIV1q7c2JIgAl23uDWq+2KTE2R5liP/KjvjwKonVKtTqGqX6ei25rsTHO
+aDpBH/LdQK2txgsm7R7+IThWNvUI0TttrmwBqyMCAwEAAaNTMFEwHQYDVR0OBBYE
+FD142gxIAJMhpgMkgpzmRNoW9XbEMB8GA1UdIwQYMBaAFD142gxIAJMhpgMkgpzm
+RNoW9XbEMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBADQd6k6z
+FIc20GfGHY5C2MFwyGOmP5/UG/JiTq7Zky28G6D0NA0je+GztzXx7VYDfCfHxLcm
+2k5t9nYhb9kVawiLUUDVF6s+yZUXA4gUA3KoTWh1/oRxR3ggW7dKYm9fsNOdQAbx
+UUkzp7HLZ45ZlpKUS0hO7es+fPyF5KVw0g0SrtQWwWucnQMAQE9m+B0aOf+92y7J
+QkdgdR8Gd/XZ4NZfoOnKV7A1utT4rWxYCgICeRTHx9tly5OhPW4hQr5qOpngcsJ9
+vhr86IjznQXhfj3hql5lA3VbHW04ro37ROIkh2bShDq5dwJJHpYCGrF3MQv8S3m+
+jzGhYL6m9gFTm/8=
+-----END CERTIFICATE-----`;
+
 function DemoCard({
   done,
   open,
@@ -119,6 +132,8 @@ function DemoCard({
   apiKeySecretToken: string;
   setAPIKeySecretToken: (_: string) => void;
 }) {
+  const { APP_URL, DUMMYIDP_SSO_URL, DUMMYIDP_URL } = useConfig();
+
   const queryClient = useQueryClient();
   const { data: onboardingState } = useQuery(getOnboardingState, {});
   const getOnboardingStateMutation = useMutation(getOnboardingState);
@@ -429,6 +444,8 @@ function StartLoginCard({
   done: boolean;
   apiKeySecretToken: string;
 }) {
+  const { PUBLIC_API_URL } = useConfig();
+
   const { data: onboardingState } = useQuery(getOnboardingState, {});
   const code = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "samlConnectionId": "${onboardingState?.onboardingSamlConnectionId}" }'`;
   const copyCode = `curl ${PUBLIC_API_URL}/v1/saml/redirect \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ${apiKeySecretToken}" \\\n    -d '{ "samlConnectionId": "${onboardingState?.onboardingSamlConnectionId}" }'`;
@@ -556,6 +573,8 @@ function HandleLoginCard({
   done: boolean;
   apiKeySecretToken: string;
 }) {
+  const { PUBLIC_API_URL } = useConfig();
+
   const [searchParams] = useSearchParams();
   const samlAccessCode = searchParams.get("saml_access_code");
   const code = `curl ${PUBLIC_API_URL}/v1/saml/redeem \\\n    -H "Content-Type: application/json" \\\n    -H "Authorization: Bearer ssoready_sk_•••••" \\\n    -d '{ "samlAccessCode": "${samlAccessCode}" }'`;

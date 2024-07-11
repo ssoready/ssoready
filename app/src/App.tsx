@@ -17,33 +17,37 @@ import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 import { CreateEnvironmentPage } from "@/pages/CreateEnvironmentPage";
 import { ViewAPIKeyPage } from "@/pages/ViewAPIKeyPage";
 import { VerifyEmailPage } from "@/pages/VerifyEmailPage";
-import { API_URL } from "@/config";
 import { Toaster } from "@/components/ui/sonner";
-import { RedirectSAMLFlowPage } from "@/pages/RedirectSAMLFlowPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
-import { analytics } from "@/analytics";
-import { ListSAMLOAuthClientsPage } from "@/pages/ListSAMLOAuthClientsPage";
 import { NotFound } from "@/pages/NotFound";
 import { ViewSAMLOAuthClientPage } from "@/pages/ViewSAMLOAuthClientPage";
 import { ListAPIKeysPage } from "@/pages/ListAPIKeysPage";
+import { AnalyticsProvider, useAnalytics } from "@/analytics";
+import { Transport } from "@connectrpc/connect";
+import { ConfigProvider, useConfig } from "@/config";
+import * as Sentry from "@sentry/react";
 
 const queryClient = new QueryClient();
 
-const transport = createConnectTransport({
-  baseUrl: API_URL,
-  interceptors: [
-    (next) => async (req) => {
-      req.header.set("Authorization", `Bearer ${getSessionToken() ?? ""}`);
-      return next(req);
-    },
-  ],
-});
+function useTransport(): Transport {
+  const { API_URL } = useConfig();
+  return createConnectTransport({
+    baseUrl: API_URL,
+    interceptors: [
+      (next) => async (req) => {
+        req.header.set("Authorization", `Bearer ${getSessionToken() ?? ""}`);
+        return next(req);
+      },
+    ],
+  });
+}
 
 export function AppRoutes() {
   const location = useLocation();
+  const analytics = useAnalytics();
   useEffect(() => {
-    analytics.page();
-  }, [location]);
+    analytics?.page();
+  }, [analytics, location]);
 
   return (
     <Routes>
@@ -100,7 +104,24 @@ export function AppRoutes() {
   );
 }
 
-export function App() {
+export function AppWithinConfig() {
+  const { SENTRY_DSN, SENTRY_ENVIRONMENT } = useConfig();
+  const transport = useTransport();
+
+  useEffect(() => {
+    Sentry.init({
+      dsn: SENTRY_DSN,
+      environment: SENTRY_ENVIRONMENT,
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration(),
+        Sentry.httpClientIntegration(),
+      ],
+      replaysSessionSampleRate: 0.0,
+      replaysOnErrorSampleRate: 1.0,
+    });
+  }, [SENTRY_DSN, SENTRY_ENVIRONMENT]);
+
   return (
     <>
       <TransportProvider transport={transport}>
@@ -112,5 +133,15 @@ export function App() {
       </TransportProvider>
       <Toaster />
     </>
+  );
+}
+
+export function App() {
+  return (
+    <ConfigProvider>
+      <AnalyticsProvider>
+        <AppWithinConfig />
+      </AnalyticsProvider>
+    </ConfigProvider>
   );
 }

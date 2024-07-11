@@ -21,7 +21,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { DropdownMenu } from "./ui/dropdown-menu";
 import { Button } from "@/components/ui/button";

@@ -9,18 +9,18 @@ import {
   signIn,
   verifyEmail,
 } from "../gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
-import { setSessionToken } from "../auth";
+import { setSessionToken } from "@/auth";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GOOGLE_OAUTH_CLIENT_ID } from "@/config";
-import { analytics } from "@/analytics";
+import { useConfig } from "@/config";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { GOOGLE_OAUTH_CLIENT_ID } = useConfig();
 
   const [email, setEmail] = useState("");
   const [showEmailWait, setShowEmailWait] = useState(false);

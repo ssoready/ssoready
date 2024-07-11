@@ -4,9 +4,10 @@ import { ReactNode, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import React from "react";
 import * as Sentry from "@sentry/react";
-import { analytics } from "@/analytics";
+import { useAnalytics } from "@/analytics";
 
 export function LoginGate() {
+  const analytics = useAnalytics();
   const { data, error } = useQuery(
     whoami,
     {},
@@ -32,7 +33,7 @@ export function LoginGate() {
 
       analytics.identify(data.appUserId);
     }
-  }, [data, error, navigate]);
+  }, [analytics, data, error, navigate]);
 
   return data ? <Outlet /> : <></>;
 }

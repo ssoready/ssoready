@@ -7,19 +7,6 @@ import xml from "highlight.js/lib/languages/xml";
 import json from "highlight.js/lib/languages/json";
 
 import * as Sentry from "@sentry/react";
-import { SENTRY_DSN, SENTRY_ENVIRONMENT } from "@/config";
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: SENTRY_ENVIRONMENT,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-    Sentry.httpClientIntegration(),
-  ],
-  replaysSessionSampleRate: 0.0,
-  replaysOnErrorSampleRate: 1.0,
-});
 
 hljs.registerLanguage("bash", bash);
 hljs.registerLanguage("xml", xml);
