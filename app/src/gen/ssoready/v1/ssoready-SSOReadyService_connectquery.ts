@@ -4,7 +4,60 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, CreateSAMLOAuthClientRequest, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import {
+  APIKey,
+  CreateAPIKeyRequest,
+  CreateEnvironmentRequest,
+  CreateOrganizationRequest,
+  CreateSAMLConnectionRequest,
+  CreateSAMLOAuthClientRequest,
+  DeleteAPIKeyRequest,
+  DeleteSAMLOAuthClientRequest,
+  Environment,
+  GetAPIKeyRequest,
+  GetEnvironmentRequest,
+  GetOnboardingStateRequest,
+  GetOnboardingStateResponse,
+  GetOrganizationRequest,
+  GetSAMLConnectionRequest,
+  GetSAMLFlowRequest,
+  GetSAMLOAuthClientRequest,
+  GetSAMLRedirectURLRequest,
+  GetSAMLRedirectURLResponse,
+  ListAPIKeysRequest,
+  ListAPIKeysResponse,
+  ListEnvironmentsRequest,
+  ListEnvironmentsResponse,
+  ListOrganizationsRequest,
+  ListOrganizationsResponse,
+  ListSAMLConnectionsRequest,
+  ListSAMLConnectionsResponse,
+  ListSAMLFlowsRequest,
+  ListSAMLFlowsResponse,
+  ListSAMLOAuthClientsRequest,
+  ListSAMLOAuthClientsResponse,
+  OnboardingGetSAMLRedirectURLRequest,
+  OnboardingRedeemSAMLAccessCodeRequest,
+  Organization,
+  ParseSAMLMetadataRequest,
+  ParseSAMLMetadataResponse,
+  RedeemSAMLAccessCodeRequest,
+  RedeemSAMLAccessCodeResponse,
+  SAMLConnection,
+  SAMLFlow,
+  SAMLOAuthClient,
+  SignInRequest,
+  SignInResponse,
+  SignOutRequest,
+  SignOutResponse,
+  UpdateEnvironmentRequest,
+  UpdateOnboardingStateRequest,
+  UpdateOrganizationRequest,
+  UpdateSAMLConnectionRequest,
+  VerifyEmailRequest,
+  WhoamiRequest,
+  WhoamiResponse,
+} from "./ssoready_pb.js";
 
 /**
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
@@ -16,8 +69,8 @@ export const getSAMLRedirectURL = {
   I: GetSAMLRedirectURLRequest,
   O: GetSAMLRedirectURLResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -30,8 +83,8 @@ export const redeemSAMLAccessCode = {
   I: RedeemSAMLAccessCodeRequest,
   O: RedeemSAMLAccessCodeResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -44,8 +97,8 @@ export const verifyEmail = {
   I: VerifyEmailRequest,
   O: Empty,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -58,8 +111,8 @@ export const signIn = {
   I: SignInRequest,
   O: SignInResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -72,8 +125,8 @@ export const signOut = {
   I: SignOutRequest,
   O: SignOutResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -86,8 +139,8 @@ export const whoami = {
   I: WhoamiRequest,
   O: WhoamiResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -100,8 +153,8 @@ export const getOnboardingState = {
   I: GetOnboardingStateRequest,
   O: GetOnboardingStateResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -114,8 +167,8 @@ export const updateOnboardingState = {
   I: UpdateOnboardingStateRequest,
   O: Empty,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -128,8 +181,8 @@ export const onboardingGetSAMLRedirectURL = {
   I: OnboardingGetSAMLRedirectURLRequest,
   O: GetSAMLRedirectURLResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -142,8 +195,8 @@ export const onboardingRedeemSAMLAccessCode = {
   I: OnboardingRedeemSAMLAccessCodeRequest,
   O: RedeemSAMLAccessCodeResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -156,8 +209,8 @@ export const listEnvironments = {
   I: ListEnvironmentsRequest,
   O: ListEnvironmentsResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -170,8 +223,8 @@ export const getEnvironment = {
   I: GetEnvironmentRequest,
   O: Environment,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -184,8 +237,8 @@ export const createEnvironment = {
   I: CreateEnvironmentRequest,
   O: Environment,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -198,8 +251,8 @@ export const updateEnvironment = {
   I: UpdateEnvironmentRequest,
   O: Environment,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -212,8 +265,8 @@ export const listAPIKeys = {
   I: ListAPIKeysRequest,
   O: ListAPIKeysResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -226,8 +279,8 @@ export const getAPIKey = {
   I: GetAPIKeyRequest,
   O: APIKey,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -240,8 +293,8 @@ export const createAPIKey = {
   I: CreateAPIKeyRequest,
   O: APIKey,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -254,8 +307,8 @@ export const deleteAPIKey = {
   I: DeleteAPIKeyRequest,
   O: Empty,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -268,8 +321,8 @@ export const listSAMLOAuthClients = {
   I: ListSAMLOAuthClientsRequest,
   O: ListSAMLOAuthClientsResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -282,8 +335,8 @@ export const getSAMLOAuthClient = {
   I: GetSAMLOAuthClientRequest,
   O: SAMLOAuthClient,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -296,8 +349,8 @@ export const createSAMLOAuthClient = {
   I: CreateSAMLOAuthClientRequest,
   O: SAMLOAuthClient,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -310,8 +363,8 @@ export const deleteSAMLOAuthClient = {
   I: DeleteSAMLOAuthClientRequest,
   O: Empty,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -324,8 +377,8 @@ export const listOrganizations = {
   I: ListOrganizationsRequest,
   O: ListOrganizationsResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -338,8 +391,8 @@ export const getOrganization = {
   I: GetOrganizationRequest,
   O: Organization,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -352,8 +405,8 @@ export const createOrganization = {
   I: CreateOrganizationRequest,
   O: Organization,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -366,8 +419,8 @@ export const updateOrganization = {
   I: UpdateOrganizationRequest,
   O: Organization,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -380,8 +433,8 @@ export const listSAMLConnections = {
   I: ListSAMLConnectionsRequest,
   O: ListSAMLConnectionsResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -394,8 +447,8 @@ export const getSAMLConnection = {
   I: GetSAMLConnectionRequest,
   O: SAMLConnection,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -408,8 +461,8 @@ export const createSAMLConnection = {
   I: CreateSAMLConnectionRequest,
   O: SAMLConnection,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -422,8 +475,8 @@ export const updateSAMLConnection = {
   I: UpdateSAMLConnectionRequest,
   O: SAMLConnection,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -436,8 +489,8 @@ export const listSAMLFlows = {
   I: ListSAMLFlowsRequest,
   O: ListSAMLFlowsResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -450,8 +503,8 @@ export const getSAMLFlow = {
   I: GetSAMLFlowRequest,
   O: SAMLFlow,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;
 
 /**
@@ -464,6 +517,6 @@ export const parseSAMLMetadata = {
   I: ParseSAMLMetadataRequest,
   O: ParseSAMLMetadataResponse,
   service: {
-    typeName: "ssoready.v1.SSOReadyService"
-  }
+    typeName: "ssoready.v1.SSOReadyService",
+  },
 } as const;

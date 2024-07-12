@@ -3,7 +3,60 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { APIKey, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, CreateSAMLOAuthClientRequest, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import {
+  APIKey,
+  CreateAPIKeyRequest,
+  CreateEnvironmentRequest,
+  CreateOrganizationRequest,
+  CreateSAMLConnectionRequest,
+  CreateSAMLOAuthClientRequest,
+  DeleteAPIKeyRequest,
+  DeleteSAMLOAuthClientRequest,
+  Environment,
+  GetAPIKeyRequest,
+  GetEnvironmentRequest,
+  GetOnboardingStateRequest,
+  GetOnboardingStateResponse,
+  GetOrganizationRequest,
+  GetSAMLConnectionRequest,
+  GetSAMLFlowRequest,
+  GetSAMLOAuthClientRequest,
+  GetSAMLRedirectURLRequest,
+  GetSAMLRedirectURLResponse,
+  ListAPIKeysRequest,
+  ListAPIKeysResponse,
+  ListEnvironmentsRequest,
+  ListEnvironmentsResponse,
+  ListOrganizationsRequest,
+  ListOrganizationsResponse,
+  ListSAMLConnectionsRequest,
+  ListSAMLConnectionsResponse,
+  ListSAMLFlowsRequest,
+  ListSAMLFlowsResponse,
+  ListSAMLOAuthClientsRequest,
+  ListSAMLOAuthClientsResponse,
+  OnboardingGetSAMLRedirectURLRequest,
+  OnboardingRedeemSAMLAccessCodeRequest,
+  Organization,
+  ParseSAMLMetadataRequest,
+  ParseSAMLMetadataResponse,
+  RedeemSAMLAccessCodeRequest,
+  RedeemSAMLAccessCodeResponse,
+  SAMLConnection,
+  SAMLFlow,
+  SAMLOAuthClient,
+  SignInRequest,
+  SignInResponse,
+  SignOutRequest,
+  SignOutResponse,
+  UpdateEnvironmentRequest,
+  UpdateOnboardingStateRequest,
+  UpdateOrganizationRequest,
+  UpdateSAMLConnectionRequest,
+  VerifyEmailRequest,
+  WhoamiRequest,
+  WhoamiResponse,
+} from "./ssoready_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -309,6 +362,5 @@ export const SSOReadyService = {
       O: ParseSAMLMetadataResponse,
       kind: MethodKind.Unary,
     },
-  }
+  },
 } as const;
-

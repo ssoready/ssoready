@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+const express = require("express")
+const morgan = require("morgan")
+const fs = require("node:fs")
+
+const app = express()
+app.use(morgan("combined"))
+app.use(express.static("public"))
+
+const index = fs.readFileSync("public/index.html").toString()
+app.get("*", (req, res) => {
+    res.send(index)
+})
+
+const host = process.env.APP_SERVE_HOST || "0.0.0.0"
+const port = parseInt(process.env.APP_SERVE_PORT || "8082")
+
+app.listen(port, host, () => {
+    console.log(`serving ssoready app on ${host}:${port}`)
+})

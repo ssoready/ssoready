@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+
+const fs = require("node:fs");
+const path = require("node:path")
+
+// as a hack, to validate that the config is set up properly, we're going to infer the schema of config by directly
+// parsing config.tsx
+
+const configTsxLines = fs.readFileSync(path.join(__dirname, "..", "src", "config.tsx")).toString().split("\n")
+
+// scan for declaration of config
+let i;
+for (i = 0; i < configTsxLines.length; i++) {
+  if (configTsxLines[i] === "export type Config = {") {
+    i++ // skip the line
+    break
+  }
+}
+
+const wantParams = []
+for (; i < configTsxLines.length; i++) {
+  if (configTsxLines[i] === "};") {
+    break
+  }
+
+  const match = configTsxLines[i].match(/\s+(.*): string;/)
+  if (!match) {
+    continue
+  }
+
+  wantParams.push(match[1])
+}
+
+if (wantParams.length === 0) {
+  console.error("could not parse src/config.tsx for validation")
+  process.exit(1)
+}
+
+const config = {};
+for (const [k, v] of Object.entries(process.env)) {
+  if (!k.startsWith("APP_")) {
+    continue;
+  }
+
+  config[k.substring("APP_".length)] = v;
+}
+
+for (const k of wantParams) {
+  if (!(k in config)) {
+    console.error("missing required config var", `APP_${k}`)
+    process.exit(1)
+  }
+}
+
+console.log(JSON.stringify(config));

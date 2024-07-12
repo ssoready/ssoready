@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { analytics } from "@/analytics";
+import { useAnalytics } from "@/analytics";
 
 export function NotFound() {
+  const analytics = useAnalytics();
   useEffect(() => {
     analytics.track("Page Not Found");
-  }, []);
+  }, [analytics]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
