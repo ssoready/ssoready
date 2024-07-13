@@ -119,10 +119,8 @@ function ListAPIKeysCard() {
 
           <AlertDialogFooter>
             <AlertDialogAction asChild>
-              <Link
-                to={`/environments/${environmentId}/saml-oauth-clients/${apiKeyId}`}
-              >
-                View SAML OAuth Client
+              <Link to={`/environments/${environmentId}/api-keys/${apiKeyId}`}>
+                View API Key
               </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
