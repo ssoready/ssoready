@@ -1,5 +1,6 @@
 /node_modules
 /app/node_modules
+/app/public/config.json
 /app/public/index.css
 /app/public/index.js
 /app/public/index.js.map
