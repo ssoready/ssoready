@@ -21,15 +21,14 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ghcr.io/ssoready/ssoready-api
+          images: ssoready/ssoready-api
 
       - name: Build and push Docker image
         id: push
@@ -44,7 +43,7 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ghcr.io/ssoready/ssoready-api
+          subject-name: index.docker.io/ssoready/ssoready-api
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
@@ -94,15 +93,14 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ghcr.io/ssoready/ssoready-migrate
+          images: ssoready/ssoready-migrate
 
       - name: Build and push Docker image
         id: push
@@ -117,7 +115,7 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ghcr.io/ssoready/ssoready-migrate
+          subject-name: index.docker.io/ssoready/ssoready-migrate
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
@@ -131,15 +129,14 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ghcr.io/ssoready/ssoready-app
+          images: ssoready/ssoready-app
 
       - name: Build and push Docker image
         id: push
@@ -154,6 +151,6 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ghcr.io/ssoready/ssoready-app
+          subject-name: index.docker.io/ssoready/ssoready-app
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
