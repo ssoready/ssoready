@@ -4,6 +4,7 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"log"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -20,6 +21,7 @@ func main() {
 
 type args struct {
 	Database string `cli:"-d,--database"`
+	Verbose  bool   `cli:"-v,--verbose"`
 }
 
 func (a args) migrate() (*migrate.Migrate, error) {
@@ -33,7 +35,20 @@ func (a args) migrate() (*migrate.Migrate, error) {
 		return nil, fmt.Errorf("create migrate: %w", err)
 	}
 
+	m.Log = logger{verbose: a.Verbose}
 	return m, nil
+}
+
+type logger struct {
+	verbose bool
+}
+
+func (l logger) Printf(format string, v ...interface{}) {
+	log.Printf(format, v...)
+}
+
+func (l logger) Verbose() bool {
+	return l.verbose
 }
 
 type versionArgs struct {
