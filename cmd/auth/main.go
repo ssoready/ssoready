@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	_ "embed"
-	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
@@ -19,6 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ssoready/conf"
 	"github.com/ssoready/ssoready/internal/authservice"
+	"github.com/ssoready/ssoready/internal/hexkey"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/store"
@@ -36,16 +37,12 @@ func main() {
 		SentryEnvironment      string `conf:"sentry-environment,noredact"`
 		ServeAddr              string `conf:"serve-addr,noredact"`
 		DB                     string `conf:"db"`
-		GlobalDefaultAuthURL   string `conf:"global-default-auth-url,noredact"`
+		DefaultAuthURL         string `conf:"default-auth-url,noredact"`
 		BaseURL                string `conf:"base-url,noredact"`
 		PageEncodingSecret     string `conf:"page-encoding-secret"`
 		SAMLStateSigningKey    string `conf:"saml-state-signing-key"`
 		OAuthIDTokenPrivateKey string `conf:"oauth-id-token-private-key"`
-	}{
-		ServeAddr:            "localhost:8080",
-		DB:                   "postgres://postgres:password@localhost/postgres",
-		GlobalDefaultAuthURL: "http://localhost:8080",
-	}
+	}{}
 
 	conf.Load(&config)
 	slog.Info("config", "config", conf.Redact(config))
@@ -63,21 +60,21 @@ func main() {
 		panic(err)
 	}
 
-	pageEncodingSecret, err := parseHexKey(config.PageEncodingSecret)
+	pageEncodingSecret, err := hexkey.New(config.PageEncodingSecret)
 	if err != nil {
 		panic(fmt.Errorf("parse page encoding secret: %w", err))
 	}
 
-	samlStateSigningKey, err := parseHexKey(config.SAMLStateSigningKey)
+	samlStateSigningKey, err := hexkey.New(config.SAMLStateSigningKey)
 	if err != nil {
 		panic(fmt.Errorf("parse saml state signing key: %w", err))
 	}
 
 	store_ := store.New(store.NewStoreParams{
-		DB:                   db,
-		PageEncoder:          pagetoken.Encoder{Secret: pageEncodingSecret},
-		GlobalDefaultAuthURL: config.GlobalDefaultAuthURL,
-		SAMLStateSigningKey:  samlStateSigningKey,
+		DB:                  db,
+		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingSecret},
+		DefaultAuthURL:      config.DefaultAuthURL,
+		SAMLStateSigningKey: samlStateSigningKey,
 	})
 
 	idTokenPrivateKey, err := parseRSAPrivateKey(config.OAuthIDTokenPrivateKey)
@@ -121,23 +118,18 @@ func logHTTP(h http.Handler) http.HandlerFunc {
 	}
 }
 
-func parseHexKey(s string) ([32]byte, error) {
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return [32]byte{}, err
-	}
-
-	if len(b) > 32 {
-		return [32]byte{}, fmt.Errorf("key must encode 32 bytes")
-	}
-
-	var k [32]byte
-	copy(k[:], b)
-	return k, nil
-}
-
 // parseRSAPrivateKey parses a JSON-encoded string containing a PKCS8 RSA private key.
 func parseRSAPrivateKey(s string) (*rsa.PrivateKey, error) {
+	if s == "" {
+		slog.Warn("no oauth-id-token-private-key provided, generating new private key")
+
+		k, err := rsa.GenerateKey(rand.Reader, 4096)
+		if err != nil {
+			return nil, fmt.Errorf("generate rsa key: %w", err)
+		}
+		return k, nil
+	}
+
 	// we json-encode the string to avoid having ASCII newlines in the secret value, because such values do not play
 	// nicely with e.g. AWS Secrets Manager.
 

@@ -79,7 +79,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		return nil, err
 	}
 
-	authURL := s.globalDefaultAuthURL
+	authURL := s.defaultAuthURL
 	if envAuthURL != nil {
 		authURL = *envAuthURL
 	}

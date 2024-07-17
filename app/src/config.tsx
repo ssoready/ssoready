@@ -14,8 +14,6 @@ export type Config = {
   API_URL: string;
   APP_URL: string;
   PUBLIC_API_URL: string;
-  DUMMYIDP_URL: string;
-  DUMMYIDP_SSO_URL: string;
   GOOGLE_OAUTH_CLIENT_ID: string;
   MICROSOFT_OAUTH_CLIENT_ID: string;
   MICROSOFT_OAUTH_REDIRECT_URI: string;

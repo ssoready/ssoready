@@ -45,7 +45,7 @@
           "value": "https://stage--ssoready.netlify.app/internal/microsoft-callback"
         },
         {
-          "name": "API_GLOBAL_DEFAULT_AUTH_URL",
+          "name": "API_DEFAULT_AUTH_URL",
           "value": "https://auth.stage.ssoready-nonprod.com"
         },
         {

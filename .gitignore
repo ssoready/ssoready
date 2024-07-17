@@ -1,3 +1,4 @@
+/.env
 /node_modules
 /app/node_modules
 /app/public/config.json

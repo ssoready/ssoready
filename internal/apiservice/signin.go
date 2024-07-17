@@ -32,7 +32,7 @@ func (s *Service) VerifyEmail(ctx context.Context, req *connect.Request[ssoready
 		Subject: "SSOReady - Verify your email",
 		Text:    fmt.Sprintf("Hi,\n\nPlease verify your email address with SSOReady by clicking the link below:\n\n%s?t=%s\n\nThanks,\nSSOReady", s.EmailVerificationEndpoint, challengeRes.SecretToken),
 	}); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("resend: send: %w", err)
 	}
 
 	return connect.NewResponse(&emptypb.Empty{}), nil

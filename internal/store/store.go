@@ -14,27 +14,27 @@ import (
 )
 
 type Store struct {
-	db                   *pgxpool.Pool
-	q                    *queries.Queries
-	pageEncoder          pagetoken.Encoder
-	globalDefaultAuthURL string
-	statesigner          *statesign.Signer
+	db             *pgxpool.Pool
+	q              *queries.Queries
+	pageEncoder    pagetoken.Encoder
+	defaultAuthURL string
+	statesigner    *statesign.Signer
 }
 
 type NewStoreParams struct {
-	DB                   *pgxpool.Pool
-	PageEncoder          pagetoken.Encoder
-	GlobalDefaultAuthURL string
-	SAMLStateSigningKey  [32]byte
+	DB                  *pgxpool.Pool
+	PageEncoder         pagetoken.Encoder
+	DefaultAuthURL      string
+	SAMLStateSigningKey [32]byte
 }
 
 func New(p NewStoreParams) *Store {
 	return &Store{
-		db:                   p.DB,
-		q:                    queries.New(p.DB),
-		pageEncoder:          p.PageEncoder,
-		globalDefaultAuthURL: p.GlobalDefaultAuthURL,
-		statesigner:          &statesign.Signer{Key: p.SAMLStateSigningKey},
+		db:             p.DB,
+		q:              queries.New(p.DB),
+		pageEncoder:    p.PageEncoder,
+		defaultAuthURL: p.DefaultAuthURL,
+		statesigner:    &statesign.Signer{Key: p.SAMLStateSigningKey},
 	}
 }
 
