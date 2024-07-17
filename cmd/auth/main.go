@@ -39,10 +39,12 @@ func main() {
 		DB                     string `conf:"db"`
 		DefaultAuthURL         string `conf:"default-auth-url,noredact"`
 		BaseURL                string `conf:"base-url,noredact"`
-		PageEncodingSecret     string `conf:"page-encoding-secret"`
+		PageEncodingValue      string `conf:"page-encoding-value"`
 		SAMLStateSigningKey    string `conf:"saml-state-signing-key"`
 		OAuthIDTokenPrivateKey string `conf:"oauth-id-token-private-key"`
-	}{}
+	}{
+		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
+	}
 
 	conf.Load(&config)
 	slog.Info("config", "config", conf.Redact(config))
@@ -60,7 +62,7 @@ func main() {
 		panic(err)
 	}
 
-	pageEncodingSecret, err := hexkey.New(config.PageEncodingSecret)
+	pageEncodingValue, err := hexkey.New(config.PageEncodingValue)
 	if err != nil {
 		panic(fmt.Errorf("parse page encoding secret: %w", err))
 	}
@@ -72,7 +74,7 @@ func main() {
 
 	store_ := store.New(store.NewStoreParams{
 		DB:                  db,
-		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingSecret},
+		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingValue},
 		DefaultAuthURL:      config.DefaultAuthURL,
 		SAMLStateSigningKey: samlStateSigningKey,
 	})

@@ -22,7 +22,6 @@ import (
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/hexkey"
-	"github.com/ssoready/ssoready/internal/microsoft"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/sentryinterceptor"
@@ -41,17 +40,20 @@ func main() {
 		SentryEnvironment          string `conf:"sentry-environment,noredact"`
 		ServeAddr                  string `conf:"serve-addr,noredact"`
 		DB                         string `conf:"db"`
-		DefaultAuthURL            string `conf:"default-auth-url,noredact"`
-		PageEncodingSecret         string `conf:"page-encoding-secret"`
+		DefaultAuthURL             string `conf:"default-auth-url,noredact"`
+		PageEncodingValue          string `conf:"page-encoding-value"`
 		SAMLStateSigningKey        string `conf:"saml-state-signing-key"`
 		GoogleOAuthClientID        string `conf:"google-oauth-client-id,noredact"`
 		MicrosoftOAuthClientID     string `conf:"microsoft-oauth-client-id,noredact"`
 		MicrosoftOAuthClientSecret string `conf:"microsoft-oauth-client-secret"`
-		MicrosoftOAuthRedirectURI  string `conf:"microsoft-oauth-redirect-uri,noredact"`ResendAPIKey              string `conf:"resend-api-key"`
-		EmailChallengeFrom        string `conf:"email-challenge-from,noredact"`
-		EmailVerificationEndpoint string `conf:"email-verification-endpoint,noredact"`
-		SegmentWriteKey           string `conf:"segment-write-key"`
-	}{}
+		MicrosoftOAuthRedirectURI  string `conf:"microsoft-oauth-redirect-uri,noredact"`
+		ResendAPIKey               string `conf:"resend-api-key"`
+		EmailChallengeFrom         string `conf:"email-challenge-from,noredact"`
+		EmailVerificationEndpoint  string `conf:"email-verification-endpoint,noredact"`
+		SegmentWriteKey            string `conf:"segment-write-key"`
+	}{
+		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
+	}
 
 	conf.Load(&config)
 	slog.Info("config", "config", conf.Redact(config))
@@ -69,7 +71,7 @@ func main() {
 		panic(err)
 	}
 
-	pageEncodingSecret, err := hexkey.New(config.PageEncodingSecret)
+	pageEncodingValue, err := hexkey.New(config.PageEncodingValue)
 	if err != nil {
 		panic(fmt.Errorf("parse page encoding secret: %w", err))
 	}
@@ -81,7 +83,7 @@ func main() {
 
 	store_ := store.New(store.NewStoreParams{
 		DB:                  db,
-		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingSecret},
+		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingValue},
 		DefaultAuthURL:      config.DefaultAuthURL,
 		SAMLStateSigningKey: samlStateSigningKey,
 	})
