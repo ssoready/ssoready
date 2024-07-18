@@ -1,0 +1,1 @@
+alter table email_verification_challenges add column complete_time timestamptz;

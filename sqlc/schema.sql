@@ -54,7 +54,8 @@ ALTER TABLE public.api_keys OWNER TO postgres;
 CREATE TABLE public.app_organizations (
     id uuid NOT NULL,
     google_hosted_domain character varying,
-    microsoft_tenant_id character varying
+    microsoft_tenant_id character varying,
+    email_logins_disabled boolean
 );
 
 
@@ -99,7 +100,8 @@ CREATE TABLE public.email_verification_challenges (
     id uuid NOT NULL,
     email character varying NOT NULL,
     expire_time timestamp with time zone NOT NULL,
-    secret_token character varying NOT NULL
+    secret_token character varying NOT NULL,
+    complete_time timestamp with time zone
 );
 
 
