@@ -241,20 +241,21 @@ func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (Api
 }
 
 const createAppOrganization = `-- name: CreateAppOrganization :one
-insert into app_organizations (id, google_hosted_domain)
-values ($1, $2)
-returning id, google_hosted_domain
+insert into app_organizations (id, google_hosted_domain, microsoft_tenant_id)
+values ($1, $2, $3)
+returning id, google_hosted_domain, microsoft_tenant_id
 `
 
 type CreateAppOrganizationParams struct {
 	ID                 uuid.UUID
 	GoogleHostedDomain *string
+	MicrosoftTenantID  *string
 }
 
 func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrganizationParams) (AppOrganization, error) {
-	row := q.db.QueryRow(ctx, createAppOrganization, arg.ID, arg.GoogleHostedDomain)
+	row := q.db.QueryRow(ctx, createAppOrganization, arg.ID, arg.GoogleHostedDomain, arg.MicrosoftTenantID)
 	var i AppOrganization
-	err := row.Scan(&i.ID, &i.GoogleHostedDomain)
+	err := row.Scan(&i.ID, &i.GoogleHostedDomain, &i.MicrosoftTenantID)
 	return i, err
 }
 
@@ -640,7 +641,7 @@ func (q *Queries) GetAPIKeyBySecretValueSHA256(ctx context.Context, secretValueS
 }
 
 const getAppOrganizationByGoogleHostedDomain = `-- name: GetAppOrganizationByGoogleHostedDomain :one
-select id, google_hosted_domain
+select id, google_hosted_domain, microsoft_tenant_id
 from app_organizations
 where google_hosted_domain = $1
 `
@@ -648,7 +649,20 @@ where google_hosted_domain = $1
 func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, googleHostedDomain *string) (AppOrganization, error) {
 	row := q.db.QueryRow(ctx, getAppOrganizationByGoogleHostedDomain, googleHostedDomain)
 	var i AppOrganization
-	err := row.Scan(&i.ID, &i.GoogleHostedDomain)
+	err := row.Scan(&i.ID, &i.GoogleHostedDomain, &i.MicrosoftTenantID)
+	return i, err
+}
+
+const getAppOrganizationByMicrosoftTenantID = `-- name: GetAppOrganizationByMicrosoftTenantID :one
+select id, google_hosted_domain, microsoft_tenant_id
+from app_organizations
+where microsoft_tenant_id = $1
+`
+
+func (q *Queries) GetAppOrganizationByMicrosoftTenantID(ctx context.Context, microsoftTenantID *string) (AppOrganization, error) {
+	row := q.db.QueryRow(ctx, getAppOrganizationByMicrosoftTenantID, microsoftTenantID)
+	var i AppOrganization
+	err := row.Scan(&i.ID, &i.GoogleHostedDomain, &i.MicrosoftTenantID)
 	return i, err
 }
 

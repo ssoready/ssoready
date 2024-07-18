@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/ssoready/ssoready/internal/authn"
+	"github.com/ssoready/ssoready/internal/microsoft"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
@@ -149,6 +150,110 @@ func (s *Store) upsertGoogleAppOrg(ctx context.Context, q *queries.Queries, req 
 			appOrg, err := q.CreateAppOrganization(ctx, queries.CreateAppOrganizationParams{
 				ID:                 uuid.New(),
 				GoogleHostedDomain: &req.HostedDomain,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			return &appOrg, nil
+		}
+
+		return nil, err
+	}
+
+	return &appOrg, nil
+}
+
+type CreateMicrosoftSessionResponse struct {
+	SessionToken string
+}
+
+func (s *Store) CreateMicrosoftSession(ctx context.Context, req *microsoft.Profile) (*CreateMicrosoftSessionResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	appUser, err := s.upsertMicrosoftAppUser(ctx, q, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// generate token as 32-byte random string
+	var tokenBytes [32]byte
+	if _, err := rand.Read(tokenBytes[:]); err != nil {
+		return nil, err
+	}
+	tokenHex := hex.EncodeToString(tokenBytes[:])
+	tokenSHA := sha256.Sum256(tokenBytes[:])
+
+	revoked := false
+	if _, err := q.CreateAppSession(ctx, queries.CreateAppSessionParams{
+		ID:          uuid.New(),
+		AppUserID:   appUser.ID,
+		CreateTime:  time.Now(),
+		ExpireTime:  time.Now().Add(time.Hour * 24 * 7),
+		TokenSha256: tokenSHA[:],
+		Revoked:     &revoked,
+	}); err != nil {
+		return nil, err
+	}
+
+	if err := commit(); err != nil {
+		return nil, err
+	}
+
+	return &CreateMicrosoftSessionResponse{SessionToken: tokenHex}, nil
+}
+
+func (s *Store) upsertMicrosoftAppUser(ctx context.Context, q *queries.Queries, req *microsoft.Profile) (*queries.AppUser, error) {
+	appUser, err := q.GetAppUserByEmail(ctx, req.Email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			appOrg, err := s.upsertMicrosoftAppOrg(ctx, q, req)
+			if err != nil {
+				return nil, err
+			}
+
+			appUser, err := q.CreateAppUser(ctx, queries.CreateAppUserParams{
+				ID:                uuid.New(),
+				AppOrganizationID: appOrg.ID,
+				DisplayName:       req.Name,
+				Email:             req.Email,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			return &appUser, nil
+		}
+
+		return nil, err
+	}
+
+	return &appUser, nil
+}
+
+func (s *Store) upsertMicrosoftAppOrg(ctx context.Context, q *queries.Queries, req *microsoft.Profile) (*queries.AppOrganization, error) {
+	if req.TenantID == "" {
+		// this is a personal address; give them their own app org
+		appOrg, err := q.CreateAppOrganization(ctx, queries.CreateAppOrganizationParams{
+			ID: uuid.New(),
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return &appOrg, nil
+	}
+
+	appOrg, err := q.GetAppOrganizationByMicrosoftTenantID(ctx, &req.TenantID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			appOrg, err := q.CreateAppOrganization(ctx, queries.CreateAppOrganizationParams{
+				ID:                uuid.New(),
+				MicrosoftTenantID: &req.TenantID,
 			})
 			if err != nil {
 				return nil, err

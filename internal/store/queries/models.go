@@ -65,6 +65,7 @@ type ApiKey struct {
 type AppOrganization struct {
 	ID                 uuid.UUID
 	GoogleHostedDomain *string
+	MicrosoftTenantID  *string
 }
 
 type AppSession struct {

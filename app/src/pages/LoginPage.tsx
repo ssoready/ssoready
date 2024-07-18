@@ -17,10 +17,12 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useConfig } from "@/config";
+import { useAnalytics } from "@/analytics";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const { GOOGLE_OAUTH_CLIENT_ID } = useConfig();
+  const analytics = useAnalytics();
 
   const [email, setEmail] = useState("");
   const [showEmailWait, setShowEmailWait] = useState(false);
@@ -107,22 +109,28 @@ export function LoginPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-center">
-                  <GoogleLogin
-                    click_listener={() =>
-                      analytics.track("Google Login Clicked")
-                    }
-                    onError={() => {
-                      throw new Error("Google login failed");
-                    }}
-                    text="continue_with"
-                    onSuccess={handleGoogle}
-                  />
+                <div className="flex flex-col gap-y-2">
+                  <div className="flex justify-center">
+                    <GoogleLogin
+                      click_listener={() =>
+                        analytics.track("Google Login Clicked")
+                      }
+                      onError={() => {
+                        throw new Error("Google login failed");
+                      }}
+                      text="continue_with"
+                      onSuccess={handleGoogle}
+                    />
+                  </div>
+
+                  <div className="flex justify-center">
+                    <MicrosoftLogin />
+                  </div>
                 </div>
 
                 <div className="flex justify-center">
                   <p className="text-sm text-muted-foreground text-center">
-                    If you haven't created an account yet, either option will
+                    If you haven't created an account yet, any option will
                     create one for you.
                   </p>
                 </div>
@@ -132,5 +140,63 @@ export function LoginPage() {
         </div>
       )}
     </GoogleOAuthProvider>
+  );
+}
+
+function MicrosoftLogin() {
+  const { MICROSOFT_OAUTH_CLIENT_ID, MICROSOFT_OAUTH_REDIRECT_URI } =
+    useConfig();
+
+  const microsoftRedirectUri = new URL(
+    "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+  );
+  microsoftRedirectUri.searchParams.set("response_type", "code");
+  microsoftRedirectUri.searchParams.set("response_mode", "query");
+  microsoftRedirectUri.searchParams.set("scope", "openid profile email");
+  microsoftRedirectUri.searchParams.set("client_id", MICROSOFT_OAUTH_CLIENT_ID);
+  microsoftRedirectUri.searchParams.set(
+    "redirect_uri",
+    MICROSOFT_OAUTH_REDIRECT_URI,
+  );
+
+  return (
+    <Button variant="outline" asChild>
+      <a
+        className="flex items-center gap-x-2"
+        href={microsoftRedirectUri.toString()}
+      >
+        <span>Continue with Microsoft</span>
+        <svg
+          className="h-5 w-5"
+          xmlns="http://www.w3.org/2000/svg"
+          x="0px"
+          y="0px"
+          width="100"
+          height="100"
+          viewBox="0 0 48 48"
+        >
+          <path
+            fill="#ff5722"
+            d="M6 6H22V22H6z"
+            transform="rotate(-180 14 14)"
+          ></path>
+          <path
+            fill="#4caf50"
+            d="M26 6H42V22H26z"
+            transform="rotate(-180 34 14)"
+          ></path>
+          <path
+            fill="#ffc107"
+            d="M26 26H42V42H26z"
+            transform="rotate(-180 34 34)"
+          ></path>
+          <path
+            fill="#03a9f4"
+            d="M6 26H22V42H6z"
+            transform="rotate(-180 14 34)"
+          ></path>
+        </svg>
+      </a>
+    </Button>
   );
 }
