@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/ssoready/ssoready/internal/authn"
@@ -367,6 +368,14 @@ func (s *Store) VerifyEmail(ctx context.Context, req *VerifyEmailRequest) (*Veri
 		return nil, err
 	}
 
+	now := time.Now()
+	if _, err := q.UpdateEmailVerificationChallengeCompleteTime(ctx, queries.UpdateEmailVerificationChallengeCompleteTimeParams{
+		CompleteTime: &now,
+		ID:           qChallenge.ID,
+	}); err != nil {
+		return nil, fmt.Errorf("update email verification challenge complete time: %w", err)
+	}
+
 	if err := commit(); err != nil {
 		return nil, err
 	}
@@ -398,6 +407,19 @@ func (s *Store) upsertUserByEmailSoleInOrg(ctx context.Context, q *queries.Queri
 		}
 
 		return nil, err
+	}
+
+	// Refuse to create a user if the org has email_logins_disabled.
+	//
+	// We don't need to worry about this case if the user was not found, because in that case the new org is guaranteed
+	// to not have email_logins_disabled set.
+	appOrg, err := q.GetAppOrganizationByID(ctx, appUser.AppOrganizationID)
+	if err != nil {
+		return nil, fmt.Errorf("get app org by id: %w", err)
+	}
+
+	if appOrg.EmailLoginsDisabled != nil && *appOrg.EmailLoginsDisabled {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("app organization has email_logins_disabled"))
 	}
 
 	return &appUser, nil

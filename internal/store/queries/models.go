@@ -63,9 +63,10 @@ type ApiKey struct {
 }
 
 type AppOrganization struct {
-	ID                 uuid.UUID
-	GoogleHostedDomain *string
-	MicrosoftTenantID  *string
+	ID                  uuid.UUID
+	GoogleHostedDomain  *string
+	MicrosoftTenantID   *string
+	EmailLoginsDisabled *bool
 }
 
 type AppSession struct {
@@ -86,10 +87,11 @@ type AppUser struct {
 }
 
 type EmailVerificationChallenge struct {
-	ID          uuid.UUID
-	Email       string
-	ExpireTime  time.Time
-	SecretToken string
+	ID           uuid.UUID
+	Email        string
+	ExpireTime   time.Time
+	SecretToken  string
+	CompleteTime *time.Time
 }
 
 type Environment struct {

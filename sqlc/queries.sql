@@ -1,5 +1,7 @@
 -- name: CheckExistsEmailVerificationChallenge :one
-select exists(select * from email_verification_challenges where email = $1 and expire_time > $2);
+select exists(select *
+              from email_verification_challenges
+              where email = $1 and expire_time > $2 and complete_time is null);
 
 -- name: CreateEmailVerificationChallenge :one
 insert into email_verification_challenges (id, email, expire_time, secret_token)
@@ -11,6 +13,12 @@ select *
 from email_verification_challenges
 where secret_token = $1
   and expire_time > $2;
+
+-- name: UpdateEmailVerificationChallengeCompleteTime :one
+update email_verification_challenges
+set complete_time = $1
+where id = $2
+returning *;
 
 -- name: GetOnboardingState :one
 select *
@@ -181,6 +189,11 @@ select *
 from app_users
 where app_organization_id = $1
   and id = $2;
+
+-- name: GetAppOrganizationByID :one
+select *
+from app_organizations
+where id = $1;
 
 -- name: GetAppOrganizationByGoogleHostedDomain :one
 select *

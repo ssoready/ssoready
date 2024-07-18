@@ -201,7 +201,9 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 }
 
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
-select exists(select id, email, expire_time, secret_token from email_verification_challenges where email = $1 and expire_time > $2)
+select exists(select id, email, expire_time, secret_token, complete_time
+              from email_verification_challenges
+              where email = $1 and expire_time > $2 and complete_time is null)
 `
 
 type CheckExistsEmailVerificationChallengeParams struct {
@@ -243,7 +245,7 @@ func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (Api
 const createAppOrganization = `-- name: CreateAppOrganization :one
 insert into app_organizations (id, google_hosted_domain, microsoft_tenant_id)
 values ($1, $2, $3)
-returning id, google_hosted_domain, microsoft_tenant_id
+returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
 `
 
 type CreateAppOrganizationParams struct {
@@ -255,7 +257,12 @@ type CreateAppOrganizationParams struct {
 func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrganizationParams) (AppOrganization, error) {
 	row := q.db.QueryRow(ctx, createAppOrganization, arg.ID, arg.GoogleHostedDomain, arg.MicrosoftTenantID)
 	var i AppOrganization
-	err := row.Scan(&i.ID, &i.GoogleHostedDomain, &i.MicrosoftTenantID)
+	err := row.Scan(
+		&i.ID,
+		&i.GoogleHostedDomain,
+		&i.MicrosoftTenantID,
+		&i.EmailLoginsDisabled,
+	)
 	return i, err
 }
 
@@ -329,7 +336,7 @@ func (q *Queries) CreateAppUser(ctx context.Context, arg CreateAppUserParams) (A
 const createEmailVerificationChallenge = `-- name: CreateEmailVerificationChallenge :one
 insert into email_verification_challenges (id, email, expire_time, secret_token)
 values ($1, $2, $3, $4)
-returning id, email, expire_time, secret_token
+returning id, email, expire_time, secret_token, complete_time
 `
 
 type CreateEmailVerificationChallengeParams struct {
@@ -352,6 +359,7 @@ func (q *Queries) CreateEmailVerificationChallenge(ctx context.Context, arg Crea
 		&i.Email,
 		&i.ExpireTime,
 		&i.SecretToken,
+		&i.CompleteTime,
 	)
 	return i, err
 }
@@ -641,7 +649,7 @@ func (q *Queries) GetAPIKeyBySecretValueSHA256(ctx context.Context, secretValueS
 }
 
 const getAppOrganizationByGoogleHostedDomain = `-- name: GetAppOrganizationByGoogleHostedDomain :one
-select id, google_hosted_domain, microsoft_tenant_id
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
 from app_organizations
 where google_hosted_domain = $1
 `
@@ -649,12 +657,35 @@ where google_hosted_domain = $1
 func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, googleHostedDomain *string) (AppOrganization, error) {
 	row := q.db.QueryRow(ctx, getAppOrganizationByGoogleHostedDomain, googleHostedDomain)
 	var i AppOrganization
-	err := row.Scan(&i.ID, &i.GoogleHostedDomain, &i.MicrosoftTenantID)
+	err := row.Scan(
+		&i.ID,
+		&i.GoogleHostedDomain,
+		&i.MicrosoftTenantID,
+		&i.EmailLoginsDisabled,
+	)
+	return i, err
+}
+
+const getAppOrganizationByID = `-- name: GetAppOrganizationByID :one
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
+from app_organizations
+where id = $1
+`
+
+func (q *Queries) GetAppOrganizationByID(ctx context.Context, id uuid.UUID) (AppOrganization, error) {
+	row := q.db.QueryRow(ctx, getAppOrganizationByID, id)
+	var i AppOrganization
+	err := row.Scan(
+		&i.ID,
+		&i.GoogleHostedDomain,
+		&i.MicrosoftTenantID,
+		&i.EmailLoginsDisabled,
+	)
 	return i, err
 }
 
 const getAppOrganizationByMicrosoftTenantID = `-- name: GetAppOrganizationByMicrosoftTenantID :one
-select id, google_hosted_domain, microsoft_tenant_id
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
 from app_organizations
 where microsoft_tenant_id = $1
 `
@@ -662,7 +693,12 @@ where microsoft_tenant_id = $1
 func (q *Queries) GetAppOrganizationByMicrosoftTenantID(ctx context.Context, microsoftTenantID *string) (AppOrganization, error) {
 	row := q.db.QueryRow(ctx, getAppOrganizationByMicrosoftTenantID, microsoftTenantID)
 	var i AppOrganization
-	err := row.Scan(&i.ID, &i.GoogleHostedDomain, &i.MicrosoftTenantID)
+	err := row.Scan(
+		&i.ID,
+		&i.GoogleHostedDomain,
+		&i.MicrosoftTenantID,
+		&i.EmailLoginsDisabled,
+	)
 	return i, err
 }
 
@@ -748,7 +784,7 @@ func (q *Queries) GetAppUserByID(ctx context.Context, arg GetAppUserByIDParams) 
 }
 
 const getEmailVerificationChallengeBySecretToken = `-- name: GetEmailVerificationChallengeBySecretToken :one
-select id, email, expire_time, secret_token
+select id, email, expire_time, secret_token, complete_time
 from email_verification_challenges
 where secret_token = $1
   and expire_time > $2
@@ -767,6 +803,7 @@ func (q *Queries) GetEmailVerificationChallengeBySecretToken(ctx context.Context
 		&i.Email,
 		&i.ExpireTime,
 		&i.SecretToken,
+		&i.CompleteTime,
 	)
 	return i, err
 }
@@ -1471,6 +1508,31 @@ func (q *Queries) RevokeAppSessionByID(ctx context.Context, id uuid.UUID) (AppSe
 		&i.Token,
 		&i.TokenSha256,
 		&i.Revoked,
+	)
+	return i, err
+}
+
+const updateEmailVerificationChallengeCompleteTime = `-- name: UpdateEmailVerificationChallengeCompleteTime :one
+update email_verification_challenges
+set complete_time = $1
+where id = $2
+returning id, email, expire_time, secret_token, complete_time
+`
+
+type UpdateEmailVerificationChallengeCompleteTimeParams struct {
+	CompleteTime *time.Time
+	ID           uuid.UUID
+}
+
+func (q *Queries) UpdateEmailVerificationChallengeCompleteTime(ctx context.Context, arg UpdateEmailVerificationChallengeCompleteTimeParams) (EmailVerificationChallenge, error) {
+	row := q.db.QueryRow(ctx, updateEmailVerificationChallengeCompleteTime, arg.CompleteTime, arg.ID)
+	var i EmailVerificationChallenge
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.ExpireTime,
+		&i.SecretToken,
+		&i.CompleteTime,
 	)
 	return i, err
 }
