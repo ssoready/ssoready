@@ -37,6 +37,14 @@
           "value": "43701429226-3674sgkc830ruvovd5tdupohn6rjt7f8.apps.googleusercontent.com"
         },
         {
+          "name": "API_MICROSOFT_OAUTH_CLIENT_ID",
+          "value": "7c8326f6-65e4-40a7-b689-9b976d066e02"
+        },
+        {
+          "name": "API_MICROSOFT_OAUTH_REDIRECT_URI",
+          "value": "https://app.ssoready.com/internal/microsoft-callback"
+        },
+        {
           "name": "API_GLOBAL_DEFAULT_AUTH_URL",
           "value": "https://auth.ssoready.com"
         },
