@@ -37,6 +37,14 @@
           "value": "246323888269-8n9om7p9j358g936ghkmg8s8eqlhotkr.apps.googleusercontent.com"
         },
         {
+          "name": "API_MICROSOFT_OAUTH_CLIENT_ID",
+          "value": "72e0ccf5-da8d-40c2-87c3-fbe52a7053ea"
+        },
+        {
+          "name": "API_MICROSOFT_OAUTH_REDIRECT_URI",
+          "value": "https://stage--ssoready.netlify.app/internal/microsoft-callback"
+        },
+        {
           "name": "API_GLOBAL_DEFAULT_AUTH_URL",
           "value": "https://auth.stage.ssoready-nonprod.com"
         },
