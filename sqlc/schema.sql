@@ -53,7 +53,8 @@ ALTER TABLE public.api_keys OWNER TO postgres;
 
 CREATE TABLE public.app_organizations (
     id uuid NOT NULL,
-    google_hosted_domain character varying
+    google_hosted_domain character varying,
+    microsoft_tenant_id character varying
 );
 
 
@@ -270,6 +271,14 @@ ALTER TABLE ONLY public.app_organizations
 
 ALTER TABLE ONLY public.app_organizations
     ADD CONSTRAINT app_organizations_google_hosted_domain_key1 UNIQUE (google_hosted_domain);
+
+
+--
+-- Name: app_organizations app_organizations_microsoft_tenant_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_organizations
+    ADD CONSTRAINT app_organizations_microsoft_tenant_id_key UNIQUE (microsoft_tenant_id);
 
 
 --

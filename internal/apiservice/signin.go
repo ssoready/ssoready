@@ -70,6 +70,26 @@ func (s *Service) SignIn(ctx context.Context, req *connect.Request[ssoreadyv1.Si
 		}), nil
 	}
 
+	if req.Msg.MicrosoftCode != "" {
+		profile, err := s.MicrosoftClient.ExchangeToken(ctx, req.Msg.MicrosoftCode)
+		if err != nil {
+			return nil, fmt.Errorf("microsoft: exchange token: %w", err)
+		}
+
+		createSessionRes, err := s.Store.CreateMicrosoftSession(ctx, profile)
+		if err != nil {
+			return nil, fmt.Errorf("store: %w", err)
+		}
+
+		if err := s.trackSignInAnalytics(ctx, "google", createSessionRes.SessionToken); err != nil {
+			return nil, fmt.Errorf("analytics: %w", err)
+		}
+
+		return connect.NewResponse(&ssoreadyv1.SignInResponse{
+			SessionToken: createSessionRes.SessionToken,
+		}), nil
+	}
+
 	verifyRes, err := s.Store.VerifyEmail(ctx, &store.VerifyEmailRequest{
 		Token: req.Msg.EmailVerifyToken,
 	})

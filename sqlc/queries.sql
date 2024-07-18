@@ -187,9 +187,14 @@ select *
 from app_organizations
 where google_hosted_domain = $1;
 
+-- name: GetAppOrganizationByMicrosoftTenantID :one
+select *
+from app_organizations
+where microsoft_tenant_id = $1;
+
 -- name: CreateAppOrganization :one
-insert into app_organizations (id, google_hosted_domain)
-values ($1, $2)
+insert into app_organizations (id, google_hosted_domain, microsoft_tenant_id)
+values ($1, $2, $3)
 returning *;
 
 -- name: CreateAppUser :one

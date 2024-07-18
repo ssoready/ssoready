@@ -3,14 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type {
-  BinaryReadOptions,
-  FieldList,
-  JsonReadOptions,
-  JsonValue,
-  PartialMessage,
-  PlainMessage,
-} from "@bufbuild/protobuf";
+import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Empty, Message, proto3, Timestamp } from "@bufbuild/protobuf";
 
 /**
@@ -73,40 +66,23 @@ export class AppUser extends Message<AppUser> {
   static readonly typeName = "ssoready.v1.AppUser";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "display_name",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): AppUser {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUser {
     return new AppUser().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): AppUser {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUser {
     return new AppUser().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): AppUser {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUser {
     return new AppUser().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: AppUser | PlainMessage<AppUser> | undefined,
-    b: AppUser | PlainMessage<AppUser> | undefined,
-  ): boolean {
+  static equals(a: AppUser | PlainMessage<AppUser> | undefined, b: AppUser | PlainMessage<AppUser> | undefined): boolean {
     return proto3.util.equals(AppUser, a, b);
   }
 }
@@ -149,52 +125,25 @@ export class Environment extends Message<Environment> {
   static readonly typeName = "ssoready.v1.Environment";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "redirect_url",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "display_name",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "auth_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 5,
-      name: "oauth_redirect_uri",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 5, name: "oauth_redirect_uri", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): Environment {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Environment {
     return new Environment().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): Environment {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Environment {
     return new Environment().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): Environment {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Environment {
     return new Environment().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: Environment | PlainMessage<Environment> | undefined,
-    b: Environment | PlainMessage<Environment> | undefined,
-  ): boolean {
+  static equals(a: Environment | PlainMessage<Environment> | undefined, b: Environment | PlainMessage<Environment> | undefined): boolean {
     return proto3.util.equals(Environment, a, b);
   }
 }
@@ -227,45 +176,23 @@ export class APIKey extends Message<APIKey> {
   static readonly typeName = "ssoready.v1.APIKey";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "secret_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): APIKey {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): APIKey {
     return new APIKey().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): APIKey {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): APIKey {
     return new APIKey().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): APIKey {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): APIKey {
     return new APIKey().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: APIKey | PlainMessage<APIKey> | undefined,
-    b: APIKey | PlainMessage<APIKey> | undefined,
-  ): boolean {
+  static equals(a: APIKey | PlainMessage<APIKey> | undefined, b: APIKey | PlainMessage<APIKey> | undefined): boolean {
     return proto3.util.equals(APIKey, a, b);
   }
 }
@@ -298,45 +225,23 @@ export class SAMLOAuthClient extends Message<SAMLOAuthClient> {
   static readonly typeName = "ssoready.v1.SAMLOAuthClient";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "client_secret",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "client_secret", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SAMLOAuthClient {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLOAuthClient {
     return new SAMLOAuthClient().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SAMLOAuthClient {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLOAuthClient {
     return new SAMLOAuthClient().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SAMLOAuthClient {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLOAuthClient {
     return new SAMLOAuthClient().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SAMLOAuthClient | PlainMessage<SAMLOAuthClient> | undefined,
-    b: SAMLOAuthClient | PlainMessage<SAMLOAuthClient> | undefined,
-  ): boolean {
+  static equals(a: SAMLOAuthClient | PlainMessage<SAMLOAuthClient> | undefined, b: SAMLOAuthClient | PlainMessage<SAMLOAuthClient> | undefined): boolean {
     return proto3.util.equals(SAMLOAuthClient, a, b);
   }
 }
@@ -374,52 +279,24 @@ export class Organization extends Message<Organization> {
   static readonly typeName = "ssoready.v1.Organization";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "external_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 4,
-      name: "domains",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-      repeated: true,
-    },
+    { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "domains", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): Organization {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Organization {
     return new Organization().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): Organization {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Organization {
     return new Organization().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): Organization {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Organization {
     return new Organization().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: Organization | PlainMessage<Organization> | undefined,
-    b: Organization | PlainMessage<Organization> | undefined,
-  ): boolean {
+  static equals(a: Organization | PlainMessage<Organization> | undefined, b: Organization | PlainMessage<Organization> | undefined): boolean {
     return proto3.util.equals(Organization, a, b);
   }
 }
@@ -477,65 +354,28 @@ export class SAMLConnection extends Message<SAMLConnection> {
   static readonly typeName = "ssoready.v1.SAMLConnection";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "organization_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "primary", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    {
-      no: 3,
-      name: "idp_redirect_url",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 4,
-      name: "idp_certificate",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 5,
-      name: "idp_entity_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 6,
-      name: "sp_entity_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 3, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "idp_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "sp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "sp_acs_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SAMLConnection {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLConnection {
     return new SAMLConnection().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SAMLConnection {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLConnection {
     return new SAMLConnection().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SAMLConnection {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLConnection {
     return new SAMLConnection().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SAMLConnection | PlainMessage<SAMLConnection> | undefined,
-    b: SAMLConnection | PlainMessage<SAMLConnection> | undefined,
-  ): boolean {
+  static equals(a: SAMLConnection | PlainMessage<SAMLConnection> | undefined, b: SAMLConnection | PlainMessage<SAMLConnection> | undefined): boolean {
     return proto3.util.equals(SAMLConnection, a, b);
   }
 }
@@ -562,43 +402,37 @@ export class SAMLFlow extends Message<SAMLFlow> {
   /**
    * @generated from oneof ssoready.v1.SAMLFlow.error
    */
-  error:
-    | {
-        /**
-         * @generated from field: google.protobuf.Empty unsigned_assertion = 22;
-         */
-        value: Empty;
-        case: "unsignedAssertion";
-      }
-    | {
-        /**
-         * @generated from field: string bad_issuer = 18;
-         */
-        value: string;
-        case: "badIssuer";
-      }
-    | {
-        /**
-         * @generated from field: string bad_audience = 19;
-         */
-        value: string;
-        case: "badAudience";
-      }
-    | {
-        /**
-         * @generated from field: string bad_subject_id = 20;
-         */
-        value: string;
-        case: "badSubjectId";
-      }
-    | {
-        /**
-         * @generated from field: string email_outside_organization_domains = 21;
-         */
-        value: string;
-        case: "emailOutsideOrganizationDomains";
-      }
-    | { case: undefined; value?: undefined } = { case: undefined };
+  error: {
+    /**
+     * @generated from field: google.protobuf.Empty unsigned_assertion = 22;
+     */
+    value: Empty;
+    case: "unsignedAssertion";
+  } | {
+    /**
+     * @generated from field: string bad_issuer = 18;
+     */
+    value: string;
+    case: "badIssuer";
+  } | {
+    /**
+     * @generated from field: string bad_audience = 19;
+     */
+    value: string;
+    case: "badAudience";
+  } | {
+    /**
+     * @generated from field: string bad_subject_id = 20;
+     */
+    value: string;
+    case: "badSubjectId";
+  } | {
+    /**
+     * @generated from field: string email_outside_organization_domains = 21;
+     */
+    value: string;
+    case: "emailOutsideOrganizationDomains";
+  } | { case: undefined; value?: undefined } = { case: undefined };
 
   /**
    * @generated from field: string state = 3;
@@ -679,120 +513,42 @@ export class SAMLFlow extends Message<SAMLFlow> {
   static readonly typeName = "ssoready.v1.SAMLFlow";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 2,
-      name: "saml_connection_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 17,
-      name: "status",
-      kind: "enum",
-      T: proto3.getEnumType(SAMLFlowStatus),
-    },
-    {
-      no: 22,
-      name: "unsigned_assertion",
-      kind: "message",
-      T: Empty,
-      oneof: "error",
-    },
-    {
-      no: 18,
-      name: "bad_issuer",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-      oneof: "error",
-    },
-    {
-      no: 19,
-      name: "bad_audience",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-      oneof: "error",
-    },
-    {
-      no: 20,
-      name: "bad_subject_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-      oneof: "error",
-    },
-    {
-      no: 21,
-      name: "email_outside_organization_domains",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-      oneof: "error",
-    },
+    { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 17, name: "status", kind: "enum", T: proto3.getEnumType(SAMLFlowStatus) },
+    { no: 22, name: "unsigned_assertion", kind: "message", T: Empty, oneof: "error" },
+    { no: 18, name: "bad_issuer", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 19, name: "bad_audience", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 20, name: "bad_subject_id", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 21, name: "email_outside_organization_domains", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 3, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 5,
-      name: "attributes",
-      kind: "map",
-      K: 9 /* ScalarType.STRING */,
-      V: { kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    },
+    { no: 5, name: "attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
     { no: 6, name: "create_time", kind: "message", T: Timestamp },
     { no: 7, name: "update_time", kind: "message", T: Timestamp },
-    {
-      no: 8,
-      name: "auth_redirect_url",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 8, name: "auth_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 9, name: "get_redirect_time", kind: "message", T: Timestamp },
-    {
-      no: 10,
-      name: "initiate_request",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 10, name: "initiate_request", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 11, name: "initiate_time", kind: "message", T: Timestamp },
     { no: 12, name: "assertion", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 13,
-      name: "app_redirect_url",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 13, name: "app_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 14, name: "receive_assertion_time", kind: "message", T: Timestamp },
     { no: 15, name: "redeem_time", kind: "message", T: Timestamp },
-    {
-      no: 16,
-      name: "redeem_response",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 16, name: "redeem_response", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SAMLFlow {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SAMLFlow {
     return new SAMLFlow().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SAMLFlow {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SAMLFlow {
     return new SAMLFlow().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SAMLFlow {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SAMLFlow {
     return new SAMLFlow().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SAMLFlow | PlainMessage<SAMLFlow> | undefined,
-    b: SAMLFlow | PlainMessage<SAMLFlow> | undefined,
-  ): boolean {
+  static equals(a: SAMLFlow | PlainMessage<SAMLFlow> | undefined, b: SAMLFlow | PlainMessage<SAMLFlow> | undefined): boolean {
     return proto3.util.equals(SAMLFlow, a, b);
   }
 }
@@ -829,58 +585,25 @@ export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.GetSAMLRedirectURLRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "saml_connection_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "organization_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "organization_external_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetSAMLRedirectURLRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLRedirectURLRequest {
     return new GetSAMLRedirectURLRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLRedirectURLRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLRequest {
     return new GetSAMLRedirectURLRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLRedirectURLRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLRequest {
     return new GetSAMLRedirectURLRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetSAMLRedirectURLRequest
-      | PlainMessage<GetSAMLRedirectURLRequest>
-      | undefined,
-    b:
-      | GetSAMLRedirectURLRequest
-      | PlainMessage<GetSAMLRedirectURLRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: GetSAMLRedirectURLRequest | PlainMessage<GetSAMLRedirectURLRequest> | undefined, b: GetSAMLRedirectURLRequest | PlainMessage<GetSAMLRedirectURLRequest> | undefined): boolean {
     return proto3.util.equals(GetSAMLRedirectURLRequest, a, b);
   }
 }
@@ -902,45 +625,22 @@ export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLRespon
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.GetSAMLRedirectURLResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "redirect_url",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetSAMLRedirectURLResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLRedirectURLResponse {
     return new GetSAMLRedirectURLResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLRedirectURLResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLResponse {
     return new GetSAMLRedirectURLResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLRedirectURLResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLRedirectURLResponse {
     return new GetSAMLRedirectURLResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetSAMLRedirectURLResponse
-      | PlainMessage<GetSAMLRedirectURLResponse>
-      | undefined,
-    b:
-      | GetSAMLRedirectURLResponse
-      | PlainMessage<GetSAMLRedirectURLResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: GetSAMLRedirectURLResponse | PlainMessage<GetSAMLRedirectURLResponse> | undefined, b: GetSAMLRedirectURLResponse | PlainMessage<GetSAMLRedirectURLResponse> | undefined): boolean {
     return proto3.util.equals(GetSAMLRedirectURLResponse, a, b);
   }
 }
@@ -962,48 +662,22 @@ export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeReq
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.RedeemSAMLAccessCodeRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "saml_access_code",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "saml_access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): RedeemSAMLAccessCodeRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeRequest {
     return new RedeemSAMLAccessCodeRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): RedeemSAMLAccessCodeRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeRequest {
     return new RedeemSAMLAccessCodeRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): RedeemSAMLAccessCodeRequest {
-    return new RedeemSAMLAccessCodeRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeRequest {
+    return new RedeemSAMLAccessCodeRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | RedeemSAMLAccessCodeRequest
-      | PlainMessage<RedeemSAMLAccessCodeRequest>
-      | undefined,
-    b:
-      | RedeemSAMLAccessCodeRequest
-      | PlainMessage<RedeemSAMLAccessCodeRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: RedeemSAMLAccessCodeRequest | PlainMessage<RedeemSAMLAccessCodeRequest> | undefined, b: RedeemSAMLAccessCodeRequest | PlainMessage<RedeemSAMLAccessCodeRequest> | undefined): boolean {
     return proto3.util.equals(RedeemSAMLAccessCodeRequest, a, b);
   }
 }
@@ -1052,67 +726,25 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    {
-      no: 3,
-      name: "attributes",
-      kind: "map",
-      K: 9 /* ScalarType.STRING */,
-      V: { kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    },
-    {
-      no: 4,
-      name: "organization_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 5,
-      name: "organization_external_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 6,
-      name: "saml_flow_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 3, name: "attributes", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 4, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "saml_flow_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): RedeemSAMLAccessCodeResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemSAMLAccessCodeResponse {
     return new RedeemSAMLAccessCodeResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): RedeemSAMLAccessCodeResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeResponse {
     return new RedeemSAMLAccessCodeResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): RedeemSAMLAccessCodeResponse {
-    return new RedeemSAMLAccessCodeResponse().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemSAMLAccessCodeResponse {
+    return new RedeemSAMLAccessCodeResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | RedeemSAMLAccessCodeResponse
-      | PlainMessage<RedeemSAMLAccessCodeResponse>
-      | undefined,
-    b:
-      | RedeemSAMLAccessCodeResponse
-      | PlainMessage<RedeemSAMLAccessCodeResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: RedeemSAMLAccessCodeResponse | PlainMessage<RedeemSAMLAccessCodeResponse> | undefined, b: RedeemSAMLAccessCodeResponse | PlainMessage<RedeemSAMLAccessCodeResponse> | undefined): boolean {
     return proto3.util.equals(RedeemSAMLAccessCodeResponse, a, b);
   }
 }
@@ -1137,31 +769,19 @@ export class VerifyEmailRequest extends Message<VerifyEmailRequest> {
     { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): VerifyEmailRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): VerifyEmailRequest {
     return new VerifyEmailRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): VerifyEmailRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): VerifyEmailRequest {
     return new VerifyEmailRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): VerifyEmailRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): VerifyEmailRequest {
     return new VerifyEmailRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: VerifyEmailRequest | PlainMessage<VerifyEmailRequest> | undefined,
-    b: VerifyEmailRequest | PlainMessage<VerifyEmailRequest> | undefined,
-  ): boolean {
+  static equals(a: VerifyEmailRequest | PlainMessage<VerifyEmailRequest> | undefined, b: VerifyEmailRequest | PlainMessage<VerifyEmailRequest> | undefined): boolean {
     return proto3.util.equals(VerifyEmailRequest, a, b);
   }
 }
@@ -1180,6 +800,11 @@ export class SignInRequest extends Message<SignInRequest> {
    */
   emailVerifyToken = "";
 
+  /**
+   * @generated from field: string microsoft_code = 3;
+   */
+  microsoftCode = "";
+
   constructor(data?: PartialMessage<SignInRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1188,45 +813,24 @@ export class SignInRequest extends Message<SignInRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.SignInRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "google_credential",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "email_verify_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "google_credential", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "email_verify_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "microsoft_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SignInRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignInRequest {
     return new SignInRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SignInRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignInRequest {
     return new SignInRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SignInRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignInRequest {
     return new SignInRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SignInRequest | PlainMessage<SignInRequest> | undefined,
-    b: SignInRequest | PlainMessage<SignInRequest> | undefined,
-  ): boolean {
+  static equals(a: SignInRequest | PlainMessage<SignInRequest> | undefined, b: SignInRequest | PlainMessage<SignInRequest> | undefined): boolean {
     return proto3.util.equals(SignInRequest, a, b);
   }
 }
@@ -1248,39 +852,22 @@ export class SignInResponse extends Message<SignInResponse> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.SignInResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "session_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "session_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SignInResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignInResponse {
     return new SignInResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SignInResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignInResponse {
     return new SignInResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SignInResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignInResponse {
     return new SignInResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SignInResponse | PlainMessage<SignInResponse> | undefined,
-    b: SignInResponse | PlainMessage<SignInResponse> | undefined,
-  ): boolean {
+  static equals(a: SignInResponse | PlainMessage<SignInResponse> | undefined, b: SignInResponse | PlainMessage<SignInResponse> | undefined): boolean {
     return proto3.util.equals(SignInResponse, a, b);
   }
 }
@@ -1296,33 +883,22 @@ export class SignOutRequest extends Message<SignOutRequest> {
 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.SignOutRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => []);
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SignOutRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignOutRequest {
     return new SignOutRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SignOutRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignOutRequest {
     return new SignOutRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SignOutRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignOutRequest {
     return new SignOutRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SignOutRequest | PlainMessage<SignOutRequest> | undefined,
-    b: SignOutRequest | PlainMessage<SignOutRequest> | undefined,
-  ): boolean {
+  static equals(a: SignOutRequest | PlainMessage<SignOutRequest> | undefined, b: SignOutRequest | PlainMessage<SignOutRequest> | undefined): boolean {
     return proto3.util.equals(SignOutRequest, a, b);
   }
 }
@@ -1338,33 +914,22 @@ export class SignOutResponse extends Message<SignOutResponse> {
 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.SignOutResponse";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => []);
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): SignOutResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignOutResponse {
     return new SignOutResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): SignOutResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignOutResponse {
     return new SignOutResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): SignOutResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignOutResponse {
     return new SignOutResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: SignOutResponse | PlainMessage<SignOutResponse> | undefined,
-    b: SignOutResponse | PlainMessage<SignOutResponse> | undefined,
-  ): boolean {
+  static equals(a: SignOutResponse | PlainMessage<SignOutResponse> | undefined, b: SignOutResponse | PlainMessage<SignOutResponse> | undefined): boolean {
     return proto3.util.equals(SignOutResponse, a, b);
   }
 }
@@ -1380,33 +945,22 @@ export class WhoamiRequest extends Message<WhoamiRequest> {
 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.WhoamiRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => []);
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): WhoamiRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): WhoamiRequest {
     return new WhoamiRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): WhoamiRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): WhoamiRequest {
     return new WhoamiRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): WhoamiRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): WhoamiRequest {
     return new WhoamiRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: WhoamiRequest | PlainMessage<WhoamiRequest> | undefined,
-    b: WhoamiRequest | PlainMessage<WhoamiRequest> | undefined,
-  ): boolean {
+  static equals(a: WhoamiRequest | PlainMessage<WhoamiRequest> | undefined, b: WhoamiRequest | PlainMessage<WhoamiRequest> | undefined): boolean {
     return proto3.util.equals(WhoamiRequest, a, b);
   }
 }
@@ -1438,46 +992,24 @@ export class WhoamiResponse extends Message<WhoamiResponse> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.WhoamiResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "app_user_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "display_name",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "app_user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): WhoamiResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): WhoamiResponse {
     return new WhoamiResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): WhoamiResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): WhoamiResponse {
     return new WhoamiResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): WhoamiResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): WhoamiResponse {
     return new WhoamiResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: WhoamiResponse | PlainMessage<WhoamiResponse> | undefined,
-    b: WhoamiResponse | PlainMessage<WhoamiResponse> | undefined,
-  ): boolean {
+  static equals(a: WhoamiResponse | PlainMessage<WhoamiResponse> | undefined, b: WhoamiResponse | PlainMessage<WhoamiResponse> | undefined): boolean {
     return proto3.util.equals(WhoamiResponse, a, b);
   }
 }
@@ -1493,39 +1025,22 @@ export class GetOnboardingStateRequest extends Message<GetOnboardingStateRequest
 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.GetOnboardingStateRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => []);
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetOnboardingStateRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOnboardingStateRequest {
     return new GetOnboardingStateRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetOnboardingStateRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOnboardingStateRequest {
     return new GetOnboardingStateRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetOnboardingStateRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOnboardingStateRequest {
     return new GetOnboardingStateRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetOnboardingStateRequest
-      | PlainMessage<GetOnboardingStateRequest>
-      | undefined,
-    b:
-      | GetOnboardingStateRequest
-      | PlainMessage<GetOnboardingStateRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: GetOnboardingStateRequest | PlainMessage<GetOnboardingStateRequest> | undefined, b: GetOnboardingStateRequest | PlainMessage<GetOnboardingStateRequest> | undefined): boolean {
     return proto3.util.equals(GetOnboardingStateRequest, a, b);
   }
 }
@@ -1562,63 +1077,25 @@ export class GetOnboardingStateResponse extends Message<GetOnboardingStateRespon
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.GetOnboardingStateResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "dummyidp_app_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "onboarding_environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "onboarding_organization_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 4,
-      name: "onboarding_saml_connection_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "dummyidp_app_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "onboarding_environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "onboarding_organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "onboarding_saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetOnboardingStateResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOnboardingStateResponse {
     return new GetOnboardingStateResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetOnboardingStateResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOnboardingStateResponse {
     return new GetOnboardingStateResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetOnboardingStateResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOnboardingStateResponse {
     return new GetOnboardingStateResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetOnboardingStateResponse
-      | PlainMessage<GetOnboardingStateResponse>
-      | undefined,
-    b:
-      | GetOnboardingStateResponse
-      | PlainMessage<GetOnboardingStateResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: GetOnboardingStateResponse | PlainMessage<GetOnboardingStateResponse> | undefined, b: GetOnboardingStateResponse | PlainMessage<GetOnboardingStateResponse> | undefined): boolean {
     return proto3.util.equals(GetOnboardingStateResponse, a, b);
   }
 }
@@ -1655,66 +1132,25 @@ export class UpdateOnboardingStateRequest extends Message<UpdateOnboardingStateR
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.UpdateOnboardingStateRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "dummyidp_app_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "onboarding_environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "onboarding_organization_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 4,
-      name: "onboarding_saml_connection_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "dummyidp_app_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "onboarding_environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "onboarding_organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "onboarding_saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): UpdateOnboardingStateRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOnboardingStateRequest {
     return new UpdateOnboardingStateRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateOnboardingStateRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOnboardingStateRequest {
     return new UpdateOnboardingStateRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateOnboardingStateRequest {
-    return new UpdateOnboardingStateRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOnboardingStateRequest {
+    return new UpdateOnboardingStateRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | UpdateOnboardingStateRequest
-      | PlainMessage<UpdateOnboardingStateRequest>
-      | undefined,
-    b:
-      | UpdateOnboardingStateRequest
-      | PlainMessage<UpdateOnboardingStateRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: UpdateOnboardingStateRequest | PlainMessage<UpdateOnboardingStateRequest> | undefined, b: UpdateOnboardingStateRequest | PlainMessage<UpdateOnboardingStateRequest> | undefined): boolean {
     return proto3.util.equals(UpdateOnboardingStateRequest, a, b);
   }
 }
@@ -1741,57 +1177,23 @@ export class OnboardingGetSAMLRedirectURLRequest extends Message<OnboardingGetSA
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.OnboardingGetSAMLRedirectURLRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "api_key_secret_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "saml_connection_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "api_key_secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): OnboardingGetSAMLRedirectURLRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OnboardingGetSAMLRedirectURLRequest {
     return new OnboardingGetSAMLRedirectURLRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): OnboardingGetSAMLRedirectURLRequest {
-    return new OnboardingGetSAMLRedirectURLRequest().fromJson(
-      jsonValue,
-      options,
-    );
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OnboardingGetSAMLRedirectURLRequest {
+    return new OnboardingGetSAMLRedirectURLRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): OnboardingGetSAMLRedirectURLRequest {
-    return new OnboardingGetSAMLRedirectURLRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OnboardingGetSAMLRedirectURLRequest {
+    return new OnboardingGetSAMLRedirectURLRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | OnboardingGetSAMLRedirectURLRequest
-      | PlainMessage<OnboardingGetSAMLRedirectURLRequest>
-      | undefined,
-    b:
-      | OnboardingGetSAMLRedirectURLRequest
-      | PlainMessage<OnboardingGetSAMLRedirectURLRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: OnboardingGetSAMLRedirectURLRequest | PlainMessage<OnboardingGetSAMLRedirectURLRequest> | undefined, b: OnboardingGetSAMLRedirectURLRequest | PlainMessage<OnboardingGetSAMLRedirectURLRequest> | undefined): boolean {
     return proto3.util.equals(OnboardingGetSAMLRedirectURLRequest, a, b);
   }
 }
@@ -1816,63 +1218,25 @@ export class OnboardingRedeemSAMLAccessCodeRequest extends Message<OnboardingRed
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName =
-    "ssoready.v1.OnboardingRedeemSAMLAccessCodeRequest";
+  static readonly typeName = "ssoready.v1.OnboardingRedeemSAMLAccessCodeRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "api_key_secret_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "saml_access_code",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "api_key_secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_access_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): OnboardingRedeemSAMLAccessCodeRequest {
-    return new OnboardingRedeemSAMLAccessCodeRequest().fromBinary(
-      bytes,
-      options,
-    );
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OnboardingRedeemSAMLAccessCodeRequest {
+    return new OnboardingRedeemSAMLAccessCodeRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): OnboardingRedeemSAMLAccessCodeRequest {
-    return new OnboardingRedeemSAMLAccessCodeRequest().fromJson(
-      jsonValue,
-      options,
-    );
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessCodeRequest {
+    return new OnboardingRedeemSAMLAccessCodeRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): OnboardingRedeemSAMLAccessCodeRequest {
-    return new OnboardingRedeemSAMLAccessCodeRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OnboardingRedeemSAMLAccessCodeRequest {
+    return new OnboardingRedeemSAMLAccessCodeRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | OnboardingRedeemSAMLAccessCodeRequest
-      | PlainMessage<OnboardingRedeemSAMLAccessCodeRequest>
-      | undefined,
-    b:
-      | OnboardingRedeemSAMLAccessCodeRequest
-      | PlainMessage<OnboardingRedeemSAMLAccessCodeRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: OnboardingRedeemSAMLAccessCodeRequest | PlainMessage<OnboardingRedeemSAMLAccessCodeRequest> | undefined, b: OnboardingRedeemSAMLAccessCodeRequest | PlainMessage<OnboardingRedeemSAMLAccessCodeRequest> | undefined): boolean {
     return proto3.util.equals(OnboardingRedeemSAMLAccessCodeRequest, a, b);
   }
 }
@@ -1897,37 +1261,19 @@ export class ListEnvironmentsRequest extends Message<ListEnvironmentsRequest> {
     { no: 1, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListEnvironmentsRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEnvironmentsRequest {
     return new ListEnvironmentsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListEnvironmentsRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEnvironmentsRequest {
     return new ListEnvironmentsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListEnvironmentsRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEnvironmentsRequest {
     return new ListEnvironmentsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListEnvironmentsRequest
-      | PlainMessage<ListEnvironmentsRequest>
-      | undefined,
-    b:
-      | ListEnvironmentsRequest
-      | PlainMessage<ListEnvironmentsRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: ListEnvironmentsRequest | PlainMessage<ListEnvironmentsRequest> | undefined, b: ListEnvironmentsRequest | PlainMessage<ListEnvironmentsRequest> | undefined): boolean {
     return proto3.util.equals(ListEnvironmentsRequest, a, b);
   }
 }
@@ -1954,52 +1300,23 @@ export class ListEnvironmentsResponse extends Message<ListEnvironmentsResponse> 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListEnvironmentsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "environments",
-      kind: "message",
-      T: Environment,
-      repeated: true,
-    },
-    {
-      no: 2,
-      name: "next_page_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "environments", kind: "message", T: Environment, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListEnvironmentsResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEnvironmentsResponse {
     return new ListEnvironmentsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListEnvironmentsResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEnvironmentsResponse {
     return new ListEnvironmentsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListEnvironmentsResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEnvironmentsResponse {
     return new ListEnvironmentsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListEnvironmentsResponse
-      | PlainMessage<ListEnvironmentsResponse>
-      | undefined,
-    b:
-      | ListEnvironmentsResponse
-      | PlainMessage<ListEnvironmentsResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: ListEnvironmentsResponse | PlainMessage<ListEnvironmentsResponse> | undefined, b: ListEnvironmentsResponse | PlainMessage<ListEnvironmentsResponse> | undefined): boolean {
     return proto3.util.equals(ListEnvironmentsResponse, a, b);
   }
 }
@@ -2024,31 +1341,19 @@ export class GetEnvironmentRequest extends Message<GetEnvironmentRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetEnvironmentRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEnvironmentRequest {
     return new GetEnvironmentRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetEnvironmentRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEnvironmentRequest {
     return new GetEnvironmentRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetEnvironmentRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEnvironmentRequest {
     return new GetEnvironmentRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: GetEnvironmentRequest | PlainMessage<GetEnvironmentRequest> | undefined,
-    b: GetEnvironmentRequest | PlainMessage<GetEnvironmentRequest> | undefined,
-  ): boolean {
+  static equals(a: GetEnvironmentRequest | PlainMessage<GetEnvironmentRequest> | undefined, b: GetEnvironmentRequest | PlainMessage<GetEnvironmentRequest> | undefined): boolean {
     return proto3.util.equals(GetEnvironmentRequest, a, b);
   }
 }
@@ -2073,37 +1378,19 @@ export class CreateEnvironmentRequest extends Message<CreateEnvironmentRequest> 
     { no: 1, name: "environment", kind: "message", T: Environment },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): CreateEnvironmentRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateEnvironmentRequest {
     return new CreateEnvironmentRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): CreateEnvironmentRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateEnvironmentRequest {
     return new CreateEnvironmentRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): CreateEnvironmentRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateEnvironmentRequest {
     return new CreateEnvironmentRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | CreateEnvironmentRequest
-      | PlainMessage<CreateEnvironmentRequest>
-      | undefined,
-    b:
-      | CreateEnvironmentRequest
-      | PlainMessage<CreateEnvironmentRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: CreateEnvironmentRequest | PlainMessage<CreateEnvironmentRequest> | undefined, b: CreateEnvironmentRequest | PlainMessage<CreateEnvironmentRequest> | undefined): boolean {
     return proto3.util.equals(CreateEnvironmentRequest, a, b);
   }
 }
@@ -2128,37 +1415,19 @@ export class UpdateEnvironmentRequest extends Message<UpdateEnvironmentRequest> 
     { no: 1, name: "environment", kind: "message", T: Environment },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): UpdateEnvironmentRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEnvironmentRequest {
     return new UpdateEnvironmentRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateEnvironmentRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateEnvironmentRequest {
     return new UpdateEnvironmentRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateEnvironmentRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEnvironmentRequest {
     return new UpdateEnvironmentRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | UpdateEnvironmentRequest
-      | PlainMessage<UpdateEnvironmentRequest>
-      | undefined,
-    b:
-      | UpdateEnvironmentRequest
-      | PlainMessage<UpdateEnvironmentRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: UpdateEnvironmentRequest | PlainMessage<UpdateEnvironmentRequest> | undefined, b: UpdateEnvironmentRequest | PlainMessage<UpdateEnvironmentRequest> | undefined): boolean {
     return proto3.util.equals(UpdateEnvironmentRequest, a, b);
   }
 }
@@ -2185,40 +1454,23 @@ export class ListAPIKeysRequest extends Message<ListAPIKeysRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListAPIKeysRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListAPIKeysRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAPIKeysRequest {
     return new ListAPIKeysRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListAPIKeysRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAPIKeysRequest {
     return new ListAPIKeysRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListAPIKeysRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAPIKeysRequest {
     return new ListAPIKeysRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: ListAPIKeysRequest | PlainMessage<ListAPIKeysRequest> | undefined,
-    b: ListAPIKeysRequest | PlainMessage<ListAPIKeysRequest> | undefined,
-  ): boolean {
+  static equals(a: ListAPIKeysRequest | PlainMessage<ListAPIKeysRequest> | undefined, b: ListAPIKeysRequest | PlainMessage<ListAPIKeysRequest> | undefined): boolean {
     return proto3.util.equals(ListAPIKeysRequest, a, b);
   }
 }
@@ -2246,39 +1498,22 @@ export class ListAPIKeysResponse extends Message<ListAPIKeysResponse> {
   static readonly typeName = "ssoready.v1.ListAPIKeysResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "api_keys", kind: "message", T: APIKey, repeated: true },
-    {
-      no: 2,
-      name: "next_page_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListAPIKeysResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAPIKeysResponse {
     return new ListAPIKeysResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListAPIKeysResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAPIKeysResponse {
     return new ListAPIKeysResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListAPIKeysResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAPIKeysResponse {
     return new ListAPIKeysResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: ListAPIKeysResponse | PlainMessage<ListAPIKeysResponse> | undefined,
-    b: ListAPIKeysResponse | PlainMessage<ListAPIKeysResponse> | undefined,
-  ): boolean {
+  static equals(a: ListAPIKeysResponse | PlainMessage<ListAPIKeysResponse> | undefined, b: ListAPIKeysResponse | PlainMessage<ListAPIKeysResponse> | undefined): boolean {
     return proto3.util.equals(ListAPIKeysResponse, a, b);
   }
 }
@@ -2303,31 +1538,19 @@ export class GetAPIKeyRequest extends Message<GetAPIKeyRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetAPIKeyRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAPIKeyRequest {
     return new GetAPIKeyRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetAPIKeyRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAPIKeyRequest {
     return new GetAPIKeyRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetAPIKeyRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAPIKeyRequest {
     return new GetAPIKeyRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: GetAPIKeyRequest | PlainMessage<GetAPIKeyRequest> | undefined,
-    b: GetAPIKeyRequest | PlainMessage<GetAPIKeyRequest> | undefined,
-  ): boolean {
+  static equals(a: GetAPIKeyRequest | PlainMessage<GetAPIKeyRequest> | undefined, b: GetAPIKeyRequest | PlainMessage<GetAPIKeyRequest> | undefined): boolean {
     return proto3.util.equals(GetAPIKeyRequest, a, b);
   }
 }
@@ -2352,31 +1575,19 @@ export class CreateAPIKeyRequest extends Message<CreateAPIKeyRequest> {
     { no: 1, name: "api_key", kind: "message", T: APIKey },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): CreateAPIKeyRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAPIKeyRequest {
     return new CreateAPIKeyRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): CreateAPIKeyRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateAPIKeyRequest {
     return new CreateAPIKeyRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): CreateAPIKeyRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateAPIKeyRequest {
     return new CreateAPIKeyRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: CreateAPIKeyRequest | PlainMessage<CreateAPIKeyRequest> | undefined,
-    b: CreateAPIKeyRequest | PlainMessage<CreateAPIKeyRequest> | undefined,
-  ): boolean {
+  static equals(a: CreateAPIKeyRequest | PlainMessage<CreateAPIKeyRequest> | undefined, b: CreateAPIKeyRequest | PlainMessage<CreateAPIKeyRequest> | undefined): boolean {
     return proto3.util.equals(CreateAPIKeyRequest, a, b);
   }
 }
@@ -2401,31 +1612,19 @@ export class DeleteAPIKeyRequest extends Message<DeleteAPIKeyRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): DeleteAPIKeyRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteAPIKeyRequest {
     return new DeleteAPIKeyRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): DeleteAPIKeyRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteAPIKeyRequest {
     return new DeleteAPIKeyRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): DeleteAPIKeyRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteAPIKeyRequest {
     return new DeleteAPIKeyRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined,
-    b: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined,
-  ): boolean {
+  static equals(a: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined, b: DeleteAPIKeyRequest | PlainMessage<DeleteAPIKeyRequest> | undefined): boolean {
     return proto3.util.equals(DeleteAPIKeyRequest, a, b);
   }
 }
@@ -2452,49 +1651,23 @@ export class ListSAMLOAuthClientsRequest extends Message<ListSAMLOAuthClientsReq
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListSAMLOAuthClientsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListSAMLOAuthClientsRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLOAuthClientsRequest {
     return new ListSAMLOAuthClientsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLOAuthClientsRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsRequest {
     return new ListSAMLOAuthClientsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLOAuthClientsRequest {
-    return new ListSAMLOAuthClientsRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsRequest {
+    return new ListSAMLOAuthClientsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListSAMLOAuthClientsRequest
-      | PlainMessage<ListSAMLOAuthClientsRequest>
-      | undefined,
-    b:
-      | ListSAMLOAuthClientsRequest
-      | PlainMessage<ListSAMLOAuthClientsRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: ListSAMLOAuthClientsRequest | PlainMessage<ListSAMLOAuthClientsRequest> | undefined, b: ListSAMLOAuthClientsRequest | PlainMessage<ListSAMLOAuthClientsRequest> | undefined): boolean {
     return proto3.util.equals(ListSAMLOAuthClientsRequest, a, b);
   }
 }
@@ -2521,55 +1694,23 @@ export class ListSAMLOAuthClientsResponse extends Message<ListSAMLOAuthClientsRe
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListSAMLOAuthClientsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "saml_oauth_clients",
-      kind: "message",
-      T: SAMLOAuthClient,
-      repeated: true,
-    },
-    {
-      no: 2,
-      name: "next_page_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "saml_oauth_clients", kind: "message", T: SAMLOAuthClient, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListSAMLOAuthClientsResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLOAuthClientsResponse {
     return new ListSAMLOAuthClientsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLOAuthClientsResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsResponse {
     return new ListSAMLOAuthClientsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLOAuthClientsResponse {
-    return new ListSAMLOAuthClientsResponse().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLOAuthClientsResponse {
+    return new ListSAMLOAuthClientsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListSAMLOAuthClientsResponse
-      | PlainMessage<ListSAMLOAuthClientsResponse>
-      | undefined,
-    b:
-      | ListSAMLOAuthClientsResponse
-      | PlainMessage<ListSAMLOAuthClientsResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: ListSAMLOAuthClientsResponse | PlainMessage<ListSAMLOAuthClientsResponse> | undefined, b: ListSAMLOAuthClientsResponse | PlainMessage<ListSAMLOAuthClientsResponse> | undefined): boolean {
     return proto3.util.equals(ListSAMLOAuthClientsResponse, a, b);
   }
 }
@@ -2594,37 +1735,19 @@ export class GetSAMLOAuthClientRequest extends Message<GetSAMLOAuthClientRequest
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetSAMLOAuthClientRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLOAuthClientRequest {
     return new GetSAMLOAuthClientRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLOAuthClientRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLOAuthClientRequest {
     return new GetSAMLOAuthClientRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLOAuthClientRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLOAuthClientRequest {
     return new GetSAMLOAuthClientRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetSAMLOAuthClientRequest
-      | PlainMessage<GetSAMLOAuthClientRequest>
-      | undefined,
-    b:
-      | GetSAMLOAuthClientRequest
-      | PlainMessage<GetSAMLOAuthClientRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: GetSAMLOAuthClientRequest | PlainMessage<GetSAMLOAuthClientRequest> | undefined, b: GetSAMLOAuthClientRequest | PlainMessage<GetSAMLOAuthClientRequest> | undefined): boolean {
     return proto3.util.equals(GetSAMLOAuthClientRequest, a, b);
   }
 }
@@ -2649,40 +1772,19 @@ export class CreateSAMLOAuthClientRequest extends Message<CreateSAMLOAuthClientR
     { no: 1, name: "saml_oauth_client", kind: "message", T: SAMLOAuthClient },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): CreateSAMLOAuthClientRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLOAuthClientRequest {
     return new CreateSAMLOAuthClientRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): CreateSAMLOAuthClientRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLOAuthClientRequest {
     return new CreateSAMLOAuthClientRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): CreateSAMLOAuthClientRequest {
-    return new CreateSAMLOAuthClientRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLOAuthClientRequest {
+    return new CreateSAMLOAuthClientRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | CreateSAMLOAuthClientRequest
-      | PlainMessage<CreateSAMLOAuthClientRequest>
-      | undefined,
-    b:
-      | CreateSAMLOAuthClientRequest
-      | PlainMessage<CreateSAMLOAuthClientRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: CreateSAMLOAuthClientRequest | PlainMessage<CreateSAMLOAuthClientRequest> | undefined, b: CreateSAMLOAuthClientRequest | PlainMessage<CreateSAMLOAuthClientRequest> | undefined): boolean {
     return proto3.util.equals(CreateSAMLOAuthClientRequest, a, b);
   }
 }
@@ -2707,40 +1809,19 @@ export class DeleteSAMLOAuthClientRequest extends Message<DeleteSAMLOAuthClientR
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): DeleteSAMLOAuthClientRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteSAMLOAuthClientRequest {
     return new DeleteSAMLOAuthClientRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): DeleteSAMLOAuthClientRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteSAMLOAuthClientRequest {
     return new DeleteSAMLOAuthClientRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): DeleteSAMLOAuthClientRequest {
-    return new DeleteSAMLOAuthClientRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteSAMLOAuthClientRequest {
+    return new DeleteSAMLOAuthClientRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | DeleteSAMLOAuthClientRequest
-      | PlainMessage<DeleteSAMLOAuthClientRequest>
-      | undefined,
-    b:
-      | DeleteSAMLOAuthClientRequest
-      | PlainMessage<DeleteSAMLOAuthClientRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: DeleteSAMLOAuthClientRequest | PlainMessage<DeleteSAMLOAuthClientRequest> | undefined, b: DeleteSAMLOAuthClientRequest | PlainMessage<DeleteSAMLOAuthClientRequest> | undefined): boolean {
     return proto3.util.equals(DeleteSAMLOAuthClientRequest, a, b);
   }
 }
@@ -2767,46 +1848,23 @@ export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListOrganizationsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "environment_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListOrganizationsRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListOrganizationsRequest {
     return new ListOrganizationsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListOrganizationsRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListOrganizationsRequest {
     return new ListOrganizationsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListOrganizationsRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListOrganizationsRequest {
     return new ListOrganizationsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListOrganizationsRequest
-      | PlainMessage<ListOrganizationsRequest>
-      | undefined,
-    b:
-      | ListOrganizationsRequest
-      | PlainMessage<ListOrganizationsRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: ListOrganizationsRequest | PlainMessage<ListOrganizationsRequest> | undefined, b: ListOrganizationsRequest | PlainMessage<ListOrganizationsRequest> | undefined): boolean {
     return proto3.util.equals(ListOrganizationsRequest, a, b);
   }
 }
@@ -2833,52 +1891,23 @@ export class ListOrganizationsResponse extends Message<ListOrganizationsResponse
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListOrganizationsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "organizations",
-      kind: "message",
-      T: Organization,
-      repeated: true,
-    },
-    {
-      no: 2,
-      name: "next_page_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "organizations", kind: "message", T: Organization, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListOrganizationsResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListOrganizationsResponse {
     return new ListOrganizationsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListOrganizationsResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListOrganizationsResponse {
     return new ListOrganizationsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListOrganizationsResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListOrganizationsResponse {
     return new ListOrganizationsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListOrganizationsResponse
-      | PlainMessage<ListOrganizationsResponse>
-      | undefined,
-    b:
-      | ListOrganizationsResponse
-      | PlainMessage<ListOrganizationsResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: ListOrganizationsResponse | PlainMessage<ListOrganizationsResponse> | undefined, b: ListOrganizationsResponse | PlainMessage<ListOrganizationsResponse> | undefined): boolean {
     return proto3.util.equals(ListOrganizationsResponse, a, b);
   }
 }
@@ -2903,37 +1932,19 @@ export class GetOrganizationRequest extends Message<GetOrganizationRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetOrganizationRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOrganizationRequest {
     return new GetOrganizationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetOrganizationRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
     return new GetOrganizationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetOrganizationRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
     return new GetOrganizationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetOrganizationRequest
-      | PlainMessage<GetOrganizationRequest>
-      | undefined,
-    b:
-      | GetOrganizationRequest
-      | PlainMessage<GetOrganizationRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined, b: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined): boolean {
     return proto3.util.equals(GetOrganizationRequest, a, b);
   }
 }
@@ -2958,37 +1969,19 @@ export class CreateOrganizationRequest extends Message<CreateOrganizationRequest
     { no: 1, name: "organization", kind: "message", T: Organization },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): CreateOrganizationRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateOrganizationRequest {
     return new CreateOrganizationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): CreateOrganizationRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateOrganizationRequest {
     return new CreateOrganizationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): CreateOrganizationRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateOrganizationRequest {
     return new CreateOrganizationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | CreateOrganizationRequest
-      | PlainMessage<CreateOrganizationRequest>
-      | undefined,
-    b:
-      | CreateOrganizationRequest
-      | PlainMessage<CreateOrganizationRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: CreateOrganizationRequest | PlainMessage<CreateOrganizationRequest> | undefined, b: CreateOrganizationRequest | PlainMessage<CreateOrganizationRequest> | undefined): boolean {
     return proto3.util.equals(CreateOrganizationRequest, a, b);
   }
 }
@@ -3013,37 +2006,19 @@ export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest
     { no: 1, name: "organization", kind: "message", T: Organization },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): UpdateOrganizationRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOrganizationRequest {
     return new UpdateOrganizationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateOrganizationRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
     return new UpdateOrganizationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateOrganizationRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
     return new UpdateOrganizationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | UpdateOrganizationRequest
-      | PlainMessage<UpdateOrganizationRequest>
-      | undefined,
-    b:
-      | UpdateOrganizationRequest
-      | PlainMessage<UpdateOrganizationRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined, b: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined): boolean {
     return proto3.util.equals(UpdateOrganizationRequest, a, b);
   }
 }
@@ -3070,46 +2045,23 @@ export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsReque
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListSAMLConnectionsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "organization_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListSAMLConnectionsRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLConnectionsRequest {
     return new ListSAMLConnectionsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLConnectionsRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLConnectionsRequest {
     return new ListSAMLConnectionsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLConnectionsRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLConnectionsRequest {
     return new ListSAMLConnectionsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListSAMLConnectionsRequest
-      | PlainMessage<ListSAMLConnectionsRequest>
-      | undefined,
-    b:
-      | ListSAMLConnectionsRequest
-      | PlainMessage<ListSAMLConnectionsRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: ListSAMLConnectionsRequest | PlainMessage<ListSAMLConnectionsRequest> | undefined, b: ListSAMLConnectionsRequest | PlainMessage<ListSAMLConnectionsRequest> | undefined): boolean {
     return proto3.util.equals(ListSAMLConnectionsRequest, a, b);
   }
 }
@@ -3136,55 +2088,23 @@ export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResp
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListSAMLConnectionsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "saml_connections",
-      kind: "message",
-      T: SAMLConnection,
-      repeated: true,
-    },
-    {
-      no: 2,
-      name: "next_page_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "saml_connections", kind: "message", T: SAMLConnection, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListSAMLConnectionsResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLConnectionsResponse {
     return new ListSAMLConnectionsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLConnectionsResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLConnectionsResponse {
     return new ListSAMLConnectionsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLConnectionsResponse {
-    return new ListSAMLConnectionsResponse().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLConnectionsResponse {
+    return new ListSAMLConnectionsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ListSAMLConnectionsResponse
-      | PlainMessage<ListSAMLConnectionsResponse>
-      | undefined,
-    b:
-      | ListSAMLConnectionsResponse
-      | PlainMessage<ListSAMLConnectionsResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined, b: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined): boolean {
     return proto3.util.equals(ListSAMLConnectionsResponse, a, b);
   }
 }
@@ -3209,37 +2129,19 @@ export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> 
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetSAMLConnectionRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLConnectionRequest {
     return new GetSAMLConnectionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLConnectionRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
     return new GetSAMLConnectionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLConnectionRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
     return new GetSAMLConnectionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | GetSAMLConnectionRequest
-      | PlainMessage<GetSAMLConnectionRequest>
-      | undefined,
-    b:
-      | GetSAMLConnectionRequest
-      | PlainMessage<GetSAMLConnectionRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined, b: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined): boolean {
     return proto3.util.equals(GetSAMLConnectionRequest, a, b);
   }
 }
@@ -3264,40 +2166,19 @@ export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionReq
     { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): CreateSAMLConnectionRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLConnectionRequest {
     return new CreateSAMLConnectionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): CreateSAMLConnectionRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
     return new CreateSAMLConnectionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): CreateSAMLConnectionRequest {
-    return new CreateSAMLConnectionRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | CreateSAMLConnectionRequest
-      | PlainMessage<CreateSAMLConnectionRequest>
-      | undefined,
-    b:
-      | CreateSAMLConnectionRequest
-      | PlainMessage<CreateSAMLConnectionRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined, b: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined): boolean {
     return proto3.util.equals(CreateSAMLConnectionRequest, a, b);
   }
 }
@@ -3322,40 +2203,19 @@ export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionReq
     { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): UpdateSAMLConnectionRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSAMLConnectionRequest {
     return new UpdateSAMLConnectionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateSAMLConnectionRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
     return new UpdateSAMLConnectionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): UpdateSAMLConnectionRequest {
-    return new UpdateSAMLConnectionRequest().fromJsonString(
-      jsonString,
-      options,
-    );
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | UpdateSAMLConnectionRequest
-      | PlainMessage<UpdateSAMLConnectionRequest>
-      | undefined,
-    b:
-      | UpdateSAMLConnectionRequest
-      | PlainMessage<UpdateSAMLConnectionRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined, b: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined): boolean {
     return proto3.util.equals(UpdateSAMLConnectionRequest, a, b);
   }
 }
@@ -3382,40 +2242,23 @@ export class ListSAMLFlowsRequest extends Message<ListSAMLFlowsRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ListSAMLFlowsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "saml_connection_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListSAMLFlowsRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowsRequest {
     return new ListSAMLFlowsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLFlowsRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowsRequest {
     return new ListSAMLFlowsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLFlowsRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowsRequest {
     return new ListSAMLFlowsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined,
-    b: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined,
-  ): boolean {
+  static equals(a: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined, b: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined): boolean {
     return proto3.util.equals(ListSAMLFlowsRequest, a, b);
   }
 }
@@ -3443,39 +2286,22 @@ export class ListSAMLFlowsResponse extends Message<ListSAMLFlowsResponse> {
   static readonly typeName = "ssoready.v1.ListSAMLFlowsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_flows", kind: "message", T: SAMLFlow, repeated: true },
-    {
-      no: 2,
-      name: "next_page_token",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ListSAMLFlowsResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowsResponse {
     return new ListSAMLFlowsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLFlowsResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowsResponse {
     return new ListSAMLFlowsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ListSAMLFlowsResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowsResponse {
     return new ListSAMLFlowsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined,
-    b: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined,
-  ): boolean {
+  static equals(a: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined, b: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined): boolean {
     return proto3.util.equals(ListSAMLFlowsResponse, a, b);
   }
 }
@@ -3500,31 +2326,19 @@ export class GetSAMLFlowRequest extends Message<GetSAMLFlowRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): GetSAMLFlowRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLFlowRequest {
     return new GetSAMLFlowRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLFlowRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLFlowRequest {
     return new GetSAMLFlowRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): GetSAMLFlowRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLFlowRequest {
     return new GetSAMLFlowRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined,
-    b: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined,
-  ): boolean {
+  static equals(a: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined, b: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined): boolean {
     return proto3.util.equals(GetSAMLFlowRequest, a, b);
   }
 }
@@ -3549,37 +2363,19 @@ export class ParseSAMLMetadataRequest extends Message<ParseSAMLMetadataRequest> 
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ParseSAMLMetadataRequest {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ParseSAMLMetadataRequest {
     return new ParseSAMLMetadataRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ParseSAMLMetadataRequest {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ParseSAMLMetadataRequest {
     return new ParseSAMLMetadataRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ParseSAMLMetadataRequest {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ParseSAMLMetadataRequest {
     return new ParseSAMLMetadataRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ParseSAMLMetadataRequest
-      | PlainMessage<ParseSAMLMetadataRequest>
-      | undefined,
-    b:
-      | ParseSAMLMetadataRequest
-      | PlainMessage<ParseSAMLMetadataRequest>
-      | undefined,
-  ): boolean {
+  static equals(a: ParseSAMLMetadataRequest | PlainMessage<ParseSAMLMetadataRequest> | undefined, b: ParseSAMLMetadataRequest | PlainMessage<ParseSAMLMetadataRequest> | undefined): boolean {
     return proto3.util.equals(ParseSAMLMetadataRequest, a, b);
   }
 }
@@ -3611,57 +2407,25 @@ export class ParseSAMLMetadataResponse extends Message<ParseSAMLMetadataResponse
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.ParseSAMLMetadataResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "idp_redirect_url",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 2,
-      name: "idp_certificate",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
-    {
-      no: 3,
-      name: "idp_entity_id",
-      kind: "scalar",
-      T: 9 /* ScalarType.STRING */,
-    },
+    { no: 1, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "idp_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(
-    bytes: Uint8Array,
-    options?: Partial<BinaryReadOptions>,
-  ): ParseSAMLMetadataResponse {
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ParseSAMLMetadataResponse {
     return new ParseSAMLMetadataResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(
-    jsonValue: JsonValue,
-    options?: Partial<JsonReadOptions>,
-  ): ParseSAMLMetadataResponse {
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ParseSAMLMetadataResponse {
     return new ParseSAMLMetadataResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(
-    jsonString: string,
-    options?: Partial<JsonReadOptions>,
-  ): ParseSAMLMetadataResponse {
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ParseSAMLMetadataResponse {
     return new ParseSAMLMetadataResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(
-    a:
-      | ParseSAMLMetadataResponse
-      | PlainMessage<ParseSAMLMetadataResponse>
-      | undefined,
-    b:
-      | ParseSAMLMetadataResponse
-      | PlainMessage<ParseSAMLMetadataResponse>
-      | undefined,
-  ): boolean {
+  static equals(a: ParseSAMLMetadataResponse | PlainMessage<ParseSAMLMetadataResponse> | undefined, b: ParseSAMLMetadataResponse | PlainMessage<ParseSAMLMetadataResponse> | undefined): boolean {
     return proto3.util.equals(ParseSAMLMetadataResponse, a, b);
   }
 }
+

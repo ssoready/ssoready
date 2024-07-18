@@ -17,6 +17,8 @@ export type Config = {
   DUMMYIDP_URL: string;
   DUMMYIDP_SSO_URL: string;
   GOOGLE_OAUTH_CLIENT_ID: string;
+  MICROSOFT_OAUTH_CLIENT_ID: string;
+  MICROSOFT_OAUTH_REDIRECT_URI: string;
 };
 
 const Context = createContext<Config>(undefined as any);

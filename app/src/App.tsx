@@ -26,6 +26,7 @@ import { AnalyticsProvider, useAnalytics } from "@/analytics";
 import { Transport } from "@connectrpc/connect";
 import { ConfigProvider, useConfig } from "@/config";
 import * as Sentry from "@sentry/react";
+import { MicrosoftCallbackPage } from "@/pages/internal/MicrosoftCallbackPage";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,10 @@ export function AppRoutes() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route
+        path="/internal/microsoft-callback"
+        element={<MicrosoftCallbackPage />}
+      />
 
       <Route path="/" element={<LoginGate />}>
         <Route path="/onboarding" element={<OnboardingPage />} />

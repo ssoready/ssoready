@@ -22,6 +22,7 @@ import (
 	"github.com/ssoready/ssoready/internal/authn/authninterceptor"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
+	"github.com/ssoready/ssoready/internal/microsoft"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/sentryinterceptor"
@@ -36,18 +37,21 @@ func main() {
 	}
 
 	config := struct {
-		SentryDSN                 string `conf:"sentry-dsn,noredact"`
-		SentryEnvironment         string `conf:"sentry-environment,noredact"`
-		ServeAddr                 string `conf:"serve-addr,noredact"`
-		DB                        string `conf:"db"`
-		GlobalDefaultAuthURL      string `conf:"global-default-auth-url,noredact"`
-		PageEncodingSecret        string `conf:"page-encoding-secret"`
-		SAMLStateSigningKey       string `conf:"saml-state-signing-key"`
-		GoogleOAuthClientID       string `conf:"google-oauth-client-id,noredact"`
-		ResendAPIKey              string `conf:"resend-api-key"`
-		EmailChallengeFrom        string `conf:"email-challenge-from,noredact"`
-		EmailVerificationEndpoint string `conf:"email-verification-endpoint,noredact"`
-		SegmentWriteKey           string `conf:"segment-write-key"`
+		SentryDSN                  string `conf:"sentry-dsn,noredact"`
+		SentryEnvironment          string `conf:"sentry-environment,noredact"`
+		ServeAddr                  string `conf:"serve-addr,noredact"`
+		DB                         string `conf:"db"`
+		GlobalDefaultAuthURL       string `conf:"global-default-auth-url,noredact"`
+		PageEncodingSecret         string `conf:"page-encoding-secret"`
+		SAMLStateSigningKey        string `conf:"saml-state-signing-key"`
+		GoogleOAuthClientID        string `conf:"google-oauth-client-id,noredact"`
+		MicrosoftOAuthClientID     string `conf:"microsoft-oauth-client-id,noredact"`
+		MicrosoftOAuthClientSecret string `conf:"microsoft-oauth-client-secret"`
+		MicrosoftOAuthRedirectURI  string `conf:"microsoft-oauth-redirect-uri,noredact"`
+		ResendAPIKey               string `conf:"resend-api-key"`
+		EmailChallengeFrom         string `conf:"email-challenge-from,noredact"`
+		EmailVerificationEndpoint  string `conf:"email-verification-endpoint,noredact"`
+		SegmentWriteKey            string `conf:"segment-write-key"`
 	}{
 		ServeAddr:                 "localhost:8081",
 		DB:                        "postgres://postgres:password@localhost/postgres",
@@ -100,6 +104,12 @@ func main() {
 			GoogleClient: &google.Client{
 				HTTPClient:          http.DefaultClient,
 				GoogleOAuthClientID: config.GoogleOAuthClientID,
+			},
+			MicrosoftClient: &microsoft.Client{
+				HTTPClient:                 http.DefaultClient,
+				MicrosoftOAuthClientID:     config.MicrosoftOAuthClientID,
+				MicrosoftOAuthClientSecret: config.MicrosoftOAuthClientSecret,
+				MicrosoftOAuthRedirectURI:  config.MicrosoftOAuthRedirectURI,
 			},
 			ResendClient:              resend.NewClient(config.ResendAPIKey),
 			EmailChallengeFrom:        config.EmailChallengeFrom,

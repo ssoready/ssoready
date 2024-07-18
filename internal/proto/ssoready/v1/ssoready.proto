@@ -178,6 +178,7 @@ message VerifyEmailRequest {
 message SignInRequest {
   string google_credential = 1;
   string email_verify_token = 2;
+  string microsoft_code = 3;
 }
 
 message SignInResponse {
