@@ -45,7 +45,7 @@
           "value": "https://dev-ucarion--ssoready.netlify.app/internal/microsoft-callback"
         },
         {
-          "name": "API_GLOBAL_DEFAULT_AUTH_URL",
+          "name": "API_DEFAULT_AUTH_URL",
           "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
         },
         {

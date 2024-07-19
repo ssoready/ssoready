@@ -45,7 +45,7 @@
           "value": "https://app.ssoready.com/internal/microsoft-callback"
         },
         {
-          "name": "API_GLOBAL_DEFAULT_AUTH_URL",
+          "name": "API_DEFAULT_AUTH_URL",
           "value": "https://auth.ssoready.com"
         },
         {

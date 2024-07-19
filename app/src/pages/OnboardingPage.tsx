@@ -95,6 +95,9 @@ export function OnboardingPage() {
   );
 }
 
+const DUMMYIDP_URL = "https://dummyidp.com";
+const DUMMYIDP_SSO_URL = "https://sso.dummyidp.com";
+
 const DUMMYIDP_CERTIFICATE = `-----BEGIN CERTIFICATE-----
 MIIDBzCCAe+gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
 BQAwEzERMA8GA1UEAwwIZHVtbXlpZHAwHhcNMjQwNTEzMjE1NDE2WhcNMzQwNTEx
@@ -132,7 +135,7 @@ function DemoCard({
   apiKeySecretToken: string;
   setAPIKeySecretToken: (_: string) => void;
 }) {
-  const { APP_URL, DUMMYIDP_SSO_URL, DUMMYIDP_URL } = useConfig();
+  const { APP_URL } = useConfig();
 
   const queryClient = useQueryClient();
   const { data: onboardingState } = useQuery(getOnboardingState, {});
