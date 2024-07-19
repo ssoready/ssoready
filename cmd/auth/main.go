@@ -6,7 +6,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	_ "embed"
-	"encoding/json"
+	"encoding/base64"
 	"encoding/pem"
 	"fmt"
 	"log/slog"
@@ -132,15 +132,15 @@ func parseRSAPrivateKey(s string) (*rsa.PrivateKey, error) {
 		return k, nil
 	}
 
-	// we json-encode the string to avoid having ASCII newlines in the secret value, because such values do not play
+	// we base64-encode the string to avoid having ASCII newlines in the secret value, because such values do not play
 	// nicely with e.g. AWS Secrets Manager.
 
-	var data string
-	if err := json.Unmarshal([]byte(s), &data); err != nil {
-		return nil, fmt.Errorf("parse json: %w", err)
+	data, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		return nil, fmt.Errorf("base64 decode: %w", err)
 	}
 
-	block, _ := pem.Decode([]byte(data))
+	block, _ := pem.Decode(data)
 	if block == nil {
 		return nil, fmt.Errorf("invalid pem file")
 	}
