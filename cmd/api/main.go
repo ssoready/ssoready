@@ -22,6 +22,7 @@ import (
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/hexkey"
+	"github.com/ssoready/ssoready/internal/microsoft"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/sentryinterceptor"
