@@ -33,15 +33,15 @@ func main() {
 	}
 
 	config := struct {
-		SentryDSN              string `conf:"sentry-dsn,noredact"`
-		SentryEnvironment      string `conf:"sentry-environment,noredact"`
-		ServeAddr              string `conf:"serve-addr,noredact"`
-		DB                     string `conf:"db"`
-		DefaultAuthURL         string `conf:"default-auth-url,noredact"`
-		BaseURL                string `conf:"base-url,noredact"`
-		PageEncodingValue      string `conf:"page-encoding-value"`
-		SAMLStateSigningKey    string `conf:"saml-state-signing-key"`
-		OAuthIDTokenPrivateKey string `conf:"oauth-id-token-private-key"`
+		SentryDSN                    string `conf:"sentry-dsn,noredact"`
+		SentryEnvironment            string `conf:"sentry-environment,noredact"`
+		ServeAddr                    string `conf:"serve-addr,noredact"`
+		DB                           string `conf:"db"`
+		DefaultAuthURL               string `conf:"default-auth-url,noredact"`
+		BaseURL                      string `conf:"base-url,noredact"`
+		PageEncodingValue            string `conf:"page-encoding-value"`
+		SAMLStateSigningKey          string `conf:"saml-state-signing-key"`
+		OAuthIDTokenPrivateKeyBase64 string `conf:"oauth-id-token-private-key-base64"`
 	}{
 		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
 	}
@@ -79,7 +79,7 @@ func main() {
 		SAMLStateSigningKey: samlStateSigningKey,
 	})
 
-	idTokenPrivateKey, err := parseRSAPrivateKey(config.OAuthIDTokenPrivateKey)
+	idTokenPrivateKey, err := parseRSAPrivateKey(config.OAuthIDTokenPrivateKeyBase64)
 	if err != nil {
 		panic(fmt.Errorf("parse oauth idtoken private key: %w", err))
 	}
@@ -123,7 +123,7 @@ func logHTTP(h http.Handler) http.HandlerFunc {
 // parseRSAPrivateKey parses a JSON-encoded string containing a PKCS8 RSA private key.
 func parseRSAPrivateKey(s string) (*rsa.PrivateKey, error) {
 	if s == "" {
-		slog.Warn("no oauth-id-token-private-key provided, generating new private key")
+		slog.Warn("no oauth-id-token-private-key-base64 provided, generating new private key")
 
 		k, err := rsa.GenerateKey(rand.Reader, 4096)
 		if err != nil {
