@@ -17,10 +17,10 @@ export function AnalyticsProvider({ children }: { children?: ReactNode }) {
 
   useEffect(() => {
     const analytics = AnalyticsBrowser.load({
-      writeKey: SEGMENT_WRITE_KEY,
+      writeKey: SEGMENT_WRITE_KEY ?? "",
     });
 
-    posthog.init(POSTHOG_API_KEY, {
+    posthog.init(POSTHOG_API_KEY ?? "", {
       api_host: "https://us.i.posthog.com",
       segment: analytics as any,
       capture_pageview: false,

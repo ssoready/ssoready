@@ -23,7 +23,7 @@ for (; i < configTsxLines.length; i++) {
     break
   }
 
-  const match = configTsxLines[i].match(/\s+(.*): string;/)
+  const match = configTsxLines[i].match(/\s+([^?]*): string;/)
   if (!match) {
     continue
   }
