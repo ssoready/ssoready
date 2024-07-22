@@ -47,7 +47,7 @@ export function LoginPage() {
   );
 
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_OAUTH_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={GOOGLE_OAUTH_CLIENT_ID ?? ""}>
       {showEmailWait ? (
         <div className="h-screen flex items-center">
           <Card className="max-w-[400px] mx-auto">
@@ -153,10 +153,13 @@ function MicrosoftLogin() {
   microsoftRedirectUri.searchParams.set("response_type", "code");
   microsoftRedirectUri.searchParams.set("response_mode", "query");
   microsoftRedirectUri.searchParams.set("scope", "openid profile email");
-  microsoftRedirectUri.searchParams.set("client_id", MICROSOFT_OAUTH_CLIENT_ID);
+  microsoftRedirectUri.searchParams.set(
+    "client_id",
+    MICROSOFT_OAUTH_CLIENT_ID ?? "",
+  );
   microsoftRedirectUri.searchParams.set(
     "redirect_uri",
-    MICROSOFT_OAUTH_REDIRECT_URI,
+    MICROSOFT_OAUTH_REDIRECT_URI ?? "",
   );
 
   return (
