@@ -29,6 +29,8 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ssoready/ssoready-api
+          tags: |
+            type=sha
 
       - name: Build and push Docker image
         id: push
@@ -65,6 +67,8 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ssoready/ssoready-auth
+          tags: |
+            type=sha
 
       - name: Build and push Docker image
         id: push
@@ -101,6 +105,8 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ssoready/ssoready-migrate
+          tags: |
+            type=sha
 
       - name: Build and push Docker image
         id: push
@@ -137,6 +143,8 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ssoready/ssoready-app
+          tags: |
+            type=sha
 
       - name: Build and push Docker image
         id: push
