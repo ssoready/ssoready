@@ -77,6 +77,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -180,7 +181,10 @@ export function ViewOrganizationPage() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div className="flex flex-col space-y-1.5">
-              <CardTitle>SAML Connections</CardTitle>
+              <CardTitle>
+                SAML Connections
+                <DocsLink to="https://ssoready.com/docs/sso-ready-concepts/saml-connections" />
+              </CardTitle>
               <CardDescription>
                 SAML Connections within this organization.
               </CardDescription>

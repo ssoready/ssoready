@@ -79,6 +79,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { InputTags } from "@/components/InputTags";
 import { Switch } from "@/components/ui/switch";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -361,7 +362,10 @@ function ListLoginFlowsTabContent() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>SAML Login Flows</CardTitle>
+        <CardTitle>
+          SAML Login Flows
+          <DocsLink to="https://ssoready.com/docs/sso-ready-concepts/login-flows" />
+        </CardTitle>
         <CardDescription>
           SAML login flows from this connection are listed here.
         </CardDescription>
