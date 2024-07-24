@@ -30,6 +30,7 @@ import {
   BookOpenTextIcon,
   PlusIcon,
 } from "lucide-react";
+import { DocsLink } from "@/components/DocsLink";
 
 export function HomePage() {
   const { data: onboardingState } = useQuery(getOnboardingState, {});
@@ -98,7 +99,10 @@ export function HomePage() {
         <CardHeader>
           <div className="lg:flex justify-between items-center">
             <div className="flex flex-col space-y-1.5">
-              <CardTitle>Environments</CardTitle>
+              <CardTitle>
+                Environments
+                <DocsLink to="https://ssoready.com/docs/sso-ready-concepts/environments" />
+              </CardTitle>
 
               <CardDescription className="mr-2">
                 An environment corresponds to a deployment environment in your
