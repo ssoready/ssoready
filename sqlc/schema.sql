@@ -34,6 +34,22 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: admin_access_tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admin_access_tokens (
+    id uuid NOT NULL,
+    organization_id uuid NOT NULL,
+    one_time_token_sha256 bytea NOT NULL,
+    access_token_sha256 bytea,
+    create_time timestamp with time zone NOT NULL,
+    expire_time timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.admin_access_tokens OWNER TO postgres;
+
+--
 -- Name: api_keys; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -244,6 +260,30 @@ CREATE TABLE public.schema_migrations (
 ALTER TABLE public.schema_migrations OWNER TO postgres;
 
 --
+-- Name: admin_access_tokens admin_access_tokens_access_token_sha256_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin_access_tokens
+    ADD CONSTRAINT admin_access_tokens_access_token_sha256_key UNIQUE (access_token_sha256);
+
+
+--
+-- Name: admin_access_tokens admin_access_tokens_one_time_token_sha256_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin_access_tokens
+    ADD CONSTRAINT admin_access_tokens_one_time_token_sha256_key UNIQUE (one_time_token_sha256);
+
+
+--
+-- Name: admin_access_tokens admin_access_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin_access_tokens
+    ADD CONSTRAINT admin_access_tokens_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: api_keys api_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -425,6 +465,14 @@ ALTER TABLE ONLY public.saml_oauth_clients
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: admin_access_tokens admin_access_tokens_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin_access_tokens
+    ADD CONSTRAINT admin_access_tokens_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
 
 
 --

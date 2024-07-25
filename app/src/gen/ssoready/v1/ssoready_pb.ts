@@ -2024,6 +2024,80 @@ export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest
 }
 
 /**
+ * @generated from message ssoready.v1.CreateAdminSetupURLRequest
+ */
+export class CreateAdminSetupURLRequest extends Message<CreateAdminSetupURLRequest> {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId = "";
+
+  constructor(data?: PartialMessage<CreateAdminSetupURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateAdminSetupURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAdminSetupURLRequest {
+    return new CreateAdminSetupURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateAdminSetupURLRequest {
+    return new CreateAdminSetupURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateAdminSetupURLRequest {
+    return new CreateAdminSetupURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateAdminSetupURLRequest | PlainMessage<CreateAdminSetupURLRequest> | undefined, b: CreateAdminSetupURLRequest | PlainMessage<CreateAdminSetupURLRequest> | undefined): boolean {
+    return proto3.util.equals(CreateAdminSetupURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateAdminSetupURLResponse
+ */
+export class CreateAdminSetupURLResponse extends Message<CreateAdminSetupURLResponse> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<CreateAdminSetupURLResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateAdminSetupURLResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAdminSetupURLResponse {
+    return new CreateAdminSetupURLResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateAdminSetupURLResponse {
+    return new CreateAdminSetupURLResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateAdminSetupURLResponse {
+    return new CreateAdminSetupURLResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateAdminSetupURLResponse | PlainMessage<CreateAdminSetupURLResponse> | undefined, b: CreateAdminSetupURLResponse | PlainMessage<CreateAdminSetupURLResponse> | undefined): boolean {
+    return proto3.util.equals(CreateAdminSetupURLResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListSAMLConnectionsRequest
  */
 export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsRequest> {

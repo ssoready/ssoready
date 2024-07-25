@@ -42,6 +42,7 @@ func main() {
 		ServeAddr                  string `conf:"serve-addr,noredact"`
 		DB                         string `conf:"db"`
 		DefaultAuthURL             string `conf:"default-auth-url,noredact"`
+		DefaultAdminSetupURL       string `conf:"default-admin-setup-url,noredact"`
 		PageEncodingValue          string `conf:"page-encoding-value"`
 		SAMLStateSigningKey        string `conf:"saml-state-signing-key"`
 		GoogleOAuthClientID        string `conf:"google-oauth-client-id,noredact"`
@@ -83,10 +84,11 @@ func main() {
 	}
 
 	store_ := store.New(store.NewStoreParams{
-		DB:                  db,
-		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingValue},
-		DefaultAuthURL:      config.DefaultAuthURL,
-		SAMLStateSigningKey: samlStateSigningKey,
+		DB:                   db,
+		PageEncoder:          pagetoken.Encoder{Secret: pageEncodingValue},
+		DefaultAuthURL:       config.DefaultAuthURL,
+		DefaultAdminSetupURL: config.DefaultAdminSetupURL,
+		SAMLStateSigningKey:  samlStateSigningKey,
 	})
 
 	var analyticsClient analytics.Client = appanalytics.NoopClient{}

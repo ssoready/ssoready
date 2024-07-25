@@ -51,6 +51,8 @@ service SSOReadyService {
   rpc CreateOrganization(CreateOrganizationRequest) returns (Organization);
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (Organization);
 
+  rpc CreateAdminSetupURL(CreateAdminSetupURLRequest) returns (CreateAdminSetupURLResponse);
+
   rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
   rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (SAMLConnection);
   rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (SAMLConnection);
@@ -312,6 +314,14 @@ message CreateOrganizationRequest {
 
 message UpdateOrganizationRequest {
   Organization organization = 1;
+}
+
+message CreateAdminSetupURLRequest {
+  string organization_id = 1;
+}
+
+message CreateAdminSetupURLResponse {
+  string url = 1;
 }
 
 message ListSAMLConnectionsRequest {

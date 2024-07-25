@@ -55,6 +55,15 @@ func (ns NullSamlFlowStatus) Value() (driver.Value, error) {
 	return string(ns.SamlFlowStatus), nil
 }
 
+type AdminAccessToken struct {
+	ID                 uuid.UUID
+	OrganizationID     uuid.UUID
+	OneTimeTokenSha256 []byte
+	AccessTokenSha256  []byte
+	CreateTime         time.Time
+	ExpireTime         time.Time
+}
+
 type ApiKey struct {
 	ID                uuid.UUID
 	SecretValue       string

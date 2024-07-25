@@ -203,7 +203,9 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
 select exists(select id, email, expire_time, secret_token, complete_time
               from email_verification_challenges
-              where email = $1 and expire_time > $2 and complete_time is null)
+              where email = $1
+                and expire_time > $2
+                and complete_time is null)
 `
 
 type CheckExistsEmailVerificationChallengeParams struct {
@@ -238,6 +240,40 @@ func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (Api
 		&i.SecretValue,
 		&i.EnvironmentID,
 		&i.SecretValueSha256,
+	)
+	return i, err
+}
+
+const createAdminAccessToken = `-- name: CreateAdminAccessToken :one
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time)
+values ($1, $2, $3, $4, $5)
+returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+`
+
+type CreateAdminAccessTokenParams struct {
+	ID                 uuid.UUID
+	OrganizationID     uuid.UUID
+	OneTimeTokenSha256 []byte
+	CreateTime         time.Time
+	ExpireTime         time.Time
+}
+
+func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAccessTokenParams) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, createAdminAccessToken,
+		arg.ID,
+		arg.OrganizationID,
+		arg.OneTimeTokenSha256,
+		arg.CreateTime,
+		arg.ExpireTime,
+	)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
 	)
 	return i, err
 }
