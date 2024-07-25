@@ -2,7 +2,9 @@ package store
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/url"
 	"time"
@@ -58,11 +60,53 @@ func (s *Store) CreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.CreateA
 	}
 
 	query := url.Values{}
-	query.Set("one-time-token", oneTimeToken.String())
+	query.Set("one-time-token", idformat.AdminOneTimeToken.Format(oneTimeToken))
 
 	loginURL.RawQuery = query.Encode()
 
 	return &ssoreadyv1.CreateAdminSetupURLResponse{
 		Url: loginURL.String(),
+	}, nil
+}
+
+func (s *Store) AdminRedeemOneTimeToken(ctx context.Context, req *ssoreadyv1.AdminRedeemOneTimeTokenRequest) (*ssoreadyv1.AdminRedeemOneTimeTokenResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	oneTimeToken, err := idformat.AdminOneTimeToken.Parse(req.OneTimeToken)
+	if err != nil {
+		return nil, fmt.Errorf("")
+	}
+
+	oneTimeTokenSHA := sha256.Sum256(oneTimeToken[:])
+	adminAccessToken, err := q.AdminGetAdminAccessTokenByOneTimeToken(ctx, oneTimeTokenSHA[:])
+	if err != nil {
+		return nil, fmt.Errorf("get admin access token: %w", err)
+	}
+
+	// generate token as 32-byte random string
+	var tokenBytes [32]byte
+	if _, err := rand.Read(tokenBytes[:]); err != nil {
+		return nil, err
+	}
+	accessTokenHex := hex.EncodeToString(tokenBytes[:])
+	accessTokenSHA := sha256.Sum256(tokenBytes[:])
+
+	if _, err := q.AdminConvertAdminAccessTokenToSession(ctx, queries.AdminConvertAdminAccessTokenToSessionParams{
+		AccessTokenSha256: accessTokenSHA[:],
+		ID:                adminAccessToken.ID,
+	}); err != nil {
+		return nil, fmt.Errorf("convert admin access token to session: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &ssoreadyv1.AdminRedeemOneTimeTokenResponse{
+		AdminSessionToken: accessTokenHex,
 	}, nil
 }

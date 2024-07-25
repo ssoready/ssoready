@@ -12,6 +12,53 @@ import (
 	"github.com/google/uuid"
 )
 
+const adminConvertAdminAccessTokenToSession = `-- name: AdminConvertAdminAccessTokenToSession :one
+update admin_access_tokens
+set one_time_token_sha256 = null,
+    access_token_sha256   = $1
+where id = $2
+returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+`
+
+type AdminConvertAdminAccessTokenToSessionParams struct {
+	AccessTokenSha256 []byte
+	ID                uuid.UUID
+}
+
+func (q *Queries) AdminConvertAdminAccessTokenToSession(ctx context.Context, arg AdminConvertAdminAccessTokenToSessionParams) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, adminConvertAdminAccessTokenToSession, arg.AccessTokenSha256, arg.ID)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
+	)
+	return i, err
+}
+
+const adminGetAdminAccessTokenByOneTimeToken = `-- name: AdminGetAdminAccessTokenByOneTimeToken :one
+select id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+from admin_access_tokens
+where one_time_token_sha256 = $1
+`
+
+func (q *Queries) AdminGetAdminAccessTokenByOneTimeToken(ctx context.Context, oneTimeTokenSha256 []byte) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, adminGetAdminAccessTokenByOneTimeToken, oneTimeTokenSha256)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
+	)
+	return i, err
+}
+
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
 select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth from saml_flows where id = $1 and access_code_sha256 is not null)
 `

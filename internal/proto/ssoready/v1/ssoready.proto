@@ -62,6 +62,8 @@ service SSOReadyService {
   rpc GetSAMLFlow(GetSAMLFlowRequest) returns (SAMLFlow);
 
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
+
+  rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
 }
 
 message AppUser {
@@ -368,4 +370,12 @@ message ParseSAMLMetadataResponse {
   string idp_redirect_url = 1;
   string idp_certificate = 2;
   string idp_entity_id = 3;
+}
+
+message AdminRedeemOneTimeTokenRequest {
+  string one_time_token = 1;
+}
+
+message AdminRedeemOneTimeTokenResponse {
+  string admin_session_token = 1;
 }

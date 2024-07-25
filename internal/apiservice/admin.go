@@ -16,3 +16,12 @@ func (s *Service) CreateAdminSetupURL(ctx context.Context, req *connect.Request[
 
 	return connect.NewResponse(res), nil
 }
+
+func (s *Service) AdminRedeemOneTimeToken(ctx context.Context, req *connect.Request[ssoreadyv1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[ssoreadyv1.AdminRedeemOneTimeTokenResponse], error) {
+	res, err := s.Store.AdminRedeemOneTimeToken(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}

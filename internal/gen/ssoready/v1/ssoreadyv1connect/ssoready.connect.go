@@ -133,6 +133,9 @@ const (
 	// SSOReadyServiceParseSAMLMetadataProcedure is the fully-qualified name of the SSOReadyService's
 	// ParseSAMLMetadata RPC.
 	SSOReadyServiceParseSAMLMetadataProcedure = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	// SSOReadyServiceAdminRedeemOneTimeTokenProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminRedeemOneTimeToken RPC.
+	SSOReadyServiceAdminRedeemOneTimeTokenProcedure = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
 )
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
@@ -171,6 +174,7 @@ type SSOReadyServiceClient interface {
 	ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error)
 	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
+	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 }
 
 // NewSSOReadyServiceClient constructs a client for the ssoready.v1.SSOReadyService service. By
@@ -353,6 +357,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceParseSAMLMetadataProcedure,
 			opts...,
 		),
+		adminRedeemOneTimeToken: connect.NewClient[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminRedeemOneTimeTokenProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -392,6 +401,7 @@ type sSOReadyServiceClient struct {
 	listSAMLFlows                  *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
 	getSAMLFlow                    *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
 	parseSAMLMetadata              *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
+	adminRedeemOneTimeToken        *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -564,6 +574,11 @@ func (c *sSOReadyServiceClient) ParseSAMLMetadata(ctx context.Context, req *conn
 	return c.parseSAMLMetadata.CallUnary(ctx, req)
 }
 
+// AdminRedeemOneTimeToken calls ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken.
+func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, req *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error) {
+	return c.adminRedeemOneTimeToken.CallUnary(ctx, req)
+}
+
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
@@ -600,6 +615,7 @@ type SSOReadyServiceHandler interface {
 	ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error)
 	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
+	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 }
 
 // NewSSOReadyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -778,6 +794,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.ParseSAMLMetadata,
 		opts...,
 	)
+	sSOReadyServiceAdminRedeemOneTimeTokenHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminRedeemOneTimeTokenProcedure,
+		svc.AdminRedeemOneTimeToken,
+		opts...,
+	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SSOReadyServiceGetSAMLRedirectURLProcedure:
@@ -848,6 +869,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetSAMLFlowHandler.ServeHTTP(w, r)
 		case SSOReadyServiceParseSAMLMetadataProcedure:
 			sSOReadyServiceParseSAMLMetadataHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminRedeemOneTimeTokenProcedure:
+			sSOReadyServiceAdminRedeemOneTimeTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -991,4 +1014,8 @@ func (UnimplementedSSOReadyServiceHandler) GetSAMLFlow(context.Context, *connect
 
 func (UnimplementedSSOReadyServiceHandler) ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ParseSAMLMetadata is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken is not implemented"))
 }

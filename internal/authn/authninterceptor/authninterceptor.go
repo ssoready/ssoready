@@ -14,6 +14,7 @@ import (
 var skipRPCs = []string{
 	"/ssoready.v1.SSOReadyService/VerifyEmail",
 	"/ssoready.v1.SSOReadyService/SignIn",
+	"/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken",
 }
 
 func New(s *store.Store) connect.UnaryInterceptorFunc {
