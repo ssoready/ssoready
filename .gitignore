@@ -1,5 +1,11 @@
 /.env
 /node_modules
+/admin/node_modules
+/admin/public/config.json
+/admin/public/index.css
+/admin/public/index.js
+/admin/public/index.js.map
+/admin/.idea/
 /app/node_modules
 /app/public/config.json
 /app/public/index.css

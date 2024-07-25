@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "rootDir": "src",
+    "module": "commonjs",
+    "target": "es2015",
+    "sourceMap": true,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es2017", "dom"],
+    "strict": true
+  },
+  "exclude": ["node_modules"]
+}
