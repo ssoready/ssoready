@@ -49,6 +49,10 @@
           "value": "https://auth.ssoready.com"
         },
         {
+          "name": "API_DEFAULT_ADMIN_SETUP_URL",
+          "value": "https://admin.ssoready.com/setup"
+        },
+        {
           "name": "API_EMAIL_CHALLENGE_FROM",
           "value": "noreply@mail.ssoready.com"
         },
