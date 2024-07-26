@@ -47,7 +47,7 @@ for (const [k, v] of Object.entries(process.env)) {
 
 for (const k of wantParams) {
   if (!(k in config)) {
-    console.error("missing required config var", `APP_${k}`)
+    console.error("missing required config var", `CONFIG_${k}`)
     process.exit(1)
   }
 }
