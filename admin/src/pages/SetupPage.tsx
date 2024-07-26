@@ -22,5 +22,13 @@ export function SetupPage() {
     })();
   }, [oneTimeToken, redeemOneTimeTokenMutation.mutateAsync, navigate]);
 
-  return <h1>setup page :)</h1>;
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <p>Loading...</p>
+      <p>
+        If this message does not go away, you may have used this setup link
+        previously. Setup links expire once you visit them.
+      </p>
+    </div>
+  );
 }

@@ -32,8 +32,8 @@ function useTransport(): Transport {
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/setup" element={<SetupPage />} />
       <Route path="" element={<Layout />}>
-        <Route path="/setup" element={<SetupPage />} />
         <Route path="/" element={<IndexPage />} />
         <Route
           path="/saml-connections/:samlConnectionId"
