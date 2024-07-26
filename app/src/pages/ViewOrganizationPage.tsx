@@ -190,7 +190,10 @@ export function ViewOrganizationPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Customer self-serve setup</CardTitle>
+          <CardTitle className="flex gap-x-4 items-center">
+            <span>Customer self-serve setup</span>
+            <Badge variant="secondary">Beta</Badge>
+          </CardTitle>
           <CardDescription>
             You can invite your customer's IT admin to set up their SAML
             connection into your product. You can create for them a one-time-use
