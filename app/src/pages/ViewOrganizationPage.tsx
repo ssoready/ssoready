@@ -7,6 +7,7 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  createAdminSetupURL,
   createOrganization,
   createSAMLConnection,
   getEnvironment,
@@ -122,6 +123,16 @@ export function ViewOrganizationPage() {
     navigate,
   ]);
 
+  const createAdminSetupURLMutation = useMutation(createAdminSetupURL);
+  const handleCreateAdminSetupURL = async () => {
+    const { url } = await createAdminSetupURLMutation.mutateAsync({
+      organizationId,
+    });
+
+    await navigator.clipboard.writeText(url);
+    toast("Setup link copied to clipboard");
+  };
+
   return (
     <div className="flex flex-col gap-8">
       <Breadcrumb>
@@ -174,6 +185,24 @@ export function ViewOrganizationPage() {
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Customer self-serve setup</CardTitle>
+          <CardDescription>
+            You can invite your customer's IT admin to set up their SAML
+            connection into your product. You can create for them a one-time-use
+            link where they can create and modify this organization's SAML
+            connections.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <Button variant="outline" onClick={handleCreateAdminSetupURL}>
+            Copy setup link
+          </Button>
         </CardContent>
       </Card>
 
