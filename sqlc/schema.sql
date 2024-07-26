@@ -40,7 +40,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.admin_access_tokens (
     id uuid NOT NULL,
     organization_id uuid NOT NULL,
-    one_time_token_sha256 bytea NOT NULL,
+    one_time_token_sha256 bytea,
     access_token_sha256 bytea,
     create_time timestamp with time zone NOT NULL,
     expire_time timestamp with time zone NOT NULL

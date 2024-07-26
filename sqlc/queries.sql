@@ -443,9 +443,20 @@ select *
 from admin_access_tokens
 where one_time_token_sha256 = $1;
 
+-- name: AdminGetOrganizationByAccessToken :one
+select organization_id
+from admin_access_tokens
+where access_token_sha256 = $1;
+
 -- name: AdminConvertAdminAccessTokenToSession :one
 update admin_access_tokens
 set one_time_token_sha256 = null,
     access_token_sha256   = $1
 where id = $2
 returning *;
+
+-- name: AdminGetSAMLConnection :one
+select *
+from saml_connections
+where organization_id = $1
+  and id = $2;

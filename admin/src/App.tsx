@@ -10,6 +10,9 @@ import { AnalyticsProvider } from "@/analytics";
 import { Toaster } from "sonner";
 import * as Sentry from "@sentry/react";
 import { TransportProvider } from "@connectrpc/connect-query";
+import { IndexPage } from "@/pages/IndexPage";
+import { Layout } from "@/components/Layout";
+import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +32,14 @@ function useTransport(): Transport {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/setup" element={<SetupPage />} />
+      <Route path="" element={<Layout />}>
+        <Route path="/setup" element={<SetupPage />} />
+        <Route path="/" element={<IndexPage />} />
+        <Route
+          path="/saml-connections/:samlConnectionId"
+          element={<ViewSAMLConnectionPage />}
+        />
+      </Route>
     </Routes>
   );
 }

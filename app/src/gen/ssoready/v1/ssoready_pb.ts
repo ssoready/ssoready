@@ -2577,3 +2577,391 @@ export class AdminRedeemOneTimeTokenResponse extends Message<AdminRedeemOneTimeT
   }
 }
 
+/**
+ * @generated from message ssoready.v1.AdminListSAMLConnectionsRequest
+ */
+export class AdminListSAMLConnectionsRequest extends Message<AdminListSAMLConnectionsRequest> {
+  /**
+   * @generated from field: string page_token = 1;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<AdminListSAMLConnectionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminListSAMLConnectionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminListSAMLConnectionsRequest {
+    return new AdminListSAMLConnectionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminListSAMLConnectionsRequest {
+    return new AdminListSAMLConnectionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminListSAMLConnectionsRequest {
+    return new AdminListSAMLConnectionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminListSAMLConnectionsRequest | PlainMessage<AdminListSAMLConnectionsRequest> | undefined, b: AdminListSAMLConnectionsRequest | PlainMessage<AdminListSAMLConnectionsRequest> | undefined): boolean {
+    return proto3.util.equals(AdminListSAMLConnectionsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminListSAMLConnectionsResponse
+ */
+export class AdminListSAMLConnectionsResponse extends Message<AdminListSAMLConnectionsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SAMLConnection saml_connections = 1;
+   */
+  samlConnections: SAMLConnection[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<AdminListSAMLConnectionsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminListSAMLConnectionsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connections", kind: "message", T: SAMLConnection, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminListSAMLConnectionsResponse {
+    return new AdminListSAMLConnectionsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminListSAMLConnectionsResponse {
+    return new AdminListSAMLConnectionsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminListSAMLConnectionsResponse {
+    return new AdminListSAMLConnectionsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminListSAMLConnectionsResponse | PlainMessage<AdminListSAMLConnectionsResponse> | undefined, b: AdminListSAMLConnectionsResponse | PlainMessage<AdminListSAMLConnectionsResponse> | undefined): boolean {
+    return proto3.util.equals(AdminListSAMLConnectionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminGetSAMLConnectionRequest
+ */
+export class AdminGetSAMLConnectionRequest extends Message<AdminGetSAMLConnectionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<AdminGetSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminGetSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminGetSAMLConnectionRequest {
+    return new AdminGetSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminGetSAMLConnectionRequest {
+    return new AdminGetSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminGetSAMLConnectionRequest {
+    return new AdminGetSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminGetSAMLConnectionRequest | PlainMessage<AdminGetSAMLConnectionRequest> | undefined, b: AdminGetSAMLConnectionRequest | PlainMessage<AdminGetSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AdminGetSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminGetSAMLConnectionResponse
+ */
+export class AdminGetSAMLConnectionResponse extends Message<AdminGetSAMLConnectionResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<AdminGetSAMLConnectionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminGetSAMLConnectionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminGetSAMLConnectionResponse {
+    return new AdminGetSAMLConnectionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminGetSAMLConnectionResponse {
+    return new AdminGetSAMLConnectionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminGetSAMLConnectionResponse {
+    return new AdminGetSAMLConnectionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminGetSAMLConnectionResponse | PlainMessage<AdminGetSAMLConnectionResponse> | undefined, b: AdminGetSAMLConnectionResponse | PlainMessage<AdminGetSAMLConnectionResponse> | undefined): boolean {
+    return proto3.util.equals(AdminGetSAMLConnectionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminCreateSAMLConnectionRequest
+ */
+export class AdminCreateSAMLConnectionRequest extends Message<AdminCreateSAMLConnectionRequest> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<AdminCreateSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminCreateSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCreateSAMLConnectionRequest {
+    return new AdminCreateSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCreateSAMLConnectionRequest {
+    return new AdminCreateSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCreateSAMLConnectionRequest {
+    return new AdminCreateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminCreateSAMLConnectionRequest | PlainMessage<AdminCreateSAMLConnectionRequest> | undefined, b: AdminCreateSAMLConnectionRequest | PlainMessage<AdminCreateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AdminCreateSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminCreateSAMLConnectionResponse
+ */
+export class AdminCreateSAMLConnectionResponse extends Message<AdminCreateSAMLConnectionResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<AdminCreateSAMLConnectionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminCreateSAMLConnectionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCreateSAMLConnectionResponse {
+    return new AdminCreateSAMLConnectionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCreateSAMLConnectionResponse {
+    return new AdminCreateSAMLConnectionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCreateSAMLConnectionResponse {
+    return new AdminCreateSAMLConnectionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminCreateSAMLConnectionResponse | PlainMessage<AdminCreateSAMLConnectionResponse> | undefined, b: AdminCreateSAMLConnectionResponse | PlainMessage<AdminCreateSAMLConnectionResponse> | undefined): boolean {
+    return proto3.util.equals(AdminCreateSAMLConnectionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminUpdateSAMLConnectionRequest
+ */
+export class AdminUpdateSAMLConnectionRequest extends Message<AdminUpdateSAMLConnectionRequest> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<AdminUpdateSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminUpdateSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminUpdateSAMLConnectionRequest {
+    return new AdminUpdateSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminUpdateSAMLConnectionRequest {
+    return new AdminUpdateSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminUpdateSAMLConnectionRequest {
+    return new AdminUpdateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminUpdateSAMLConnectionRequest | PlainMessage<AdminUpdateSAMLConnectionRequest> | undefined, b: AdminUpdateSAMLConnectionRequest | PlainMessage<AdminUpdateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AdminUpdateSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminUpdateSAMLConnectionResponse
+ */
+export class AdminUpdateSAMLConnectionResponse extends Message<AdminUpdateSAMLConnectionResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<AdminUpdateSAMLConnectionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminUpdateSAMLConnectionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminUpdateSAMLConnectionResponse {
+    return new AdminUpdateSAMLConnectionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminUpdateSAMLConnectionResponse {
+    return new AdminUpdateSAMLConnectionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminUpdateSAMLConnectionResponse {
+    return new AdminUpdateSAMLConnectionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminUpdateSAMLConnectionResponse | PlainMessage<AdminUpdateSAMLConnectionResponse> | undefined, b: AdminUpdateSAMLConnectionResponse | PlainMessage<AdminUpdateSAMLConnectionResponse> | undefined): boolean {
+    return proto3.util.equals(AdminUpdateSAMLConnectionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminParseSAMLMetadataRequest
+ */
+export class AdminParseSAMLMetadataRequest extends Message<AdminParseSAMLMetadataRequest> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<AdminParseSAMLMetadataRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminParseSAMLMetadataRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminParseSAMLMetadataRequest {
+    return new AdminParseSAMLMetadataRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminParseSAMLMetadataRequest {
+    return new AdminParseSAMLMetadataRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminParseSAMLMetadataRequest {
+    return new AdminParseSAMLMetadataRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminParseSAMLMetadataRequest | PlainMessage<AdminParseSAMLMetadataRequest> | undefined, b: AdminParseSAMLMetadataRequest | PlainMessage<AdminParseSAMLMetadataRequest> | undefined): boolean {
+    return proto3.util.equals(AdminParseSAMLMetadataRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminParseSAMLMetadataResponse
+ */
+export class AdminParseSAMLMetadataResponse extends Message<AdminParseSAMLMetadataResponse> {
+  /**
+   * @generated from field: string idp_redirect_url = 1;
+   */
+  idpRedirectUrl = "";
+
+  /**
+   * @generated from field: string idp_certificate = 2;
+   */
+  idpCertificate = "";
+
+  /**
+   * @generated from field: string idp_entity_id = 3;
+   */
+  idpEntityId = "";
+
+  constructor(data?: PartialMessage<AdminParseSAMLMetadataResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminParseSAMLMetadataResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "idp_redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "idp_certificate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "idp_entity_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminParseSAMLMetadataResponse {
+    return new AdminParseSAMLMetadataResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminParseSAMLMetadataResponse {
+    return new AdminParseSAMLMetadataResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminParseSAMLMetadataResponse {
+    return new AdminParseSAMLMetadataResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminParseSAMLMetadataResponse | PlainMessage<AdminParseSAMLMetadataResponse> | undefined, b: AdminParseSAMLMetadataResponse | PlainMessage<AdminParseSAMLMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(AdminParseSAMLMetadataResponse, a, b);
+  }
+}
+

@@ -55,6 +55,11 @@ const (
 	SSOReadyService_GetSAMLFlow_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
 	SSOReadyService_ParseSAMLMetadata_FullMethodName              = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
 	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName        = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
+	SSOReadyService_AdminListSAMLConnections_FullMethodName       = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
+	SSOReadyService_AdminGetSAMLConnection_FullMethodName         = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
+	SSOReadyService_AdminCreateSAMLConnection_FullMethodName      = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
+	SSOReadyService_AdminUpdateSAMLConnection_FullMethodName      = "/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection"
+	SSOReadyService_AdminParseSAMLMetadata_FullMethodName         = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -96,6 +101,11 @@ type SSOReadyServiceClient interface {
 	GetSAMLFlow(ctx context.Context, in *GetSAMLFlowRequest, opts ...grpc.CallOption) (*SAMLFlow, error)
 	ParseSAMLMetadata(ctx context.Context, in *ParseSAMLMetadataRequest, opts ...grpc.CallOption) (*ParseSAMLMetadataResponse, error)
 	AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error)
+	AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error)
+	AdminGetSAMLConnection(ctx context.Context, in *AdminGetSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminGetSAMLConnectionResponse, error)
+	AdminCreateSAMLConnection(ctx context.Context, in *AdminCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminCreateSAMLConnectionResponse, error)
+	AdminUpdateSAMLConnection(ctx context.Context, in *AdminUpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminUpdateSAMLConnectionResponse, error)
+	AdminParseSAMLMetadata(ctx context.Context, in *AdminParseSAMLMetadataRequest, opts ...grpc.CallOption) (*AdminParseSAMLMetadataResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -456,6 +466,56 @@ func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminListSAMLConnectionsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminListSAMLConnections_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminGetSAMLConnection(ctx context.Context, in *AdminGetSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminGetSAMLConnectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetSAMLConnectionResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminGetSAMLConnection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminCreateSAMLConnection(ctx context.Context, in *AdminCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminCreateSAMLConnectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCreateSAMLConnectionResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminCreateSAMLConnection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminUpdateSAMLConnection(ctx context.Context, in *AdminUpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminUpdateSAMLConnectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminUpdateSAMLConnectionResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminUpdateSAMLConnection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, in *AdminParseSAMLMetadataRequest, opts ...grpc.CallOption) (*AdminParseSAMLMetadataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminParseSAMLMetadataResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminParseSAMLMetadata_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility
@@ -495,6 +555,11 @@ type SSOReadyServiceServer interface {
 	GetSAMLFlow(context.Context, *GetSAMLFlowRequest) (*SAMLFlow, error)
 	ParseSAMLMetadata(context.Context, *ParseSAMLMetadataRequest) (*ParseSAMLMetadataResponse, error)
 	AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error)
+	AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error)
+	AdminGetSAMLConnection(context.Context, *AdminGetSAMLConnectionRequest) (*AdminGetSAMLConnectionResponse, error)
+	AdminCreateSAMLConnection(context.Context, *AdminCreateSAMLConnectionRequest) (*AdminCreateSAMLConnectionResponse, error)
+	AdminUpdateSAMLConnection(context.Context, *AdminUpdateSAMLConnectionRequest) (*AdminUpdateSAMLConnectionResponse, error)
+	AdminParseSAMLMetadata(context.Context, *AdminParseSAMLMetadataRequest) (*AdminParseSAMLMetadataResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -606,6 +671,21 @@ func (UnimplementedSSOReadyServiceServer) ParseSAMLMetadata(context.Context, *Pa
 }
 func (UnimplementedSSOReadyServiceServer) AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminRedeemOneTimeToken not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminListSAMLConnections not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminGetSAMLConnection(context.Context, *AdminGetSAMLConnectionRequest) (*AdminGetSAMLConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminGetSAMLConnection not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminCreateSAMLConnection(context.Context, *AdminCreateSAMLConnectionRequest) (*AdminCreateSAMLConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminCreateSAMLConnection not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminUpdateSAMLConnection(context.Context, *AdminUpdateSAMLConnectionRequest) (*AdminUpdateSAMLConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminUpdateSAMLConnection not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminParseSAMLMetadata(context.Context, *AdminParseSAMLMetadataRequest) (*AdminParseSAMLMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminParseSAMLMetadata not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 
@@ -1250,6 +1330,96 @@ func _SSOReadyService_AdminRedeemOneTimeToken_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AdminListSAMLConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminListSAMLConnectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminListSAMLConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminListSAMLConnections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminListSAMLConnections(ctx, req.(*AdminListSAMLConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminGetSAMLConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetSAMLConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminGetSAMLConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminGetSAMLConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminGetSAMLConnection(ctx, req.(*AdminGetSAMLConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminCreateSAMLConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminCreateSAMLConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminCreateSAMLConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminCreateSAMLConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminCreateSAMLConnection(ctx, req.(*AdminCreateSAMLConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminUpdateSAMLConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminUpdateSAMLConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminUpdateSAMLConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminUpdateSAMLConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminUpdateSAMLConnection(ctx, req.(*AdminUpdateSAMLConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminParseSAMLMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminParseSAMLMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminParseSAMLMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminParseSAMLMetadata_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminParseSAMLMetadata(ctx, req.(*AdminParseSAMLMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1396,6 +1566,26 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminRedeemOneTimeToken",
 			Handler:    _SSOReadyService_AdminRedeemOneTimeToken_Handler,
+		},
+		{
+			MethodName: "AdminListSAMLConnections",
+			Handler:    _SSOReadyService_AdminListSAMLConnections_Handler,
+		},
+		{
+			MethodName: "AdminGetSAMLConnection",
+			Handler:    _SSOReadyService_AdminGetSAMLConnection_Handler,
+		},
+		{
+			MethodName: "AdminCreateSAMLConnection",
+			Handler:    _SSOReadyService_AdminCreateSAMLConnection_Handler,
+		},
+		{
+			MethodName: "AdminUpdateSAMLConnection",
+			Handler:    _SSOReadyService_AdminUpdateSAMLConnection_Handler,
+		},
+		{
+			MethodName: "AdminParseSAMLMetadata",
+			Handler:    _SSOReadyService_AdminParseSAMLMetadata_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

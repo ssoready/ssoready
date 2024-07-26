@@ -59,6 +59,47 @@ func (q *Queries) AdminGetAdminAccessTokenByOneTimeToken(ctx context.Context, on
 	return i, err
 }
 
+const adminGetOrganizationByAccessToken = `-- name: AdminGetOrganizationByAccessToken :one
+select organization_id
+from admin_access_tokens
+where access_token_sha256 = $1
+`
+
+func (q *Queries) AdminGetOrganizationByAccessToken(ctx context.Context, accessTokenSha256 []byte) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, adminGetOrganizationByAccessToken, accessTokenSha256)
+	var organization_id uuid.UUID
+	err := row.Scan(&organization_id)
+	return organization_id, err
+}
+
+const adminGetSAMLConnection = `-- name: AdminGetSAMLConnection :one
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id, is_primary, sp_acs_url
+from saml_connections
+where organization_id = $1
+  and id = $2
+`
+
+type AdminGetSAMLConnectionParams struct {
+	OrganizationID uuid.UUID
+	ID             uuid.UUID
+}
+
+func (q *Queries) AdminGetSAMLConnection(ctx context.Context, arg AdminGetSAMLConnectionParams) (SamlConnection, error) {
+	row := q.db.QueryRow(ctx, adminGetSAMLConnection, arg.OrganizationID, arg.ID)
+	var i SamlConnection
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+		&i.IdpEntityID,
+		&i.SpEntityID,
+		&i.IsPrimary,
+		&i.SpAcsUrl,
+	)
+	return i, err
+}
+
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
 select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth from saml_flows where id = $1 and access_code_sha256 is not null)
 `
