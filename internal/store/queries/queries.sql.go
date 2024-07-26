@@ -63,10 +63,16 @@ const adminGetOrganizationByAccessToken = `-- name: AdminGetOrganizationByAccess
 select organization_id
 from admin_access_tokens
 where access_token_sha256 = $1
+  and expire_time > $2
 `
 
-func (q *Queries) AdminGetOrganizationByAccessToken(ctx context.Context, accessTokenSha256 []byte) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, adminGetOrganizationByAccessToken, accessTokenSha256)
+type AdminGetOrganizationByAccessTokenParams struct {
+	AccessTokenSha256 []byte
+	ExpireTime        time.Time
+}
+
+func (q *Queries) AdminGetOrganizationByAccessToken(ctx context.Context, arg AdminGetOrganizationByAccessTokenParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, adminGetOrganizationByAccessToken, arg.AccessTokenSha256, arg.ExpireTime)
 	var organization_id uuid.UUID
 	err := row.Scan(&organization_id)
 	return organization_id, err

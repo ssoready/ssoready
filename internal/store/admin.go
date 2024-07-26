@@ -124,7 +124,10 @@ func (s *Store) AdminGetAdminSession(ctx context.Context, sessionToken string) (
 	}
 
 	sha := sha256.Sum256(token)
-	orgID, err := s.q.AdminGetOrganizationByAccessToken(ctx, sha[:])
+	orgID, err := s.q.AdminGetOrganizationByAccessToken(ctx, queries.AdminGetOrganizationByAccessTokenParams{
+		AccessTokenSha256: sha[:],
+		ExpireTime:        time.Now(),
+	})
 	if err != nil {
 		return nil, fmt.Errorf("get organization by admin access token: %w", err)
 	}

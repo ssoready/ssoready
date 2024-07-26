@@ -446,7 +446,8 @@ where one_time_token_sha256 = $1;
 -- name: AdminGetOrganizationByAccessToken :one
 select organization_id
 from admin_access_tokens
-where access_token_sha256 = $1;
+where access_token_sha256 = $1
+  and expire_time > $2;
 
 -- name: AdminConvertAdminAccessTokenToSession :one
 update admin_access_tokens
