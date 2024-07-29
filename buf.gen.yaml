@@ -21,6 +21,15 @@ plugins:
     out: internal/gen
     opt: paths=source_relative
   - local: protoc-gen-es
+    out: admin/src/gen
+    opt: target=ts
+  - local: protoc-gen-connect-es
+    out: admin/src/gen
+    opt: target=ts
+  - local: protoc-gen-connect-query
+    out: admin/src/gen
+    opt: target=ts
+  - local: protoc-gen-es
     out: app/src/gen
     opt: target=ts
   - local: protoc-gen-connect-es

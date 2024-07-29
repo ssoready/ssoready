@@ -7,9 +7,10 @@ import (
 )
 
 type ContextData struct {
-	AppSession      *AppSessionData
-	APIKey          *APIKeyData
-	SAMLOAuthClient *SAMLOAuthClientData
+	AppSession       *AppSessionData
+	APIKey           *APIKeyData
+	SAMLOAuthClient  *SAMLOAuthClientData
+	AdminAccessToken *AdminAccessTokenData
 }
 
 type AppSessionData struct {
@@ -28,6 +29,10 @@ type SAMLOAuthClientData struct {
 	AppOrgID      uuid.UUID
 	EnvID         string
 	OAuthClientID string
+}
+
+type AdminAccessTokenData struct {
+	OrganizationID uuid.UUID
 }
 
 type ctxKey struct{}

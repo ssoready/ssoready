@@ -49,6 +49,10 @@
           "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
         },
         {
+          "name": "API_DEFAULT_ADMIN_SETUP_URL",
+          "value": "https://dev-ucarion--ssoready-admin.netlify.app/setup"
+        },
+        {
           "name": "API_EMAIL_CHALLENGE_FROM",
           "value": "noreply-dev-ucarion@mail.ssoready.com"
         },

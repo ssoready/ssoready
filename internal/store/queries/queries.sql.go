@@ -12,6 +12,100 @@ import (
 	"github.com/google/uuid"
 )
 
+const adminConvertAdminAccessTokenToSession = `-- name: AdminConvertAdminAccessTokenToSession :one
+update admin_access_tokens
+set one_time_token_sha256 = null,
+    access_token_sha256   = $1
+where id = $2
+returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+`
+
+type AdminConvertAdminAccessTokenToSessionParams struct {
+	AccessTokenSha256 []byte
+	ID                uuid.UUID
+}
+
+func (q *Queries) AdminConvertAdminAccessTokenToSession(ctx context.Context, arg AdminConvertAdminAccessTokenToSessionParams) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, adminConvertAdminAccessTokenToSession, arg.AccessTokenSha256, arg.ID)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
+	)
+	return i, err
+}
+
+const adminGetAdminAccessTokenByOneTimeToken = `-- name: AdminGetAdminAccessTokenByOneTimeToken :one
+select id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+from admin_access_tokens
+where one_time_token_sha256 = $1
+`
+
+func (q *Queries) AdminGetAdminAccessTokenByOneTimeToken(ctx context.Context, oneTimeTokenSha256 []byte) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, adminGetAdminAccessTokenByOneTimeToken, oneTimeTokenSha256)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
+	)
+	return i, err
+}
+
+const adminGetOrganizationByAccessToken = `-- name: AdminGetOrganizationByAccessToken :one
+select organization_id
+from admin_access_tokens
+where access_token_sha256 = $1
+  and expire_time > $2
+`
+
+type AdminGetOrganizationByAccessTokenParams struct {
+	AccessTokenSha256 []byte
+	ExpireTime        time.Time
+}
+
+func (q *Queries) AdminGetOrganizationByAccessToken(ctx context.Context, arg AdminGetOrganizationByAccessTokenParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, adminGetOrganizationByAccessToken, arg.AccessTokenSha256, arg.ExpireTime)
+	var organization_id uuid.UUID
+	err := row.Scan(&organization_id)
+	return organization_id, err
+}
+
+const adminGetSAMLConnection = `-- name: AdminGetSAMLConnection :one
+select id, organization_id, idp_redirect_url, idp_x509_certificate, idp_entity_id, sp_entity_id, is_primary, sp_acs_url
+from saml_connections
+where organization_id = $1
+  and id = $2
+`
+
+type AdminGetSAMLConnectionParams struct {
+	OrganizationID uuid.UUID
+	ID             uuid.UUID
+}
+
+func (q *Queries) AdminGetSAMLConnection(ctx context.Context, arg AdminGetSAMLConnectionParams) (SamlConnection, error) {
+	row := q.db.QueryRow(ctx, adminGetSAMLConnection, arg.OrganizationID, arg.ID)
+	var i SamlConnection
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+		&i.IdpEntityID,
+		&i.SpEntityID,
+		&i.IsPrimary,
+		&i.SpAcsUrl,
+	)
+	return i, err
+}
+
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
 select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth from saml_flows where id = $1 and access_code_sha256 is not null)
 `
@@ -203,7 +297,9 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
 select exists(select id, email, expire_time, secret_token, complete_time
               from email_verification_challenges
-              where email = $1 and expire_time > $2 and complete_time is null)
+              where email = $1
+                and expire_time > $2
+                and complete_time is null)
 `
 
 type CheckExistsEmailVerificationChallengeParams struct {
@@ -238,6 +334,40 @@ func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (Api
 		&i.SecretValue,
 		&i.EnvironmentID,
 		&i.SecretValueSha256,
+	)
+	return i, err
+}
+
+const createAdminAccessToken = `-- name: CreateAdminAccessToken :one
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time)
+values ($1, $2, $3, $4, $5)
+returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+`
+
+type CreateAdminAccessTokenParams struct {
+	ID                 uuid.UUID
+	OrganizationID     uuid.UUID
+	OneTimeTokenSha256 []byte
+	CreateTime         time.Time
+	ExpireTime         time.Time
+}
+
+func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAccessTokenParams) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, createAdminAccessToken,
+		arg.ID,
+		arg.OrganizationID,
+		arg.OneTimeTokenSha256,
+		arg.CreateTime,
+		arg.ExpireTime,
+	)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
 	)
 	return i, err
 }

@@ -17,4 +17,6 @@ var (
 	SAMLConnection        = prettyuuid.MustNewFormat("saml_conn_", alphabet)
 	SAMLFlow              = prettyuuid.MustNewFormat("saml_flow_", alphabet)
 	SAMLAccessCode        = prettyuuid.MustNewFormat("saml_access_code_", alphabet)
+
+	AdminOneTimeToken = prettyuuid.MustNewFormat("ssoready_one_time_token_", alphabet)
 )

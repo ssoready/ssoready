@@ -1,7 +1,9 @@
 -- name: CheckExistsEmailVerificationChallenge :one
 select exists(select *
               from email_verification_challenges
-              where email = $1 and expire_time > $2 and complete_time is null);
+              where email = $1
+                and expire_time > $2
+                and complete_time is null);
 
 -- name: CreateEmailVerificationChallenge :one
 insert into email_verification_challenges (id, email, expire_time, secret_token)
@@ -430,3 +432,32 @@ from saml_oauth_clients
          join environments on saml_oauth_clients.environment_id = environments.id
 where saml_oauth_clients.id = $1
   and saml_oauth_clients.client_secret_sha256 = $2;
+
+-- name: CreateAdminAccessToken :one
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time)
+values ($1, $2, $3, $4, $5)
+returning *;
+
+-- name: AdminGetAdminAccessTokenByOneTimeToken :one
+select *
+from admin_access_tokens
+where one_time_token_sha256 = $1;
+
+-- name: AdminGetOrganizationByAccessToken :one
+select organization_id
+from admin_access_tokens
+where access_token_sha256 = $1
+  and expire_time > $2;
+
+-- name: AdminConvertAdminAccessTokenToSession :one
+update admin_access_tokens
+set one_time_token_sha256 = null,
+    access_token_sha256   = $1
+where id = $2
+returning *;
+
+-- name: AdminGetSAMLConnection :one
+select *
+from saml_connections
+where organization_id = $1
+  and id = $2;

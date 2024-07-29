@@ -51,6 +51,8 @@ service SSOReadyService {
   rpc CreateOrganization(CreateOrganizationRequest) returns (Organization);
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (Organization);
 
+  rpc CreateAdminSetupURL(CreateAdminSetupURLRequest) returns (CreateAdminSetupURLResponse);
+
   rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
   rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (SAMLConnection);
   rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (SAMLConnection);
@@ -60,6 +62,13 @@ service SSOReadyService {
   rpc GetSAMLFlow(GetSAMLFlowRequest) returns (SAMLFlow);
 
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
+
+  rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
+  rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
+  rpc AdminGetSAMLConnection(AdminGetSAMLConnectionRequest) returns (AdminGetSAMLConnectionResponse);
+  rpc AdminCreateSAMLConnection(AdminCreateSAMLConnectionRequest) returns (AdminCreateSAMLConnectionResponse);
+  rpc AdminUpdateSAMLConnection(AdminUpdateSAMLConnectionRequest) returns (AdminUpdateSAMLConnectionResponse);
+  rpc AdminParseSAMLMetadata(AdminParseSAMLMetadataRequest) returns (AdminParseSAMLMetadataResponse);
 }
 
 message AppUser {
@@ -314,6 +323,14 @@ message UpdateOrganizationRequest {
   Organization organization = 1;
 }
 
+message CreateAdminSetupURLRequest {
+  string organization_id = 1;
+}
+
+message CreateAdminSetupURLResponse {
+  string url = 1;
+}
+
 message ListSAMLConnectionsRequest {
   string organization_id = 1;
   string page_token = 2;
@@ -355,6 +372,57 @@ message ParseSAMLMetadataRequest {
 }
 
 message ParseSAMLMetadataResponse {
+  string idp_redirect_url = 1;
+  string idp_certificate = 2;
+  string idp_entity_id = 3;
+}
+
+message AdminRedeemOneTimeTokenRequest {
+  string one_time_token = 1;
+}
+
+message AdminRedeemOneTimeTokenResponse {
+  string admin_session_token = 1;
+}
+
+message AdminListSAMLConnectionsRequest {
+  string page_token = 1;
+}
+
+message AdminListSAMLConnectionsResponse {
+  repeated SAMLConnection saml_connections = 1;
+  string next_page_token = 2;
+}
+
+message AdminGetSAMLConnectionRequest {
+  string id = 1;
+}
+
+message AdminGetSAMLConnectionResponse {
+  SAMLConnection saml_connection = 1;
+}
+
+message AdminCreateSAMLConnectionRequest {
+  SAMLConnection saml_connection = 1;
+}
+
+message AdminCreateSAMLConnectionResponse {
+  SAMLConnection saml_connection = 1;
+}
+
+message AdminUpdateSAMLConnectionRequest {
+  SAMLConnection saml_connection = 1;
+}
+
+message AdminUpdateSAMLConnectionResponse {
+  SAMLConnection saml_connection = 1;
+}
+
+message AdminParseSAMLMetadataRequest {
+  string url = 1;
+}
+
+message AdminParseSAMLMetadataResponse {
   string idp_redirect_url = 1;
   string idp_certificate = 2;
   string idp_entity_id = 3;

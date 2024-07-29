@@ -14,6 +14,15 @@ import (
 var skipRPCs = []string{
 	"/ssoready.v1.SSOReadyService/VerifyEmail",
 	"/ssoready.v1.SSOReadyService/SignIn",
+	"/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken",
+}
+
+var adminRPCs = []string{
+	"/ssoready.v1.SSOReadyService/AdminListSAMLConnections",
+	"/ssoready.v1.SSOReadyService/AdminGetSAMLConnection",
+	"/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection",
+	"/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection",
+	"/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata",
 }
 
 func New(s *store.Store) connect.UnaryInterceptorFunc {
@@ -33,6 +42,22 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 			secretValue, ok := strings.CutPrefix(authorization, "Bearer ")
 			if !ok {
 				return nil, connect.NewError(connect.CodeUnauthenticated, nil)
+			}
+
+			for _, rpc := range adminRPCs {
+				if req.Spec().Procedure == rpc {
+					res, err := s.AdminGetAdminSession(ctx, secretValue)
+					if err != nil {
+						return nil, fmt.Errorf("store: get admin session: %w", err)
+					}
+
+					ctx = authn.NewContext(ctx, authn.ContextData{
+						AdminAccessToken: &authn.AdminAccessTokenData{
+							OrganizationID: res.OrganizationID,
+						},
+					})
+					return next(ctx, req)
+				}
 			}
 
 			if strings.HasPrefix(secretValue, "ssoready_sk_") {
