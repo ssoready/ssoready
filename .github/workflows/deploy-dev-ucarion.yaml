@@ -77,7 +77,7 @@ jobs:
 
       - name: Build, tag, and push Docker image to ECR
         run: |
-          docker build . -f ./cmd/$SERVICE/Dockerfile -t $ECR_REGISTRY_URL/$SERVICE:$TAG
+          docker buildx build --platform linux/arm64 . -f ./cmd/$SERVICE/Dockerfile -t $ECR_REGISTRY_URL/$SERVICE:$TAG
           docker push $ECR_REGISTRY_URL/$SERVICE:$TAG
 
       - name: Create ECS task definition
