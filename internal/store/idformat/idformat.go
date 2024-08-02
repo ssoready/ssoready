@@ -18,5 +18,8 @@ var (
 	SAMLFlow              = prettyuuid.MustNewFormat("saml_flow_", alphabet)
 	SAMLAccessCode        = prettyuuid.MustNewFormat("saml_access_code_", alphabet)
 
+	SCIMDirectory = prettyuuid.MustNewFormat("scim_directory_", alphabet)
+	SCIMUser      = prettyuuid.MustNewFormat("scim_user_", alphabet)
+
 	AdminOneTimeToken = prettyuuid.MustNewFormat("ssoready_one_time_token_", alphabet)
 )

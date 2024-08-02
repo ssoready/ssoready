@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 
 service SSOReadyService {
   rpc GetSAMLRedirectURL(GetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse) {
@@ -157,6 +158,16 @@ enum SAMLFlowStatus {
   SAML_FLOW_STATUS_IN_PROGRESS = 1;
   SAML_FLOW_STATUS_FAILED = 2;
   SAML_FLOW_STATUS_SUCCEEDED = 3;
+}
+
+message SCIMDirectory {}
+
+message SCIMUser {
+  string id = 1;
+  string scim_directory_id = 2;
+  string email = 3;
+  bool deleted = 4;
+  google.protobuf.Struct attributes = 5;
 }
 
 message GetSAMLRedirectURLRequest {

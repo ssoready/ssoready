@@ -117,6 +117,20 @@ func (q *Queries) AuthCheckAssertionAlreadyProcessed(ctx context.Context, id uui
 	return exists, err
 }
 
+const authCountSCIMUsers = `-- name: AuthCountSCIMUsers :one
+select count(*)
+from scim_users
+where scim_directory_id = $1
+  and deleted = false
+`
+
+func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, authCountSCIMUsers, scimDirectoryID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const authGetInitData = `-- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections
@@ -261,6 +275,19 @@ func (q *Queries) AuthGetSAMLOAuthClientWithSecret(ctx context.Context, arg Auth
 	return i, err
 }
 
+const authGetSCIMDirectory = `-- name: AuthGetSCIMDirectory :one
+select id, organization_id, bearer_token_sha256
+from scim_directories
+where id = $1
+`
+
+func (q *Queries) AuthGetSCIMDirectory(ctx context.Context, id uuid.UUID) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMDirectory, id)
+	var i ScimDirectory
+	err := row.Scan(&i.ID, &i.OrganizationID, &i.BearerTokenSha256)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
@@ -292,6 +319,47 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 		&i.OauthRedirectUri,
 	)
 	return i, err
+}
+
+const authListSCIMUsers = `-- name: AuthListSCIMUsers :many
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and deleted = false
+order by email
+offset $2 limit $3
+`
+
+type AuthListSCIMUsersParams struct {
+	ScimDirectoryID uuid.UUID
+	Offset          int32
+	Limit           int32
+}
+
+func (q *Queries) AuthListSCIMUsers(ctx context.Context, arg AuthListSCIMUsersParams) ([]ScimUser, error) {
+	rows, err := q.db.Query(ctx, authListSCIMUsers, arg.ScimDirectoryID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimUser
+	for rows.Next() {
+		var i ScimUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Email,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one

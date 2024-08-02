@@ -15,7 +15,20 @@ func main() {
 		fmt.Println(r.Header)
 		fmt.Println(r.URL)
 
-		if err := json.NewEncoder(w).Encode(scimListUsersResponse{}); err != nil {
+		if err := json.NewEncoder(w).Encode(scimListUsersResponse{
+			Resources: []struct {
+				Id       string `json:"id"`
+				UserName string `json:"userName"`
+			}([]struct {
+				Id       string
+				UserName string
+			}{
+				{
+					Id:       "aaa",
+					UserName: "foobar",
+				},
+			}),
+		}); err != nil {
 			panic(err)
 		}
 	}).Methods("GET")

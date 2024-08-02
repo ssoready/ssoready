@@ -466,3 +466,22 @@ select *
 from saml_connections
 where organization_id = $1
   and id = $2;
+
+-- name: AuthGetSCIMDirectory :one
+select *
+from scim_directories
+where id = $1;
+
+-- name: AuthCountSCIMUsers :one
+select count(*)
+from scim_users
+where scim_directory_id = $1
+  and deleted = false;
+
+-- name: AuthListSCIMUsers :many
+select *
+from scim_users
+where scim_directory_id = $1
+  and deleted = false
+order by email
+offset $2 limit $3;

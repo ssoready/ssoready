@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Empty, Message, proto3, Timestamp } from "@bufbuild/protobuf";
+import { Empty, Message, proto3, Struct, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from enum ssoready.v1.SAMLFlowStatus
@@ -550,6 +550,98 @@ export class SAMLFlow extends Message<SAMLFlow> {
 
   static equals(a: SAMLFlow | PlainMessage<SAMLFlow> | undefined, b: SAMLFlow | PlainMessage<SAMLFlow> | undefined): boolean {
     return proto3.util.equals(SAMLFlow, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.SCIMDirectory
+ */
+export class SCIMDirectory extends Message<SCIMDirectory> {
+  constructor(data?: PartialMessage<SCIMDirectory>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SCIMDirectory";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SCIMDirectory {
+    return new SCIMDirectory().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SCIMDirectory {
+    return new SCIMDirectory().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SCIMDirectory {
+    return new SCIMDirectory().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SCIMDirectory | PlainMessage<SCIMDirectory> | undefined, b: SCIMDirectory | PlainMessage<SCIMDirectory> | undefined): boolean {
+    return proto3.util.equals(SCIMDirectory, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.SCIMUser
+ */
+export class SCIMUser extends Message<SCIMUser> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string scim_directory_id = 2;
+   */
+  scimDirectoryId = "";
+
+  /**
+   * @generated from field: string email = 3;
+   */
+  email = "";
+
+  /**
+   * @generated from field: bool deleted = 4;
+   */
+  deleted = false;
+
+  /**
+   * @generated from field: google.protobuf.Struct attributes = 5;
+   */
+  attributes?: Struct;
+
+  constructor(data?: PartialMessage<SCIMUser>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SCIMUser";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "deleted", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 5, name: "attributes", kind: "message", T: Struct },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SCIMUser {
+    return new SCIMUser().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SCIMUser {
+    return new SCIMUser().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SCIMUser {
+    return new SCIMUser().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SCIMUser | PlainMessage<SCIMUser> | undefined, b: SCIMUser | PlainMessage<SCIMUser> | undefined): boolean {
+    return proto3.util.equals(SCIMUser, a, b);
   }
 }
 

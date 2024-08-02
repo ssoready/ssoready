@@ -78,6 +78,9 @@ func (s *Service) NewHandler() http.Handler {
 	r.HandleFunc("/v1/oauth/authorize", s.oauthAuthorize).Methods("GET")
 	r.HandleFunc("/v1/oauth/token", s.oauthToken).Methods("POST")
 	r.HandleFunc("/v1/oauth/jwks", s.oauthJWKS).Methods("GET")
+
+	r.HandleFunc("/v1/scim/{scim_directory_id}/Users", s.scimListUsers).Methods("GET")
+
 	return r
 }
 
