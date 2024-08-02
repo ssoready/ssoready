@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.21-alpine AS build
 
 RUN apk update && apk add --no-cache git ca-certificates tzdata && update-ca-certificates
 
@@ -10,7 +10,9 @@ RUN go mod download
 COPY cmd ./cmd
 COPY internal ./internal
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "-w -s" -o api ./cmd/api
+ARG TARGETOS
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-w -s" -o api ./cmd/api
 
 FROM scratch
 
