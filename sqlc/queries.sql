@@ -186,6 +186,11 @@ select *
 from app_users
 where email = $1;
 
+-- name: ListAppUsers :many
+select id, display_name, email
+from app_users
+where app_organization_id = $1;
+
 -- name: GetAppUserByID :one
 select *
 from app_users

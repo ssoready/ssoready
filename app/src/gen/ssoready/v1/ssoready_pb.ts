@@ -1242,6 +1242,142 @@ export class OnboardingRedeemSAMLAccessCodeRequest extends Message<OnboardingRed
 }
 
 /**
+ * @generated from message ssoready.v1.GetAppOrganizationRequest
+ */
+export class GetAppOrganizationRequest extends Message<GetAppOrganizationRequest> {
+  constructor(data?: PartialMessage<GetAppOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetAppOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAppOrganizationRequest {
+    return new GetAppOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAppOrganizationRequest {
+    return new GetAppOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAppOrganizationRequest {
+    return new GetAppOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetAppOrganizationRequest | PlainMessage<GetAppOrganizationRequest> | undefined, b: GetAppOrganizationRequest | PlainMessage<GetAppOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(GetAppOrganizationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetAppOrganizationResponse
+ */
+export class GetAppOrganizationResponse extends Message<GetAppOrganizationResponse> {
+  /**
+   * @generated from field: string google_hosted_domain = 1;
+   */
+  googleHostedDomain = "";
+
+  constructor(data?: PartialMessage<GetAppOrganizationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetAppOrganizationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "google_hosted_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAppOrganizationResponse {
+    return new GetAppOrganizationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAppOrganizationResponse {
+    return new GetAppOrganizationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAppOrganizationResponse {
+    return new GetAppOrganizationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetAppOrganizationResponse | PlainMessage<GetAppOrganizationResponse> | undefined, b: GetAppOrganizationResponse | PlainMessage<GetAppOrganizationResponse> | undefined): boolean {
+    return proto3.util.equals(GetAppOrganizationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListAppUsersRequest
+ */
+export class ListAppUsersRequest extends Message<ListAppUsersRequest> {
+  constructor(data?: PartialMessage<ListAppUsersRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListAppUsersRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAppUsersRequest {
+    return new ListAppUsersRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAppUsersRequest {
+    return new ListAppUsersRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAppUsersRequest {
+    return new ListAppUsersRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListAppUsersRequest | PlainMessage<ListAppUsersRequest> | undefined, b: ListAppUsersRequest | PlainMessage<ListAppUsersRequest> | undefined): boolean {
+    return proto3.util.equals(ListAppUsersRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListAppUsersResponse
+ */
+export class ListAppUsersResponse extends Message<ListAppUsersResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.AppUser app_users = 1;
+   */
+  appUsers: AppUser[] = [];
+
+  constructor(data?: PartialMessage<ListAppUsersResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListAppUsersResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "app_users", kind: "message", T: AppUser, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAppUsersResponse {
+    return new ListAppUsersResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAppUsersResponse {
+    return new ListAppUsersResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAppUsersResponse {
+    return new ListAppUsersResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListAppUsersResponse | PlainMessage<ListAppUsersResponse> | undefined, b: ListAppUsersResponse | PlainMessage<ListAppUsersResponse> | undefined): boolean {
+    return proto3.util.equals(ListAppUsersResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListEnvironmentsRequest
  */
 export class ListEnvironmentsRequest extends Message<ListEnvironmentsRequest> {

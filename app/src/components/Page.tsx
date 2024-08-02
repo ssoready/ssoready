@@ -9,6 +9,7 @@ import {
   PhoneIcon,
   UserIcon,
   EllipsisVerticalIcon,
+  SettingsIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
@@ -103,6 +104,16 @@ export function Page() {
                 </a>
               </div>
             </div>
+          </div>
+
+          <div className="p-2 border-t border-gray-200">
+            <Link
+              to={`/settings`}
+              className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
+            >
+              <SettingsIcon className="h-4 w-4" />
+              <span>Team Settings</span>
+            </Link>
           </div>
 
           <div className="flex items-center gap-3 justify-between border-t border-gray-200 px-4 py-4">

@@ -1310,6 +1310,38 @@ func (q *Queries) ListAPIKeys(ctx context.Context, arg ListAPIKeysParams) ([]Api
 	return items, nil
 }
 
+const listAppUsers = `-- name: ListAppUsers :many
+select id, display_name, email
+from app_users
+where app_organization_id = $1
+`
+
+type ListAppUsersRow struct {
+	ID          uuid.UUID
+	DisplayName string
+	Email       string
+}
+
+func (q *Queries) ListAppUsers(ctx context.Context, appOrganizationID uuid.UUID) ([]ListAppUsersRow, error) {
+	rows, err := q.db.Query(ctx, listAppUsers, appOrganizationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAppUsersRow
+	for rows.Next() {
+		var i ListAppUsersRow
+		if err := rows.Scan(&i.ID, &i.DisplayName, &i.Email); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listEnvironments = `-- name: ListEnvironments :many
 select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri
 from environments
