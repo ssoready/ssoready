@@ -27,6 +27,7 @@ import { Transport } from "@connectrpc/connect";
 import { ConfigProvider, useConfig } from "@/config";
 import * as Sentry from "@sentry/react";
 import { MicrosoftCallbackPage } from "@/pages/internal/MicrosoftCallbackPage";
+import { SettingsPage } from "@/pages/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,8 @@ export function AppRoutes() {
 
         <Route path="/" element={<Page />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+
           <Route path="/environments/new" element={<CreateEnvironmentPage />} />
           <Route
             path="/environments/:environmentId"

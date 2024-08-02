@@ -31,6 +31,9 @@ service SSOReadyService {
   rpc OnboardingGetSAMLRedirectURL(OnboardingGetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse);
   rpc OnboardingRedeemSAMLAccessCode(OnboardingRedeemSAMLAccessCodeRequest) returns (RedeemSAMLAccessCodeResponse);
 
+  rpc GetAppOrganization(GetAppOrganizationRequest) returns (GetAppOrganizationResponse);
+  rpc ListAppUsers(ListAppUsersRequest) returns (ListAppUsersResponse);
+
   rpc ListEnvironments(ListEnvironmentsRequest) returns (ListEnvironmentsResponse);
   rpc GetEnvironment(GetEnvironmentRequest) returns (Environment);
   rpc CreateEnvironment(CreateEnvironmentRequest) returns (Environment);
@@ -234,6 +237,20 @@ message OnboardingGetSAMLRedirectURLRequest {
 message OnboardingRedeemSAMLAccessCodeRequest {
   string api_key_secret_token = 1;
   string saml_access_code = 2;
+}
+
+message GetAppOrganizationRequest {
+}
+
+message GetAppOrganizationResponse {
+  string google_hosted_domain = 1;
+}
+
+message ListAppUsersRequest {
+}
+
+message ListAppUsersResponse {
+  repeated AppUser app_users = 1;
 }
 
 message ListEnvironmentsRequest {
