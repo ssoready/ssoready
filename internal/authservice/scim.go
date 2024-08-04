@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -33,6 +34,44 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		panic(err)
+	}
+
+	if r.URL.Query().Has("filter") {
+		filterEmailPat := regexp.MustCompile(`userName eq "(.*)"`)
+		match := filterEmailPat.FindStringSubmatch(r.URL.Query().Get("filter"))
+		if match == nil {
+			panic("unsupported filter param")
+		}
+
+		email := match[1]
+		scimUser, err := s.Store.AuthGetSCIMUserByEmail(ctx, &store.AuthGetSCIMUserByEmailRequest{
+			SCIMDirectoryID: scimDirectoryID,
+			Email:           email,
+		})
+		if err != nil {
+			if errors.Is(err, store.ErrSCIMUserNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+
+			panic(err)
+		}
+
+		resource := scimUser.Attributes.AsMap()
+		resource["id"] = scimUser.Id
+		resource["userName"] = scimUser.Email
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(scimListResponse{
+			TotalResults: 1,
+			ItemsPerPage: 1,
+			StartIndex:   1,
+			Schemas:      []string{"urn:ietf:params:scim:schemas:core:2.0:User"},
+			Resources:    []any{resource},
+		}); err != nil {
+			panic(err)
+		}
 	}
 
 	startIndex := 0

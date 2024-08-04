@@ -85,6 +85,34 @@ func (s *Store) AuthListSCIMUsers(ctx context.Context, req *AuthListSCIMUsersReq
 	}, nil
 }
 
+type AuthGetSCIMUserByEmailRequest struct {
+	SCIMDirectoryID string
+	Email           string
+}
+
+var ErrSCIMUserNotFound = errors.New("store: scim user not found")
+
+func (s *Store) AuthGetSCIMUserByEmail(ctx context.Context, req *AuthGetSCIMUserByEmailRequest) (*ssoreadyv1.SCIMUser, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	qSCIMUser, err := s.q.AuthGetSCIMUserByEmail(ctx, queries.AuthGetSCIMUserByEmailParams{
+		ScimDirectoryID: scimDirID,
+		Email:           req.Email,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrSCIMUserNotFound
+		}
+
+		return nil, fmt.Errorf("get scim user by email: %w", err)
+	}
+
+	return parseSCIMUser(qSCIMUser), nil
+}
+
 type AuthGetSCIMUserRequest struct {
 	SCIMDirectoryID string
 	SCIMUserID      string

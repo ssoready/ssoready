@@ -492,6 +492,12 @@ where scim_directory_id = $1
 order by id
 offset $2 limit $3;
 
+-- name: AuthGetSCIMUserByEmail :one
+select *
+from scim_users
+where scim_directory_id = $1
+  and email = $2;
+
 -- name: AuthGetSCIMUser :one
 select *
 from scim_users

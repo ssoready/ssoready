@@ -365,6 +365,31 @@ func (q *Queries) AuthGetSCIMUser(ctx context.Context, arg AuthGetSCIMUserParams
 	return i, err
 }
 
+const authGetSCIMUserByEmail = `-- name: AuthGetSCIMUserByEmail :one
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and email = $2
+`
+
+type AuthGetSCIMUserByEmailParams struct {
+	ScimDirectoryID uuid.UUID
+	Email           string
+}
+
+func (q *Queries) AuthGetSCIMUserByEmail(ctx context.Context, arg AuthGetSCIMUserByEmailParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMUserByEmail, arg.ScimDirectoryID, arg.Email)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
