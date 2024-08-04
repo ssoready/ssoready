@@ -472,6 +472,12 @@ select *
 from scim_directories
 where id = $1;
 
+-- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
+select *
+from scim_directories
+where id = $1
+  and bearer_token_sha256 = $2;
+
 -- name: AuthCountSCIMUsers :one
 select count(*)
 from scim_users
@@ -483,5 +489,24 @@ select *
 from scim_users
 where scim_directory_id = $1
   and deleted = false
-order by email
+order by id
 offset $2 limit $3;
+
+-- name: AuthGetSCIMUser :one
+select *
+from scim_users
+where scim_directory_id = $1
+  and id = $2;
+
+-- name: AuthCreateSCIMUser :one
+insert into scim_users (id, scim_directory_id, email, deleted, attributes)
+values ($1, $2, $3, $4, $5)
+returning *;
+
+-- name: AuthUpdateSCIMUser :one
+update scim_users
+set email      = $1,
+    attributes = $2
+where scim_directory_id = $3
+  and id = $4
+returning *;

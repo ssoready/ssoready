@@ -131,6 +131,39 @@ func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.U
 	return count, err
 }
 
+const authCreateSCIMUser = `-- name: AuthCreateSCIMUser :one
+insert into scim_users (id, scim_directory_id, email, deleted, attributes)
+values ($1, $2, $3, $4, $5)
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+type AuthCreateSCIMUserParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	Email           string
+	Deleted         bool
+	Attributes      []byte
+}
+
+func (q *Queries) AuthCreateSCIMUser(ctx context.Context, arg AuthCreateSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authCreateSCIMUser,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.Email,
+		arg.Deleted,
+		arg.Attributes,
+	)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authGetInitData = `-- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections
@@ -288,6 +321,50 @@ func (q *Queries) AuthGetSCIMDirectory(ctx context.Context, id uuid.UUID) (ScimD
 	return i, err
 }
 
+const authGetSCIMDirectoryByIDAndBearerToken = `-- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
+select id, organization_id, bearer_token_sha256
+from scim_directories
+where id = $1
+  and bearer_token_sha256 = $2
+`
+
+type AuthGetSCIMDirectoryByIDAndBearerTokenParams struct {
+	ID                uuid.UUID
+	BearerTokenSha256 []byte
+}
+
+func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, arg AuthGetSCIMDirectoryByIDAndBearerTokenParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMDirectoryByIDAndBearerToken, arg.ID, arg.BearerTokenSha256)
+	var i ScimDirectory
+	err := row.Scan(&i.ID, &i.OrganizationID, &i.BearerTokenSha256)
+	return i, err
+}
+
+const authGetSCIMUser = `-- name: AuthGetSCIMUser :one
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and id = $2
+`
+
+type AuthGetSCIMUserParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthGetSCIMUser(ctx context.Context, arg AuthGetSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMUser, arg.ScimDirectoryID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
@@ -326,7 +403,7 @@ select id, scim_directory_id, email, deleted, attributes
 from scim_users
 where scim_directory_id = $1
   and deleted = false
-order by email
+order by id
 offset $2 limit $3
 `
 
@@ -360,6 +437,40 @@ func (q *Queries) AuthListSCIMUsers(ctx context.Context, arg AuthListSCIMUsersPa
 		return nil, err
 	}
 	return items, nil
+}
+
+const authUpdateSCIMUser = `-- name: AuthUpdateSCIMUser :one
+update scim_users
+set email      = $1,
+    attributes = $2
+where scim_directory_id = $3
+  and id = $4
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+type AuthUpdateSCIMUserParams struct {
+	Email           string
+	Attributes      []byte
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthUpdateSCIMUser(ctx context.Context, arg AuthUpdateSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMUser,
+		arg.Email,
+		arg.Attributes,
+		arg.ScimDirectoryID,
+		arg.ID,
+	)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
 }
 
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one

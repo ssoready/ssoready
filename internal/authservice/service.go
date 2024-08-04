@@ -79,7 +79,10 @@ func (s *Service) NewHandler() http.Handler {
 	r.HandleFunc("/v1/oauth/token", s.oauthToken).Methods("POST")
 	r.HandleFunc("/v1/oauth/jwks", s.oauthJWKS).Methods("GET")
 
-	r.HandleFunc("/v1/scim/{scim_directory_id}/Users", s.scimListUsers).Methods("GET")
+	r.HandleFunc("/v1/scim/{scim_directory_id}/Users", s.scimListUsers).Methods(http.MethodGet)
+	r.HandleFunc("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", s.scimGetUser).Methods(http.MethodGet)
+	r.HandleFunc("/v1/scim/{scim_directory_id}/Users", s.scimCreateUser).Methods(http.MethodPost)
+	r.HandleFunc("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", s.scimUpdateUser).Methods(http.MethodPut)
 
 	return r
 }
