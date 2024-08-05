@@ -91,6 +91,7 @@ service SSOReadyService {
 
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
 
+  rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse);
   rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (SCIMDirectory);
 
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
@@ -488,6 +489,16 @@ message ParseSAMLMetadataResponse {
 
 message CreateSCIMDirectoryRequest {
   SCIMDirectory scim_directory = 1;
+}
+
+message ListSCIMDirectoriesRequest {
+  string organization_id = 1;
+  string page_token = 2;
+}
+
+message ListSCIMDirectoriesResponse {
+  repeated SCIMDirectory scim_directories = 1;
+  string next_page_token = 2;
 }
 
 message AdminRedeemOneTimeTokenRequest {

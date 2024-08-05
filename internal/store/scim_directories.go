@@ -11,6 +11,58 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
+func (s *Store) ListSCIMDirectories(ctx context.Context, req *ssoreadyv1.ListSCIMDirectoriesRequest) (*ssoreadyv1.ListSCIMDirectoriesResponse, error) {
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	orgID, err := idformat.Organization.Parse(req.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	// idor check
+	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                orgID,
+	}); err != nil {
+		return nil, err
+	}
+
+	var startID uuid.UUID
+	if err := s.pageEncoder.Unmarshal(req.PageToken, &startID); err != nil {
+		return nil, err
+	}
+
+	limit := 10
+	qSCIMDirectories, err := q.ListSCIMDirectories(ctx, queries.ListSCIMDirectoriesParams{
+		OrganizationID: orgID,
+		ID:             startID,
+		Limit:          int32(limit + 1),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var scimDirectories []*ssoreadyv1.SCIMDirectory
+	for _, qSCIMDirectory := range qSCIMDirectories {
+		scimDirectories = append(scimDirectories, parseSCIMDirectory(qSCIMDirectory))
+	}
+
+	var nextPageToken string
+	if len(scimDirectories) == limit+1 {
+		nextPageToken = s.pageEncoder.Marshal(qSCIMDirectories[limit].ID)
+		scimDirectories = scimDirectories[:limit]
+	}
+
+	return &ssoreadyv1.ListSCIMDirectoriesResponse{
+		ScimDirectories: scimDirectories,
+		NextPageToken:   nextPageToken,
+	}, nil
+}
+
 func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {

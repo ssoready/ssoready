@@ -607,3 +607,11 @@ where organizations.environment_id = $1
 insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
 values ($1, $2, $3, $4, $5)
 returning *;
+
+-- name: ListSCIMDirectories :many
+select *
+from scim_directories
+where organization_id = $1
+  and id >= $2
+order by id
+limit $3;

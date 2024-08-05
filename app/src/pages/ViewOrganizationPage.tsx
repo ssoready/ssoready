@@ -17,6 +17,7 @@ import {
   listOrganizations,
   listSAMLConnections,
   listSAMLFlows,
+  listSCIMDirectories,
   updateEnvironment,
   updateOrganization,
   updateSAMLConnection,
@@ -393,22 +394,21 @@ function EditOrganizationAlertDialog({
 
 function OrganizationSCIMDirectoriesPage() {
   const { environmentId, organizationId } = useParams();
-  // const data: SCIMDirectory[] = []
-  // const { data: organization } = useQuery(getOrganization, {
-  //   id: organizationId,
-  // });
-  // const {
-  //   data: listSAMLConnectionResponses,
-  //   fetchNextPage,
-  //   hasNextPage,
-  // } = useInfiniteQuery(
-  //     listscimdi,
-  //     { organizationId, pageToken: "" },
-  //     {
-  //       pageParamKey: "pageToken",
-  //       getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
-  //     },
-  // );
+  const { data: organization } = useQuery(getOrganization, {
+    id: organizationId,
+  });
+  const {
+    data: listSCIMDirectoriesPages,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    listSCIMDirectories,
+    { organizationId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
 
   const createSCIMDirectoryMutation = useMutation(createSCIMDirectory);
   const navigate = useNavigate();
@@ -450,48 +450,44 @@ function OrganizationSCIMDirectoriesPage() {
         </div>
       </CardHeader>
 
-      {/*<CardContent>*/}
-      {/*  <Table>*/}
-      {/*    <TableHeader>*/}
-      {/*      <TableRow>*/}
-      {/*        <TableHead>SAML Connection ID</TableHead>*/}
-      {/*        <TableHead>IDP Redirect URL</TableHead>*/}
-      {/*        <TableHead>IDP Entity ID</TableHead>*/}
-      {/*      </TableRow>*/}
-      {/*    </TableHeader>*/}
-      {/*    <TableBody>*/}
-      {/*      {listSAMLConnectionResponses?.pages*/}
-      {/*        .flatMap((page) => page.samlConnections)*/}
-      {/*        ?.map((samlConn) => (*/}
-      {/*          <TableRow key={samlConn.id}>*/}
-      {/*            <TableCell>*/}
-      {/*              <Link*/}
-      {/*                to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/saml-connections/${samlConn.id}`}*/}
-      {/*                className="underline underline-offset-4 decoration-muted-foreground"*/}
-      {/*              >*/}
-      {/*                {samlConn.id}*/}
-      {/*              </Link>*/}
-      {/*              {samlConn.primary && (*/}
-      {/*                <Badge className="ml-2">Primary</Badge>*/}
-      {/*              )}*/}
-      {/*            </TableCell>*/}
-      {/*            <TableCell className="max-w-[300px] truncate">*/}
-      {/*              {samlConn.idpRedirectUrl}*/}
-      {/*            </TableCell>*/}
-      {/*            <TableCell className="max-w-[300px] truncate">*/}
-      {/*              {samlConn.idpEntityId}*/}
-      {/*            </TableCell>*/}
-      {/*          </TableRow>*/}
-      {/*        ))}*/}
-      {/*    </TableBody>*/}
-      {/*  </Table>*/}
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>SCIM Directory ID</TableHead>
+              <TableHead>SCIM Base URL</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {listSCIMDirectoriesPages?.pages
+              .flatMap((page) => page.scimDirectories)
+              ?.map((scimDirectory) => (
+                <TableRow key={scimDirectory.id}>
+                  <TableCell>
+                    <Link
+                      to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/scim-directories/${scimDirectory.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
+                    >
+                      {scimDirectory.id}
+                    </Link>
+                    {scimDirectory.primary && (
+                      <Badge className="ml-2">Primary</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="max-w-[300px] truncate">
+                    {scimDirectory.scimBaseUrl}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
 
-      {/*  {hasNextPage && (*/}
-      {/*    <Button variant="secondary" onClick={() => fetchNextPage()}>*/}
-      {/*      Load more*/}
-      {/*    </Button>*/}
-      {/*  )}*/}
-      {/*</CardContent>*/}
+        {hasNextPage && (
+          <Button variant="secondary" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        )}
+      </CardContent>
     </Card>
   );
 }

@@ -2123,6 +2123,47 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 	return items, nil
 }
 
+const listSCIMDirectories = `-- name: ListSCIMDirectories :many
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+from scim_directories
+where organization_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type ListSCIMDirectoriesParams struct {
+	OrganizationID uuid.UUID
+	ID             uuid.UUID
+	Limit          int32
+}
+
+func (q *Queries) ListSCIMDirectories(ctx context.Context, arg ListSCIMDirectoriesParams) ([]ScimDirectory, error) {
+	rows, err := q.db.Query(ctx, listSCIMDirectories, arg.OrganizationID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimDirectory
+	for rows.Next() {
+		var i ScimDirectory
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrganizationID,
+			&i.BearerTokenSha256,
+			&i.IsPrimary,
+			&i.ScimBaseUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listSCIMGroups = `-- name: ListSCIMGroups :many
 select id, scim_directory_id, display_name, deleted, attributes
 from scim_groups

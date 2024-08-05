@@ -3210,6 +3210,92 @@ export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryReque
 }
 
 /**
+ * @generated from message ssoready.v1.ListSCIMDirectoriesRequest
+ */
+export class ListSCIMDirectoriesRequest extends Message<ListSCIMDirectoriesRequest> {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMDirectoriesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMDirectoriesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMDirectoriesRequest {
+    return new ListSCIMDirectoriesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesRequest {
+    return new ListSCIMDirectoriesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesRequest {
+    return new ListSCIMDirectoriesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMDirectoriesRequest | PlainMessage<ListSCIMDirectoriesRequest> | undefined, b: ListSCIMDirectoriesRequest | PlainMessage<ListSCIMDirectoriesRequest> | undefined): boolean {
+    return proto3.util.equals(ListSCIMDirectoriesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMDirectoriesResponse
+ */
+export class ListSCIMDirectoriesResponse extends Message<ListSCIMDirectoriesResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SCIMDirectory scim_directories = 1;
+   */
+  scimDirectories: SCIMDirectory[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMDirectoriesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMDirectoriesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directories", kind: "message", T: SCIMDirectory, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMDirectoriesResponse {
+    return new ListSCIMDirectoriesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesResponse {
+    return new ListSCIMDirectoriesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesResponse {
+    return new ListSCIMDirectoriesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMDirectoriesResponse | PlainMessage<ListSCIMDirectoriesResponse> | undefined, b: ListSCIMDirectoriesResponse | PlainMessage<ListSCIMDirectoriesResponse> | undefined): boolean {
+    return proto3.util.equals(ListSCIMDirectoriesResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AdminRedeemOneTimeTokenRequest
  */
 export class AdminRedeemOneTimeTokenRequest extends Message<AdminRedeemOneTimeTokenRequest> {
