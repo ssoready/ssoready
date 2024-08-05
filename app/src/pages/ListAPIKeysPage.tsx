@@ -150,7 +150,7 @@ function ListAPIKeysCard() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>SAML OAuth Client ID</TableHead>
+                <TableHead>API Key ID</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
