@@ -22,6 +22,10 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	SSOReadyService_GetSAMLRedirectURL_FullMethodName             = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
 	SSOReadyService_RedeemSAMLAccessCode_FullMethodName           = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_ListSCIMUsers_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
+	SSOReadyService_GetSCIMUser_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSCIMUser"
+	SSOReadyService_ListSCIMGroups_FullMethodName                 = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
+	SSOReadyService_GetSCIMGroup_FullMethodName                   = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
 	SSOReadyService_VerifyEmail_FullMethodName                    = "/ssoready.v1.SSOReadyService/VerifyEmail"
 	SSOReadyService_SignIn_FullMethodName                         = "/ssoready.v1.SSOReadyService/SignIn"
 	SSOReadyService_SignOut_FullMethodName                        = "/ssoready.v1.SSOReadyService/SignOut"
@@ -70,6 +74,10 @@ const (
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(ctx context.Context, in *GetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
 	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
+	ListSCIMUsers(ctx context.Context, in *ListSCIMUsersRequest, opts ...grpc.CallOption) (*ListSCIMUsersResponse, error)
+	GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error)
+	ListSCIMGroups(ctx context.Context, in *ListSCIMGroupsRequest, opts ...grpc.CallOption) (*ListSCIMGroupsResponse, error)
+	GetSCIMGroup(ctx context.Context, in *GetSCIMGroupRequest, opts ...grpc.CallOption) (*GetSCIMGroupResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	SignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*SignOutResponse, error)
@@ -134,6 +142,46 @@ func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, in *Re
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RedeemSAMLAccessCodeResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_RedeemSAMLAccessCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) ListSCIMUsers(ctx context.Context, in *ListSCIMUsersRequest, opts ...grpc.CallOption) (*ListSCIMUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSCIMUsersResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSCIMUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSCIMUserResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetSCIMUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) ListSCIMGroups(ctx context.Context, in *ListSCIMGroupsRequest, opts ...grpc.CallOption) (*ListSCIMGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSCIMGroupsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSCIMGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) GetSCIMGroup(ctx context.Context, in *GetSCIMGroupRequest, opts ...grpc.CallOption) (*GetSCIMGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSCIMGroupResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetSCIMGroup_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -546,6 +594,10 @@ func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, in *
 type SSOReadyServiceServer interface {
 	GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
 	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
+	ListSCIMUsers(context.Context, *ListSCIMUsersRequest) (*ListSCIMUsersResponse, error)
+	GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error)
+	ListSCIMGroups(context.Context, *ListSCIMGroupsRequest) (*ListSCIMGroupsResponse, error)
+	GetSCIMGroup(context.Context, *GetSCIMGroupRequest) (*GetSCIMGroupResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	SignOut(context.Context, *SignOutRequest) (*SignOutResponse, error)
@@ -601,6 +653,18 @@ func (UnimplementedSSOReadyServiceServer) GetSAMLRedirectURL(context.Context, *G
 }
 func (UnimplementedSSOReadyServiceServer) RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RedeemSAMLAccessCode not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListSCIMUsers(context.Context, *ListSCIMUsersRequest) (*ListSCIMUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSCIMUsers not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSCIMUser not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListSCIMGroups(context.Context, *ListSCIMGroupsRequest) (*ListSCIMGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSCIMGroups not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetSCIMGroup(context.Context, *GetSCIMGroupRequest) (*GetSCIMGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSCIMGroup not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
@@ -775,6 +839,78 @@ func _SSOReadyService_RedeemSAMLAccessCode_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).RedeemSAMLAccessCode(ctx, req.(*RedeemSAMLAccessCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_ListSCIMUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSCIMUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListSCIMUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListSCIMUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListSCIMUsers(ctx, req.(*ListSCIMUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_GetSCIMUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSCIMUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetSCIMUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetSCIMUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetSCIMUser(ctx, req.(*GetSCIMUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_ListSCIMGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSCIMGroupsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListSCIMGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListSCIMGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListSCIMGroups(ctx, req.(*ListSCIMGroupsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_GetSCIMGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSCIMGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetSCIMGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetSCIMGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetSCIMGroup(ctx, req.(*GetSCIMGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1513,6 +1649,22 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RedeemSAMLAccessCode",
 			Handler:    _SSOReadyService_RedeemSAMLAccessCode_Handler,
+		},
+		{
+			MethodName: "ListSCIMUsers",
+			Handler:    _SSOReadyService_ListSCIMUsers_Handler,
+		},
+		{
+			MethodName: "GetSCIMUser",
+			Handler:    _SSOReadyService_GetSCIMUser_Handler,
+		},
+		{
+			MethodName: "ListSCIMGroups",
+			Handler:    _SSOReadyService_ListSCIMGroups_Handler,
+		},
+		{
+			MethodName: "GetSCIMGroup",
+			Handler:    _SSOReadyService_GetSCIMGroup_Handler,
 		},
 		{
 			MethodName: "VerifyEmail",

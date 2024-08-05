@@ -599,6 +599,11 @@ export class SCIMUser extends Message<SCIMUser> {
   scimDirectoryId = "";
 
   /**
+   * @generated from field: string organization_id = 6;
+   */
+  organizationId = "";
+
+  /**
    * @generated from field: string email = 3;
    */
   email = "";
@@ -623,6 +628,7 @@ export class SCIMUser extends Message<SCIMUser> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "deleted", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 5, name: "attributes", kind: "message", T: Struct },
@@ -660,6 +666,11 @@ export class SCIMGroup extends Message<SCIMGroup> {
   scimDirectoryId = "";
 
   /**
+   * @generated from field: string organization_id = 5;
+   */
+  organizationId = "";
+
+  /**
    * @generated from field: string display_name = 3;
    */
   displayName = "";
@@ -679,6 +690,7 @@ export class SCIMGroup extends Message<SCIMGroup> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "attributes", kind: "message", T: Struct },
   ]);
@@ -893,6 +905,356 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
 
   static equals(a: RedeemSAMLAccessCodeResponse | PlainMessage<RedeemSAMLAccessCodeResponse> | undefined, b: RedeemSAMLAccessCodeResponse | PlainMessage<RedeemSAMLAccessCodeResponse> | undefined): boolean {
     return proto3.util.equals(RedeemSAMLAccessCodeResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMUsersRequest
+ */
+export class ListSCIMUsersRequest extends Message<ListSCIMUsersRequest> {
+  /**
+   * @generated from field: string scim_directory_id = 1;
+   */
+  scimDirectoryId = "";
+
+  /**
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: string organization_external_id = 3;
+   */
+  organizationExternalId = "";
+
+  /**
+   * @generated from field: string scim_group_id = 4;
+   */
+  scimGroupId = "";
+
+  /**
+   * @generated from field: string page_token = 5;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMUsersRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMUsersRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "scim_group_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMUsersRequest {
+    return new ListSCIMUsersRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMUsersRequest {
+    return new ListSCIMUsersRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMUsersRequest {
+    return new ListSCIMUsersRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMUsersRequest | PlainMessage<ListSCIMUsersRequest> | undefined, b: ListSCIMUsersRequest | PlainMessage<ListSCIMUsersRequest> | undefined): boolean {
+    return proto3.util.equals(ListSCIMUsersRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMUsersResponse
+ */
+export class ListSCIMUsersResponse extends Message<ListSCIMUsersResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SCIMUser scim_users = 1;
+   */
+  scimUsers: SCIMUser[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMUsersResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMUsersResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_users", kind: "message", T: SCIMUser, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMUsersResponse {
+    return new ListSCIMUsersResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMUsersResponse {
+    return new ListSCIMUsersResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMUsersResponse {
+    return new ListSCIMUsersResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMUsersResponse | PlainMessage<ListSCIMUsersResponse> | undefined, b: ListSCIMUsersResponse | PlainMessage<ListSCIMUsersResponse> | undefined): boolean {
+    return proto3.util.equals(ListSCIMUsersResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSCIMUserRequest
+ */
+export class GetSCIMUserRequest extends Message<GetSCIMUserRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSCIMUserRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSCIMUserRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMUserRequest {
+    return new GetSCIMUserRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMUserRequest {
+    return new GetSCIMUserRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMUserRequest {
+    return new GetSCIMUserRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSCIMUserRequest | PlainMessage<GetSCIMUserRequest> | undefined, b: GetSCIMUserRequest | PlainMessage<GetSCIMUserRequest> | undefined): boolean {
+    return proto3.util.equals(GetSCIMUserRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSCIMUserResponse
+ */
+export class GetSCIMUserResponse extends Message<GetSCIMUserResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMUser scim_user = 1;
+   */
+  scimUser?: SCIMUser;
+
+  constructor(data?: PartialMessage<GetSCIMUserResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSCIMUserResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_user", kind: "message", T: SCIMUser },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMUserResponse {
+    return new GetSCIMUserResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMUserResponse {
+    return new GetSCIMUserResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMUserResponse {
+    return new GetSCIMUserResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSCIMUserResponse | PlainMessage<GetSCIMUserResponse> | undefined, b: GetSCIMUserResponse | PlainMessage<GetSCIMUserResponse> | undefined): boolean {
+    return proto3.util.equals(GetSCIMUserResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMGroupsRequest
+ */
+export class ListSCIMGroupsRequest extends Message<ListSCIMGroupsRequest> {
+  /**
+   * @generated from field: string scim_directory_id = 1;
+   */
+  scimDirectoryId = "";
+
+  /**
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: string organization_external_id = 3;
+   */
+  organizationExternalId = "";
+
+  /**
+   * @generated from field: string page_token = 4;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMGroupsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMGroupsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "organization_external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMGroupsRequest {
+    return new ListSCIMGroupsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMGroupsRequest {
+    return new ListSCIMGroupsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMGroupsRequest {
+    return new ListSCIMGroupsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMGroupsRequest | PlainMessage<ListSCIMGroupsRequest> | undefined, b: ListSCIMGroupsRequest | PlainMessage<ListSCIMGroupsRequest> | undefined): boolean {
+    return proto3.util.equals(ListSCIMGroupsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMGroupsResponse
+ */
+export class ListSCIMGroupsResponse extends Message<ListSCIMGroupsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SCIMGroup scim_groups = 1;
+   */
+  scimGroups: SCIMGroup[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMGroupsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMGroupsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_groups", kind: "message", T: SCIMGroup, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMGroupsResponse {
+    return new ListSCIMGroupsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMGroupsResponse {
+    return new ListSCIMGroupsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMGroupsResponse {
+    return new ListSCIMGroupsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMGroupsResponse | PlainMessage<ListSCIMGroupsResponse> | undefined, b: ListSCIMGroupsResponse | PlainMessage<ListSCIMGroupsResponse> | undefined): boolean {
+    return proto3.util.equals(ListSCIMGroupsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSCIMGroupRequest
+ */
+export class GetSCIMGroupRequest extends Message<GetSCIMGroupRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSCIMGroupRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSCIMGroupRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMGroupRequest {
+    return new GetSCIMGroupRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMGroupRequest {
+    return new GetSCIMGroupRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMGroupRequest {
+    return new GetSCIMGroupRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSCIMGroupRequest | PlainMessage<GetSCIMGroupRequest> | undefined, b: GetSCIMGroupRequest | PlainMessage<GetSCIMGroupRequest> | undefined): boolean {
+    return proto3.util.equals(GetSCIMGroupRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSCIMGroupResponse
+ */
+export class GetSCIMGroupResponse extends Message<GetSCIMGroupResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMGroup scim_group = 1;
+   */
+  scimGroup?: SCIMGroup;
+
+  constructor(data?: PartialMessage<GetSCIMGroupResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSCIMGroupResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_group", kind: "message", T: SCIMGroup },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMGroupResponse {
+    return new GetSCIMGroupResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMGroupResponse {
+    return new GetSCIMGroupResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMGroupResponse {
+    return new GetSCIMGroupResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSCIMGroupResponse | PlainMessage<GetSCIMGroupResponse> | undefined, b: GetSCIMGroupResponse | PlainMessage<GetSCIMGroupResponse> | undefined): boolean {
+    return proto3.util.equals(GetSCIMGroupResponse, a, b);
   }
 }
 

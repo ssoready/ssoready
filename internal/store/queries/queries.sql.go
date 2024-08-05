@@ -369,7 +369,7 @@ func (q *Queries) AuthGetSAMLOAuthClientWithSecret(ctx context.Context, arg Auth
 }
 
 const authGetSCIMDirectory = `-- name: AuthGetSCIMDirectory :one
-select id, organization_id, bearer_token_sha256
+select id, organization_id, bearer_token_sha256, is_primary
 from scim_directories
 where id = $1
 `
@@ -377,12 +377,17 @@ where id = $1
 func (q *Queries) AuthGetSCIMDirectory(ctx context.Context, id uuid.UUID) (ScimDirectory, error) {
 	row := q.db.QueryRow(ctx, authGetSCIMDirectory, id)
 	var i ScimDirectory
-	err := row.Scan(&i.ID, &i.OrganizationID, &i.BearerTokenSha256)
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+	)
 	return i, err
 }
 
 const authGetSCIMDirectoryByIDAndBearerToken = `-- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
-select id, organization_id, bearer_token_sha256
+select id, organization_id, bearer_token_sha256, is_primary
 from scim_directories
 where id = $1
   and bearer_token_sha256 = $2
@@ -396,7 +401,12 @@ type AuthGetSCIMDirectoryByIDAndBearerTokenParams struct {
 func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, arg AuthGetSCIMDirectoryByIDAndBearerTokenParams) (ScimDirectory, error) {
 	row := q.db.QueryRow(ctx, authGetSCIMDirectoryByIDAndBearerToken, arg.ID, arg.BearerTokenSha256)
 	var i ScimDirectory
-	err := row.Scan(&i.ID, &i.OrganizationID, &i.BearerTokenSha256)
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+	)
 	return i, err
 }
 
@@ -1366,6 +1376,48 @@ func (q *Queries) GetPrimarySAMLConnectionIDByOrganizationID(ctx context.Context
 	return id, err
 }
 
+const getPrimarySCIMDirectoryIDByOrganizationExternalID = `-- name: GetPrimarySCIMDirectoryIDByOrganizationExternalID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.external_id = $2
+  and scim_directories.is_primary = true
+`
+
+type GetPrimarySCIMDirectoryIDByOrganizationExternalIDParams struct {
+	EnvironmentID uuid.UUID
+	ExternalID    *string
+}
+
+func (q *Queries) GetPrimarySCIMDirectoryIDByOrganizationExternalID(ctx context.Context, arg GetPrimarySCIMDirectoryIDByOrganizationExternalIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getPrimarySCIMDirectoryIDByOrganizationExternalID, arg.EnvironmentID, arg.ExternalID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getPrimarySCIMDirectoryIDByOrganizationID = `-- name: GetPrimarySCIMDirectoryIDByOrganizationID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.id = $2
+  and scim_directories.is_primary = true
+`
+
+type GetPrimarySCIMDirectoryIDByOrganizationIDParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetPrimarySCIMDirectoryIDByOrganizationID(ctx context.Context, arg GetPrimarySCIMDirectoryIDByOrganizationIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getPrimarySCIMDirectoryIDByOrganizationID, arg.EnvironmentID, arg.ID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
 select saml_flows.id             as saml_flow_id,
        saml_flows.email,
@@ -1556,6 +1608,53 @@ func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirec
 	var auth_url *string
 	err := row.Scan(&auth_url)
 	return auth_url, err
+}
+
+const getSCIMDirectoryByIDAndEnvironmentID = `-- name: GetSCIMDirectoryByIDAndEnvironmentID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_directories.id = $2
+`
+
+type GetSCIMDirectoryByIDAndEnvironmentIDParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetSCIMDirectoryByIDAndEnvironmentID(ctx context.Context, arg GetSCIMDirectoryByIDAndEnvironmentIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getSCIMDirectoryByIDAndEnvironmentID, arg.EnvironmentID, arg.ID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getSCIMUser = `-- name: GetSCIMUser :one
+select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_users.id = $2
+`
+
+type GetSCIMUserParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetSCIMUser(ctx context.Context, arg GetSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, getSCIMUser, arg.EnvironmentID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
 }
 
 const listAPIKeys = `-- name: ListAPIKeys :many
@@ -1930,6 +2029,47 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 	for rows.Next() {
 		var i SamlOauthClient
 		if err := rows.Scan(&i.ID, &i.EnvironmentID, &i.ClientSecretSha256); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSCIMUsers = `-- name: ListSCIMUsers :many
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type ListSCIMUsersParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+}
+
+func (q *Queries) ListSCIMUsers(ctx context.Context, arg ListSCIMUsersParams) ([]ScimUser, error) {
+	rows, err := q.db.Query(ctx, listSCIMUsers, arg.ScimDirectoryID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimUser
+	for rows.Next() {
+		var i ScimUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Email,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

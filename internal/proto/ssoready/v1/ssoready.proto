@@ -23,6 +23,30 @@ service SSOReadyService {
     };
   };
 
+  rpc ListSCIMUsers(ListSCIMUsersRequest) returns (ListSCIMUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/users"
+    };
+  };
+
+  rpc GetSCIMUser(GetSCIMUserRequest) returns (GetSCIMUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/users/{id=*}"
+    };
+  };
+
+  rpc ListSCIMGroups(ListSCIMGroupsRequest) returns (ListSCIMGroupsResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/groups"
+    };
+  };
+
+  rpc GetSCIMGroup(GetSCIMGroupRequest) returns (GetSCIMGroupResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/groups/{id=*}"
+    };
+  };
+
   rpc VerifyEmail(VerifyEmailRequest) returns (google.protobuf.Empty);
   rpc SignIn(SignInRequest) returns (SignInResponse);
   rpc SignOut(SignOutRequest) returns (SignOutResponse);
@@ -165,6 +189,7 @@ message SCIMDirectory {}
 message SCIMUser {
   string id = 1;
   string scim_directory_id = 2;
+  string organization_id = 6;
   string email = 3;
   bool deleted = 4;
   google.protobuf.Struct attributes = 5;
@@ -173,6 +198,7 @@ message SCIMUser {
 message SCIMGroup {
   string id = 1;
   string scim_directory_id = 2;
+  string organization_id = 5;
   string display_name = 3;
   google.protobuf.Struct attributes = 4;
 }
@@ -199,6 +225,47 @@ message RedeemSAMLAccessCodeResponse {
   string organization_id = 4;
   string organization_external_id = 5;
   string saml_flow_id = 6;
+}
+
+message ListSCIMUsersRequest {
+  string scim_directory_id = 1;
+  string organization_id = 2;
+  string organization_external_id = 3;
+  string scim_group_id = 4;
+  string page_token = 5;
+}
+
+message ListSCIMUsersResponse {
+  repeated SCIMUser scim_users = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMUserRequest {
+  string id = 1;
+}
+
+message GetSCIMUserResponse {
+  SCIMUser scim_user = 1;
+}
+
+message ListSCIMGroupsRequest {
+  string scim_directory_id = 1;
+  string organization_id = 2;
+  string organization_external_id = 3;
+  string page_token = 4;
+}
+
+message ListSCIMGroupsResponse {
+  repeated SCIMGroup scim_groups = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMGroupRequest {
+  string id = 1;
+}
+
+message GetSCIMGroupResponse {
+  SCIMGroup scim_group = 1;
 }
 
 message VerifyEmailRequest {

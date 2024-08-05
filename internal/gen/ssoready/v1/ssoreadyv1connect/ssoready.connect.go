@@ -40,6 +40,18 @@ const (
 	// SSOReadyServiceRedeemSAMLAccessCodeProcedure is the fully-qualified name of the SSOReadyService's
 	// RedeemSAMLAccessCode RPC.
 	SSOReadyServiceRedeemSAMLAccessCodeProcedure = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	// SSOReadyServiceListSCIMUsersProcedure is the fully-qualified name of the SSOReadyService's
+	// ListSCIMUsers RPC.
+	SSOReadyServiceListSCIMUsersProcedure = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
+	// SSOReadyServiceGetSCIMUserProcedure is the fully-qualified name of the SSOReadyService's
+	// GetSCIMUser RPC.
+	SSOReadyServiceGetSCIMUserProcedure = "/ssoready.v1.SSOReadyService/GetSCIMUser"
+	// SSOReadyServiceListSCIMGroupsProcedure is the fully-qualified name of the SSOReadyService's
+	// ListSCIMGroups RPC.
+	SSOReadyServiceListSCIMGroupsProcedure = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
+	// SSOReadyServiceGetSCIMGroupProcedure is the fully-qualified name of the SSOReadyService's
+	// GetSCIMGroup RPC.
+	SSOReadyServiceGetSCIMGroupProcedure = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
 	// SSOReadyServiceVerifyEmailProcedure is the fully-qualified name of the SSOReadyService's
 	// VerifyEmail RPC.
 	SSOReadyServiceVerifyEmailProcedure = "/ssoready.v1.SSOReadyService/VerifyEmail"
@@ -163,6 +175,10 @@ const (
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
+	ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error)
+	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
+	ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error)
+	GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error)
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error)
@@ -223,6 +239,26 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		redeemSAMLAccessCode: connect.NewClient[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse](
 			httpClient,
 			baseURL+SSOReadyServiceRedeemSAMLAccessCodeProcedure,
+			opts...,
+		),
+		listSCIMUsers: connect.NewClient[v1.ListSCIMUsersRequest, v1.ListSCIMUsersResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListSCIMUsersProcedure,
+			opts...,
+		),
+		getSCIMUser: connect.NewClient[v1.GetSCIMUserRequest, v1.GetSCIMUserResponse](
+			httpClient,
+			baseURL+SSOReadyServiceGetSCIMUserProcedure,
+			opts...,
+		),
+		listSCIMGroups: connect.NewClient[v1.ListSCIMGroupsRequest, v1.ListSCIMGroupsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceListSCIMGroupsProcedure,
+			opts...,
+		),
+		getSCIMGroup: connect.NewClient[v1.GetSCIMGroupRequest, v1.GetSCIMGroupResponse](
+			httpClient,
+			baseURL+SSOReadyServiceGetSCIMGroupProcedure,
 			opts...,
 		),
 		verifyEmail: connect.NewClient[v1.VerifyEmailRequest, emptypb.Empty](
@@ -432,6 +468,10 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 type sSOReadyServiceClient struct {
 	getSAMLRedirectURL             *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
 	redeemSAMLAccessCode           *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	listSCIMUsers                  *connect.Client[v1.ListSCIMUsersRequest, v1.ListSCIMUsersResponse]
+	getSCIMUser                    *connect.Client[v1.GetSCIMUserRequest, v1.GetSCIMUserResponse]
+	listSCIMGroups                 *connect.Client[v1.ListSCIMGroupsRequest, v1.ListSCIMGroupsResponse]
+	getSCIMGroup                   *connect.Client[v1.GetSCIMGroupRequest, v1.GetSCIMGroupResponse]
 	verifyEmail                    *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
 	signIn                         *connect.Client[v1.SignInRequest, v1.SignInResponse]
 	signOut                        *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
@@ -482,6 +522,26 @@ func (c *sSOReadyServiceClient) GetSAMLRedirectURL(ctx context.Context, req *con
 // RedeemSAMLAccessCode calls ssoready.v1.SSOReadyService.RedeemSAMLAccessCode.
 func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, req *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
 	return c.redeemSAMLAccessCode.CallUnary(ctx, req)
+}
+
+// ListSCIMUsers calls ssoready.v1.SSOReadyService.ListSCIMUsers.
+func (c *sSOReadyServiceClient) ListSCIMUsers(ctx context.Context, req *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error) {
+	return c.listSCIMUsers.CallUnary(ctx, req)
+}
+
+// GetSCIMUser calls ssoready.v1.SSOReadyService.GetSCIMUser.
+func (c *sSOReadyServiceClient) GetSCIMUser(ctx context.Context, req *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error) {
+	return c.getSCIMUser.CallUnary(ctx, req)
+}
+
+// ListSCIMGroups calls ssoready.v1.SSOReadyService.ListSCIMGroups.
+func (c *sSOReadyServiceClient) ListSCIMGroups(ctx context.Context, req *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error) {
+	return c.listSCIMGroups.CallUnary(ctx, req)
+}
+
+// GetSCIMGroup calls ssoready.v1.SSOReadyService.GetSCIMGroup.
+func (c *sSOReadyServiceClient) GetSCIMGroup(ctx context.Context, req *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error) {
+	return c.getSCIMGroup.CallUnary(ctx, req)
 }
 
 // VerifyEmail calls ssoready.v1.SSOReadyService.VerifyEmail.
@@ -688,6 +748,10 @@ func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, req 
 type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
+	ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error)
+	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
+	ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error)
+	GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error)
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
 	SignOut(context.Context, *connect.Request[v1.SignOutRequest]) (*connect.Response[v1.SignOutResponse], error)
@@ -744,6 +808,26 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceRedeemSAMLAccessCodeHandler := connect.NewUnaryHandler(
 		SSOReadyServiceRedeemSAMLAccessCodeProcedure,
 		svc.RedeemSAMLAccessCode,
+		opts...,
+	)
+	sSOReadyServiceListSCIMUsersHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListSCIMUsersProcedure,
+		svc.ListSCIMUsers,
+		opts...,
+	)
+	sSOReadyServiceGetSCIMUserHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetSCIMUserProcedure,
+		svc.GetSCIMUser,
+		opts...,
+	)
+	sSOReadyServiceListSCIMGroupsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceListSCIMGroupsProcedure,
+		svc.ListSCIMGroups,
+		opts...,
+	)
+	sSOReadyServiceGetSCIMGroupHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetSCIMGroupProcedure,
+		svc.GetSCIMGroup,
 		opts...,
 	)
 	sSOReadyServiceVerifyEmailHandler := connect.NewUnaryHandler(
@@ -952,6 +1036,14 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetSAMLRedirectURLHandler.ServeHTTP(w, r)
 		case SSOReadyServiceRedeemSAMLAccessCodeProcedure:
 			sSOReadyServiceRedeemSAMLAccessCodeHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListSCIMUsersProcedure:
+			sSOReadyServiceListSCIMUsersHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetSCIMUserProcedure:
+			sSOReadyServiceGetSCIMUserHandler.ServeHTTP(w, r)
+		case SSOReadyServiceListSCIMGroupsProcedure:
+			sSOReadyServiceListSCIMGroupsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetSCIMGroupProcedure:
+			sSOReadyServiceGetSCIMGroupHandler.ServeHTTP(w, r)
 		case SSOReadyServiceVerifyEmailProcedure:
 			sSOReadyServiceVerifyEmailHandler.ServeHTTP(w, r)
 		case SSOReadyServiceSignInProcedure:
@@ -1047,6 +1139,22 @@ func (UnimplementedSSOReadyServiceHandler) GetSAMLRedirectURL(context.Context, *
 
 func (UnimplementedSSOReadyServiceHandler) RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemSAMLAccessCode is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSCIMUsers is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSCIMUser is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSCIMGroups is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSCIMGroup is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error) {

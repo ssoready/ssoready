@@ -532,3 +532,42 @@ returning *;
 insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
 values ($1, $2, $3, $4)
 returning *;
+
+-- name: GetSCIMDirectoryByIDAndEnvironmentID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_directories.id = $2;
+
+-- name: GetPrimarySCIMDirectoryIDByOrganizationID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.id = $2
+  and scim_directories.is_primary = true;
+
+-- name: GetPrimarySCIMDirectoryIDByOrganizationExternalID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.external_id = $2
+  and scim_directories.is_primary = true;
+
+-- name: ListSCIMUsers :many
+select *
+from scim_users
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3;
+
+-- name: GetSCIMUser :one
+select scim_users.*
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_users.id = $2;
