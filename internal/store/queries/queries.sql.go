@@ -1630,6 +1630,32 @@ func (q *Queries) GetSCIMDirectoryByIDAndEnvironmentID(ctx context.Context, arg 
 	return id, err
 }
 
+const getSCIMGroup = `-- name: GetSCIMGroup :one
+select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.attributes
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_groups.id = $2
+`
+
+type GetSCIMGroupParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetSCIMGroup(ctx context.Context, arg GetSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, getSCIMGroup, arg.EnvironmentID, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const getSCIMUser = `-- name: GetSCIMUser :one
 select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
 from scim_users
@@ -2029,6 +2055,46 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 	for rows.Next() {
 		var i SamlOauthClient
 		if err := rows.Scan(&i.ID, &i.EnvironmentID, &i.ClientSecretSha256); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSCIMGroups = `-- name: ListSCIMGroups :many
+select id, scim_directory_id, display_name, attributes
+from scim_groups
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type ListSCIMGroupsParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+}
+
+func (q *Queries) ListSCIMGroups(ctx context.Context, arg ListSCIMGroupsParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, listSCIMGroups, arg.ScimDirectoryID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Attributes,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

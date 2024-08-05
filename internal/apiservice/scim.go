@@ -26,9 +26,19 @@ func (s *Service) GetSCIMUser(ctx context.Context, req *connect.Request[ssoready
 }
 
 func (s *Service) ListSCIMGroups(ctx context.Context, req *connect.Request[ssoreadyv1.ListSCIMGroupsRequest]) (*connect.Response[ssoreadyv1.ListSCIMGroupsResponse], error) {
-	panic("todo")
+	res, err := s.Store.ListSCIMGroups(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(res), nil
 }
 
 func (s *Service) GetSCIMGroup(ctx context.Context, req *connect.Request[ssoreadyv1.GetSCIMGroupRequest]) (*connect.Response[ssoreadyv1.GetSCIMGroupResponse], error) {
-	panic("todo")
+	res, err := s.Store.GetSCIMGroup(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(res), nil
 }
