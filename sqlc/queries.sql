@@ -564,6 +564,15 @@ where scim_directory_id = $1
 order by id
 limit $3;
 
+-- name: ListSCIMUsersInSCIMGroup :many
+select *
+from scim_users
+where scim_users.scim_directory_id = $1
+  and scim_users.id >= $2
+  and exists(select * from scim_user_group_memberships where scim_group_id = $4 and scim_user_id = scim_users.id)
+order by scim_users.id
+limit $3;
+
 -- name: GetSCIMUser :one
 select scim_users.*
 from scim_users

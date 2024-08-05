@@ -79,13 +79,33 @@ func (s *Store) ListSCIMUsers(ctx context.Context, req *ssoreadyv1.ListSCIMUsers
 	}
 
 	limit := 10
-	qSCIMUsers, err := s.q.ListSCIMUsers(ctx, queries.ListSCIMUsersParams{
-		ScimDirectoryID: scimDirID,
-		ID:              startID,
-		Limit:           int32(limit + 1),
-	})
-	if err != nil {
-		return nil, err
+	var qSCIMUsers []queries.ScimUser
+	if req.ScimGroupId != "" {
+		// list by group id
+		scimGroupID, err := idformat.SCIMGroup.Parse(req.ScimGroupId)
+		if err != nil {
+			return nil, fmt.Errorf("parse scim group id: %w", err)
+		}
+
+		qSCIMUsers, err = s.q.ListSCIMUsersInSCIMGroup(ctx, queries.ListSCIMUsersInSCIMGroupParams{
+			ScimDirectoryID: scimDirID,
+			ID:              startID,
+			Limit:           int32(limit + 1),
+			ScimGroupID:     scimGroupID,
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// plain list by scim dir id
+		qSCIMUsers, err = s.q.ListSCIMUsers(ctx, queries.ListSCIMUsersParams{
+			ScimDirectoryID: scimDirID,
+			ID:              startID,
+			Limit:           int32(limit + 1),
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if err := commit(); err != nil {

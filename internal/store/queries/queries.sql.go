@@ -2080,6 +2080,54 @@ func (q *Queries) ListSCIMUsers(ctx context.Context, arg ListSCIMUsersParams) ([
 	return items, nil
 }
 
+const listSCIMUsersInSCIMGroup = `-- name: ListSCIMUsersInSCIMGroup :many
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_users.scim_directory_id = $1
+  and scim_users.id >= $2
+  and exists(select id, scim_directory_id, scim_user_id, scim_group_id from scim_user_group_memberships where scim_group_id = $4 and scim_user_id = scim_users.id)
+order by scim_users.id
+limit $3
+`
+
+type ListSCIMUsersInSCIMGroupParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+	ScimGroupID     uuid.UUID
+}
+
+func (q *Queries) ListSCIMUsersInSCIMGroup(ctx context.Context, arg ListSCIMUsersInSCIMGroupParams) ([]ScimUser, error) {
+	rows, err := q.db.Query(ctx, listSCIMUsersInSCIMGroup,
+		arg.ScimDirectoryID,
+		arg.ID,
+		arg.Limit,
+		arg.ScimGroupID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimUser
+	for rows.Next() {
+		var i ScimUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Email,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const revokeAppSessionByID = `-- name: RevokeAppSessionByID :one
 update app_sessions
 set revoked = true
