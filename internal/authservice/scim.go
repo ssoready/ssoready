@@ -50,7 +50,17 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		})
 		if err != nil {
 			if errors.Is(err, store.ErrSCIMUserNotFound) {
-				w.WriteHeader(http.StatusNotFound)
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				if err := json.NewEncoder(w).Encode(scimListResponse{
+					TotalResults: 0,
+					ItemsPerPage: 1,
+					StartIndex:   1,
+					Schemas:      []string{"urn:ietf:params:scim:schemas:core:2.0:User"},
+					Resources:    []any{},
+				}); err != nil {
+					panic(err)
+				}
 				return
 			}
 
