@@ -602,3 +602,8 @@ from scim_groups
          join organizations on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_groups.id = $2;
+
+-- name: CreateSCIMDirectory :one
+insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
+values ($1, $2, $3, $4, $5)
+returning *;

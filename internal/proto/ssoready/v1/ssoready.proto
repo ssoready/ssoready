@@ -91,6 +91,8 @@ service SSOReadyService {
 
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
 
+  rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (SCIMDirectory);
+
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
   rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
   rpc AdminGetSAMLConnection(AdminGetSAMLConnectionRequest) returns (AdminGetSAMLConnectionResponse);
@@ -184,7 +186,13 @@ enum SAMLFlowStatus {
   SAML_FLOW_STATUS_SUCCEEDED = 3;
 }
 
-message SCIMDirectory {}
+message SCIMDirectory {
+  string id = 1;
+  string organization_id = 2;
+  bool primary = 3;
+  string scim_base_url = 4;
+  string client_bearer_token = 5;
+}
 
 message SCIMUser {
   string id = 1;
@@ -476,6 +484,10 @@ message ParseSAMLMetadataResponse {
   string idp_redirect_url = 1;
   string idp_certificate = 2;
   string idp_entity_id = 3;
+}
+
+message CreateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
 }
 
 message AdminRedeemOneTimeTokenRequest {

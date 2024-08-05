@@ -188,6 +188,7 @@ type ScimDirectory struct {
 	OrganizationID    uuid.UUID
 	BearerTokenSha256 []byte
 	IsPrimary         bool
+	ScimBaseUrl       string
 }
 
 type ScimGroup struct {

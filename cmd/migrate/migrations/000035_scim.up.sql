@@ -1,9 +1,10 @@
 create table scim_directories
 (
-    id                  uuid  not null primary key,
-    organization_id     uuid  not null references organizations (id),
-    bearer_token_sha256 bytea not null,
-    is_primary          bool  not null
+    id                  uuid    not null primary key,
+    organization_id     uuid    not null references organizations (id),
+    scim_base_url       varchar,
+    bearer_token_sha256 bytea   not null,
+    is_primary          bool    not null
 );
 
 create table scim_users

@@ -10,6 +10,7 @@ import {
   createAdminSetupURL,
   createOrganization,
   createSAMLConnection,
+  createSCIMDirectory,
   getEnvironment,
   getOrganization,
   getSAMLConnection,
@@ -44,6 +45,7 @@ import {
   Environment,
   Organization,
   SAMLConnection,
+  SCIMDirectory,
 } from "@/gen/ssoready/v1/ssoready_pb";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -272,6 +274,8 @@ export function ViewOrganizationPage() {
           )}
         </CardContent>
       </Card>
+
+      <OrganizationSCIMDirectoriesPage />
     </div>
   );
 }
@@ -384,5 +388,110 @@ function EditOrganizationAlertDialog({
         </Form>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function OrganizationSCIMDirectoriesPage() {
+  const { environmentId, organizationId } = useParams();
+  // const data: SCIMDirectory[] = []
+  // const { data: organization } = useQuery(getOrganization, {
+  //   id: organizationId,
+  // });
+  // const {
+  //   data: listSAMLConnectionResponses,
+  //   fetchNextPage,
+  //   hasNextPage,
+  // } = useInfiniteQuery(
+  //     listscimdi,
+  //     { organizationId, pageToken: "" },
+  //     {
+  //       pageParamKey: "pageToken",
+  //       getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+  //     },
+  // );
+
+  const createSCIMDirectoryMutation = useMutation(createSCIMDirectory);
+  const navigate = useNavigate();
+  const handleCreateSCIMDirectory = useCallback(async () => {
+    const scimDirectory = await createSCIMDirectoryMutation.mutateAsync({
+      scimDirectory: {
+        organizationId,
+        primary: true,
+      },
+    });
+
+    toast("SCIM Directory has been created.");
+    navigate(
+      `/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectory.id}`,
+    );
+  }, [
+    // listSAMLConnectionResponses,
+    environmentId,
+    organizationId,
+    createSCIMDirectoryMutation,
+    navigate,
+  ]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col space-y-1.5">
+            <CardTitle>SCIM Directories</CardTitle>
+            <CardDescription>
+              SCIM Directories within this organization.
+            </CardDescription>
+          </div>
+
+          <Button variant="outline" onClick={handleCreateSCIMDirectory}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create SCIM directory
+          </Button>
+        </div>
+      </CardHeader>
+
+      {/*<CardContent>*/}
+      {/*  <Table>*/}
+      {/*    <TableHeader>*/}
+      {/*      <TableRow>*/}
+      {/*        <TableHead>SAML Connection ID</TableHead>*/}
+      {/*        <TableHead>IDP Redirect URL</TableHead>*/}
+      {/*        <TableHead>IDP Entity ID</TableHead>*/}
+      {/*      </TableRow>*/}
+      {/*    </TableHeader>*/}
+      {/*    <TableBody>*/}
+      {/*      {listSAMLConnectionResponses?.pages*/}
+      {/*        .flatMap((page) => page.samlConnections)*/}
+      {/*        ?.map((samlConn) => (*/}
+      {/*          <TableRow key={samlConn.id}>*/}
+      {/*            <TableCell>*/}
+      {/*              <Link*/}
+      {/*                to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/saml-connections/${samlConn.id}`}*/}
+      {/*                className="underline underline-offset-4 decoration-muted-foreground"*/}
+      {/*              >*/}
+      {/*                {samlConn.id}*/}
+      {/*              </Link>*/}
+      {/*              {samlConn.primary && (*/}
+      {/*                <Badge className="ml-2">Primary</Badge>*/}
+      {/*              )}*/}
+      {/*            </TableCell>*/}
+      {/*            <TableCell className="max-w-[300px] truncate">*/}
+      {/*              {samlConn.idpRedirectUrl}*/}
+      {/*            </TableCell>*/}
+      {/*            <TableCell className="max-w-[300px] truncate">*/}
+      {/*              {samlConn.idpEntityId}*/}
+      {/*            </TableCell>*/}
+      {/*          </TableRow>*/}
+      {/*        ))}*/}
+      {/*    </TableBody>*/}
+      {/*  </Table>*/}
+
+      {/*  {hasNextPage && (*/}
+      {/*    <Button variant="secondary" onClick={() => fetchNextPage()}>*/}
+      {/*      Load more*/}
+      {/*    </Button>*/}
+      {/*  )}*/}
+      {/*</CardContent>*/}
+    </Card>
   );
 }

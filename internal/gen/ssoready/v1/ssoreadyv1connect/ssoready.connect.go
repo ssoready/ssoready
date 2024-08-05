@@ -151,6 +151,9 @@ const (
 	// SSOReadyServiceParseSAMLMetadataProcedure is the fully-qualified name of the SSOReadyService's
 	// ParseSAMLMetadata RPC.
 	SSOReadyServiceParseSAMLMetadataProcedure = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	// SSOReadyServiceCreateSCIMDirectoryProcedure is the fully-qualified name of the SSOReadyService's
+	// CreateSCIMDirectory RPC.
+	SSOReadyServiceCreateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
 	// SSOReadyServiceAdminRedeemOneTimeTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminRedeemOneTimeToken RPC.
 	SSOReadyServiceAdminRedeemOneTimeTokenProcedure = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
@@ -213,6 +216,7 @@ type SSOReadyServiceClient interface {
 	ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error)
 	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
+	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
@@ -431,6 +435,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceParseSAMLMetadataProcedure,
 			opts...,
 		),
+		createSCIMDirectory: connect.NewClient[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory](
+			httpClient,
+			baseURL+SSOReadyServiceCreateSCIMDirectoryProcedure,
+			opts...,
+		),
 		adminRedeemOneTimeToken: connect.NewClient[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAdminRedeemOneTimeTokenProcedure,
@@ -506,6 +515,7 @@ type sSOReadyServiceClient struct {
 	listSAMLFlows                  *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
 	getSAMLFlow                    *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
 	parseSAMLMetadata              *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
+	createSCIMDirectory            *connect.Client[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory]
 	adminRedeemOneTimeToken        *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
 	adminListSAMLConnections       *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
 	adminGetSAMLConnection         *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
@@ -714,6 +724,11 @@ func (c *sSOReadyServiceClient) ParseSAMLMetadata(ctx context.Context, req *conn
 	return c.parseSAMLMetadata.CallUnary(ctx, req)
 }
 
+// CreateSCIMDirectory calls ssoready.v1.SSOReadyService.CreateSCIMDirectory.
+func (c *sSOReadyServiceClient) CreateSCIMDirectory(ctx context.Context, req *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
+	return c.createSCIMDirectory.CallUnary(ctx, req)
+}
+
 // AdminRedeemOneTimeToken calls ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken.
 func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, req *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error) {
 	return c.adminRedeemOneTimeToken.CallUnary(ctx, req)
@@ -786,6 +801,7 @@ type SSOReadyServiceHandler interface {
 	ListSAMLFlows(context.Context, *connect.Request[v1.ListSAMLFlowsRequest]) (*connect.Response[v1.ListSAMLFlowsResponse], error)
 	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
+	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
@@ -1000,6 +1016,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.ParseSAMLMetadata,
 		opts...,
 	)
+	sSOReadyServiceCreateSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceCreateSCIMDirectoryProcedure,
+		svc.CreateSCIMDirectory,
+		opts...,
+	)
 	sSOReadyServiceAdminRedeemOneTimeTokenHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAdminRedeemOneTimeTokenProcedure,
 		svc.AdminRedeemOneTimeToken,
@@ -1112,6 +1133,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetSAMLFlowHandler.ServeHTTP(w, r)
 		case SSOReadyServiceParseSAMLMetadataProcedure:
 			sSOReadyServiceParseSAMLMetadataHandler.ServeHTTP(w, r)
+		case SSOReadyServiceCreateSCIMDirectoryProcedure:
+			sSOReadyServiceCreateSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminRedeemOneTimeTokenProcedure:
 			sSOReadyServiceAdminRedeemOneTimeTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminListSAMLConnectionsProcedure:
@@ -1291,6 +1314,10 @@ func (UnimplementedSSOReadyServiceHandler) GetSAMLFlow(context.Context, *connect
 
 func (UnimplementedSSOReadyServiceHandler) ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ParseSAMLMetadata is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateSCIMDirectory is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error) {

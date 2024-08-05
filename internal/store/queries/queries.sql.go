@@ -370,7 +370,7 @@ func (q *Queries) AuthGetSAMLOAuthClientWithSecret(ctx context.Context, arg Auth
 }
 
 const authGetSCIMDirectory = `-- name: AuthGetSCIMDirectory :one
-select id, organization_id, bearer_token_sha256, is_primary
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
 from scim_directories
 where id = $1
 `
@@ -383,12 +383,13 @@ func (q *Queries) AuthGetSCIMDirectory(ctx context.Context, id uuid.UUID) (ScimD
 		&i.OrganizationID,
 		&i.BearerTokenSha256,
 		&i.IsPrimary,
+		&i.ScimBaseUrl,
 	)
 	return i, err
 }
 
 const authGetSCIMDirectoryByIDAndBearerToken = `-- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
-select id, organization_id, bearer_token_sha256, is_primary
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
 from scim_directories
 where id = $1
   and bearer_token_sha256 = $2
@@ -407,6 +408,7 @@ func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, ar
 		&i.OrganizationID,
 		&i.BearerTokenSha256,
 		&i.IsPrimary,
+		&i.ScimBaseUrl,
 	)
 	return i, err
 }
@@ -1009,6 +1011,39 @@ func (q *Queries) CreateSAMLOAuthClient(ctx context.Context, arg CreateSAMLOAuth
 	row := q.db.QueryRow(ctx, createSAMLOAuthClient, arg.ID, arg.EnvironmentID, arg.ClientSecretSha256)
 	var i SamlOauthClient
 	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ClientSecretSha256)
+	return i, err
+}
+
+const createSCIMDirectory = `-- name: CreateSCIMDirectory :one
+insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
+values ($1, $2, $3, $4, $5)
+returning id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+`
+
+type CreateSCIMDirectoryParams struct {
+	ID                uuid.UUID
+	OrganizationID    uuid.UUID
+	BearerTokenSha256 []byte
+	IsPrimary         bool
+	ScimBaseUrl       string
+}
+
+func (q *Queries) CreateSCIMDirectory(ctx context.Context, arg CreateSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, createSCIMDirectory,
+		arg.ID,
+		arg.OrganizationID,
+		arg.BearerTokenSha256,
+		arg.IsPrimary,
+		arg.ScimBaseUrl,
+	)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
 	return i, err
 }
 

@@ -557,6 +557,31 @@ export class SAMLFlow extends Message<SAMLFlow> {
  * @generated from message ssoready.v1.SCIMDirectory
  */
 export class SCIMDirectory extends Message<SCIMDirectory> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string organization_id = 2;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: bool primary = 3;
+   */
+  primary = false;
+
+  /**
+   * @generated from field: string scim_base_url = 4;
+   */
+  scimBaseUrl = "";
+
+  /**
+   * @generated from field: string client_bearer_token = 5;
+   */
+  clientBearerToken = "";
+
   constructor(data?: PartialMessage<SCIMDirectory>) {
     super();
     proto3.util.initPartial(data, this);
@@ -565,6 +590,11 @@ export class SCIMDirectory extends Message<SCIMDirectory> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "ssoready.v1.SCIMDirectory";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "primary", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 4, name: "scim_base_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "client_bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SCIMDirectory {
@@ -599,11 +629,6 @@ export class SCIMUser extends Message<SCIMUser> {
   scimDirectoryId = "";
 
   /**
-   * @generated from field: string organization_id = 6;
-   */
-  organizationId = "";
-
-  /**
    * @generated from field: string email = 3;
    */
   email = "";
@@ -628,7 +653,6 @@ export class SCIMUser extends Message<SCIMUser> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "deleted", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 5, name: "attributes", kind: "message", T: Struct },
@@ -666,14 +690,14 @@ export class SCIMGroup extends Message<SCIMGroup> {
   scimDirectoryId = "";
 
   /**
-   * @generated from field: string organization_id = 5;
-   */
-  organizationId = "";
-
-  /**
    * @generated from field: string display_name = 3;
    */
   displayName = "";
+
+  /**
+   * @generated from field: bool deleted = 6;
+   */
+  deleted = false;
 
   /**
    * @generated from field: google.protobuf.Struct attributes = 4;
@@ -690,8 +714,8 @@ export class SCIMGroup extends Message<SCIMGroup> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "deleted", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 4, name: "attributes", kind: "message", T: Struct },
   ]);
 
@@ -3145,6 +3169,43 @@ export class ParseSAMLMetadataResponse extends Message<ParseSAMLMetadataResponse
 
   static equals(a: ParseSAMLMetadataResponse | PlainMessage<ParseSAMLMetadataResponse> | undefined, b: ParseSAMLMetadataResponse | PlainMessage<ParseSAMLMetadataResponse> | undefined): boolean {
     return proto3.util.equals(ParseSAMLMetadataResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSCIMDirectoryRequest
+ */
+export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryRequest> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<CreateSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSCIMDirectoryRequest {
+    return new CreateSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryRequest {
+    return new CreateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryRequest {
+    return new CreateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSCIMDirectoryRequest | PlainMessage<CreateSCIMDirectoryRequest> | undefined, b: CreateSCIMDirectoryRequest | PlainMessage<CreateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(CreateSCIMDirectoryRequest, a, b);
   }
 }
 

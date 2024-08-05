@@ -266,8 +266,9 @@ ALTER TABLE public.schema_migrations OWNER TO postgres;
 CREATE TABLE public.scim_directories (
     id uuid NOT NULL,
     organization_id uuid NOT NULL,
-    bearer_token_sha256 bytea NOT NULL,
-    is_primary boolean NOT NULL
+    bearer_token_sha256 bytea,
+    is_primary boolean NOT NULL,
+    scim_base_url character varying NOT NULL
 );
 
 
