@@ -194,6 +194,7 @@ type ScimGroup struct {
 	ID              uuid.UUID
 	ScimDirectoryID uuid.UUID
 	DisplayName     string
+	Deleted         bool
 	Attributes      []byte
 }
 

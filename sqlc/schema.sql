@@ -281,6 +281,7 @@ CREATE TABLE public.scim_groups (
     id uuid NOT NULL,
     scim_directory_id uuid NOT NULL,
     display_name character varying NOT NULL,
+    deleted boolean NOT NULL,
     attributes jsonb
 );
 

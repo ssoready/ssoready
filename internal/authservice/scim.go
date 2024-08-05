@@ -323,6 +323,7 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	displayName := resource["displayName"].(string)
 	delete(resource, "schemas")
+	delete(resource, "displayName")
 	delete(resource, "members")
 
 	// at this point, all remaining properties are user attributes
@@ -360,6 +361,21 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
+}
+
+func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
+	scimGroupID := mux.Vars(r)["scim_group_id"]
+
+	if err := s.Store.AuthDeleteSCIMGroup(ctx, &store.AuthDeleteSCIMGroupRequest{
+		SCIMDirectoryID: scimDirectoryID,
+		SCIMGroupID:     scimGroupID,
+	}); err != nil {
+		panic(err)
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {

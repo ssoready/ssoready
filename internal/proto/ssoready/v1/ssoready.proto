@@ -189,7 +189,6 @@ message SCIMDirectory {}
 message SCIMUser {
   string id = 1;
   string scim_directory_id = 2;
-  string organization_id = 6;
   string email = 3;
   bool deleted = 4;
   google.protobuf.Struct attributes = 5;
@@ -198,8 +197,8 @@ message SCIMUser {
 message SCIMGroup {
   string id = 1;
   string scim_directory_id = 2;
-  string organization_id = 5;
   string display_name = 3;
+  bool deleted = 6;
   google.protobuf.Struct attributes = 4;
 }
 

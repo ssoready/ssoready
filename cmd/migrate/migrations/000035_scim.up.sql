@@ -22,6 +22,7 @@ create table scim_groups
     id                uuid    not null primary key,
     scim_directory_id uuid    not null references scim_directories (id),
     display_name      varchar not null,
+    deleted           bool    not null,
     attributes        jsonb
 );
 

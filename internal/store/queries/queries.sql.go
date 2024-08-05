@@ -134,7 +134,7 @@ func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.U
 const authCreateSCIMGroup = `-- name: AuthCreateSCIMGroup :one
 insert into scim_groups (id, scim_directory_id, display_name, attributes)
 values ($1, $2, $3, $4)
-returning id, scim_directory_id, display_name, attributes
+returning id, scim_directory_id, display_name, deleted, attributes
 `
 
 type AuthCreateSCIMGroupParams struct {
@@ -156,6 +156,7 @@ func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGro
 		&i.ID,
 		&i.ScimDirectoryID,
 		&i.DisplayName,
+		&i.Deleted,
 		&i.Attributes,
 	)
 	return i, err
@@ -411,7 +412,7 @@ func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, ar
 }
 
 const authGetSCIMGroup = `-- name: AuthGetSCIMGroup :one
-select id, scim_directory_id, display_name, attributes
+select id, scim_directory_id, display_name, deleted, attributes
 from scim_groups
 where scim_directory_id = $1
   and id = $2
@@ -429,6 +430,7 @@ func (q *Queries) AuthGetSCIMGroup(ctx context.Context, arg AuthGetSCIMGroupPara
 		&i.ID,
 		&i.ScimDirectoryID,
 		&i.DisplayName,
+		&i.Deleted,
 		&i.Attributes,
 	)
 	return i, err
@@ -556,6 +558,26 @@ func (q *Queries) AuthListSCIMUsers(ctx context.Context, arg AuthListSCIMUsersPa
 		return nil, err
 	}
 	return items, nil
+}
+
+const authMarkSCIMGroupDeleted = `-- name: AuthMarkSCIMGroupDeleted :one
+update scim_groups
+set deleted = true
+where id = $1
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+func (q *Queries) AuthMarkSCIMGroupDeleted(ctx context.Context, id uuid.UUID) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authMarkSCIMGroupDeleted, id)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
 }
 
 const authUpdateSCIMUser = `-- name: AuthUpdateSCIMUser :one
@@ -1631,7 +1653,7 @@ func (q *Queries) GetSCIMDirectoryByIDAndEnvironmentID(ctx context.Context, arg 
 }
 
 const getSCIMGroup = `-- name: GetSCIMGroup :one
-select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.attributes
+select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
 from scim_groups
          join scim_directories on scim_groups.scim_directory_id = scim_directories.id
          join organizations on scim_directories.organization_id = organizations.id
@@ -1651,6 +1673,7 @@ func (q *Queries) GetSCIMGroup(ctx context.Context, arg GetSCIMGroupParams) (Sci
 		&i.ID,
 		&i.ScimDirectoryID,
 		&i.DisplayName,
+		&i.Deleted,
 		&i.Attributes,
 	)
 	return i, err
@@ -2066,7 +2089,7 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 }
 
 const listSCIMGroups = `-- name: ListSCIMGroups :many
-select id, scim_directory_id, display_name, attributes
+select id, scim_directory_id, display_name, deleted, attributes
 from scim_groups
 where scim_directory_id = $1
   and id >= $2
@@ -2093,6 +2116,7 @@ func (q *Queries) ListSCIMGroups(ctx context.Context, arg ListSCIMGroupsParams) 
 			&i.ID,
 			&i.ScimDirectoryID,
 			&i.DisplayName,
+			&i.Deleted,
 			&i.Attributes,
 		); err != nil {
 			return nil, err
