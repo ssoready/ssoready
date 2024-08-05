@@ -234,6 +234,109 @@ func (s *Store) AuthUpdateSCIMUser(ctx context.Context, req *AuthUpdateSCIMUserR
 	}, nil
 }
 
+type AuthGetSCIMGroupRequest struct {
+	SCIMDirectoryID string
+	SCIMGroupID     string
+}
+
+func (s *Store) AuthGetSCIMGroup(ctx context.Context, req *AuthGetSCIMGroupRequest) (*ssoreadyv1.SCIMGroup, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	scimGroupID, err := idformat.SCIMGroup.Parse(req.SCIMGroupID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim group id: %w", err)
+	}
+
+	qSCIMGroup, err := s.q.AuthGetSCIMGroup(ctx, queries.AuthGetSCIMGroupParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimGroupID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get scim group: %w", err)
+	}
+
+	return parseSCIMGroup(qSCIMGroup), nil
+}
+
+type AuthCreateSCIMGroupRequest struct {
+	SCIMGroup         *ssoreadyv1.SCIMGroup
+	MemberSCIMUserIDs []string
+}
+
+type AuthCreateSCIMGroupResponse struct {
+	SCIMGroup         *ssoreadyv1.SCIMGroup
+	MemberSCIMUserIDs []string
+}
+
+func (s *Store) AuthCreateSCIMGroup(ctx context.Context, req *AuthCreateSCIMGroupRequest) (*AuthCreateSCIMGroupResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMGroup.ScimDirectoryId)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	// check every member user belongs to same directory as group does
+	var scimUserIDs []uuid.UUID
+	for _, scimUserID := range req.MemberSCIMUserIDs {
+		scimUserID, err := idformat.SCIMUser.Parse(scimUserID)
+		if err != nil {
+			return nil, fmt.Errorf("parse scim user id: %w", err)
+		}
+
+		if _, err := q.AuthGetSCIMUser(ctx, queries.AuthGetSCIMUserParams{
+			ScimDirectoryID: scimDirID,
+			ID:              scimUserID,
+		}); err != nil {
+			return nil, fmt.Errorf("get scim user: %w", err)
+		}
+
+		scimUserIDs = append(scimUserIDs, scimUserID)
+	}
+
+	attrs, err := json.Marshal(req.SCIMGroup.Attributes.AsMap())
+	if err != nil {
+		panic(fmt.Errorf("marshal scim group attributes: %w", err))
+	}
+
+	qSCIMGroup, err := q.AuthCreateSCIMGroup(ctx, queries.AuthCreateSCIMGroupParams{
+		ID:              uuid.New(),
+		ScimDirectoryID: scimDirID,
+		DisplayName:     req.SCIMGroup.DisplayName,
+		Attributes:      attrs,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("create scim group: %w", err)
+	}
+
+	for _, scimUserID := range scimUserIDs {
+		if _, err := q.AuthCreateSCIMUserGroupMembership(ctx, queries.AuthCreateSCIMUserGroupMembershipParams{
+			ID:              uuid.New(),
+			ScimDirectoryID: scimDirID,
+			ScimUserID:      scimUserID,
+			ScimGroupID:     qSCIMGroup.ID,
+		}); err != nil {
+			return nil, fmt.Errorf("create scim user group membership: %w", err)
+		}
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &AuthCreateSCIMGroupResponse{
+		SCIMGroup:         parseSCIMGroup(qSCIMGroup),
+		MemberSCIMUserIDs: req.MemberSCIMUserIDs,
+	}, nil
+}
+
 func parseSCIMUser(qSCIMUser queries.ScimUser) *ssoreadyv1.SCIMUser {
 	var attrs map[string]any
 	if err := json.Unmarshal(qSCIMUser.Attributes, &attrs); err != nil {
@@ -250,6 +353,25 @@ func parseSCIMUser(qSCIMUser queries.ScimUser) *ssoreadyv1.SCIMUser {
 		ScimDirectoryId: idformat.SCIMDirectory.Format(qSCIMUser.ScimDirectoryID),
 		Email:           qSCIMUser.Email,
 		Deleted:         qSCIMUser.Deleted,
+		Attributes:      attrsStruct,
+	}
+}
+
+func parseSCIMGroup(qSCIMGroup queries.ScimGroup) *ssoreadyv1.SCIMGroup {
+	var attrs map[string]any
+	if err := json.Unmarshal(qSCIMGroup.Attributes, &attrs); err != nil {
+		panic(fmt.Errorf("unmarshal scim group attributes: %w", err))
+	}
+
+	attrsStruct, err := structpb.NewStruct(attrs)
+	if err != nil {
+		panic(fmt.Errorf("build struct from scim group attributes: %w", err))
+	}
+
+	return &ssoreadyv1.SCIMGroup{
+		Id:              idformat.SCIMGroup.Format(qSCIMGroup.ID),
+		ScimDirectoryId: idformat.SCIMDirectory.Format(qSCIMGroup.ScimDirectoryID),
+		DisplayName:     qSCIMGroup.DisplayName,
 		Attributes:      attrsStruct,
 	}
 }

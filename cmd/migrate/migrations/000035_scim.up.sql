@@ -15,3 +15,19 @@ create table scim_users
 
     unique (scim_directory_id, email)
 );
+
+create table scim_groups
+(
+    id                uuid    not null primary key,
+    scim_directory_id uuid    not null references scim_directories (id),
+    display_name      varchar not null,
+    attributes        jsonb
+);
+
+create table scim_user_group_memberships
+(
+    id                uuid not null primary key,
+    scim_directory_id uuid not null references scim_directories (id),
+    scim_user_id      uuid not null references scim_users (id),
+    scim_group_id     uuid not null references scim_groups (id)
+);

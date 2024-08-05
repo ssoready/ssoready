@@ -516,3 +516,19 @@ set email      = $1,
 where scim_directory_id = $3
   and id = $4
 returning *;
+
+-- name: AuthGetSCIMGroup :one
+select *
+from scim_groups
+where scim_directory_id = $1
+  and id = $2;
+
+-- name: AuthCreateSCIMGroup :one
+insert into scim_groups (id, scim_directory_id, display_name, attributes)
+values ($1, $2, $3, $4)
+returning *;
+
+-- name: AuthCreateSCIMUserGroupMembership :one
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+values ($1, $2, $3, $4)
+returning *;

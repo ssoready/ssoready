@@ -273,6 +273,34 @@ CREATE TABLE public.scim_directories (
 ALTER TABLE public.scim_directories OWNER TO postgres;
 
 --
+-- Name: scim_groups; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.scim_groups (
+    id uuid NOT NULL,
+    scim_directory_id uuid NOT NULL,
+    display_name character varying NOT NULL,
+    attributes jsonb
+);
+
+
+ALTER TABLE public.scim_groups OWNER TO postgres;
+
+--
+-- Name: scim_user_group_memberships; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.scim_user_group_memberships (
+    id uuid NOT NULL,
+    scim_directory_id uuid NOT NULL,
+    scim_user_id uuid NOT NULL,
+    scim_group_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.scim_user_group_memberships OWNER TO postgres;
+
+--
 -- Name: scim_users; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -504,6 +532,22 @@ ALTER TABLE ONLY public.scim_directories
 
 
 --
+-- Name: scim_groups scim_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_groups
+    ADD CONSTRAINT scim_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: scim_user_group_memberships scim_user_group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_user_group_memberships
+    ADD CONSTRAINT scim_user_group_memberships_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: scim_users scim_users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -613,6 +657,38 @@ ALTER TABLE ONLY public.saml_oauth_clients
 
 ALTER TABLE ONLY public.scim_directories
     ADD CONSTRAINT scim_directories_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
+
+
+--
+-- Name: scim_groups scim_groups_scim_directory_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_groups
+    ADD CONSTRAINT scim_groups_scim_directory_id_fkey FOREIGN KEY (scim_directory_id) REFERENCES public.scim_directories(id);
+
+
+--
+-- Name: scim_user_group_memberships scim_user_group_memberships_scim_directory_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_user_group_memberships
+    ADD CONSTRAINT scim_user_group_memberships_scim_directory_id_fkey FOREIGN KEY (scim_directory_id) REFERENCES public.scim_directories(id);
+
+
+--
+-- Name: scim_user_group_memberships scim_user_group_memberships_scim_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_user_group_memberships
+    ADD CONSTRAINT scim_user_group_memberships_scim_group_id_fkey FOREIGN KEY (scim_group_id) REFERENCES public.scim_groups(id);
+
+
+--
+-- Name: scim_user_group_memberships scim_user_group_memberships_scim_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_user_group_memberships
+    ADD CONSTRAINT scim_user_group_memberships_scim_user_id_fkey FOREIGN KEY (scim_user_id) REFERENCES public.scim_users(id);
 
 
 --

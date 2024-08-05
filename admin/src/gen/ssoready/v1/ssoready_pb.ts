@@ -646,6 +646,61 @@ export class SCIMUser extends Message<SCIMUser> {
 }
 
 /**
+ * @generated from message ssoready.v1.SCIMGroup
+ */
+export class SCIMGroup extends Message<SCIMGroup> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string scim_directory_id = 2;
+   */
+  scimDirectoryId = "";
+
+  /**
+   * @generated from field: string display_name = 3;
+   */
+  displayName = "";
+
+  /**
+   * @generated from field: google.protobuf.Struct attributes = 4;
+   */
+  attributes?: Struct;
+
+  constructor(data?: PartialMessage<SCIMGroup>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.SCIMGroup";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "attributes", kind: "message", T: Struct },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SCIMGroup {
+    return new SCIMGroup().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SCIMGroup {
+    return new SCIMGroup().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SCIMGroup {
+    return new SCIMGroup().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SCIMGroup | PlainMessage<SCIMGroup> | undefined, b: SCIMGroup | PlainMessage<SCIMGroup> | undefined): boolean {
+    return proto3.util.equals(SCIMGroup, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.GetSAMLRedirectURLRequest
  */
 export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest> {

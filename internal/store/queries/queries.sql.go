@@ -131,6 +131,36 @@ func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.U
 	return count, err
 }
 
+const authCreateSCIMGroup = `-- name: AuthCreateSCIMGroup :one
+insert into scim_groups (id, scim_directory_id, display_name, attributes)
+values ($1, $2, $3, $4)
+returning id, scim_directory_id, display_name, attributes
+`
+
+type AuthCreateSCIMGroupParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+	Attributes      []byte
+}
+
+func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authCreateSCIMGroup,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.DisplayName,
+		arg.Attributes,
+	)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authCreateSCIMUser = `-- name: AuthCreateSCIMUser :one
 insert into scim_users (id, scim_directory_id, email, deleted, attributes)
 values ($1, $2, $3, $4, $5)
@@ -160,6 +190,36 @@ func (q *Queries) AuthCreateSCIMUser(ctx context.Context, arg AuthCreateSCIMUser
 		&i.Email,
 		&i.Deleted,
 		&i.Attributes,
+	)
+	return i, err
+}
+
+const authCreateSCIMUserGroupMembership = `-- name: AuthCreateSCIMUserGroupMembership :one
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+values ($1, $2, $3, $4)
+returning id, scim_directory_id, scim_user_id, scim_group_id
+`
+
+type AuthCreateSCIMUserGroupMembershipParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	ScimUserID      uuid.UUID
+	ScimGroupID     uuid.UUID
+}
+
+func (q *Queries) AuthCreateSCIMUserGroupMembership(ctx context.Context, arg AuthCreateSCIMUserGroupMembershipParams) (ScimUserGroupMembership, error) {
+	row := q.db.QueryRow(ctx, authCreateSCIMUserGroupMembership,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.ScimUserID,
+		arg.ScimGroupID,
+	)
+	var i ScimUserGroupMembership
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.ScimUserID,
+		&i.ScimGroupID,
 	)
 	return i, err
 }
@@ -337,6 +397,30 @@ func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, ar
 	row := q.db.QueryRow(ctx, authGetSCIMDirectoryByIDAndBearerToken, arg.ID, arg.BearerTokenSha256)
 	var i ScimDirectory
 	err := row.Scan(&i.ID, &i.OrganizationID, &i.BearerTokenSha256)
+	return i, err
+}
+
+const authGetSCIMGroup = `-- name: AuthGetSCIMGroup :one
+select id, scim_directory_id, display_name, attributes
+from scim_groups
+where scim_directory_id = $1
+  and id = $2
+`
+
+type AuthGetSCIMGroupParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthGetSCIMGroup(ctx context.Context, arg AuthGetSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMGroup, arg.ScimDirectoryID, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Attributes,
+	)
 	return i, err
 }
 

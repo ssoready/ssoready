@@ -189,10 +189,24 @@ type ScimDirectory struct {
 	BearerTokenSha256 []byte
 }
 
+type ScimGroup struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+	Attributes      []byte
+}
+
 type ScimUser struct {
 	ID              uuid.UUID
 	ScimDirectoryID uuid.UUID
 	Email           string
 	Deleted         bool
 	Attributes      []byte
+}
+
+type ScimUserGroupMembership struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	ScimUserID      uuid.UUID
+	ScimGroupID     uuid.UUID
 }

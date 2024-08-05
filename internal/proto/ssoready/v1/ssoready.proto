@@ -170,6 +170,13 @@ message SCIMUser {
   google.protobuf.Struct attributes = 5;
 }
 
+message SCIMGroup {
+  string id = 1;
+  string scim_directory_id = 2;
+  string display_name = 3;
+  google.protobuf.Struct attributes = 4;
+}
+
 message GetSAMLRedirectURLRequest {
   string saml_connection_id = 1;
   string organization_id = 2;

@@ -20,6 +20,7 @@ var (
 
 	SCIMDirectory = prettyuuid.MustNewFormat("scim_directory_", alphabet)
 	SCIMUser      = prettyuuid.MustNewFormat("scim_user_", alphabet)
+	SCIMGroup     = prettyuuid.MustNewFormat("scim_group_", alphabet)
 
 	AdminOneTimeToken = prettyuuid.MustNewFormat("ssoready_one_time_token_", alphabet)
 )
