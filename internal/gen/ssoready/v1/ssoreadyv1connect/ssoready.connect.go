@@ -154,9 +154,18 @@ const (
 	// SSOReadyServiceListSCIMDirectoriesProcedure is the fully-qualified name of the SSOReadyService's
 	// ListSCIMDirectories RPC.
 	SSOReadyServiceListSCIMDirectoriesProcedure = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
+	// SSOReadyServiceGetSCIMDirectoryProcedure is the fully-qualified name of the SSOReadyService's
+	// GetSCIMDirectory RPC.
+	SSOReadyServiceGetSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
 	// SSOReadyServiceCreateSCIMDirectoryProcedure is the fully-qualified name of the SSOReadyService's
 	// CreateSCIMDirectory RPC.
 	SSOReadyServiceCreateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	// SSOReadyServiceAppListSCIMUsersProcedure is the fully-qualified name of the SSOReadyService's
+	// AppListSCIMUsers RPC.
+	SSOReadyServiceAppListSCIMUsersProcedure = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
+	// SSOReadyServiceAppListSCIMGroupsProcedure is the fully-qualified name of the SSOReadyService's
+	// AppListSCIMGroups RPC.
+	SSOReadyServiceAppListSCIMGroupsProcedure = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
 	// SSOReadyServiceAdminRedeemOneTimeTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminRedeemOneTimeToken RPC.
 	SSOReadyServiceAdminRedeemOneTimeTokenProcedure = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
@@ -220,7 +229,10 @@ type SSOReadyServiceClient interface {
 	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
+	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
+	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
+	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
@@ -444,9 +456,24 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceListSCIMDirectoriesProcedure,
 			opts...,
 		),
+		getSCIMDirectory: connect.NewClient[v1.GetSCIMDirectoryRequest, v1.SCIMDirectory](
+			httpClient,
+			baseURL+SSOReadyServiceGetSCIMDirectoryProcedure,
+			opts...,
+		),
 		createSCIMDirectory: connect.NewClient[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory](
 			httpClient,
 			baseURL+SSOReadyServiceCreateSCIMDirectoryProcedure,
+			opts...,
+		),
+		appListSCIMUsers: connect.NewClient[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAppListSCIMUsersProcedure,
+			opts...,
+		),
+		appListSCIMGroups: connect.NewClient[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAppListSCIMGroupsProcedure,
 			opts...,
 		),
 		adminRedeemOneTimeToken: connect.NewClient[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse](
@@ -525,7 +552,10 @@ type sSOReadyServiceClient struct {
 	getSAMLFlow                    *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
 	parseSAMLMetadata              *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
 	listSCIMDirectories            *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
+	getSCIMDirectory               *connect.Client[v1.GetSCIMDirectoryRequest, v1.SCIMDirectory]
 	createSCIMDirectory            *connect.Client[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory]
+	appListSCIMUsers               *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
+	appListSCIMGroups              *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
 	adminRedeemOneTimeToken        *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
 	adminListSAMLConnections       *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
 	adminGetSAMLConnection         *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
@@ -739,9 +769,24 @@ func (c *sSOReadyServiceClient) ListSCIMDirectories(ctx context.Context, req *co
 	return c.listSCIMDirectories.CallUnary(ctx, req)
 }
 
+// GetSCIMDirectory calls ssoready.v1.SSOReadyService.GetSCIMDirectory.
+func (c *sSOReadyServiceClient) GetSCIMDirectory(ctx context.Context, req *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
+	return c.getSCIMDirectory.CallUnary(ctx, req)
+}
+
 // CreateSCIMDirectory calls ssoready.v1.SSOReadyService.CreateSCIMDirectory.
 func (c *sSOReadyServiceClient) CreateSCIMDirectory(ctx context.Context, req *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
 	return c.createSCIMDirectory.CallUnary(ctx, req)
+}
+
+// AppListSCIMUsers calls ssoready.v1.SSOReadyService.AppListSCIMUsers.
+func (c *sSOReadyServiceClient) AppListSCIMUsers(ctx context.Context, req *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {
+	return c.appListSCIMUsers.CallUnary(ctx, req)
+}
+
+// AppListSCIMGroups calls ssoready.v1.SSOReadyService.AppListSCIMGroups.
+func (c *sSOReadyServiceClient) AppListSCIMGroups(ctx context.Context, req *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error) {
+	return c.appListSCIMGroups.CallUnary(ctx, req)
 }
 
 // AdminRedeemOneTimeToken calls ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken.
@@ -817,7 +862,10 @@ type SSOReadyServiceHandler interface {
 	GetSAMLFlow(context.Context, *connect.Request[v1.GetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
+	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
+	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
+	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
@@ -1037,9 +1085,24 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.ListSCIMDirectories,
 		opts...,
 	)
+	sSOReadyServiceGetSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetSCIMDirectoryProcedure,
+		svc.GetSCIMDirectory,
+		opts...,
+	)
 	sSOReadyServiceCreateSCIMDirectoryHandler := connect.NewUnaryHandler(
 		SSOReadyServiceCreateSCIMDirectoryProcedure,
 		svc.CreateSCIMDirectory,
+		opts...,
+	)
+	sSOReadyServiceAppListSCIMUsersHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppListSCIMUsersProcedure,
+		svc.AppListSCIMUsers,
+		opts...,
+	)
+	sSOReadyServiceAppListSCIMGroupsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppListSCIMGroupsProcedure,
+		svc.AppListSCIMGroups,
 		opts...,
 	)
 	sSOReadyServiceAdminRedeemOneTimeTokenHandler := connect.NewUnaryHandler(
@@ -1156,8 +1219,14 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceParseSAMLMetadataHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListSCIMDirectoriesProcedure:
 			sSOReadyServiceListSCIMDirectoriesHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetSCIMDirectoryProcedure:
+			sSOReadyServiceGetSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceCreateSCIMDirectoryProcedure:
 			sSOReadyServiceCreateSCIMDirectoryHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppListSCIMUsersProcedure:
+			sSOReadyServiceAppListSCIMUsersHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppListSCIMGroupsProcedure:
+			sSOReadyServiceAppListSCIMGroupsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminRedeemOneTimeTokenProcedure:
 			sSOReadyServiceAdminRedeemOneTimeTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminListSAMLConnectionsProcedure:
@@ -1343,8 +1412,20 @@ func (UnimplementedSSOReadyServiceHandler) ListSCIMDirectories(context.Context, 
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.ListSCIMDirectories is not implemented"))
 }
 
+func (UnimplementedSSOReadyServiceHandler) GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetSCIMDirectory is not implemented"))
+}
+
 func (UnimplementedSSOReadyServiceHandler) CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateSCIMDirectory is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppListSCIMUsers is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppListSCIMGroups is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error) {

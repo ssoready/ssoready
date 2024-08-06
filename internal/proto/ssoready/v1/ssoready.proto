@@ -92,7 +92,11 @@ service SSOReadyService {
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
 
   rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse);
+  rpc GetSCIMDirectory(GetSCIMDirectoryRequest) returns (SCIMDirectory);
   rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (SCIMDirectory);
+
+  rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
+  rpc AppListSCIMGroups(AppListSCIMGroupsRequest) returns (AppListSCIMGroupsResponse);
 
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
   rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
@@ -487,10 +491,6 @@ message ParseSAMLMetadataResponse {
   string idp_entity_id = 3;
 }
 
-message CreateSCIMDirectoryRequest {
-  SCIMDirectory scim_directory = 1;
-}
-
 message ListSCIMDirectoriesRequest {
   string organization_id = 1;
   string page_token = 2;
@@ -498,6 +498,34 @@ message ListSCIMDirectoriesRequest {
 
 message ListSCIMDirectoriesResponse {
   repeated SCIMDirectory scim_directories = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMDirectoryRequest {
+  string id = 1;
+}
+
+message CreateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
+}
+
+message AppListSCIMUsersRequest {
+  string scim_directory_id = 1;
+  string page_token = 2;
+}
+
+message AppListSCIMUsersResponse {
+  repeated SCIMUser scim_users = 1;
+  string next_page_token = 2;
+}
+
+message AppListSCIMGroupsRequest {
+  string scim_directory_id = 1;
+  string page_token = 2;
+}
+
+message AppListSCIMGroupsResponse {
+  repeated SCIMGroup scim_groups = 1;
   string next_page_token = 2;
 }
 

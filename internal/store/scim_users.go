@@ -1,0 +1,63 @@
+package store
+
+import (
+	"context"
+
+	"github.com/google/uuid"
+	"github.com/ssoready/ssoready/internal/authn"
+	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
+	"github.com/ssoready/ssoready/internal/store/idformat"
+	"github.com/ssoready/ssoready/internal/store/queries"
+)
+
+func (s *Store) AppListSCIMUsers(ctx context.Context, req *ssoreadyv1.AppListSCIMUsersRequest) (*ssoreadyv1.AppListSCIMUsersResponse, error) {
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
+	if err != nil {
+		return nil, err
+	}
+
+	// idor check
+	if _, err = q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                scimDirID,
+	}); err != nil {
+		return nil, err
+	}
+
+	var startID uuid.UUID
+	if err := s.pageEncoder.Unmarshal(req.PageToken, &startID); err != nil {
+		return nil, err
+	}
+
+	limit := 10
+	qSCIMUsers, err := q.ListSCIMUsers(ctx, queries.ListSCIMUsersParams{
+		ScimDirectoryID: scimDirID,
+		ID:              startID,
+		Limit:           int32(limit + 1),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var scimUsers []*ssoreadyv1.SCIMUser
+	for _, qSCIMUser := range qSCIMUsers {
+		scimUsers = append(scimUsers, parseSCIMUser(qSCIMUser))
+	}
+
+	var nextPageToken string
+	if len(scimUsers) == limit+1 {
+		nextPageToken = s.pageEncoder.Marshal(qSCIMUsers[limit].ID)
+		scimUsers = scimUsers[:limit]
+	}
+
+	return &ssoreadyv1.AppListSCIMUsersResponse{
+		ScimUsers:     scimUsers,
+		NextPageToken: nextPageToken,
+	}, nil
+}

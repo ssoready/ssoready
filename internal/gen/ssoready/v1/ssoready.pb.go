@@ -4117,53 +4117,6 @@ func (x *ParseSAMLMetadataResponse) GetIdpEntityId() string {
 	return ""
 }
 
-type CreateSCIMDirectoryRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	ScimDirectory *SCIMDirectory `protobuf:"bytes,1,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
-}
-
-func (x *CreateSCIMDirectoryRequest) Reset() {
-	*x = CreateSCIMDirectoryRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[70]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateSCIMDirectoryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateSCIMDirectoryRequest) ProtoMessage() {}
-
-func (x *CreateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[70]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
-func (*CreateSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{70}
-}
-
-func (x *CreateSCIMDirectoryRequest) GetScimDirectory() *SCIMDirectory {
-	if x != nil {
-		return x.ScimDirectory
-	}
-	return nil
-}
-
 type ListSCIMDirectoriesRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -4176,7 +4129,7 @@ type ListSCIMDirectoriesRequest struct {
 func (x *ListSCIMDirectoriesRequest) Reset() {
 	*x = ListSCIMDirectoriesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[71]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[70]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4189,7 +4142,7 @@ func (x *ListSCIMDirectoriesRequest) String() string {
 func (*ListSCIMDirectoriesRequest) ProtoMessage() {}
 
 func (x *ListSCIMDirectoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[71]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[70]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4202,7 +4155,7 @@ func (x *ListSCIMDirectoriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSCIMDirectoriesRequest.ProtoReflect.Descriptor instead.
 func (*ListSCIMDirectoriesRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{71}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *ListSCIMDirectoriesRequest) GetOrganizationId() string {
@@ -4231,7 +4184,7 @@ type ListSCIMDirectoriesResponse struct {
 func (x *ListSCIMDirectoriesResponse) Reset() {
 	*x = ListSCIMDirectoriesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[72]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[71]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4244,7 +4197,7 @@ func (x *ListSCIMDirectoriesResponse) String() string {
 func (*ListSCIMDirectoriesResponse) ProtoMessage() {}
 
 func (x *ListSCIMDirectoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[72]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[71]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4257,7 +4210,7 @@ func (x *ListSCIMDirectoriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSCIMDirectoriesResponse.ProtoReflect.Descriptor instead.
 func (*ListSCIMDirectoriesResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{72}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *ListSCIMDirectoriesResponse) GetScimDirectories() []*SCIMDirectory {
@@ -4268,6 +4221,320 @@ func (x *ListSCIMDirectoriesResponse) GetScimDirectories() []*SCIMDirectory {
 }
 
 func (x *ListSCIMDirectoriesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+type GetSCIMDirectoryRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetSCIMDirectoryRequest) Reset() {
+	*x = GetSCIMDirectoryRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[72]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetSCIMDirectoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSCIMDirectoryRequest) ProtoMessage() {}
+
+func (x *GetSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[72]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
+func (*GetSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *GetSCIMDirectoryRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type CreateSCIMDirectoryRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScimDirectory *SCIMDirectory `protobuf:"bytes,1,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
+}
+
+func (x *CreateSCIMDirectoryRequest) Reset() {
+	*x = CreateSCIMDirectoryRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[73]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateSCIMDirectoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSCIMDirectoryRequest) ProtoMessage() {}
+
+func (x *CreateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[73]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
+func (*CreateSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *CreateSCIMDirectoryRequest) GetScimDirectory() *SCIMDirectory {
+	if x != nil {
+		return x.ScimDirectory
+	}
+	return nil
+}
+
+type AppListSCIMUsersRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScimDirectoryId string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	PageToken       string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+}
+
+func (x *AppListSCIMUsersRequest) Reset() {
+	*x = AppListSCIMUsersRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[74]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppListSCIMUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppListSCIMUsersRequest) ProtoMessage() {}
+
+func (x *AppListSCIMUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[74]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppListSCIMUsersRequest.ProtoReflect.Descriptor instead.
+func (*AppListSCIMUsersRequest) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *AppListSCIMUsersRequest) GetScimDirectoryId() string {
+	if x != nil {
+		return x.ScimDirectoryId
+	}
+	return ""
+}
+
+func (x *AppListSCIMUsersRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type AppListSCIMUsersResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScimUsers     []*SCIMUser `protobuf:"bytes,1,rep,name=scim_users,json=scimUsers,proto3" json:"scim_users,omitempty"`
+	NextPageToken string      `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+}
+
+func (x *AppListSCIMUsersResponse) Reset() {
+	*x = AppListSCIMUsersResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[75]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppListSCIMUsersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppListSCIMUsersResponse) ProtoMessage() {}
+
+func (x *AppListSCIMUsersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[75]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppListSCIMUsersResponse.ProtoReflect.Descriptor instead.
+func (*AppListSCIMUsersResponse) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *AppListSCIMUsersResponse) GetScimUsers() []*SCIMUser {
+	if x != nil {
+		return x.ScimUsers
+	}
+	return nil
+}
+
+func (x *AppListSCIMUsersResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+type AppListSCIMGroupsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScimDirectoryId string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	PageToken       string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+}
+
+func (x *AppListSCIMGroupsRequest) Reset() {
+	*x = AppListSCIMGroupsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[76]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppListSCIMGroupsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppListSCIMGroupsRequest) ProtoMessage() {}
+
+func (x *AppListSCIMGroupsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[76]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppListSCIMGroupsRequest.ProtoReflect.Descriptor instead.
+func (*AppListSCIMGroupsRequest) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *AppListSCIMGroupsRequest) GetScimDirectoryId() string {
+	if x != nil {
+		return x.ScimDirectoryId
+	}
+	return ""
+}
+
+func (x *AppListSCIMGroupsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type AppListSCIMGroupsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScimGroups    []*SCIMGroup `protobuf:"bytes,1,rep,name=scim_groups,json=scimGroups,proto3" json:"scim_groups,omitempty"`
+	NextPageToken string       `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+}
+
+func (x *AppListSCIMGroupsResponse) Reset() {
+	*x = AppListSCIMGroupsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[77]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppListSCIMGroupsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppListSCIMGroupsResponse) ProtoMessage() {}
+
+func (x *AppListSCIMGroupsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[77]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppListSCIMGroupsResponse.ProtoReflect.Descriptor instead.
+func (*AppListSCIMGroupsResponse) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *AppListSCIMGroupsResponse) GetScimGroups() []*SCIMGroup {
+	if x != nil {
+		return x.ScimGroups
+	}
+	return nil
+}
+
+func (x *AppListSCIMGroupsResponse) GetNextPageToken() string {
 	if x != nil {
 		return x.NextPageToken
 	}
@@ -4285,7 +4552,7 @@ type AdminRedeemOneTimeTokenRequest struct {
 func (x *AdminRedeemOneTimeTokenRequest) Reset() {
 	*x = AdminRedeemOneTimeTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[73]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[78]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4298,7 +4565,7 @@ func (x *AdminRedeemOneTimeTokenRequest) String() string {
 func (*AdminRedeemOneTimeTokenRequest) ProtoMessage() {}
 
 func (x *AdminRedeemOneTimeTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[73]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[78]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4311,7 +4578,7 @@ func (x *AdminRedeemOneTimeTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminRedeemOneTimeTokenRequest.ProtoReflect.Descriptor instead.
 func (*AdminRedeemOneTimeTokenRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{73}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *AdminRedeemOneTimeTokenRequest) GetOneTimeToken() string {
@@ -4332,7 +4599,7 @@ type AdminRedeemOneTimeTokenResponse struct {
 func (x *AdminRedeemOneTimeTokenResponse) Reset() {
 	*x = AdminRedeemOneTimeTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[74]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[79]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4345,7 +4612,7 @@ func (x *AdminRedeemOneTimeTokenResponse) String() string {
 func (*AdminRedeemOneTimeTokenResponse) ProtoMessage() {}
 
 func (x *AdminRedeemOneTimeTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[74]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[79]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4358,7 +4625,7 @@ func (x *AdminRedeemOneTimeTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminRedeemOneTimeTokenResponse.ProtoReflect.Descriptor instead.
 func (*AdminRedeemOneTimeTokenResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{74}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *AdminRedeemOneTimeTokenResponse) GetAdminSessionToken() string {
@@ -4379,7 +4646,7 @@ type AdminListSAMLConnectionsRequest struct {
 func (x *AdminListSAMLConnectionsRequest) Reset() {
 	*x = AdminListSAMLConnectionsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[75]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[80]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4392,7 +4659,7 @@ func (x *AdminListSAMLConnectionsRequest) String() string {
 func (*AdminListSAMLConnectionsRequest) ProtoMessage() {}
 
 func (x *AdminListSAMLConnectionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[75]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[80]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4405,7 +4672,7 @@ func (x *AdminListSAMLConnectionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSAMLConnectionsRequest.ProtoReflect.Descriptor instead.
 func (*AdminListSAMLConnectionsRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{75}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *AdminListSAMLConnectionsRequest) GetPageToken() string {
@@ -4427,7 +4694,7 @@ type AdminListSAMLConnectionsResponse struct {
 func (x *AdminListSAMLConnectionsResponse) Reset() {
 	*x = AdminListSAMLConnectionsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[76]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[81]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4440,7 +4707,7 @@ func (x *AdminListSAMLConnectionsResponse) String() string {
 func (*AdminListSAMLConnectionsResponse) ProtoMessage() {}
 
 func (x *AdminListSAMLConnectionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[76]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[81]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4453,7 +4720,7 @@ func (x *AdminListSAMLConnectionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSAMLConnectionsResponse.ProtoReflect.Descriptor instead.
 func (*AdminListSAMLConnectionsResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{76}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *AdminListSAMLConnectionsResponse) GetSamlConnections() []*SAMLConnection {
@@ -4481,7 +4748,7 @@ type AdminGetSAMLConnectionRequest struct {
 func (x *AdminGetSAMLConnectionRequest) Reset() {
 	*x = AdminGetSAMLConnectionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[77]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[82]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4494,7 +4761,7 @@ func (x *AdminGetSAMLConnectionRequest) String() string {
 func (*AdminGetSAMLConnectionRequest) ProtoMessage() {}
 
 func (x *AdminGetSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[77]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[82]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4507,7 +4774,7 @@ func (x *AdminGetSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSAMLConnectionRequest.ProtoReflect.Descriptor instead.
 func (*AdminGetSAMLConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{77}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *AdminGetSAMLConnectionRequest) GetId() string {
@@ -4528,7 +4795,7 @@ type AdminGetSAMLConnectionResponse struct {
 func (x *AdminGetSAMLConnectionResponse) Reset() {
 	*x = AdminGetSAMLConnectionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[78]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[83]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4541,7 +4808,7 @@ func (x *AdminGetSAMLConnectionResponse) String() string {
 func (*AdminGetSAMLConnectionResponse) ProtoMessage() {}
 
 func (x *AdminGetSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[78]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[83]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4554,7 +4821,7 @@ func (x *AdminGetSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSAMLConnectionResponse.ProtoReflect.Descriptor instead.
 func (*AdminGetSAMLConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{78}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *AdminGetSAMLConnectionResponse) GetSamlConnection() *SAMLConnection {
@@ -4575,7 +4842,7 @@ type AdminCreateSAMLConnectionRequest struct {
 func (x *AdminCreateSAMLConnectionRequest) Reset() {
 	*x = AdminCreateSAMLConnectionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[79]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[84]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4588,7 +4855,7 @@ func (x *AdminCreateSAMLConnectionRequest) String() string {
 func (*AdminCreateSAMLConnectionRequest) ProtoMessage() {}
 
 func (x *AdminCreateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[79]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[84]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4601,7 +4868,7 @@ func (x *AdminCreateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminCreateSAMLConnectionRequest.ProtoReflect.Descriptor instead.
 func (*AdminCreateSAMLConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{79}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *AdminCreateSAMLConnectionRequest) GetSamlConnection() *SAMLConnection {
@@ -4622,7 +4889,7 @@ type AdminCreateSAMLConnectionResponse struct {
 func (x *AdminCreateSAMLConnectionResponse) Reset() {
 	*x = AdminCreateSAMLConnectionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[80]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[85]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4635,7 +4902,7 @@ func (x *AdminCreateSAMLConnectionResponse) String() string {
 func (*AdminCreateSAMLConnectionResponse) ProtoMessage() {}
 
 func (x *AdminCreateSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[80]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[85]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4648,7 +4915,7 @@ func (x *AdminCreateSAMLConnectionResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use AdminCreateSAMLConnectionResponse.ProtoReflect.Descriptor instead.
 func (*AdminCreateSAMLConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{80}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *AdminCreateSAMLConnectionResponse) GetSamlConnection() *SAMLConnection {
@@ -4669,7 +4936,7 @@ type AdminUpdateSAMLConnectionRequest struct {
 func (x *AdminUpdateSAMLConnectionRequest) Reset() {
 	*x = AdminUpdateSAMLConnectionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[81]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[86]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4682,7 +4949,7 @@ func (x *AdminUpdateSAMLConnectionRequest) String() string {
 func (*AdminUpdateSAMLConnectionRequest) ProtoMessage() {}
 
 func (x *AdminUpdateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[81]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[86]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4695,7 +4962,7 @@ func (x *AdminUpdateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminUpdateSAMLConnectionRequest.ProtoReflect.Descriptor instead.
 func (*AdminUpdateSAMLConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{81}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *AdminUpdateSAMLConnectionRequest) GetSamlConnection() *SAMLConnection {
@@ -4716,7 +4983,7 @@ type AdminUpdateSAMLConnectionResponse struct {
 func (x *AdminUpdateSAMLConnectionResponse) Reset() {
 	*x = AdminUpdateSAMLConnectionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[82]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[87]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4729,7 +4996,7 @@ func (x *AdminUpdateSAMLConnectionResponse) String() string {
 func (*AdminUpdateSAMLConnectionResponse) ProtoMessage() {}
 
 func (x *AdminUpdateSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[82]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[87]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4742,7 +5009,7 @@ func (x *AdminUpdateSAMLConnectionResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use AdminUpdateSAMLConnectionResponse.ProtoReflect.Descriptor instead.
 func (*AdminUpdateSAMLConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{82}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *AdminUpdateSAMLConnectionResponse) GetSamlConnection() *SAMLConnection {
@@ -4763,7 +5030,7 @@ type AdminParseSAMLMetadataRequest struct {
 func (x *AdminParseSAMLMetadataRequest) Reset() {
 	*x = AdminParseSAMLMetadataRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[83]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[88]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4776,7 +5043,7 @@ func (x *AdminParseSAMLMetadataRequest) String() string {
 func (*AdminParseSAMLMetadataRequest) ProtoMessage() {}
 
 func (x *AdminParseSAMLMetadataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[83]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[88]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4789,7 +5056,7 @@ func (x *AdminParseSAMLMetadataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminParseSAMLMetadataRequest.ProtoReflect.Descriptor instead.
 func (*AdminParseSAMLMetadataRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{83}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *AdminParseSAMLMetadataRequest) GetUrl() string {
@@ -4812,7 +5079,7 @@ type AdminParseSAMLMetadataResponse struct {
 func (x *AdminParseSAMLMetadataResponse) Reset() {
 	*x = AdminParseSAMLMetadataResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ssoready_v1_ssoready_proto_msgTypes[84]
+		mi := &file_ssoready_v1_ssoready_proto_msgTypes[89]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4825,7 +5092,7 @@ func (x *AdminParseSAMLMetadataResponse) String() string {
 func (*AdminParseSAMLMetadataResponse) ProtoMessage() {}
 
 func (x *AdminParseSAMLMetadataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[84]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[89]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4838,7 +5105,7 @@ func (x *AdminParseSAMLMetadataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminParseSAMLMetadataResponse.ProtoReflect.Descriptor instead.
 func (*AdminParseSAMLMetadataResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{84}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *AdminParseSAMLMetadataResponse) GetIdpRedirectUrl() string {
@@ -5401,26 +5668,57 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x69, 0x64, 0x70, 0x43, 0x65, 0x72, 0x74, 0x69, 0x66, 0x69,
 	0x63, 0x61, 0x74, 0x65, 0x12, 0x22, 0x0a, 0x0d, 0x69, 0x64, 0x70, 0x5f, 0x65, 0x6e, 0x74, 0x69,
 	0x74, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x69, 0x64, 0x70,
-	0x45, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x49, 0x64, 0x22, 0x5f, 0x0a, 0x1a, 0x43, 0x72, 0x65, 0x61,
+	0x45, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x49, 0x64, 0x22, 0x64, 0x0a, 0x1a, 0x4c, 0x69, 0x73, 0x74,
+	0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x27, 0x0a, 0x0f, 0x6f, 0x72, 0x67, 0x61, 0x6e, 0x69,
+	0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0e, 0x6f, 0x72, 0x67, 0x61, 0x6e, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12,
+	0x1d, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x70, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x8c,
+	0x01, 0x0a, 0x1b, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63,
+	0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x45,
+	0x0a, 0x10, 0x73, 0x63, 0x69, 0x6d, 0x5f, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x69,
+	0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65,
+	0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63,
+	0x74, 0x6f, 0x72, 0x79, 0x52, 0x0f, 0x73, 0x63, 0x69, 0x6d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74,
+	0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x0f, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x61,
+	0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d,
+	0x6e, 0x65, 0x78, 0x74, 0x50, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x29, 0x0a,
+	0x17, 0x47, 0x65, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72,
+	0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x5f, 0x0a, 0x1a, 0x43, 0x72, 0x65, 0x61,
 	0x74, 0x65, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x41, 0x0a, 0x0e, 0x73, 0x63, 0x69, 0x6d, 0x5f, 0x64,
 	0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
 	0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x43, 0x49,
 	0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x0d, 0x73, 0x63, 0x69, 0x6d,
-	0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x22, 0x64, 0x0a, 0x1a, 0x4c, 0x69, 0x73,
-	0x74, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x69, 0x65, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x27, 0x0a, 0x0f, 0x6f, 0x72, 0x67, 0x61, 0x6e,
-	0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0e, 0x6f, 0x72, 0x67, 0x61, 0x6e, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64,
+	0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x22, 0x64, 0x0a, 0x17, 0x41, 0x70, 0x70,
+	0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x2a, 0x0a, 0x11, 0x73, 0x63, 0x69, 0x6d, 0x5f, 0x64, 0x69, 0x72,
+	0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0f, 0x73, 0x63, 0x69, 0x6d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x49, 0x64,
 	0x12, 0x1d, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x70, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22,
-	0x8c, 0x01, 0x0a, 0x1b, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65,
-	0x63, 0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x45, 0x0a, 0x10, 0x73, 0x63, 0x69, 0x6d, 0x5f, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72,
-	0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x73, 0x73, 0x6f, 0x72,
-	0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65,
-	0x63, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x0f, 0x73, 0x63, 0x69, 0x6d, 0x44, 0x69, 0x72, 0x65, 0x63,
-	0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x0f, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70,
+	0x78, 0x0a, 0x18, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x55, 0x73,
+	0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x34, 0x0a, 0x0a, 0x73,
+	0x63, 0x69, 0x6d, 0x5f, 0x75, 0x73, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x15, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x43,
+	0x49, 0x4d, 0x55, 0x73, 0x65, 0x72, 0x52, 0x09, 0x73, 0x63, 0x69, 0x6d, 0x55, 0x73, 0x65, 0x72,
+	0x73, 0x12, 0x26, 0x0a, 0x0f, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x74,
+	0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x6e, 0x65, 0x78, 0x74,
+	0x50, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x65, 0x0a, 0x18, 0x41, 0x70, 0x70,
+	0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2a, 0x0a, 0x11, 0x73, 0x63, 0x69, 0x6d, 0x5f, 0x64, 0x69,
+	0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0f, 0x73, 0x63, 0x69, 0x6d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x49,
+	0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x70, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e,
+	0x22, 0x7c, 0x0a, 0x19, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x47,
+	0x72, 0x6f, 0x75, 0x70, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x37, 0x0a,
+	0x0b, 0x73, 0x63, 0x69, 0x6d, 0x5f, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x16, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31,
+	0x2e, 0x53, 0x43, 0x49, 0x4d, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x0a, 0x73, 0x63, 0x69, 0x6d,
+	0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x12, 0x26, 0x0a, 0x0f, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70,
 	0x61, 0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x0d, 0x6e, 0x65, 0x78, 0x74, 0x50, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x46,
 	0x0a, 0x1e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x64, 0x65, 0x65, 0x6d, 0x4f, 0x6e, 0x65,
@@ -5504,7 +5802,7 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x46, 0x4c, 0x4f, 0x57, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x46, 0x41, 0x49, 0x4c,
 	0x45, 0x44, 0x10, 0x02, 0x12, 0x1e, 0x0a, 0x1a, 0x53, 0x41, 0x4d, 0x4c, 0x5f, 0x46, 0x4c, 0x4f,
 	0x57, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x53, 0x55, 0x43, 0x43, 0x45, 0x45, 0x44,
-	0x45, 0x44, 0x10, 0x03, 0x32, 0xec, 0x24, 0x0a, 0x0f, 0x53, 0x53, 0x4f, 0x52, 0x65, 0x61, 0x64,
+	0x45, 0x44, 0x10, 0x03, 0x32, 0x87, 0x27, 0x0a, 0x0f, 0x53, 0x53, 0x4f, 0x52, 0x65, 0x61, 0x64,
 	0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x83, 0x01, 0x0a, 0x12, 0x47, 0x65, 0x74,
 	0x53, 0x41, 0x4d, 0x4c, 0x52, 0x65, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x55, 0x52, 0x4c, 0x12,
 	0x26, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65,
@@ -5748,69 +6046,87 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x1a, 0x28, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x4c,
 	0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x69,
-	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5a, 0x0a, 0x13, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x12, 0x27, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
-	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74,
-	0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x73, 0x6f,
-	0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72,
-	0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x12, 0x74, 0x0a, 0x17, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52,
-	0x65, 0x64, 0x65, 0x65, 0x6d, 0x4f, 0x6e, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x54, 0x6f, 0x6b, 0x65,
-	0x6e, 0x12, 0x2b, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
-	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x64, 0x65, 0x65, 0x6d, 0x4f, 0x6e, 0x65, 0x54, 0x69,
-	0x6d, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c,
-	0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d,
-	0x69, 0x6e, 0x52, 0x65, 0x64, 0x65, 0x65, 0x6d, 0x4f, 0x6e, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x54,
-	0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x77, 0x0a, 0x18,
+	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x54, 0x0a, 0x10, 0x47, 0x65,
+	0x74, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x12, 0x24,
+	0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74,
+	0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e,
+	0x76, 0x31, 0x2e, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79,
+	0x12, 0x5a, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69,
+	0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x12, 0x27, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61,
+	0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x43, 0x49, 0x4d,
+	0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x1a, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53,
+	0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x12, 0x5f, 0x0a, 0x10,
+	0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x55, 0x73, 0x65, 0x72, 0x73,
+	0x12, 0x24, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41,
+	0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64,
+	0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d,
+	0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x62, 0x0a,
+	0x11, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x47, 0x72, 0x6f, 0x75,
+	0x70, 0x73, 0x12, 0x25, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31,
+	0x2e, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x43, 0x49, 0x4d, 0x47, 0x72, 0x6f, 0x75,
+	0x70, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x26, 0x2e, 0x73, 0x73, 0x6f, 0x72,
+	0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53,
+	0x43, 0x49, 0x4d, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x74, 0x0a, 0x17, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x64, 0x65, 0x65, 0x6d,
+	0x4f, 0x6e, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x2b, 0x2e, 0x73,
+	0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e,
+	0x52, 0x65, 0x64, 0x65, 0x65, 0x6d, 0x4f, 0x6e, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x54, 0x6f, 0x6b,
+	0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x73, 0x73, 0x6f, 0x72,
+	0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x64,
+	0x65, 0x65, 0x6d, 0x4f, 0x6e, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x77, 0x0a, 0x18, 0x41, 0x64, 0x6d, 0x69, 0x6e,
+	0x4c, 0x69, 0x73, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x12, 0x2c, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76,
+	0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43,
+	0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x2d, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
 	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e,
-	0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x2c, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65,
-	0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x69, 0x73, 0x74,
-	0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64,
-	0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x41,
-	0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x71, 0x0a, 0x16, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x47, 0x65,
-	0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12,
-	0x2a, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64,
-	0x6d, 0x69, 0x6e, 0x47, 0x65, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2b, 0x2e, 0x73, 0x73,
-	0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x47,
-	0x65, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7a, 0x0a, 0x19, 0x41, 0x64, 0x6d, 0x69,
-	0x6e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2d, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79,
-	0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53,
-	0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e,
-	0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x41,
-	0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7a, 0x0a, 0x19, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x12, 0x2d, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
-	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43,
-	0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x2e, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41,
-	0x64, 0x6d, 0x69, 0x6e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f,
-	0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x71, 0x0a, 0x16, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x53, 0x41,
-	0x4d, 0x4c, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x2a, 0x2e, 0x73, 0x73, 0x6f,
-	0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x50, 0x61,
-	0x72, 0x73, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52,
+	0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x71, 0x0a, 0x16, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x47, 0x65, 0x74, 0x53, 0x41, 0x4d, 0x4c,
+	0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2a, 0x2e, 0x73, 0x73, 0x6f,
+	0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x47, 0x65,
+	0x74, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2b, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64,
-	0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x53,
-	0x41, 0x4d, 0x4c, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x42, 0xaf, 0x01, 0x0a, 0x0f, 0x63, 0x6f, 0x6d, 0x2e, 0x73, 0x73, 0x6f, 0x72,
-	0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x42, 0x0d, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64,
-	0x79, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x40, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2f, 0x73, 0x73,
-	0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f,
-	0x67, 0x65, 0x6e, 0x2f, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2f, 0x76, 0x31, 0x3b,
-	0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x53, 0x58, 0x58,
-	0xaa, 0x02, 0x0b, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x56, 0x31, 0xca, 0x02,
-	0x0b, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x17, 0x53,
-	0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
-	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0c, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64,
-	0x79, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x47, 0x65, 0x74, 0x53, 0x41, 0x4d,
+	0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x7a, 0x0a, 0x19, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x43, 0x72, 0x65, 0x61,
+	0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x2d, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41,
+	0x64, 0x6d, 0x69, 0x6e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f,
+	0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x2e, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64,
+	0x6d, 0x69, 0x6e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e,
+	0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x7a, 0x0a, 0x19, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x41,
+	0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2d, 0x2e, 0x73,
+	0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x73, 0x73,
+	0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x71, 0x0a, 0x16, 0x41,
+	0x64, 0x6d, 0x69, 0x6e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x4d, 0x65, 0x74,
+	0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x2a, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79,
+	0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x53, 0x41,
+	0x4d, 0x4c, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x2b, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
+	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0xaf,
+	0x01, 0x0a, 0x0f, 0x63, 0x6f, 0x6d, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e,
+	0x76, 0x31, 0x42, 0x0d, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x50, 0x72, 0x6f, 0x74,
+	0x6f, 0x50, 0x01, 0x5a, 0x40, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2f, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64,
+	0x79, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x73,
+	0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2f, 0x76, 0x31, 0x3b, 0x73, 0x73, 0x6f, 0x72, 0x65,
+	0x61, 0x64, 0x79, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x53, 0x58, 0x58, 0xaa, 0x02, 0x0b, 0x53, 0x73,
+	0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x0b, 0x53, 0x73, 0x6f, 0x72,
+	0x65, 0x61, 0x64, 0x79, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x17, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61,
+	0x64, 0x79, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
+	0x61, 0xea, 0x02, 0x0c, 0x53, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x3a, 0x3a, 0x56, 0x31,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -5826,7 +6142,7 @@ func file_ssoready_v1_ssoready_proto_rawDescGZIP() []byte {
 }
 
 var file_ssoready_v1_ssoready_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ssoready_v1_ssoready_proto_msgTypes = make([]protoimpl.MessageInfo, 87)
+var file_ssoready_v1_ssoready_proto_msgTypes = make([]protoimpl.MessageInfo, 92)
 var file_ssoready_v1_ssoready_proto_goTypes = []any{
 	(SAMLFlowStatus)(0),                           // 0: ssoready.v1.SAMLFlowStatus
 	(*AppUser)(nil),                               // 1: ssoready.v1.AppUser
@@ -5899,40 +6215,45 @@ var file_ssoready_v1_ssoready_proto_goTypes = []any{
 	(*GetSAMLFlowRequest)(nil),                    // 68: ssoready.v1.GetSAMLFlowRequest
 	(*ParseSAMLMetadataRequest)(nil),              // 69: ssoready.v1.ParseSAMLMetadataRequest
 	(*ParseSAMLMetadataResponse)(nil),             // 70: ssoready.v1.ParseSAMLMetadataResponse
-	(*CreateSCIMDirectoryRequest)(nil),            // 71: ssoready.v1.CreateSCIMDirectoryRequest
-	(*ListSCIMDirectoriesRequest)(nil),            // 72: ssoready.v1.ListSCIMDirectoriesRequest
-	(*ListSCIMDirectoriesResponse)(nil),           // 73: ssoready.v1.ListSCIMDirectoriesResponse
-	(*AdminRedeemOneTimeTokenRequest)(nil),        // 74: ssoready.v1.AdminRedeemOneTimeTokenRequest
-	(*AdminRedeemOneTimeTokenResponse)(nil),       // 75: ssoready.v1.AdminRedeemOneTimeTokenResponse
-	(*AdminListSAMLConnectionsRequest)(nil),       // 76: ssoready.v1.AdminListSAMLConnectionsRequest
-	(*AdminListSAMLConnectionsResponse)(nil),      // 77: ssoready.v1.AdminListSAMLConnectionsResponse
-	(*AdminGetSAMLConnectionRequest)(nil),         // 78: ssoready.v1.AdminGetSAMLConnectionRequest
-	(*AdminGetSAMLConnectionResponse)(nil),        // 79: ssoready.v1.AdminGetSAMLConnectionResponse
-	(*AdminCreateSAMLConnectionRequest)(nil),      // 80: ssoready.v1.AdminCreateSAMLConnectionRequest
-	(*AdminCreateSAMLConnectionResponse)(nil),     // 81: ssoready.v1.AdminCreateSAMLConnectionResponse
-	(*AdminUpdateSAMLConnectionRequest)(nil),      // 82: ssoready.v1.AdminUpdateSAMLConnectionRequest
-	(*AdminUpdateSAMLConnectionResponse)(nil),     // 83: ssoready.v1.AdminUpdateSAMLConnectionResponse
-	(*AdminParseSAMLMetadataRequest)(nil),         // 84: ssoready.v1.AdminParseSAMLMetadataRequest
-	(*AdminParseSAMLMetadataResponse)(nil),        // 85: ssoready.v1.AdminParseSAMLMetadataResponse
-	nil,                                           // 86: ssoready.v1.SAMLFlow.AttributesEntry
-	nil,                                           // 87: ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
-	(*emptypb.Empty)(nil),                         // 88: google.protobuf.Empty
-	(*timestamppb.Timestamp)(nil),                 // 89: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),                       // 90: google.protobuf.Struct
+	(*ListSCIMDirectoriesRequest)(nil),            // 71: ssoready.v1.ListSCIMDirectoriesRequest
+	(*ListSCIMDirectoriesResponse)(nil),           // 72: ssoready.v1.ListSCIMDirectoriesResponse
+	(*GetSCIMDirectoryRequest)(nil),               // 73: ssoready.v1.GetSCIMDirectoryRequest
+	(*CreateSCIMDirectoryRequest)(nil),            // 74: ssoready.v1.CreateSCIMDirectoryRequest
+	(*AppListSCIMUsersRequest)(nil),               // 75: ssoready.v1.AppListSCIMUsersRequest
+	(*AppListSCIMUsersResponse)(nil),              // 76: ssoready.v1.AppListSCIMUsersResponse
+	(*AppListSCIMGroupsRequest)(nil),              // 77: ssoready.v1.AppListSCIMGroupsRequest
+	(*AppListSCIMGroupsResponse)(nil),             // 78: ssoready.v1.AppListSCIMGroupsResponse
+	(*AdminRedeemOneTimeTokenRequest)(nil),        // 79: ssoready.v1.AdminRedeemOneTimeTokenRequest
+	(*AdminRedeemOneTimeTokenResponse)(nil),       // 80: ssoready.v1.AdminRedeemOneTimeTokenResponse
+	(*AdminListSAMLConnectionsRequest)(nil),       // 81: ssoready.v1.AdminListSAMLConnectionsRequest
+	(*AdminListSAMLConnectionsResponse)(nil),      // 82: ssoready.v1.AdminListSAMLConnectionsResponse
+	(*AdminGetSAMLConnectionRequest)(nil),         // 83: ssoready.v1.AdminGetSAMLConnectionRequest
+	(*AdminGetSAMLConnectionResponse)(nil),        // 84: ssoready.v1.AdminGetSAMLConnectionResponse
+	(*AdminCreateSAMLConnectionRequest)(nil),      // 85: ssoready.v1.AdminCreateSAMLConnectionRequest
+	(*AdminCreateSAMLConnectionResponse)(nil),     // 86: ssoready.v1.AdminCreateSAMLConnectionResponse
+	(*AdminUpdateSAMLConnectionRequest)(nil),      // 87: ssoready.v1.AdminUpdateSAMLConnectionRequest
+	(*AdminUpdateSAMLConnectionResponse)(nil),     // 88: ssoready.v1.AdminUpdateSAMLConnectionResponse
+	(*AdminParseSAMLMetadataRequest)(nil),         // 89: ssoready.v1.AdminParseSAMLMetadataRequest
+	(*AdminParseSAMLMetadataResponse)(nil),        // 90: ssoready.v1.AdminParseSAMLMetadataResponse
+	nil,                                           // 91: ssoready.v1.SAMLFlow.AttributesEntry
+	nil,                                           // 92: ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
+	(*emptypb.Empty)(nil),                         // 93: google.protobuf.Empty
+	(*timestamppb.Timestamp)(nil),                 // 94: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),                       // 95: google.protobuf.Struct
 }
 var file_ssoready_v1_ssoready_proto_depIdxs = []int32{
 	0,  // 0: ssoready.v1.SAMLFlow.status:type_name -> ssoready.v1.SAMLFlowStatus
-	88, // 1: ssoready.v1.SAMLFlow.unsigned_assertion:type_name -> google.protobuf.Empty
-	86, // 2: ssoready.v1.SAMLFlow.attributes:type_name -> ssoready.v1.SAMLFlow.AttributesEntry
-	89, // 3: ssoready.v1.SAMLFlow.create_time:type_name -> google.protobuf.Timestamp
-	89, // 4: ssoready.v1.SAMLFlow.update_time:type_name -> google.protobuf.Timestamp
-	89, // 5: ssoready.v1.SAMLFlow.get_redirect_time:type_name -> google.protobuf.Timestamp
-	89, // 6: ssoready.v1.SAMLFlow.initiate_time:type_name -> google.protobuf.Timestamp
-	89, // 7: ssoready.v1.SAMLFlow.receive_assertion_time:type_name -> google.protobuf.Timestamp
-	89, // 8: ssoready.v1.SAMLFlow.redeem_time:type_name -> google.protobuf.Timestamp
-	90, // 9: ssoready.v1.SCIMUser.attributes:type_name -> google.protobuf.Struct
-	90, // 10: ssoready.v1.SCIMGroup.attributes:type_name -> google.protobuf.Struct
-	87, // 11: ssoready.v1.RedeemSAMLAccessCodeResponse.attributes:type_name -> ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
+	93, // 1: ssoready.v1.SAMLFlow.unsigned_assertion:type_name -> google.protobuf.Empty
+	91, // 2: ssoready.v1.SAMLFlow.attributes:type_name -> ssoready.v1.SAMLFlow.AttributesEntry
+	94, // 3: ssoready.v1.SAMLFlow.create_time:type_name -> google.protobuf.Timestamp
+	94, // 4: ssoready.v1.SAMLFlow.update_time:type_name -> google.protobuf.Timestamp
+	94, // 5: ssoready.v1.SAMLFlow.get_redirect_time:type_name -> google.protobuf.Timestamp
+	94, // 6: ssoready.v1.SAMLFlow.initiate_time:type_name -> google.protobuf.Timestamp
+	94, // 7: ssoready.v1.SAMLFlow.receive_assertion_time:type_name -> google.protobuf.Timestamp
+	94, // 8: ssoready.v1.SAMLFlow.redeem_time:type_name -> google.protobuf.Timestamp
+	95, // 9: ssoready.v1.SCIMUser.attributes:type_name -> google.protobuf.Struct
+	95, // 10: ssoready.v1.SCIMGroup.attributes:type_name -> google.protobuf.Struct
+	92, // 11: ssoready.v1.RedeemSAMLAccessCodeResponse.attributes:type_name -> ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
 	9,  // 12: ssoready.v1.ListSCIMUsersResponse.scim_users:type_name -> ssoready.v1.SCIMUser
 	9,  // 13: ssoready.v1.GetSCIMUserResponse.scim_user:type_name -> ssoready.v1.SCIMUser
 	10, // 14: ssoready.v1.ListSCIMGroupsResponse.scim_groups:type_name -> ssoready.v1.SCIMGroup
@@ -5952,115 +6273,123 @@ var file_ssoready_v1_ssoready_proto_depIdxs = []int32{
 	6,  // 28: ssoready.v1.CreateSAMLConnectionRequest.saml_connection:type_name -> ssoready.v1.SAMLConnection
 	6,  // 29: ssoready.v1.UpdateSAMLConnectionRequest.saml_connection:type_name -> ssoready.v1.SAMLConnection
 	7,  // 30: ssoready.v1.ListSAMLFlowsResponse.saml_flows:type_name -> ssoready.v1.SAMLFlow
-	8,  // 31: ssoready.v1.CreateSCIMDirectoryRequest.scim_directory:type_name -> ssoready.v1.SCIMDirectory
-	8,  // 32: ssoready.v1.ListSCIMDirectoriesResponse.scim_directories:type_name -> ssoready.v1.SCIMDirectory
-	6,  // 33: ssoready.v1.AdminListSAMLConnectionsResponse.saml_connections:type_name -> ssoready.v1.SAMLConnection
-	6,  // 34: ssoready.v1.AdminGetSAMLConnectionResponse.saml_connection:type_name -> ssoready.v1.SAMLConnection
-	6,  // 35: ssoready.v1.AdminCreateSAMLConnectionRequest.saml_connection:type_name -> ssoready.v1.SAMLConnection
-	6,  // 36: ssoready.v1.AdminCreateSAMLConnectionResponse.saml_connection:type_name -> ssoready.v1.SAMLConnection
-	6,  // 37: ssoready.v1.AdminUpdateSAMLConnectionRequest.saml_connection:type_name -> ssoready.v1.SAMLConnection
-	6,  // 38: ssoready.v1.AdminUpdateSAMLConnectionResponse.saml_connection:type_name -> ssoready.v1.SAMLConnection
-	11, // 39: ssoready.v1.SSOReadyService.GetSAMLRedirectURL:input_type -> ssoready.v1.GetSAMLRedirectURLRequest
-	13, // 40: ssoready.v1.SSOReadyService.RedeemSAMLAccessCode:input_type -> ssoready.v1.RedeemSAMLAccessCodeRequest
-	15, // 41: ssoready.v1.SSOReadyService.ListSCIMUsers:input_type -> ssoready.v1.ListSCIMUsersRequest
-	17, // 42: ssoready.v1.SSOReadyService.GetSCIMUser:input_type -> ssoready.v1.GetSCIMUserRequest
-	19, // 43: ssoready.v1.SSOReadyService.ListSCIMGroups:input_type -> ssoready.v1.ListSCIMGroupsRequest
-	21, // 44: ssoready.v1.SSOReadyService.GetSCIMGroup:input_type -> ssoready.v1.GetSCIMGroupRequest
-	23, // 45: ssoready.v1.SSOReadyService.VerifyEmail:input_type -> ssoready.v1.VerifyEmailRequest
-	24, // 46: ssoready.v1.SSOReadyService.SignIn:input_type -> ssoready.v1.SignInRequest
-	26, // 47: ssoready.v1.SSOReadyService.SignOut:input_type -> ssoready.v1.SignOutRequest
-	28, // 48: ssoready.v1.SSOReadyService.Whoami:input_type -> ssoready.v1.WhoamiRequest
-	30, // 49: ssoready.v1.SSOReadyService.GetOnboardingState:input_type -> ssoready.v1.GetOnboardingStateRequest
-	32, // 50: ssoready.v1.SSOReadyService.UpdateOnboardingState:input_type -> ssoready.v1.UpdateOnboardingStateRequest
-	33, // 51: ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL:input_type -> ssoready.v1.OnboardingGetSAMLRedirectURLRequest
-	34, // 52: ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode:input_type -> ssoready.v1.OnboardingRedeemSAMLAccessCodeRequest
-	35, // 53: ssoready.v1.SSOReadyService.GetAppOrganization:input_type -> ssoready.v1.GetAppOrganizationRequest
-	37, // 54: ssoready.v1.SSOReadyService.ListAppUsers:input_type -> ssoready.v1.ListAppUsersRequest
-	39, // 55: ssoready.v1.SSOReadyService.ListEnvironments:input_type -> ssoready.v1.ListEnvironmentsRequest
-	41, // 56: ssoready.v1.SSOReadyService.GetEnvironment:input_type -> ssoready.v1.GetEnvironmentRequest
-	42, // 57: ssoready.v1.SSOReadyService.CreateEnvironment:input_type -> ssoready.v1.CreateEnvironmentRequest
-	43, // 58: ssoready.v1.SSOReadyService.UpdateEnvironment:input_type -> ssoready.v1.UpdateEnvironmentRequest
-	44, // 59: ssoready.v1.SSOReadyService.ListAPIKeys:input_type -> ssoready.v1.ListAPIKeysRequest
-	46, // 60: ssoready.v1.SSOReadyService.GetAPIKey:input_type -> ssoready.v1.GetAPIKeyRequest
-	47, // 61: ssoready.v1.SSOReadyService.CreateAPIKey:input_type -> ssoready.v1.CreateAPIKeyRequest
-	48, // 62: ssoready.v1.SSOReadyService.DeleteAPIKey:input_type -> ssoready.v1.DeleteAPIKeyRequest
-	49, // 63: ssoready.v1.SSOReadyService.ListSAMLOAuthClients:input_type -> ssoready.v1.ListSAMLOAuthClientsRequest
-	51, // 64: ssoready.v1.SSOReadyService.GetSAMLOAuthClient:input_type -> ssoready.v1.GetSAMLOAuthClientRequest
-	52, // 65: ssoready.v1.SSOReadyService.CreateSAMLOAuthClient:input_type -> ssoready.v1.CreateSAMLOAuthClientRequest
-	53, // 66: ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient:input_type -> ssoready.v1.DeleteSAMLOAuthClientRequest
-	54, // 67: ssoready.v1.SSOReadyService.ListOrganizations:input_type -> ssoready.v1.ListOrganizationsRequest
-	56, // 68: ssoready.v1.SSOReadyService.GetOrganization:input_type -> ssoready.v1.GetOrganizationRequest
-	57, // 69: ssoready.v1.SSOReadyService.CreateOrganization:input_type -> ssoready.v1.CreateOrganizationRequest
-	58, // 70: ssoready.v1.SSOReadyService.UpdateOrganization:input_type -> ssoready.v1.UpdateOrganizationRequest
-	59, // 71: ssoready.v1.SSOReadyService.CreateAdminSetupURL:input_type -> ssoready.v1.CreateAdminSetupURLRequest
-	61, // 72: ssoready.v1.SSOReadyService.ListSAMLConnections:input_type -> ssoready.v1.ListSAMLConnectionsRequest
-	63, // 73: ssoready.v1.SSOReadyService.GetSAMLConnection:input_type -> ssoready.v1.GetSAMLConnectionRequest
-	64, // 74: ssoready.v1.SSOReadyService.CreateSAMLConnection:input_type -> ssoready.v1.CreateSAMLConnectionRequest
-	65, // 75: ssoready.v1.SSOReadyService.UpdateSAMLConnection:input_type -> ssoready.v1.UpdateSAMLConnectionRequest
-	66, // 76: ssoready.v1.SSOReadyService.ListSAMLFlows:input_type -> ssoready.v1.ListSAMLFlowsRequest
-	68, // 77: ssoready.v1.SSOReadyService.GetSAMLFlow:input_type -> ssoready.v1.GetSAMLFlowRequest
-	69, // 78: ssoready.v1.SSOReadyService.ParseSAMLMetadata:input_type -> ssoready.v1.ParseSAMLMetadataRequest
-	72, // 79: ssoready.v1.SSOReadyService.ListSCIMDirectories:input_type -> ssoready.v1.ListSCIMDirectoriesRequest
-	71, // 80: ssoready.v1.SSOReadyService.CreateSCIMDirectory:input_type -> ssoready.v1.CreateSCIMDirectoryRequest
-	74, // 81: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:input_type -> ssoready.v1.AdminRedeemOneTimeTokenRequest
-	76, // 82: ssoready.v1.SSOReadyService.AdminListSAMLConnections:input_type -> ssoready.v1.AdminListSAMLConnectionsRequest
-	78, // 83: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:input_type -> ssoready.v1.AdminGetSAMLConnectionRequest
-	80, // 84: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:input_type -> ssoready.v1.AdminCreateSAMLConnectionRequest
-	82, // 85: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:input_type -> ssoready.v1.AdminUpdateSAMLConnectionRequest
-	84, // 86: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:input_type -> ssoready.v1.AdminParseSAMLMetadataRequest
-	12, // 87: ssoready.v1.SSOReadyService.GetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
-	14, // 88: ssoready.v1.SSOReadyService.RedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
-	16, // 89: ssoready.v1.SSOReadyService.ListSCIMUsers:output_type -> ssoready.v1.ListSCIMUsersResponse
-	18, // 90: ssoready.v1.SSOReadyService.GetSCIMUser:output_type -> ssoready.v1.GetSCIMUserResponse
-	20, // 91: ssoready.v1.SSOReadyService.ListSCIMGroups:output_type -> ssoready.v1.ListSCIMGroupsResponse
-	22, // 92: ssoready.v1.SSOReadyService.GetSCIMGroup:output_type -> ssoready.v1.GetSCIMGroupResponse
-	88, // 93: ssoready.v1.SSOReadyService.VerifyEmail:output_type -> google.protobuf.Empty
-	25, // 94: ssoready.v1.SSOReadyService.SignIn:output_type -> ssoready.v1.SignInResponse
-	27, // 95: ssoready.v1.SSOReadyService.SignOut:output_type -> ssoready.v1.SignOutResponse
-	29, // 96: ssoready.v1.SSOReadyService.Whoami:output_type -> ssoready.v1.WhoamiResponse
-	31, // 97: ssoready.v1.SSOReadyService.GetOnboardingState:output_type -> ssoready.v1.GetOnboardingStateResponse
-	88, // 98: ssoready.v1.SSOReadyService.UpdateOnboardingState:output_type -> google.protobuf.Empty
-	12, // 99: ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
-	14, // 100: ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
-	36, // 101: ssoready.v1.SSOReadyService.GetAppOrganization:output_type -> ssoready.v1.GetAppOrganizationResponse
-	38, // 102: ssoready.v1.SSOReadyService.ListAppUsers:output_type -> ssoready.v1.ListAppUsersResponse
-	40, // 103: ssoready.v1.SSOReadyService.ListEnvironments:output_type -> ssoready.v1.ListEnvironmentsResponse
-	2,  // 104: ssoready.v1.SSOReadyService.GetEnvironment:output_type -> ssoready.v1.Environment
-	2,  // 105: ssoready.v1.SSOReadyService.CreateEnvironment:output_type -> ssoready.v1.Environment
-	2,  // 106: ssoready.v1.SSOReadyService.UpdateEnvironment:output_type -> ssoready.v1.Environment
-	45, // 107: ssoready.v1.SSOReadyService.ListAPIKeys:output_type -> ssoready.v1.ListAPIKeysResponse
-	3,  // 108: ssoready.v1.SSOReadyService.GetAPIKey:output_type -> ssoready.v1.APIKey
-	3,  // 109: ssoready.v1.SSOReadyService.CreateAPIKey:output_type -> ssoready.v1.APIKey
-	88, // 110: ssoready.v1.SSOReadyService.DeleteAPIKey:output_type -> google.protobuf.Empty
-	50, // 111: ssoready.v1.SSOReadyService.ListSAMLOAuthClients:output_type -> ssoready.v1.ListSAMLOAuthClientsResponse
-	4,  // 112: ssoready.v1.SSOReadyService.GetSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
-	4,  // 113: ssoready.v1.SSOReadyService.CreateSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
-	88, // 114: ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient:output_type -> google.protobuf.Empty
-	55, // 115: ssoready.v1.SSOReadyService.ListOrganizations:output_type -> ssoready.v1.ListOrganizationsResponse
-	5,  // 116: ssoready.v1.SSOReadyService.GetOrganization:output_type -> ssoready.v1.Organization
-	5,  // 117: ssoready.v1.SSOReadyService.CreateOrganization:output_type -> ssoready.v1.Organization
-	5,  // 118: ssoready.v1.SSOReadyService.UpdateOrganization:output_type -> ssoready.v1.Organization
-	60, // 119: ssoready.v1.SSOReadyService.CreateAdminSetupURL:output_type -> ssoready.v1.CreateAdminSetupURLResponse
-	62, // 120: ssoready.v1.SSOReadyService.ListSAMLConnections:output_type -> ssoready.v1.ListSAMLConnectionsResponse
-	6,  // 121: ssoready.v1.SSOReadyService.GetSAMLConnection:output_type -> ssoready.v1.SAMLConnection
-	6,  // 122: ssoready.v1.SSOReadyService.CreateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
-	6,  // 123: ssoready.v1.SSOReadyService.UpdateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
-	67, // 124: ssoready.v1.SSOReadyService.ListSAMLFlows:output_type -> ssoready.v1.ListSAMLFlowsResponse
-	7,  // 125: ssoready.v1.SSOReadyService.GetSAMLFlow:output_type -> ssoready.v1.SAMLFlow
-	70, // 126: ssoready.v1.SSOReadyService.ParseSAMLMetadata:output_type -> ssoready.v1.ParseSAMLMetadataResponse
-	73, // 127: ssoready.v1.SSOReadyService.ListSCIMDirectories:output_type -> ssoready.v1.ListSCIMDirectoriesResponse
-	8,  // 128: ssoready.v1.SSOReadyService.CreateSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
-	75, // 129: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:output_type -> ssoready.v1.AdminRedeemOneTimeTokenResponse
-	77, // 130: ssoready.v1.SSOReadyService.AdminListSAMLConnections:output_type -> ssoready.v1.AdminListSAMLConnectionsResponse
-	79, // 131: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:output_type -> ssoready.v1.AdminGetSAMLConnectionResponse
-	81, // 132: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:output_type -> ssoready.v1.AdminCreateSAMLConnectionResponse
-	83, // 133: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:output_type -> ssoready.v1.AdminUpdateSAMLConnectionResponse
-	85, // 134: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:output_type -> ssoready.v1.AdminParseSAMLMetadataResponse
-	87, // [87:135] is the sub-list for method output_type
-	39, // [39:87] is the sub-list for method input_type
-	39, // [39:39] is the sub-list for extension type_name
-	39, // [39:39] is the sub-list for extension extendee
-	0,  // [0:39] is the sub-list for field type_name
+	8,  // 31: ssoready.v1.ListSCIMDirectoriesResponse.scim_directories:type_name -> ssoready.v1.SCIMDirectory
+	8,  // 32: ssoready.v1.CreateSCIMDirectoryRequest.scim_directory:type_name -> ssoready.v1.SCIMDirectory
+	9,  // 33: ssoready.v1.AppListSCIMUsersResponse.scim_users:type_name -> ssoready.v1.SCIMUser
+	10, // 34: ssoready.v1.AppListSCIMGroupsResponse.scim_groups:type_name -> ssoready.v1.SCIMGroup
+	6,  // 35: ssoready.v1.AdminListSAMLConnectionsResponse.saml_connections:type_name -> ssoready.v1.SAMLConnection
+	6,  // 36: ssoready.v1.AdminGetSAMLConnectionResponse.saml_connection:type_name -> ssoready.v1.SAMLConnection
+	6,  // 37: ssoready.v1.AdminCreateSAMLConnectionRequest.saml_connection:type_name -> ssoready.v1.SAMLConnection
+	6,  // 38: ssoready.v1.AdminCreateSAMLConnectionResponse.saml_connection:type_name -> ssoready.v1.SAMLConnection
+	6,  // 39: ssoready.v1.AdminUpdateSAMLConnectionRequest.saml_connection:type_name -> ssoready.v1.SAMLConnection
+	6,  // 40: ssoready.v1.AdminUpdateSAMLConnectionResponse.saml_connection:type_name -> ssoready.v1.SAMLConnection
+	11, // 41: ssoready.v1.SSOReadyService.GetSAMLRedirectURL:input_type -> ssoready.v1.GetSAMLRedirectURLRequest
+	13, // 42: ssoready.v1.SSOReadyService.RedeemSAMLAccessCode:input_type -> ssoready.v1.RedeemSAMLAccessCodeRequest
+	15, // 43: ssoready.v1.SSOReadyService.ListSCIMUsers:input_type -> ssoready.v1.ListSCIMUsersRequest
+	17, // 44: ssoready.v1.SSOReadyService.GetSCIMUser:input_type -> ssoready.v1.GetSCIMUserRequest
+	19, // 45: ssoready.v1.SSOReadyService.ListSCIMGroups:input_type -> ssoready.v1.ListSCIMGroupsRequest
+	21, // 46: ssoready.v1.SSOReadyService.GetSCIMGroup:input_type -> ssoready.v1.GetSCIMGroupRequest
+	23, // 47: ssoready.v1.SSOReadyService.VerifyEmail:input_type -> ssoready.v1.VerifyEmailRequest
+	24, // 48: ssoready.v1.SSOReadyService.SignIn:input_type -> ssoready.v1.SignInRequest
+	26, // 49: ssoready.v1.SSOReadyService.SignOut:input_type -> ssoready.v1.SignOutRequest
+	28, // 50: ssoready.v1.SSOReadyService.Whoami:input_type -> ssoready.v1.WhoamiRequest
+	30, // 51: ssoready.v1.SSOReadyService.GetOnboardingState:input_type -> ssoready.v1.GetOnboardingStateRequest
+	32, // 52: ssoready.v1.SSOReadyService.UpdateOnboardingState:input_type -> ssoready.v1.UpdateOnboardingStateRequest
+	33, // 53: ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL:input_type -> ssoready.v1.OnboardingGetSAMLRedirectURLRequest
+	34, // 54: ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode:input_type -> ssoready.v1.OnboardingRedeemSAMLAccessCodeRequest
+	35, // 55: ssoready.v1.SSOReadyService.GetAppOrganization:input_type -> ssoready.v1.GetAppOrganizationRequest
+	37, // 56: ssoready.v1.SSOReadyService.ListAppUsers:input_type -> ssoready.v1.ListAppUsersRequest
+	39, // 57: ssoready.v1.SSOReadyService.ListEnvironments:input_type -> ssoready.v1.ListEnvironmentsRequest
+	41, // 58: ssoready.v1.SSOReadyService.GetEnvironment:input_type -> ssoready.v1.GetEnvironmentRequest
+	42, // 59: ssoready.v1.SSOReadyService.CreateEnvironment:input_type -> ssoready.v1.CreateEnvironmentRequest
+	43, // 60: ssoready.v1.SSOReadyService.UpdateEnvironment:input_type -> ssoready.v1.UpdateEnvironmentRequest
+	44, // 61: ssoready.v1.SSOReadyService.ListAPIKeys:input_type -> ssoready.v1.ListAPIKeysRequest
+	46, // 62: ssoready.v1.SSOReadyService.GetAPIKey:input_type -> ssoready.v1.GetAPIKeyRequest
+	47, // 63: ssoready.v1.SSOReadyService.CreateAPIKey:input_type -> ssoready.v1.CreateAPIKeyRequest
+	48, // 64: ssoready.v1.SSOReadyService.DeleteAPIKey:input_type -> ssoready.v1.DeleteAPIKeyRequest
+	49, // 65: ssoready.v1.SSOReadyService.ListSAMLOAuthClients:input_type -> ssoready.v1.ListSAMLOAuthClientsRequest
+	51, // 66: ssoready.v1.SSOReadyService.GetSAMLOAuthClient:input_type -> ssoready.v1.GetSAMLOAuthClientRequest
+	52, // 67: ssoready.v1.SSOReadyService.CreateSAMLOAuthClient:input_type -> ssoready.v1.CreateSAMLOAuthClientRequest
+	53, // 68: ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient:input_type -> ssoready.v1.DeleteSAMLOAuthClientRequest
+	54, // 69: ssoready.v1.SSOReadyService.ListOrganizations:input_type -> ssoready.v1.ListOrganizationsRequest
+	56, // 70: ssoready.v1.SSOReadyService.GetOrganization:input_type -> ssoready.v1.GetOrganizationRequest
+	57, // 71: ssoready.v1.SSOReadyService.CreateOrganization:input_type -> ssoready.v1.CreateOrganizationRequest
+	58, // 72: ssoready.v1.SSOReadyService.UpdateOrganization:input_type -> ssoready.v1.UpdateOrganizationRequest
+	59, // 73: ssoready.v1.SSOReadyService.CreateAdminSetupURL:input_type -> ssoready.v1.CreateAdminSetupURLRequest
+	61, // 74: ssoready.v1.SSOReadyService.ListSAMLConnections:input_type -> ssoready.v1.ListSAMLConnectionsRequest
+	63, // 75: ssoready.v1.SSOReadyService.GetSAMLConnection:input_type -> ssoready.v1.GetSAMLConnectionRequest
+	64, // 76: ssoready.v1.SSOReadyService.CreateSAMLConnection:input_type -> ssoready.v1.CreateSAMLConnectionRequest
+	65, // 77: ssoready.v1.SSOReadyService.UpdateSAMLConnection:input_type -> ssoready.v1.UpdateSAMLConnectionRequest
+	66, // 78: ssoready.v1.SSOReadyService.ListSAMLFlows:input_type -> ssoready.v1.ListSAMLFlowsRequest
+	68, // 79: ssoready.v1.SSOReadyService.GetSAMLFlow:input_type -> ssoready.v1.GetSAMLFlowRequest
+	69, // 80: ssoready.v1.SSOReadyService.ParseSAMLMetadata:input_type -> ssoready.v1.ParseSAMLMetadataRequest
+	71, // 81: ssoready.v1.SSOReadyService.ListSCIMDirectories:input_type -> ssoready.v1.ListSCIMDirectoriesRequest
+	73, // 82: ssoready.v1.SSOReadyService.GetSCIMDirectory:input_type -> ssoready.v1.GetSCIMDirectoryRequest
+	74, // 83: ssoready.v1.SSOReadyService.CreateSCIMDirectory:input_type -> ssoready.v1.CreateSCIMDirectoryRequest
+	75, // 84: ssoready.v1.SSOReadyService.AppListSCIMUsers:input_type -> ssoready.v1.AppListSCIMUsersRequest
+	77, // 85: ssoready.v1.SSOReadyService.AppListSCIMGroups:input_type -> ssoready.v1.AppListSCIMGroupsRequest
+	79, // 86: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:input_type -> ssoready.v1.AdminRedeemOneTimeTokenRequest
+	81, // 87: ssoready.v1.SSOReadyService.AdminListSAMLConnections:input_type -> ssoready.v1.AdminListSAMLConnectionsRequest
+	83, // 88: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:input_type -> ssoready.v1.AdminGetSAMLConnectionRequest
+	85, // 89: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:input_type -> ssoready.v1.AdminCreateSAMLConnectionRequest
+	87, // 90: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:input_type -> ssoready.v1.AdminUpdateSAMLConnectionRequest
+	89, // 91: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:input_type -> ssoready.v1.AdminParseSAMLMetadataRequest
+	12, // 92: ssoready.v1.SSOReadyService.GetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
+	14, // 93: ssoready.v1.SSOReadyService.RedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
+	16, // 94: ssoready.v1.SSOReadyService.ListSCIMUsers:output_type -> ssoready.v1.ListSCIMUsersResponse
+	18, // 95: ssoready.v1.SSOReadyService.GetSCIMUser:output_type -> ssoready.v1.GetSCIMUserResponse
+	20, // 96: ssoready.v1.SSOReadyService.ListSCIMGroups:output_type -> ssoready.v1.ListSCIMGroupsResponse
+	22, // 97: ssoready.v1.SSOReadyService.GetSCIMGroup:output_type -> ssoready.v1.GetSCIMGroupResponse
+	93, // 98: ssoready.v1.SSOReadyService.VerifyEmail:output_type -> google.protobuf.Empty
+	25, // 99: ssoready.v1.SSOReadyService.SignIn:output_type -> ssoready.v1.SignInResponse
+	27, // 100: ssoready.v1.SSOReadyService.SignOut:output_type -> ssoready.v1.SignOutResponse
+	29, // 101: ssoready.v1.SSOReadyService.Whoami:output_type -> ssoready.v1.WhoamiResponse
+	31, // 102: ssoready.v1.SSOReadyService.GetOnboardingState:output_type -> ssoready.v1.GetOnboardingStateResponse
+	93, // 103: ssoready.v1.SSOReadyService.UpdateOnboardingState:output_type -> google.protobuf.Empty
+	12, // 104: ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
+	14, // 105: ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
+	36, // 106: ssoready.v1.SSOReadyService.GetAppOrganization:output_type -> ssoready.v1.GetAppOrganizationResponse
+	38, // 107: ssoready.v1.SSOReadyService.ListAppUsers:output_type -> ssoready.v1.ListAppUsersResponse
+	40, // 108: ssoready.v1.SSOReadyService.ListEnvironments:output_type -> ssoready.v1.ListEnvironmentsResponse
+	2,  // 109: ssoready.v1.SSOReadyService.GetEnvironment:output_type -> ssoready.v1.Environment
+	2,  // 110: ssoready.v1.SSOReadyService.CreateEnvironment:output_type -> ssoready.v1.Environment
+	2,  // 111: ssoready.v1.SSOReadyService.UpdateEnvironment:output_type -> ssoready.v1.Environment
+	45, // 112: ssoready.v1.SSOReadyService.ListAPIKeys:output_type -> ssoready.v1.ListAPIKeysResponse
+	3,  // 113: ssoready.v1.SSOReadyService.GetAPIKey:output_type -> ssoready.v1.APIKey
+	3,  // 114: ssoready.v1.SSOReadyService.CreateAPIKey:output_type -> ssoready.v1.APIKey
+	93, // 115: ssoready.v1.SSOReadyService.DeleteAPIKey:output_type -> google.protobuf.Empty
+	50, // 116: ssoready.v1.SSOReadyService.ListSAMLOAuthClients:output_type -> ssoready.v1.ListSAMLOAuthClientsResponse
+	4,  // 117: ssoready.v1.SSOReadyService.GetSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
+	4,  // 118: ssoready.v1.SSOReadyService.CreateSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
+	93, // 119: ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient:output_type -> google.protobuf.Empty
+	55, // 120: ssoready.v1.SSOReadyService.ListOrganizations:output_type -> ssoready.v1.ListOrganizationsResponse
+	5,  // 121: ssoready.v1.SSOReadyService.GetOrganization:output_type -> ssoready.v1.Organization
+	5,  // 122: ssoready.v1.SSOReadyService.CreateOrganization:output_type -> ssoready.v1.Organization
+	5,  // 123: ssoready.v1.SSOReadyService.UpdateOrganization:output_type -> ssoready.v1.Organization
+	60, // 124: ssoready.v1.SSOReadyService.CreateAdminSetupURL:output_type -> ssoready.v1.CreateAdminSetupURLResponse
+	62, // 125: ssoready.v1.SSOReadyService.ListSAMLConnections:output_type -> ssoready.v1.ListSAMLConnectionsResponse
+	6,  // 126: ssoready.v1.SSOReadyService.GetSAMLConnection:output_type -> ssoready.v1.SAMLConnection
+	6,  // 127: ssoready.v1.SSOReadyService.CreateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
+	6,  // 128: ssoready.v1.SSOReadyService.UpdateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
+	67, // 129: ssoready.v1.SSOReadyService.ListSAMLFlows:output_type -> ssoready.v1.ListSAMLFlowsResponse
+	7,  // 130: ssoready.v1.SSOReadyService.GetSAMLFlow:output_type -> ssoready.v1.SAMLFlow
+	70, // 131: ssoready.v1.SSOReadyService.ParseSAMLMetadata:output_type -> ssoready.v1.ParseSAMLMetadataResponse
+	72, // 132: ssoready.v1.SSOReadyService.ListSCIMDirectories:output_type -> ssoready.v1.ListSCIMDirectoriesResponse
+	8,  // 133: ssoready.v1.SSOReadyService.GetSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
+	8,  // 134: ssoready.v1.SSOReadyService.CreateSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
+	76, // 135: ssoready.v1.SSOReadyService.AppListSCIMUsers:output_type -> ssoready.v1.AppListSCIMUsersResponse
+	78, // 136: ssoready.v1.SSOReadyService.AppListSCIMGroups:output_type -> ssoready.v1.AppListSCIMGroupsResponse
+	80, // 137: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:output_type -> ssoready.v1.AdminRedeemOneTimeTokenResponse
+	82, // 138: ssoready.v1.SSOReadyService.AdminListSAMLConnections:output_type -> ssoready.v1.AdminListSAMLConnectionsResponse
+	84, // 139: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:output_type -> ssoready.v1.AdminGetSAMLConnectionResponse
+	86, // 140: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:output_type -> ssoready.v1.AdminCreateSAMLConnectionResponse
+	88, // 141: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:output_type -> ssoready.v1.AdminUpdateSAMLConnectionResponse
+	90, // 142: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:output_type -> ssoready.v1.AdminParseSAMLMetadataResponse
+	92, // [92:143] is the sub-list for method output_type
+	41, // [41:92] is the sub-list for method input_type
+	41, // [41:41] is the sub-list for extension type_name
+	41, // [41:41] is the sub-list for extension extendee
+	0,  // [0:41] is the sub-list for field type_name
 }
 
 func init() { file_ssoready_v1_ssoready_proto_init() }
@@ -6910,18 +7239,6 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[70].Exporter = func(v any, i int) any {
-			switch v := v.(*CreateSCIMDirectoryRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_ssoready_v1_ssoready_proto_msgTypes[71].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSCIMDirectoriesRequest); i {
 			case 0:
 				return &v.state
@@ -6933,7 +7250,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 				return nil
 			}
 		}
-		file_ssoready_v1_ssoready_proto_msgTypes[72].Exporter = func(v any, i int) any {
+		file_ssoready_v1_ssoready_proto_msgTypes[71].Exporter = func(v any, i int) any {
 			switch v := v.(*ListSCIMDirectoriesResponse); i {
 			case 0:
 				return &v.state
@@ -6945,8 +7262,20 @@ func file_ssoready_v1_ssoready_proto_init() {
 				return nil
 			}
 		}
+		file_ssoready_v1_ssoready_proto_msgTypes[72].Exporter = func(v any, i int) any {
+			switch v := v.(*GetSCIMDirectoryRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 		file_ssoready_v1_ssoready_proto_msgTypes[73].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminRedeemOneTimeTokenRequest); i {
+			switch v := v.(*CreateSCIMDirectoryRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6958,7 +7287,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[74].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminRedeemOneTimeTokenResponse); i {
+			switch v := v.(*AppListSCIMUsersRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6970,7 +7299,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[75].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminListSAMLConnectionsRequest); i {
+			switch v := v.(*AppListSCIMUsersResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6982,7 +7311,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[76].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminListSAMLConnectionsResponse); i {
+			switch v := v.(*AppListSCIMGroupsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6994,7 +7323,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[77].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminGetSAMLConnectionRequest); i {
+			switch v := v.(*AppListSCIMGroupsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7006,7 +7335,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[78].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminGetSAMLConnectionResponse); i {
+			switch v := v.(*AdminRedeemOneTimeTokenRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7018,7 +7347,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[79].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminCreateSAMLConnectionRequest); i {
+			switch v := v.(*AdminRedeemOneTimeTokenResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7030,7 +7359,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[80].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminCreateSAMLConnectionResponse); i {
+			switch v := v.(*AdminListSAMLConnectionsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7042,7 +7371,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[81].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminUpdateSAMLConnectionRequest); i {
+			switch v := v.(*AdminListSAMLConnectionsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7054,7 +7383,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[82].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminUpdateSAMLConnectionResponse); i {
+			switch v := v.(*AdminGetSAMLConnectionRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7066,7 +7395,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[83].Exporter = func(v any, i int) any {
-			switch v := v.(*AdminParseSAMLMetadataRequest); i {
+			switch v := v.(*AdminGetSAMLConnectionResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -7078,6 +7407,66 @@ func file_ssoready_v1_ssoready_proto_init() {
 			}
 		}
 		file_ssoready_v1_ssoready_proto_msgTypes[84].Exporter = func(v any, i int) any {
+			switch v := v.(*AdminCreateSAMLConnectionRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ssoready_v1_ssoready_proto_msgTypes[85].Exporter = func(v any, i int) any {
+			switch v := v.(*AdminCreateSAMLConnectionResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ssoready_v1_ssoready_proto_msgTypes[86].Exporter = func(v any, i int) any {
+			switch v := v.(*AdminUpdateSAMLConnectionRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ssoready_v1_ssoready_proto_msgTypes[87].Exporter = func(v any, i int) any {
+			switch v := v.(*AdminUpdateSAMLConnectionResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ssoready_v1_ssoready_proto_msgTypes[88].Exporter = func(v any, i int) any {
+			switch v := v.(*AdminParseSAMLMetadataRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ssoready_v1_ssoready_proto_msgTypes[89].Exporter = func(v any, i int) any {
 			switch v := v.(*AdminParseSAMLMetadataResponse); i {
 			case 0:
 				return &v.state
@@ -7103,7 +7492,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_ssoready_v1_ssoready_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   87,
+			NumMessages:   92,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

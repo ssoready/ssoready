@@ -615,3 +615,11 @@ where organization_id = $1
   and id >= $2
 order by id
 limit $3;
+
+-- name: GetSCIMDirectory :one
+select scim_directories.*
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_directories.id = $2;

@@ -1667,6 +1667,33 @@ func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirec
 	return auth_url, err
 }
 
+const getSCIMDirectory = `-- name: GetSCIMDirectory :one
+select scim_directories.id, scim_directories.organization_id, scim_directories.bearer_token_sha256, scim_directories.is_primary, scim_directories.scim_base_url
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_directories.id = $2
+`
+
+type GetSCIMDirectoryParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetSCIMDirectory(ctx context.Context, arg GetSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, getSCIMDirectory, arg.AppOrganizationID, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
 const getSCIMDirectoryByIDAndEnvironmentID = `-- name: GetSCIMDirectoryByIDAndEnvironmentID :one
 select scim_directories.id
 from scim_directories

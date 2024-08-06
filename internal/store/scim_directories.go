@@ -63,6 +63,29 @@ func (s *Store) ListSCIMDirectories(ctx context.Context, req *ssoreadyv1.ListSCI
 	}, nil
 }
 
+func (s *Store) GetSCIMDirectory(ctx context.Context, req *ssoreadyv1.GetSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	qSCIMDir, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                scimDirID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get scim directory: %w", err)
+	}
+
+	return parseSCIMDirectory(qSCIMDir), nil
+}
+
 func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {

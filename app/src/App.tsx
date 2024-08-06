@@ -28,6 +28,7 @@ import { ConfigProvider, useConfig } from "@/config";
 import * as Sentry from "@sentry/react";
 import { MicrosoftCallbackPage } from "@/pages/internal/MicrosoftCallbackPage";
 import { SettingsPage } from "@/pages/SettingsPage";
+import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,14 @@ export function AppRoutes() {
           <Route
             path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows/:samlFlowId"
             element={<ViewSAMLFlowPage />}
+          />
+          <Route
+            path="/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId"
+            element={<ViewSCIMDirectoryPage />}
+          />
+          <Route
+            path="/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/groups"
+            element={<ViewSCIMDirectoryPage />}
           />
         </Route>
       </Route>
