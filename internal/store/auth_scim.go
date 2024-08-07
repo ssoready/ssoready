@@ -16,6 +16,20 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+func (s *Store) AuthGetSCIMDirectoryOrganizationDomains(ctx context.Context, scimDirectoryID string) ([]string, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(scimDirectoryID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	domains, err := s.q.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirID)
+	if err != nil {
+		return nil, fmt.Errorf("get scim directory organization domains: %w", err)
+	}
+
+	return domains, nil
+}
+
 var ErrAuthSCIMBadBearerToken = errors.New("store: bad scim directory bearer token")
 
 func (s *Store) AuthSCIMVerifyBearerToken(ctx context.Context, scimDirectoryID, bearerToken string) error {

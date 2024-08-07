@@ -472,6 +472,13 @@ select *
 from scim_directories
 where id = $1;
 
+-- name: AuthGetSCIMDirectoryOrganizationDomains :many
+select organization_domains.domain
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join organization_domains on organizations.id = organization_domains.organization_id
+where scim_directories.id = $1;
+
 -- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
 select *
 from scim_directories

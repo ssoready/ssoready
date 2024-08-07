@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/ssoready/ssoready/internal/emailaddr"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -183,6 +184,37 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) {
 
 	userName := resource["userName"].(string) // todo this may panic
 	delete(resource, "schemas")
+
+	emailDomain, err := emailaddr.Parse(userName)
+	if err != nil {
+		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
+		return
+	}
+
+	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
+	if err != nil {
+		panic(err)
+	}
+
+	var domainOk bool
+	for _, domain := range allowedDomains {
+		if emailDomain == domain {
+			domainOk = true
+		}
+	}
+
+	if !domainOk {
+		msg, err := json.Marshal(map[string]any{
+			"status": http.StatusBadRequest,
+			"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		http.Error(w, string(msg), http.StatusBadRequest)
+		return
+	}
 
 	// at this point, all remaining properties are user attributes
 	attributes, err := structpb.NewStruct(resource)

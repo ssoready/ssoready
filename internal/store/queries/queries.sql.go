@@ -482,6 +482,34 @@ func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, ar
 	return i, err
 }
 
+const authGetSCIMDirectoryOrganizationDomains = `-- name: AuthGetSCIMDirectoryOrganizationDomains :many
+select organization_domains.domain
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join organization_domains on organizations.id = organization_domains.organization_id
+where scim_directories.id = $1
+`
+
+func (q *Queries) AuthGetSCIMDirectoryOrganizationDomains(ctx context.Context, id uuid.UUID) ([]string, error) {
+	rows, err := q.db.Query(ctx, authGetSCIMDirectoryOrganizationDomains, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var domain string
+		if err := rows.Scan(&domain); err != nil {
+			return nil, err
+		}
+		items = append(items, domain)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const authGetSCIMGroup = `-- name: AuthGetSCIMGroup :one
 select id, scim_directory_id, display_name, deleted, attributes
 from scim_groups
