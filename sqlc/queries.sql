@@ -624,6 +624,15 @@ from scim_directories
 where environments.app_organization_id = $1
   and scim_directories.id = $2;
 
+-- name: AppGetSCIMUser :one
+select scim_users.*
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_users.id = $2;
+
 -- name: UpdateSCIMDirectoryBearerToken :one
 update scim_directories
 set bearer_token_sha256 = $1

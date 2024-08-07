@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
@@ -60,4 +61,21 @@ func (s *Store) AppListSCIMUsers(ctx context.Context, req *ssoreadyv1.AppListSCI
 		ScimUsers:     scimUsers,
 		NextPageToken: nextPageToken,
 	}, nil
+}
+
+func (s *Store) AppGetSCIMUser(ctx context.Context, req *ssoreadyv1.AppGetSCIMUserRequest) (*ssoreadyv1.SCIMUser, error) {
+	scimUserID, err := idformat.SCIMUser.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	qSCIMUser, err := s.q.AppGetSCIMUser(ctx, queries.AppGetSCIMUserParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                scimUserID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get scim user: %w", err)
+	}
+
+	return parseSCIMUser(qSCIMUser), nil
 }

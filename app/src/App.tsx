@@ -29,6 +29,7 @@ import * as Sentry from "@sentry/react";
 import { MicrosoftCallbackPage } from "@/pages/internal/MicrosoftCallbackPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
+import { ViewSCIMUserPage } from "@/pages/ViewSCIMUserPage";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,10 @@ export function AppRoutes() {
           <Route
             path="/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/groups"
             element={<ViewSCIMDirectoryPage />}
+          />
+          <Route
+            path="/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/users/:scimUserId"
+            element={<ViewSCIMUserPage />}
           />
         </Route>
       </Route>

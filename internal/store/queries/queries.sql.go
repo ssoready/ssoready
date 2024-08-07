@@ -106,6 +106,34 @@ func (q *Queries) AdminGetSAMLConnection(ctx context.Context, arg AdminGetSAMLCo
 	return i, err
 }
 
+const appGetSCIMUser = `-- name: AppGetSCIMUser :one
+select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_users.id = $2
+`
+
+type AppGetSCIMUserParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) AppGetSCIMUser(ctx context.Context, arg AppGetSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, appGetSCIMUser, arg.AppOrganizationID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
 select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth from saml_flows where id = $1 and access_code_sha256 is not null)
 `

@@ -15,3 +15,12 @@ func (s *Service) AppListSCIMUsers(ctx context.Context, req *connect.Request[sso
 
 	return connect.NewResponse(res), nil
 }
+
+func (s *Service) AppGetSCIMUser(ctx context.Context, req *connect.Request[ssoreadyv1.AppGetSCIMUserRequest]) (*connect.Response[ssoreadyv1.SCIMUser], error) {
+	res, err := s.Store.AppGetSCIMUser(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(res), nil
+}
