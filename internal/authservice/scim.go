@@ -399,8 +399,71 @@ func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
-	// todo
-	s.scimGetGroup(w, r)
+	ctx := r.Context()
+	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
+	scimGroupID := mux.Vars(r)["scim_group_id"]
+
+	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
+		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
+			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
+			return
+		}
+		panic(err)
+	}
+
+	defer r.Body.Close()
+	var resource map[string]any
+	if err := json.NewDecoder(r.Body).Decode(&resource); err != nil {
+		panic(err)
+	}
+
+	members := resource["members"].([]any)
+	var memberSCIMUserIDs []string
+	for _, member := range members {
+		member := member.(map[string]any)
+		userID := member["value"].(string)
+		memberSCIMUserIDs = append(memberSCIMUserIDs, userID)
+	}
+
+	displayName := resource["displayName"].(string)
+	delete(resource, "schemas")
+
+	// at this point, all remaining properties are user attributes
+	attributes, err := structpb.NewStruct(resource)
+	if err != nil {
+		panic(fmt.Errorf("convert attributes to structpb: %w", err))
+	}
+
+	scimGroup, err := s.Store.AuthUpdateSCIMGroup(ctx, &store.AuthUpdateSCIMGroupRequest{
+		SCIMGroup: &ssoreadyv1.SCIMGroup{
+			Id:              scimGroupID,
+			ScimDirectoryId: scimDirectoryID,
+			DisplayName:     displayName,
+			Attributes:      attributes,
+		},
+		MemberSCIMUserIDs: memberSCIMUserIDs,
+	})
+	if err != nil {
+		panic(fmt.Errorf("store: %w", err))
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	response := scimGroup.SCIMGroup.Attributes.AsMap()
+	response["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:Group"}
+	response["id"] = scimGroup.SCIMGroup.Id
+	var responseMembers []map[string]any
+	for _, userID := range scimGroup.MemberSCIMUserIDs {
+		responseMembers = append(responseMembers, map[string]any{
+			"value": userID,
+		})
+	}
+	response["members"] = responseMembers
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		panic(err)
+	}
 }
 
 func (s *Service) scimVerifyBearerToken(ctx context.Context, scimDirectoryID, authorization string) error {

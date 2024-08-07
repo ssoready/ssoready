@@ -173,6 +173,17 @@ func (q *Queries) AuthCheckAssertionAlreadyProcessed(ctx context.Context, id uui
 	return exists, err
 }
 
+const authClearSCIMGroupMembers = `-- name: AuthClearSCIMGroupMembers :exec
+delete
+from scim_user_group_memberships
+where scim_group_id = $1
+`
+
+func (q *Queries) AuthClearSCIMGroupMembers(ctx context.Context, scimGroupID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, authClearSCIMGroupMembers, scimGroupID)
+	return err
+}
+
 const authCountSCIMUsers = `-- name: AuthCountSCIMUsers :one
 select count(*)
 from scim_users
@@ -629,6 +640,33 @@ returning id, scim_directory_id, display_name, deleted, attributes
 
 func (q *Queries) AuthMarkSCIMGroupDeleted(ctx context.Context, id uuid.UUID) (ScimGroup, error) {
 	row := q.db.QueryRow(ctx, authMarkSCIMGroupDeleted, id)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpdateSCIMGroup = `-- name: AuthUpdateSCIMGroup :one
+update scim_groups
+set display_name = $1,
+    attributes   = $2
+where id = $3
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+type AuthUpdateSCIMGroupParams struct {
+	DisplayName string
+	Attributes  []byte
+	ID          uuid.UUID
+}
+
+func (q *Queries) AuthUpdateSCIMGroup(ctx context.Context, arg AuthUpdateSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMGroup, arg.DisplayName, arg.Attributes, arg.ID)
 	var i ScimGroup
 	err := row.Scan(
 		&i.ID,

@@ -163,6 +163,11 @@ export function ViewSCIMDirectoryPage() {
             <Button variant="outline" onClick={handleRotateBearerToken}>
               Generate new bearer token
             </Button>
+
+            <p className="mt-4 text-sm text-foreground-muted">
+              Generating a new bearer token will break any existing syncs with
+              this SCIM directory.
+            </p>
           </CardContent>
         </Card>
 

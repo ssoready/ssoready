@@ -529,6 +529,18 @@ insert into scim_groups (id, scim_directory_id, display_name, attributes, delete
 values ($1, $2, $3, $4, $5)
 returning *;
 
+-- name: AuthUpdateSCIMGroup :one
+update scim_groups
+set display_name = $1,
+    attributes   = $2
+where id = $3
+returning *;
+
+-- name: AuthClearSCIMGroupMembers :exec
+delete
+from scim_user_group_memberships
+where scim_group_id = $1;
+
 -- name: AuthMarkSCIMGroupDeleted :one
 update scim_groups
 set deleted = true
