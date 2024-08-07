@@ -436,5 +436,6 @@ func parseSCIMGroup(qSCIMGroup queries.ScimGroup) *ssoreadyv1.SCIMGroup {
 		ScimDirectoryId: idformat.SCIMDirectory.Format(qSCIMGroup.ScimDirectoryID),
 		DisplayName:     qSCIMGroup.DisplayName,
 		Attributes:      attrsStruct,
+		Deleted:         qSCIMGroup.Deleted,
 	}
 }

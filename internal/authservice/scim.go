@@ -380,6 +380,14 @@ func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) {
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimGroupID := mux.Vars(r)["scim_group_id"]
 
+	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
+		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
+			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
+			return
+		}
+		panic(err)
+	}
+
 	if err := s.Store.AuthDeleteSCIMGroup(ctx, &store.AuthDeleteSCIMGroupRequest{
 		SCIMDirectoryID: scimDirectoryID,
 		SCIMGroupID:     scimGroupID,
