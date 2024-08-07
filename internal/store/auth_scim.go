@@ -234,6 +234,7 @@ func (s *Store) AuthUpdateSCIMUser(ctx context.Context, req *AuthUpdateSCIMUserR
 		ID:              scimUserID,
 		ScimDirectoryID: scimDirID,
 		Email:           req.SCIMUser.Email,
+		Deleted:         req.SCIMUser.Deleted,
 		Attributes:      attrs,
 	})
 	if err != nil {

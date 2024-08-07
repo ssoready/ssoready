@@ -234,6 +234,11 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userName := resource["userName"].(string) // todo this may panic
+	active := true                            // may be omitted in request
+	if _, ok := resource["active"]; ok {
+		active = resource["active"].(bool)
+	}
+
 	delete(resource, "schemas")
 
 	// at this point, all remaining properties are user attributes
@@ -247,7 +252,7 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) {
 			Id:              scimUserID,
 			ScimDirectoryId: scimDirectoryID,
 			Email:           userName, // todo validate it's an email
-			Deleted:         false,
+			Deleted:         !active,
 			Attributes:      attributes,
 		},
 	})
@@ -328,8 +333,6 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	displayName := resource["displayName"].(string)
 	delete(resource, "schemas")
-	delete(resource, "displayName")
-	delete(resource, "members")
 
 	// at this point, all remaining properties are user attributes
 	attributes, err := structpb.NewStruct(resource)

@@ -512,7 +512,8 @@ returning *;
 -- name: AuthUpdateSCIMUser :one
 update scim_users
 set email      = $1,
-    attributes = $2
+    attributes = $2,
+    deleted    = $5
 where scim_directory_id = $3
   and id = $4
 returning *;

@@ -613,7 +613,8 @@ func (q *Queries) AuthMarkSCIMGroupDeleted(ctx context.Context, id uuid.UUID) (S
 const authUpdateSCIMUser = `-- name: AuthUpdateSCIMUser :one
 update scim_users
 set email      = $1,
-    attributes = $2
+    attributes = $2,
+    deleted    = $5
 where scim_directory_id = $3
   and id = $4
 returning id, scim_directory_id, email, deleted, attributes
@@ -624,6 +625,7 @@ type AuthUpdateSCIMUserParams struct {
 	Attributes      []byte
 	ScimDirectoryID uuid.UUID
 	ID              uuid.UUID
+	Deleted         bool
 }
 
 func (q *Queries) AuthUpdateSCIMUser(ctx context.Context, arg AuthUpdateSCIMUserParams) (ScimUser, error) {
@@ -632,6 +634,7 @@ func (q *Queries) AuthUpdateSCIMUser(ctx context.Context, arg AuthUpdateSCIMUser
 		arg.Attributes,
 		arg.ScimDirectoryID,
 		arg.ID,
+		arg.Deleted,
 	)
 	var i ScimUser
 	err := row.Scan(
