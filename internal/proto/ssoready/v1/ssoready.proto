@@ -94,6 +94,7 @@ service SSOReadyService {
   rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse);
   rpc GetSCIMDirectory(GetSCIMDirectoryRequest) returns (SCIMDirectory);
   rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc RotateSCIMDirectoryBearerToken(RotateSCIMDirectoryBearerTokenRequest) returns (RotateSCIMDirectoryBearerTokenResponse);
 
   rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
   rpc AppListSCIMGroups(AppListSCIMGroupsRequest) returns (AppListSCIMGroupsResponse);
@@ -507,6 +508,14 @@ message GetSCIMDirectoryRequest {
 
 message CreateSCIMDirectoryRequest {
   SCIMDirectory scim_directory = 1;
+}
+
+message RotateSCIMDirectoryBearerTokenRequest {
+  string scim_directory_id = 1;
+}
+
+message RotateSCIMDirectoryBearerTokenResponse {
+  string bearer_token = 1;
 }
 
 message AppListSCIMUsersRequest {

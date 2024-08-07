@@ -103,7 +103,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("store: %w", err))
 	}
 
-	var resources []any
+	resources := []any{} // intentionally initialized to avoid returning `null` instead of `[]`
 	for _, scimUser := range scimUsers.SCIMUsers {
 		resource := scimUser.Attributes.AsMap()
 		resource["id"] = scimUser.Id
@@ -143,6 +143,11 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) {
 		SCIMUserID:      scimUserID,
 	})
 	if err != nil {
+		if errors.Is(err, store.ErrSCIMUserNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
 		panic(err)
 	}
 

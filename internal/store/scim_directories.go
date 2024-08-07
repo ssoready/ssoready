@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -123,7 +124,7 @@ func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateS
 	id := uuid.New()
 	scimBaseURL := fmt.Sprintf("%s/v1/scim/%s", authURL, idformat.SCIMDirectory.Format(id))
 	qSCIMDirectory, err := q.CreateSCIMDirectory(ctx, queries.CreateSCIMDirectoryParams{
-		ID:             uuid.New(),
+		ID:             id,
 		OrganizationID: orgID,
 		IsPrimary:      req.ScimDirectory.Primary,
 		ScimBaseUrl:    scimBaseURL,
@@ -137,6 +138,46 @@ func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateS
 	}
 
 	return parseSCIMDirectory(qSCIMDirectory), nil
+}
+
+func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoreadyv1.RotateSCIMDirectoryBearerTokenRequest) (*ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                scimDirID,
+	}); err != nil {
+		return nil, fmt.Errorf("get scim directory: %w", err)
+	}
+
+	bearerToken := uuid.New()
+	bearerTokenSHA := sha256.Sum256(bearerToken[:])
+
+	fmt.Println("store bearer token", bearerToken)
+
+	if _, err := q.UpdateSCIMDirectoryBearerToken(ctx, queries.UpdateSCIMDirectoryBearerTokenParams{
+		BearerTokenSha256: bearerTokenSHA[:],
+		ID:                scimDirID,
+	}); err != nil {
+		return nil, fmt.Errorf("update scim directory access token: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse{
+		BearerToken: idformat.SCIMBearerToken.Format(bearerToken),
+	}, nil
 }
 
 func parseSCIMDirectory(qSCIMDirectory queries.ScimDirectory) *ssoreadyv1.SCIMDirectory {

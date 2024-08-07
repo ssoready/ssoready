@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,7 +24,16 @@ func (s *Store) AuthSCIMVerifyBearerToken(ctx context.Context, scimDirectoryID, 
 		return fmt.Errorf("parse scim directory id: %w", err)
 	}
 
-	bearerTokenSHA := sha256.Sum256([]byte(bearerToken))
+	bearerTokenID, err := idformat.SCIMBearerToken.Parse(bearerToken)
+	if err != nil {
+		return fmt.Errorf("parse bearer token: %w", err)
+	}
+
+	fmt.Println("bearer token id", uuid.UUID(bearerTokenID))
+
+	bearerTokenSHA := sha256.Sum256(bearerTokenID[:])
+
+	fmt.Println("check sha", uuid.UUID(scimDirID), hex.EncodeToString(bearerTokenSHA[:]))
 
 	if _, err := s.q.AuthGetSCIMDirectoryByIDAndBearerToken(ctx, queries.AuthGetSCIMDirectoryByIDAndBearerTokenParams{
 		ID:                scimDirID,
@@ -35,6 +45,7 @@ func (s *Store) AuthSCIMVerifyBearerToken(ctx context.Context, scimDirectoryID, 
 
 		return fmt.Errorf("get scim directory: %w", err)
 	}
+
 	return nil
 }
 
@@ -134,6 +145,10 @@ func (s *Store) AuthGetSCIMUser(ctx context.Context, req *AuthGetSCIMUserRequest
 		ID:              scimUserID,
 	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrSCIMUserNotFound
+		}
+
 		return nil, fmt.Errorf("get scim user: %w", err)
 	}
 

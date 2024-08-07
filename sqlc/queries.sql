@@ -623,3 +623,9 @@ from scim_directories
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_directories.id = $2;
+
+-- name: UpdateSCIMDirectoryBearerToken :one
+update scim_directories
+set bearer_token_sha256 = $1
+where id = $2
+returning *;

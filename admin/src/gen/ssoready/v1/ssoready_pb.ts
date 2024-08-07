@@ -3333,6 +3333,80 @@ export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryReque
 }
 
 /**
+ * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenRequest
+ */
+export class RotateSCIMDirectoryBearerTokenRequest extends Message<RotateSCIMDirectoryBearerTokenRequest> {
+  /**
+   * @generated from field: string scim_directory_id = 1;
+   */
+  scimDirectoryId = "";
+
+  constructor(data?: PartialMessage<RotateSCIMDirectoryBearerTokenRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.RotateSCIMDirectoryBearerTokenRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
+    return new RotateSCIMDirectoryBearerTokenRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
+    return new RotateSCIMDirectoryBearerTokenRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
+    return new RotateSCIMDirectoryBearerTokenRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RotateSCIMDirectoryBearerTokenRequest | PlainMessage<RotateSCIMDirectoryBearerTokenRequest> | undefined, b: RotateSCIMDirectoryBearerTokenRequest | PlainMessage<RotateSCIMDirectoryBearerTokenRequest> | undefined): boolean {
+    return proto3.util.equals(RotateSCIMDirectoryBearerTokenRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenResponse
+ */
+export class RotateSCIMDirectoryBearerTokenResponse extends Message<RotateSCIMDirectoryBearerTokenResponse> {
+  /**
+   * @generated from field: string bearer_token = 1;
+   */
+  bearerToken = "";
+
+  constructor(data?: PartialMessage<RotateSCIMDirectoryBearerTokenResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.RotateSCIMDirectoryBearerTokenResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
+    return new RotateSCIMDirectoryBearerTokenResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
+    return new RotateSCIMDirectoryBearerTokenResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
+    return new RotateSCIMDirectoryBearerTokenResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RotateSCIMDirectoryBearerTokenResponse | PlainMessage<RotateSCIMDirectoryBearerTokenResponse> | undefined, b: RotateSCIMDirectoryBearerTokenResponse | PlainMessage<RotateSCIMDirectoryBearerTokenResponse> | undefined): boolean {
+    return proto3.util.equals(RotateSCIMDirectoryBearerTokenResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AppListSCIMUsersRequest
  */
 export class AppListSCIMUsersRequest extends Message<AppListSCIMUsersRequest> {

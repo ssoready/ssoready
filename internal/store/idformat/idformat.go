@@ -18,9 +18,10 @@ var (
 	SAMLFlow              = prettyuuid.MustNewFormat("saml_flow_", alphabet)
 	SAMLAccessCode        = prettyuuid.MustNewFormat("saml_access_code_", alphabet)
 
-	SCIMDirectory = prettyuuid.MustNewFormat("scim_directory_", alphabet)
-	SCIMUser      = prettyuuid.MustNewFormat("scim_user_", alphabet)
-	SCIMGroup     = prettyuuid.MustNewFormat("scim_group_", alphabet)
+	SCIMDirectory   = prettyuuid.MustNewFormat("scim_directory_", alphabet)
+	SCIMUser        = prettyuuid.MustNewFormat("scim_user_", alphabet)
+	SCIMGroup       = prettyuuid.MustNewFormat("scim_group_", alphabet)
+	SCIMBearerToken = prettyuuid.MustNewFormat("ssoready_scim_bearer_token_", alphabet)
 
 	AdminOneTimeToken = prettyuuid.MustNewFormat("ssoready_one_time_token_", alphabet)
 )

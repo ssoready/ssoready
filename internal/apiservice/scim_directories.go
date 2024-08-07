@@ -33,3 +33,12 @@ func (s *Service) CreateSCIMDirectory(ctx context.Context, req *connect.Request[
 
 	return connect.NewResponse(res), nil
 }
+
+func (s *Service) RotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[ssoreadyv1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse], error) {
+	res, err := s.Store.RotateSCIMDirectoryBearerToken(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(res), nil
+}

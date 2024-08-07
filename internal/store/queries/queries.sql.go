@@ -2627,6 +2627,31 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 	return i, err
 }
 
+const updateSCIMDirectoryBearerToken = `-- name: UpdateSCIMDirectoryBearerToken :one
+update scim_directories
+set bearer_token_sha256 = $1
+where id = $2
+returning id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+`
+
+type UpdateSCIMDirectoryBearerTokenParams struct {
+	BearerTokenSha256 []byte
+	ID                uuid.UUID
+}
+
+func (q *Queries) UpdateSCIMDirectoryBearerToken(ctx context.Context, arg UpdateSCIMDirectoryBearerTokenParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, updateSCIMDirectoryBearerToken, arg.BearerTokenSha256, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
 const upsertSAMLFlowInitiate = `-- name: UpsertSAMLFlowInitiate :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
                         initiate_request, initiate_time, status, is_oauth)

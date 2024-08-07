@@ -160,6 +160,9 @@ const (
 	// SSOReadyServiceCreateSCIMDirectoryProcedure is the fully-qualified name of the SSOReadyService's
 	// CreateSCIMDirectory RPC.
 	SSOReadyServiceCreateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	// SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure is the fully-qualified name of the
+	// SSOReadyService's RotateSCIMDirectoryBearerToken RPC.
+	SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
 	// SSOReadyServiceAppListSCIMUsersProcedure is the fully-qualified name of the SSOReadyService's
 	// AppListSCIMUsers RPC.
 	SSOReadyServiceAppListSCIMUsersProcedure = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
@@ -231,6 +234,7 @@ type SSOReadyServiceClient interface {
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
 	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
+	RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
@@ -466,6 +470,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceCreateSCIMDirectoryProcedure,
 			opts...,
 		),
+		rotateSCIMDirectoryBearerToken: connect.NewClient[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse](
+			httpClient,
+			baseURL+SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure,
+			opts...,
+		),
 		appListSCIMUsers: connect.NewClient[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppListSCIMUsersProcedure,
@@ -554,6 +563,7 @@ type sSOReadyServiceClient struct {
 	listSCIMDirectories            *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
 	getSCIMDirectory               *connect.Client[v1.GetSCIMDirectoryRequest, v1.SCIMDirectory]
 	createSCIMDirectory            *connect.Client[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory]
+	rotateSCIMDirectoryBearerToken *connect.Client[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse]
 	appListSCIMUsers               *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
 	appListSCIMGroups              *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
 	adminRedeemOneTimeToken        *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
@@ -779,6 +789,11 @@ func (c *sSOReadyServiceClient) CreateSCIMDirectory(ctx context.Context, req *co
 	return c.createSCIMDirectory.CallUnary(ctx, req)
 }
 
+// RotateSCIMDirectoryBearerToken calls ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken.
+func (c *sSOReadyServiceClient) RotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error) {
+	return c.rotateSCIMDirectoryBearerToken.CallUnary(ctx, req)
+}
+
 // AppListSCIMUsers calls ssoready.v1.SSOReadyService.AppListSCIMUsers.
 func (c *sSOReadyServiceClient) AppListSCIMUsers(ctx context.Context, req *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {
 	return c.appListSCIMUsers.CallUnary(ctx, req)
@@ -864,6 +879,7 @@ type SSOReadyServiceHandler interface {
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
 	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
+	RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
@@ -1095,6 +1111,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.CreateSCIMDirectory,
 		opts...,
 	)
+	sSOReadyServiceRotateSCIMDirectoryBearerTokenHandler := connect.NewUnaryHandler(
+		SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure,
+		svc.RotateSCIMDirectoryBearerToken,
+		opts...,
+	)
 	sSOReadyServiceAppListSCIMUsersHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppListSCIMUsersProcedure,
 		svc.AppListSCIMUsers,
@@ -1223,6 +1244,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceCreateSCIMDirectoryProcedure:
 			sSOReadyServiceCreateSCIMDirectoryHandler.ServeHTTP(w, r)
+		case SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure:
+			sSOReadyServiceRotateSCIMDirectoryBearerTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSCIMUsersProcedure:
 			sSOReadyServiceAppListSCIMUsersHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSCIMGroupsProcedure:
@@ -1418,6 +1441,10 @@ func (UnimplementedSSOReadyServiceHandler) GetSCIMDirectory(context.Context, *co
 
 func (UnimplementedSSOReadyServiceHandler) CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateSCIMDirectory is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {
