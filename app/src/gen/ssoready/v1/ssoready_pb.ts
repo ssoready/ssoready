@@ -3573,6 +3573,43 @@ export class AppListSCIMGroupsRequest extends Message<AppListSCIMGroupsRequest> 
 }
 
 /**
+ * @generated from message ssoready.v1.AppGetSCIMGroupRequest
+ */
+export class AppGetSCIMGroupRequest extends Message<AppGetSCIMGroupRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<AppGetSCIMGroupRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppGetSCIMGroupRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetSCIMGroupRequest {
+    return new AppGetSCIMGroupRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetSCIMGroupRequest {
+    return new AppGetSCIMGroupRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetSCIMGroupRequest {
+    return new AppGetSCIMGroupRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppGetSCIMGroupRequest | PlainMessage<AppGetSCIMGroupRequest> | undefined, b: AppGetSCIMGroupRequest | PlainMessage<AppGetSCIMGroupRequest> | undefined): boolean {
+    return proto3.util.equals(AppGetSCIMGroupRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AppListSCIMGroupsResponse
  */
 export class AppListSCIMGroupsResponse extends Message<AppListSCIMGroupsResponse> {

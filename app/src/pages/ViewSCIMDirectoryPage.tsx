@@ -6,6 +6,7 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appListSCIMGroups,
   appListSCIMUsers,
   getSCIMDirectory,
   listSAMLFlows,
@@ -260,5 +261,64 @@ function UsersTabContent() {
 }
 
 function GroupsTabContent() {
-  return <div>groups</div>;
+  const { environmentId, organizationId, scimDirectoryId } = useParams();
+  const {
+    data: listSCIMGroupsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    appListSCIMGroups,
+    { scimDirectoryId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SCIM Groups</CardTitle>
+        <CardDescription>
+          Groups belonging to this SCIM directory.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Display Name</TableHead>
+              <TableHead>Deleted</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {listSCIMGroupsResponses?.pages
+              ?.flatMap((page) => page.scimGroups)
+              ?.map((scimGroup) => (
+                <TableRow key={scimGroup.id}>
+                  <TableCell className="max-w-[200px] truncate">
+                    <Link
+                      to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}/groups/${scimGroup.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
+                    >
+                      {scimGroup.id}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{scimGroup.displayName}</TableCell>
+                  <TableCell>{scimGroup.deleted ? "Yes" : "No"}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+        {hasNextPage && (
+          <Button variant="secondary" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

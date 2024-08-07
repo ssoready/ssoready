@@ -290,6 +290,10 @@ func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 		SCIMGroupID:     scimGroupID,
 	})
 	if err != nil {
+		if errors.Is(err, store.ErrSCIMGroupNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 		panic(err)
 	}
 

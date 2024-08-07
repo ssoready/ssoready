@@ -255,6 +255,8 @@ type AuthGetSCIMGroupRequest struct {
 	SCIMGroupID     string
 }
 
+var ErrSCIMGroupNotFound = errors.New("store: scim group not found")
+
 func (s *Store) AuthGetSCIMGroup(ctx context.Context, req *AuthGetSCIMGroupRequest) (*ssoreadyv1.SCIMGroup, error) {
 	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
 	if err != nil {
@@ -271,6 +273,9 @@ func (s *Store) AuthGetSCIMGroup(ctx context.Context, req *AuthGetSCIMGroupReque
 		ID:              scimGroupID,
 	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrSCIMGroupNotFound
+		}
 		return nil, fmt.Errorf("get scim group: %w", err)
 	}
 
@@ -327,6 +332,7 @@ func (s *Store) AuthCreateSCIMGroup(ctx context.Context, req *AuthCreateSCIMGrou
 		ScimDirectoryID: scimDirID,
 		DisplayName:     req.SCIMGroup.DisplayName,
 		Attributes:      attrs,
+		Deleted:         false,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("create scim group: %w", err)

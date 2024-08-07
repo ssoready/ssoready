@@ -99,6 +99,7 @@ service SSOReadyService {
   rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
   rpc AppGetSCIMUser(AppGetSCIMUserRequest) returns (SCIMUser);
   rpc AppListSCIMGroups(AppListSCIMGroupsRequest) returns (AppListSCIMGroupsResponse);
+  rpc AppGetSCIMGroup(AppGetSCIMGroupRequest) returns (SCIMGroup);
 
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
   rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
@@ -536,6 +537,10 @@ message AppGetSCIMUserRequest {
 message AppListSCIMGroupsRequest {
   string scim_directory_id = 1;
   string page_token = 2;
+}
+
+message AppGetSCIMGroupRequest {
+  string id = 1;
 }
 
 message AppListSCIMGroupsResponse {

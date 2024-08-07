@@ -106,6 +106,34 @@ func (q *Queries) AdminGetSAMLConnection(ctx context.Context, arg AdminGetSAMLCo
 	return i, err
 }
 
+const appGetSCIMGroup = `-- name: AppGetSCIMGroup :one
+select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_groups.id = $2
+`
+
+type AppGetSCIMGroupParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) AppGetSCIMGroup(ctx context.Context, arg AppGetSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, appGetSCIMGroup, arg.AppOrganizationID, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const appGetSCIMUser = `-- name: AppGetSCIMUser :one
 select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
 from scim_users
@@ -160,8 +188,8 @@ func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.U
 }
 
 const authCreateSCIMGroup = `-- name: AuthCreateSCIMGroup :one
-insert into scim_groups (id, scim_directory_id, display_name, attributes)
-values ($1, $2, $3, $4)
+insert into scim_groups (id, scim_directory_id, display_name, attributes, deleted)
+values ($1, $2, $3, $4, $5)
 returning id, scim_directory_id, display_name, deleted, attributes
 `
 
@@ -170,6 +198,7 @@ type AuthCreateSCIMGroupParams struct {
 	ScimDirectoryID uuid.UUID
 	DisplayName     string
 	Attributes      []byte
+	Deleted         bool
 }
 
 func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGroupParams) (ScimGroup, error) {
@@ -178,6 +207,7 @@ func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGro
 		arg.ScimDirectoryID,
 		arg.DisplayName,
 		arg.Attributes,
+		arg.Deleted,
 	)
 	var i ScimGroup
 	err := row.Scan(

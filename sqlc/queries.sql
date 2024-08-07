@@ -525,8 +525,8 @@ where scim_directory_id = $1
   and id = $2;
 
 -- name: AuthCreateSCIMGroup :one
-insert into scim_groups (id, scim_directory_id, display_name, attributes)
-values ($1, $2, $3, $4)
+insert into scim_groups (id, scim_directory_id, display_name, attributes, deleted)
+values ($1, $2, $3, $4, $5)
 returning *;
 
 -- name: AuthMarkSCIMGroupDeleted :one
@@ -633,6 +633,15 @@ from scim_users
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_users.id = $2;
+
+-- name: AppGetSCIMGroup :one
+select scim_groups.*
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_groups.id = $2;
 
 -- name: UpdateSCIMDirectoryBearerToken :one
 update scim_directories

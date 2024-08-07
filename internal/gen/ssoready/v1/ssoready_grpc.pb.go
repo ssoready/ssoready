@@ -67,6 +67,7 @@ const (
 	SSOReadyService_AppListSCIMUsers_FullMethodName               = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
 	SSOReadyService_AppGetSCIMUser_FullMethodName                 = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
 	SSOReadyService_AppListSCIMGroups_FullMethodName              = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
+	SSOReadyService_AppGetSCIMGroup_FullMethodName                = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
 	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName        = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
 	SSOReadyService_AdminListSAMLConnections_FullMethodName       = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
 	SSOReadyService_AdminGetSAMLConnection_FullMethodName         = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
@@ -126,6 +127,7 @@ type SSOReadyServiceClient interface {
 	AppListSCIMUsers(ctx context.Context, in *AppListSCIMUsersRequest, opts ...grpc.CallOption) (*AppListSCIMUsersResponse, error)
 	AppGetSCIMUser(ctx context.Context, in *AppGetSCIMUserRequest, opts ...grpc.CallOption) (*SCIMUser, error)
 	AppListSCIMGroups(ctx context.Context, in *AppListSCIMGroupsRequest, opts ...grpc.CallOption) (*AppListSCIMGroupsResponse, error)
+	AppGetSCIMGroup(ctx context.Context, in *AppGetSCIMGroupRequest, opts ...grpc.CallOption) (*SCIMGroup, error)
 	AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error)
 	AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(ctx context.Context, in *AdminGetSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminGetSAMLConnectionResponse, error)
@@ -612,6 +614,16 @@ func (c *sSOReadyServiceClient) AppListSCIMGroups(ctx context.Context, in *AppLi
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AppGetSCIMGroup(ctx context.Context, in *AppGetSCIMGroupRequest, opts ...grpc.CallOption) (*SCIMGroup, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMGroup)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppGetSCIMGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminRedeemOneTimeTokenResponse)
@@ -723,6 +735,7 @@ type SSOReadyServiceServer interface {
 	AppListSCIMUsers(context.Context, *AppListSCIMUsersRequest) (*AppListSCIMUsersResponse, error)
 	AppGetSCIMUser(context.Context, *AppGetSCIMUserRequest) (*SCIMUser, error)
 	AppListSCIMGroups(context.Context, *AppListSCIMGroupsRequest) (*AppListSCIMGroupsResponse, error)
+	AppGetSCIMGroup(context.Context, *AppGetSCIMGroupRequest) (*SCIMGroup, error)
 	AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error)
 	AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(context.Context, *AdminGetSAMLConnectionRequest) (*AdminGetSAMLConnectionResponse, error)
@@ -879,6 +892,9 @@ func (UnimplementedSSOReadyServiceServer) AppGetSCIMUser(context.Context, *AppGe
 }
 func (UnimplementedSSOReadyServiceServer) AppListSCIMGroups(context.Context, *AppListSCIMGroupsRequest) (*AppListSCIMGroupsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppListSCIMGroups not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppGetSCIMGroup(context.Context, *AppGetSCIMGroupRequest) (*SCIMGroup, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppGetSCIMGroup not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminRedeemOneTimeToken not implemented")
@@ -1765,6 +1781,24 @@ func _SSOReadyService_AppListSCIMGroups_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AppGetSCIMGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppGetSCIMGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppGetSCIMGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppGetSCIMGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppGetSCIMGroup(ctx, req.(*AppGetSCIMGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AdminRedeemOneTimeToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminRedeemOneTimeTokenRequest)
 	if err := dec(in); err != nil {
@@ -2067,6 +2101,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppListSCIMGroups",
 			Handler:    _SSOReadyService_AppListSCIMGroups_Handler,
+		},
+		{
+			MethodName: "AppGetSCIMGroup",
+			Handler:    _SSOReadyService_AppGetSCIMGroup_Handler,
 		},
 		{
 			MethodName: "AdminRedeemOneTimeToken",
