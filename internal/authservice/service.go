@@ -87,6 +87,7 @@ func (s *Service) NewHandler() http.Handler {
 	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(http.HandlerFunc(s.scimGetGroup))).Methods(http.MethodGet)
 	r.Handle("/v1/scim/{scim_directory_id}/Groups", logHandler(http.HandlerFunc(s.scimCreateGroup))).Methods(http.MethodPost)
 	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(http.HandlerFunc(s.scimUpdateGroup))).Methods(http.MethodPut)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(http.HandlerFunc(s.scimPatchGroup))).Methods(http.MethodPatch)
 	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(http.HandlerFunc(s.scimDeleteGroup))).Methods(http.MethodDelete)
 
 	return r

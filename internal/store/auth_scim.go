@@ -506,6 +506,45 @@ func (s *Store) AuthUpdateSCIMGroup(ctx context.Context, req *AuthUpdateSCIMGrou
 	}, nil
 }
 
+func (s *Store) AuthUpdateSCIMGroupDisplayName(ctx context.Context, req *ssoreadyv1.SCIMGroup) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
+	if err != nil {
+		return fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	scimGroupID, err := idformat.SCIMGroup.Parse(req.Id)
+	if err != nil {
+		return fmt.Errorf("parse scim group id: %w", err)
+	}
+
+	// authz check
+	if _, err := q.AuthGetSCIMGroup(ctx, queries.AuthGetSCIMGroupParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimGroupID,
+	}); err != nil {
+		return fmt.Errorf("get scim group: %w", err)
+	}
+
+	if _, err := q.AuthUpdateSCIMGroupDisplayName(ctx, queries.AuthUpdateSCIMGroupDisplayNameParams{
+		ID:          scimGroupID,
+		DisplayName: req.DisplayName,
+	}); err != nil {
+		return fmt.Errorf("update scim group display name: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return fmt.Errorf("commit: %w", err)
+	}
+
+	return nil
+}
+
 type AuthDeleteSCIMGroupRequest struct {
 	SCIMDirectoryID string
 	SCIMGroupID     string

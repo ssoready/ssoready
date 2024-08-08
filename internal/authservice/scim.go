@@ -524,6 +524,52 @@ func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
+	scimGroupID := mux.Vars(r)["scim_group_id"]
+
+	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
+		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
+			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
+			return
+		}
+		panic(err)
+	}
+
+	var patch struct {
+		Operations []struct {
+			Op    string `json:"op"`
+			Path  string `json:"path"`
+			Value any    `json:"value"`
+		} `json:"operations"`
+	}
+
+	defer r.Body.Close()
+	if err := json.NewDecoder(r.Body).Decode(&patch); err != nil {
+		panic(err)
+	}
+
+	// jumpcloud changes group display names via a top-level replace
+	if len(patch.Operations) == 1 && patch.Operations[0].Op == "replace" && patch.Operations[0].Path == "" {
+		value := patch.Operations[0].Value.(map[string]any)
+		displayName := value["displayName"].(string)
+
+		if err := s.Store.AuthUpdateSCIMGroupDisplayName(ctx, &ssoreadyv1.SCIMGroup{
+			Id:              scimGroupID,
+			ScimDirectoryId: scimDirectoryID,
+			DisplayName:     displayName,
+		}); err != nil {
+			panic(fmt.Errorf("store: %w", err))
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	panic("unsupported group PATCH operation type")
+}
+
 func (s *Service) scimVerifyBearerToken(ctx context.Context, scimDirectoryID, authorization string) error {
 	bearerToken := strings.TrimPrefix(authorization, "Bearer ")
 	return s.Store.AuthSCIMVerifyBearerToken(ctx, scimDirectoryID, bearerToken)

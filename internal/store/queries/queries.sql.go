@@ -726,6 +726,31 @@ func (q *Queries) AuthUpdateSCIMGroup(ctx context.Context, arg AuthUpdateSCIMGro
 	return i, err
 }
 
+const authUpdateSCIMGroupDisplayName = `-- name: AuthUpdateSCIMGroupDisplayName :one
+update scim_groups
+set display_name = $1
+where id = $2
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+type AuthUpdateSCIMGroupDisplayNameParams struct {
+	DisplayName string
+	ID          uuid.UUID
+}
+
+func (q *Queries) AuthUpdateSCIMGroupDisplayName(ctx context.Context, arg AuthUpdateSCIMGroupDisplayNameParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMGroupDisplayName, arg.DisplayName, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authUpdateSCIMUser = `-- name: AuthUpdateSCIMUser :one
 update scim_users
 set email      = $1,

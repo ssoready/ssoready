@@ -549,6 +549,12 @@ set display_name = $1,
 where id = $3
 returning *;
 
+-- name: AuthUpdateSCIMGroupDisplayName :one
+update scim_groups
+set display_name = $1
+where id = $2
+returning *;
+
 -- name: AuthClearSCIMGroupMembers :exec
 delete
 from scim_user_group_memberships
