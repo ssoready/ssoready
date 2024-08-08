@@ -328,6 +328,59 @@ func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
+
+	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
+		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
+			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
+			return
+		}
+		panic(err)
+	}
+
+	startIndex := 0
+	if r.URL.Query().Get("startIndex") != "" {
+		i, err := strconv.Atoi(r.URL.Query().Get("startIndex"))
+		if err != nil {
+			http.Error(w, fmt.Sprintf("parse startIndex: %s", err), http.StatusBadRequest)
+			return
+		}
+
+		startIndex = i - 1 // scim is 1-indexed, store is 0-indexed
+	}
+
+	scimGroups, err := s.Store.AuthListSCIMGroups(ctx, &store.AuthListSCIMGroupsRequest{
+		SCIMDirectoryID: scimDirectoryID,
+		StartIndex:      startIndex,
+	})
+	if err != nil {
+		panic(fmt.Errorf("store: %w", err))
+	}
+
+	resources := []any{} // intentionally initialized to avoid returning `null` instead of `[]`
+	for _, scimGroup := range scimGroups.SCIMGroups {
+		resource := scimGroup.Attributes.AsMap()
+		resource["id"] = scimGroup.Id
+		resource["displayName"] = scimGroup.DisplayName
+
+		resources = append(resources, resource)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(scimListResponse{
+		TotalResults: scimGroups.TotalResults,
+		ItemsPerPage: len(resources),
+		StartIndex:   startIndex,
+		Schemas:      []string{"urn:ietf:params:scim:schemas:core:2.0:Group"},
+		Resources:    resources,
+	}); err != nil {
+		panic(err)
+	}
+}
+
 func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]

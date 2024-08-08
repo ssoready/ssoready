@@ -531,6 +531,20 @@ set deleted = true
 where id = $1
 returning *;
 
+-- name: AuthCountSCIMGroups :one
+select count(*)
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false;
+
+-- name: AuthListSCIMGroups :many
+select *
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+order by id
+offset $2 limit $3;
+
 -- name: AuthGetSCIMGroup :one
 select *
 from scim_groups

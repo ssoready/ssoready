@@ -305,6 +305,53 @@ func (s *Store) AuthDeleteSCIMUser(ctx context.Context, req *AuthDeleteSCIMUserR
 	return nil
 }
 
+type AuthListSCIMGroupsRequest struct {
+	SCIMDirectoryID string
+	StartIndex      int
+}
+
+type AuthListSCIMGroupsResponse struct {
+	TotalResults int
+	SCIMGroups   []*ssoreadyv1.SCIMGroup
+}
+
+func (s *Store) AuthListSCIMGroups(ctx context.Context, req *AuthListSCIMGroupsRequest) (*AuthListSCIMGroupsResponse, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	count, err := q.AuthCountSCIMGroups(ctx, scimDirID)
+	if err != nil {
+		return nil, fmt.Errorf("count scim groups: %w", err)
+	}
+
+	qSCIMGroups, err := q.AuthListSCIMGroups(ctx, queries.AuthListSCIMGroupsParams{
+		ScimDirectoryID: scimDirID,
+		Offset:          int32(req.StartIndex),
+		Limit:           10,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list scim groups: %w", err)
+	}
+
+	var scimGroups []*ssoreadyv1.SCIMGroup
+	for _, qSCIMGroup := range qSCIMGroups {
+		scimGroups = append(scimGroups, parseSCIMGroup(qSCIMGroup))
+	}
+
+	return &AuthListSCIMGroupsResponse{
+		TotalResults: int(count),
+		SCIMGroups:   scimGroups,
+	}, nil
+}
+
 type AuthGetSCIMGroupRequest struct {
 	SCIMDirectoryID string
 	SCIMGroupID     string

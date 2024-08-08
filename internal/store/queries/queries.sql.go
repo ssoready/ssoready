@@ -184,6 +184,20 @@ func (q *Queries) AuthClearSCIMGroupMembers(ctx context.Context, scimGroupID uui
 	return err
 }
 
+const authCountSCIMGroups = `-- name: AuthCountSCIMGroups :one
+select count(*)
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+`
+
+func (q *Queries) AuthCountSCIMGroups(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, authCountSCIMGroups, scimDirectoryID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const authCountSCIMUsers = `-- name: AuthCountSCIMUsers :one
 select count(*)
 from scim_users
@@ -616,6 +630,47 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 		&i.OauthRedirectUri,
 	)
 	return i, err
+}
+
+const authListSCIMGroups = `-- name: AuthListSCIMGroups :many
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+order by id
+offset $2 limit $3
+`
+
+type AuthListSCIMGroupsParams struct {
+	ScimDirectoryID uuid.UUID
+	Offset          int32
+	Limit           int32
+}
+
+func (q *Queries) AuthListSCIMGroups(ctx context.Context, arg AuthListSCIMGroupsParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, authListSCIMGroups, arg.ScimDirectoryID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const authListSCIMUsers = `-- name: AuthListSCIMUsers :many
