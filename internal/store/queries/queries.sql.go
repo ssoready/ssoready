@@ -679,6 +679,26 @@ func (q *Queries) AuthMarkSCIMGroupDeleted(ctx context.Context, id uuid.UUID) (S
 	return i, err
 }
 
+const authMarkSCIMUserDeleted = `-- name: AuthMarkSCIMUserDeleted :one
+update scim_users
+set deleted = true
+where id = $1
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+func (q *Queries) AuthMarkSCIMUserDeleted(ctx context.Context, id uuid.UUID) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authMarkSCIMUserDeleted, id)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authUpdateSCIMGroup = `-- name: AuthUpdateSCIMGroup :one
 update scim_groups
 set display_name = $1,

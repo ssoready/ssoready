@@ -83,6 +83,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		}); err != nil {
 			panic(err)
 		}
+		return
 	}
 
 	startIndex := 0
@@ -304,6 +305,29 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
+	scimUserID := mux.Vars(r)["scim_user_id"]
+
+	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
+		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
+			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
+			return
+		}
+		panic(err)
+	}
+
+	if err := s.Store.AuthDeleteSCIMUser(ctx, &store.AuthDeleteSCIMUserRequest{
+		SCIMDirectoryID: scimDirectoryID,
+		SCIMUserID:      scimUserID,
+	}); err != nil {
+		panic(err)
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
@@ -359,12 +383,14 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	members := resource["members"].([]any)
 	var memberSCIMUserIDs []string
-	for _, member := range members {
-		member := member.(map[string]any)
-		userID := member["value"].(string)
-		memberSCIMUserIDs = append(memberSCIMUserIDs, userID)
+	if members, ok := resource["members"]; ok {
+		members := members.([]any)
+		for _, member := range members {
+			member := member.(map[string]any)
+			userID := member["value"].(string)
+			memberSCIMUserIDs = append(memberSCIMUserIDs, userID)
+		}
 	}
 
 	displayName := resource["displayName"].(string)

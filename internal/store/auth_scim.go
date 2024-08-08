@@ -264,6 +264,47 @@ func (s *Store) AuthUpdateSCIMUser(ctx context.Context, req *AuthUpdateSCIMUserR
 	}, nil
 }
 
+type AuthDeleteSCIMUserRequest struct {
+	SCIMDirectoryID string
+	SCIMUserID      string
+}
+
+func (s *Store) AuthDeleteSCIMUser(ctx context.Context, req *AuthDeleteSCIMUserRequest) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	scimUserID, err := idformat.SCIMUser.Parse(req.SCIMUserID)
+	if err != nil {
+		return fmt.Errorf("parse scim user id: %w", err)
+	}
+
+	// check that the user belongs to the scim dir
+	if _, err := q.AuthGetSCIMUser(ctx, queries.AuthGetSCIMUserParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimUserID,
+	}); err != nil {
+		return fmt.Errorf("get scim user: %w", err)
+	}
+
+	if _, err := q.AuthMarkSCIMUserDeleted(ctx, scimUserID); err != nil {
+		return fmt.Errorf("mark scim user deleted: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return fmt.Errorf("commit: %w", err)
+	}
+
+	return nil
+}
+
 type AuthGetSCIMGroupRequest struct {
 	SCIMDirectoryID string
 	SCIMGroupID     string

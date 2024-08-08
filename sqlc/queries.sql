@@ -525,6 +525,12 @@ where scim_directory_id = $3
   and id = $4
 returning *;
 
+-- name: AuthMarkSCIMUserDeleted :one
+update scim_users
+set deleted = true
+where id = $1
+returning *;
+
 -- name: AuthGetSCIMGroup :one
 select *
 from scim_groups
