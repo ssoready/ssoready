@@ -3543,6 +3543,11 @@ export class AppListSCIMGroupsRequest extends Message<AppListSCIMGroupsRequest> 
    */
   pageToken = "";
 
+  /**
+   * @generated from field: string scim_user_id = 3;
+   */
+  scimUserId = "";
+
   constructor(data?: PartialMessage<AppListSCIMGroupsRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3553,6 +3558,7 @@ export class AppListSCIMGroupsRequest extends Message<AppListSCIMGroupsRequest> 
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "scim_user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSCIMGroupsRequest {

@@ -37,13 +37,31 @@ func (s *Store) AppListSCIMGroups(ctx context.Context, req *ssoreadyv1.AppListSC
 	}
 
 	limit := 10
-	qSCIMGroups, err := q.ListSCIMGroups(ctx, queries.ListSCIMGroupsParams{
-		ScimDirectoryID: scimDirID,
-		ID:              startID,
-		Limit:           int32(limit + 1),
-	})
-	if err != nil {
-		return nil, err
+	var qSCIMGroups []queries.ScimGroup
+	if req.ScimUserId == "" {
+		qSCIMGroups, err = q.ListSCIMGroups(ctx, queries.ListSCIMGroupsParams{
+			ScimDirectoryID: scimDirID,
+			ID:              startID,
+			Limit:           int32(limit + 1),
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		scimUserID, err := idformat.SCIMUser.Parse(req.ScimUserId)
+		if err != nil {
+			return nil, fmt.Errorf("parse scim user id: %w", err)
+		}
+
+		qSCIMGroups, err = q.ListSCIMGroupsBySCIMUserID(ctx, queries.ListSCIMGroupsBySCIMUserIDParams{
+			ScimDirectoryID: scimDirID,
+			ID:              startID,
+			Limit:           int32(limit + 1),
+			ScimUserID:      scimUserID,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var scimGroups []*ssoreadyv1.SCIMGroup

@@ -5,12 +5,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import moment from "moment/moment";
 import React from "react";
 import { useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
-import { appGetSCIMUser } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import {
+  appGetSCIMUser,
+  appListSCIMGroups,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import hljs from "highlight.js/lib/core";
+import { useInfiniteQuery } from "@connectrpc/connect-query";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export function ViewSCIMUserPage() {
   const { environmentId, organizationId, scimDirectoryId, scimUserId } =
@@ -18,6 +31,18 @@ export function ViewSCIMUserPage() {
   const { data: scimUser } = useQuery(appGetSCIMUser, {
     id: scimUserId,
   });
+  const {
+    data: listSCIMGroupsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    appListSCIMGroups,
+    { scimDirectoryId, scimUserId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -89,6 +114,51 @@ export function ViewSCIMUserPage() {
               </code>
             </code>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>SCIM Groups</CardTitle>
+          <CardDescription>
+            SCIM groups this SCIM user belongs to.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Display Name</TableHead>
+                <TableHead>Deleted</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {listSCIMGroupsResponses?.pages
+                ?.flatMap((page) => page.scimGroups)
+                ?.map((scimGroup) => (
+                  <TableRow key={scimGroup.id}>
+                    <TableCell className="max-w-[200px] truncate">
+                      <Link
+                        to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}/groups/${scimGroup.id}`}
+                        className="underline underline-offset-4 decoration-muted-foreground"
+                      >
+                        {scimGroup.id}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{scimGroup.displayName}</TableCell>
+                    <TableCell>{scimGroup.deleted ? "Yes" : "No"}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+
+          {hasNextPage && (
+            <Button variant="secondary" onClick={() => fetchNextPage()}>
+              Load more
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

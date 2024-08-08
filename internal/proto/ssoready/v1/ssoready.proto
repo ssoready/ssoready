@@ -537,6 +537,7 @@ message AppGetSCIMUserRequest {
 message AppListSCIMGroupsRequest {
   string scim_directory_id = 1;
   string page_token = 2;
+  string scim_user_id = 3;
 }
 
 message AppGetSCIMGroupRequest {
