@@ -8,8 +8,22 @@ import {
 import React from "react";
 import { useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
-import { appGetSCIMGroup } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import {
+  appGetSCIMGroup,
+  appListSCIMUsers,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import hljs from "highlight.js/lib/core";
+import { useInfiniteQuery } from "@connectrpc/connect-query";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export function ViewSCIMGroupPage() {
   const { environmentId, organizationId, scimDirectoryId, scimGroupId } =
@@ -17,6 +31,18 @@ export function ViewSCIMGroupPage() {
   const { data: scimGroup } = useQuery(appGetSCIMGroup, {
     id: scimGroupId,
   });
+  const {
+    data: listSCIMUsersResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    appListSCIMUsers,
+    { scimDirectoryId, scimGroupId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -88,6 +114,49 @@ export function ViewSCIMGroupPage() {
               </code>
             </code>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>SCIM Users</CardTitle>
+          <CardDescription>Users belonging to this SCIM group.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Deleted</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {listSCIMUsersResponses?.pages
+                ?.flatMap((page) => page.scimUsers)
+                ?.map((scimUser) => (
+                  <TableRow key={scimUser.id}>
+                    <TableCell className="max-w-[200px] truncate">
+                      <Link
+                        to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}/users/${scimUser.id}`}
+                        className="underline underline-offset-4 decoration-muted-foreground"
+                      >
+                        {scimUser.id}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{scimUser.email}</TableCell>
+                    <TableCell>{scimUser.deleted ? "Yes" : "No"}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+
+          {hasNextPage && (
+            <Button variant="secondary" onClick={() => fetchNextPage()}>
+              Load more
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

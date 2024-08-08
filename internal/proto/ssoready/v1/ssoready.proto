@@ -523,6 +523,7 @@ message RotateSCIMDirectoryBearerTokenResponse {
 message AppListSCIMUsersRequest {
   string scim_directory_id = 1;
   string page_token = 2;
+  string scim_group_id = 3;
 }
 
 message AppListSCIMUsersResponse {
