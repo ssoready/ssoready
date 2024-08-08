@@ -194,7 +194,7 @@ func (s *Store) AuthCreateSCIMUser(ctx context.Context, req *AuthCreateSCIMUserR
 		panic(fmt.Errorf("marshal scim user attributes: %w", err))
 	}
 
-	qSCIMUser, err := q.AuthCreateSCIMUser(ctx, queries.AuthCreateSCIMUserParams{
+	qSCIMUser, err := q.AuthUpsertSCIMUser(ctx, queries.AuthUpsertSCIMUserParams{
 		ID:              uuid.New(),
 		ScimDirectoryID: scimDirID,
 		Email:           req.SCIMUser.Email,

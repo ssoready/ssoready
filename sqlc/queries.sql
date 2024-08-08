@@ -503,17 +503,21 @@ offset $2 limit $3;
 select *
 from scim_users
 where scim_directory_id = $1
-  and email = $2;
+  and email = $2
+  and deleted = false;
 
 -- name: AuthGetSCIMUser :one
 select *
 from scim_users
 where scim_directory_id = $1
-  and id = $2;
+  and id = $2
+  and deleted = false;
 
--- name: AuthCreateSCIMUser :one
+-- name: AuthUpsertSCIMUser :one
 insert into scim_users (id, scim_directory_id, email, deleted, attributes)
 values ($1, $2, $3, $4, $5)
+on conflict (scim_directory_id, email) do update set deleted    = excluded.deleted,
+                                                     attributes = excluded.attributes
 returning *;
 
 -- name: AuthUpdateSCIMUser :one

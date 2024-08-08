@@ -245,39 +245,6 @@ func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGro
 	return i, err
 }
 
-const authCreateSCIMUser = `-- name: AuthCreateSCIMUser :one
-insert into scim_users (id, scim_directory_id, email, deleted, attributes)
-values ($1, $2, $3, $4, $5)
-returning id, scim_directory_id, email, deleted, attributes
-`
-
-type AuthCreateSCIMUserParams struct {
-	ID              uuid.UUID
-	ScimDirectoryID uuid.UUID
-	Email           string
-	Deleted         bool
-	Attributes      []byte
-}
-
-func (q *Queries) AuthCreateSCIMUser(ctx context.Context, arg AuthCreateSCIMUserParams) (ScimUser, error) {
-	row := q.db.QueryRow(ctx, authCreateSCIMUser,
-		arg.ID,
-		arg.ScimDirectoryID,
-		arg.Email,
-		arg.Deleted,
-		arg.Attributes,
-	)
-	var i ScimUser
-	err := row.Scan(
-		&i.ID,
-		&i.ScimDirectoryID,
-		&i.Email,
-		&i.Deleted,
-		&i.Attributes,
-	)
-	return i, err
-}
-
 const authCreateSCIMUserGroupMembership = `-- name: AuthCreateSCIMUserGroupMembership :one
 insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
 values ($1, $2, $3, $4)
@@ -554,6 +521,7 @@ select id, scim_directory_id, email, deleted, attributes
 from scim_users
 where scim_directory_id = $1
   and id = $2
+  and deleted = false
 `
 
 type AuthGetSCIMUserParams struct {
@@ -579,6 +547,7 @@ select id, scim_directory_id, email, deleted, attributes
 from scim_users
 where scim_directory_id = $1
   and email = $2
+  and deleted = false
 `
 
 type AuthGetSCIMUserByEmailParams struct {
@@ -831,6 +800,41 @@ func (q *Queries) AuthUpdateSCIMUser(ctx context.Context, arg AuthUpdateSCIMUser
 		arg.ScimDirectoryID,
 		arg.ID,
 		arg.Deleted,
+	)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpsertSCIMUser = `-- name: AuthUpsertSCIMUser :one
+insert into scim_users (id, scim_directory_id, email, deleted, attributes)
+values ($1, $2, $3, $4, $5)
+on conflict (scim_directory_id, email) do update set deleted    = excluded.deleted,
+                                                     attributes = excluded.attributes
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+type AuthUpsertSCIMUserParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	Email           string
+	Deleted         bool
+	Attributes      []byte
+}
+
+func (q *Queries) AuthUpsertSCIMUser(ctx context.Context, arg AuthUpsertSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authUpsertSCIMUser,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.Email,
+		arg.Deleted,
+		arg.Attributes,
 	)
 	var i ScimUser
 	err := row.Scan(
