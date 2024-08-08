@@ -47,6 +47,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleAlert } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -108,7 +116,26 @@ export function ViewSCIMDirectoryPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       <div className="flex flex-col gap-y-8">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link
+                  to={`/environments/${environmentId}/organizations/${organizationId}`}
+                >
+                  {organizationId}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{scimDirectoryId}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">

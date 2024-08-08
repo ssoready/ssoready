@@ -24,6 +24,14 @@ import {
 } from "@/components/ui/table";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export function ViewSCIMGroupPage() {
   const { environmentId, organizationId, scimDirectoryId, scimGroupId } =
@@ -46,6 +54,34 @@ export function ViewSCIMGroupPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}`}
+              >
+                {organizationId}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}`}
+              >
+                {scimDirectoryId}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{scimGroupId}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
