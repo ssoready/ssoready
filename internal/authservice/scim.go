@@ -620,6 +620,25 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// jumpcloud adds members to groups via an `add` on members
+	if len(patch.Operations) == 1 && patch.Operations[0].Op == "add" && patch.Operations[0].Path == "members" {
+		value := patch.Operations[0].Value.([]any)
+		scimUserID := value[0].(map[string]any)["value"].(string)
+
+		if err := s.Store.AuthAddSCIMGroupMember(ctx, &store.AuthAddSCIMGroupMemberRequest{
+			SCIMGroup: &ssoreadyv1.SCIMGroup{
+				Id:              scimGroupID,
+				ScimDirectoryId: scimDirectoryID,
+			},
+			SCIMUserID: scimUserID,
+		}); err != nil {
+			panic(fmt.Errorf("store: %w", err))
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	panic("unsupported group PATCH operation type")
 }
 

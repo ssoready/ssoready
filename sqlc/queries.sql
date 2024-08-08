@@ -513,6 +513,12 @@ where scim_directory_id = $1
   and id = $2
   and deleted = false;
 
+-- name: AuthGetSCIMUserIncludeDeleted :one
+select *
+from scim_users
+where scim_directory_id = $1
+  and id = $2;
+
 -- name: AuthUpsertSCIMUser :one
 insert into scim_users (id, scim_directory_id, email, deleted, attributes)
 values ($1, $2, $3, $4, $5)
@@ -584,10 +590,10 @@ set deleted = true
 where id = $1
 returning *;
 
--- name: AuthCreateSCIMUserGroupMembership :one
+-- name: AuthUpsertSCIMUserGroupMembership :exec
 insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
 values ($1, $2, $3, $4)
-returning *;
+on conflict (scim_user_id, scim_group_id) do nothing;
 
 -- name: GetSCIMDirectoryByIDAndEnvironmentID :one
 select scim_directories.id

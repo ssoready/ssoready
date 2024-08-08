@@ -551,6 +551,14 @@ ALTER TABLE ONLY public.scim_user_group_memberships
 
 
 --
+-- Name: scim_user_group_memberships scim_user_group_memberships_scim_user_id_scim_group_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_user_group_memberships
+    ADD CONSTRAINT scim_user_group_memberships_scim_user_id_scim_group_id_key UNIQUE (scim_user_id, scim_group_id);
+
+
+--
 -- Name: scim_users scim_users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 

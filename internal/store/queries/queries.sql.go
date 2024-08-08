@@ -245,36 +245,6 @@ func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGro
 	return i, err
 }
 
-const authCreateSCIMUserGroupMembership = `-- name: AuthCreateSCIMUserGroupMembership :one
-insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
-values ($1, $2, $3, $4)
-returning id, scim_directory_id, scim_user_id, scim_group_id
-`
-
-type AuthCreateSCIMUserGroupMembershipParams struct {
-	ID              uuid.UUID
-	ScimDirectoryID uuid.UUID
-	ScimUserID      uuid.UUID
-	ScimGroupID     uuid.UUID
-}
-
-func (q *Queries) AuthCreateSCIMUserGroupMembership(ctx context.Context, arg AuthCreateSCIMUserGroupMembershipParams) (ScimUserGroupMembership, error) {
-	row := q.db.QueryRow(ctx, authCreateSCIMUserGroupMembership,
-		arg.ID,
-		arg.ScimDirectoryID,
-		arg.ScimUserID,
-		arg.ScimGroupID,
-	)
-	var i ScimUserGroupMembership
-	err := row.Scan(
-		&i.ID,
-		&i.ScimDirectoryID,
-		&i.ScimUserID,
-		&i.ScimGroupID,
-	)
-	return i, err
-}
-
 const authGetInitData = `-- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections
@@ -568,6 +538,31 @@ func (q *Queries) AuthGetSCIMUserByEmail(ctx context.Context, arg AuthGetSCIMUse
 	return i, err
 }
 
+const authGetSCIMUserIncludeDeleted = `-- name: AuthGetSCIMUserIncludeDeleted :one
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and id = $2
+`
+
+type AuthGetSCIMUserIncludeDeletedParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthGetSCIMUserIncludeDeleted(ctx context.Context, arg AuthGetSCIMUserIncludeDeletedParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMUserIncludeDeleted, arg.ScimDirectoryID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
@@ -845,6 +840,29 @@ func (q *Queries) AuthUpsertSCIMUser(ctx context.Context, arg AuthUpsertSCIMUser
 		&i.Attributes,
 	)
 	return i, err
+}
+
+const authUpsertSCIMUserGroupMembership = `-- name: AuthUpsertSCIMUserGroupMembership :exec
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+values ($1, $2, $3, $4)
+on conflict (scim_user_id, scim_group_id) do nothing
+`
+
+type AuthUpsertSCIMUserGroupMembershipParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	ScimUserID      uuid.UUID
+	ScimGroupID     uuid.UUID
+}
+
+func (q *Queries) AuthUpsertSCIMUserGroupMembership(ctx context.Context, arg AuthUpsertSCIMUserGroupMembershipParams) error {
+	_, err := q.db.Exec(ctx, authUpsertSCIMUserGroupMembership,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.ScimUserID,
+		arg.ScimGroupID,
+	)
+	return err
 }
 
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
