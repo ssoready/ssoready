@@ -214,8 +214,6 @@ func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoread
 	bearerToken := uuid.New()
 	bearerTokenSHA := sha256.Sum256(bearerToken[:])
 
-	fmt.Println("store bearer token", bearerToken)
-
 	if _, err := q.UpdateSCIMDirectoryBearerToken(ctx, queries.UpdateSCIMDirectoryBearerTokenParams{
 		BearerTokenSha256: bearerTokenSHA[:],
 		ID:                scimDirID,
