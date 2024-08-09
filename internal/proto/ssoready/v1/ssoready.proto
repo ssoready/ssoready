@@ -201,6 +201,7 @@ message SCIMDirectory {
   bool primary = 3;
   string scim_base_url = 4;
   string client_bearer_token = 5;
+  bool has_client_bearer_token = 6;
 }
 
 message SCIMUser {

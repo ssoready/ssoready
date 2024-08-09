@@ -234,10 +234,11 @@ func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoread
 
 func parseSCIMDirectory(qSCIMDirectory queries.ScimDirectory) *ssoreadyv1.SCIMDirectory {
 	return &ssoreadyv1.SCIMDirectory{
-		Id:                idformat.SCIMDirectory.Format(qSCIMDirectory.ID),
-		OrganizationId:    idformat.Organization.Format(qSCIMDirectory.OrganizationID),
-		Primary:           qSCIMDirectory.IsPrimary,
-		ScimBaseUrl:       qSCIMDirectory.ScimBaseUrl,
-		ClientBearerToken: "", // intentionally left blank
+		Id:                   idformat.SCIMDirectory.Format(qSCIMDirectory.ID),
+		OrganizationId:       idformat.Organization.Format(qSCIMDirectory.OrganizationID),
+		Primary:              qSCIMDirectory.IsPrimary,
+		ScimBaseUrl:          qSCIMDirectory.ScimBaseUrl,
+		ClientBearerToken:    "", // intentionally left blank
+		HasClientBearerToken: len(qSCIMDirectory.BearerTokenSha256) > 0,
 	}
 }

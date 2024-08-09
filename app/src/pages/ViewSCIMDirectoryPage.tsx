@@ -89,11 +89,15 @@ export function ViewSCIMDirectoryPage() {
     "/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/groups",
   );
 
+  const [warnBearerTokenAlertOpen, setWarnBearerTokenAlertOpen] =
+    useState(false);
+
   const [bearerTokenAlertOpen, setBearerTokenAlertOpen] = useState(false);
   const [bearerToken, setBearerToken] = useState("");
   const rotateSCIMDirectoryBearerTokenMutation = useMutation(
     rotateSCIMDirectoryBearerToken,
   );
+  const queryClient = useQueryClient();
   const handleRotateBearerToken = async () => {
     const { bearerToken } =
       await rotateSCIMDirectoryBearerTokenMutation.mutateAsync({
@@ -101,10 +105,40 @@ export function ViewSCIMDirectoryPage() {
       });
     setBearerToken(bearerToken);
     setBearerTokenAlertOpen(true);
+
+    await queryClient.invalidateQueries({
+      queryKey: createConnectQueryKey(getSCIMDirectory, {
+        id: scimDirectory!.id,
+      }),
+    });
   };
 
   return (
     <>
+      <AlertDialog
+        open={warnBearerTokenAlertOpen}
+        onOpenChange={setWarnBearerTokenAlertOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Rotating a SCIM directory's bearer token will break any existing
+              syncs from your customer's Identity Provider. After proceeding,
+              you'll need to have your customer input the new bearer token into
+              their Identity Provider's settings.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRotateBearerToken}>
+              I understand, rotate bearer token
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog
         open={bearerTokenAlertOpen}
         onOpenChange={setBearerTokenAlertOpen}
@@ -214,14 +248,18 @@ export function ViewSCIMDirectoryPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" onClick={handleRotateBearerToken}>
-              Generate new bearer token
-            </Button>
-
-            <p className="mt-4 text-sm text-foreground-muted">
-              Generating a new bearer token will break any existing syncs with
-              this SCIM directory.
-            </p>
+            {scimDirectory?.hasClientBearerToken ? (
+              <Button
+                variant="outline"
+                onClick={() => setWarnBearerTokenAlertOpen(true)}
+              >
+                Rotate bearer token
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={handleRotateBearerToken}>
+                Generate bearer token
+              </Button>
+            )}
           </CardContent>
         </Card>
 

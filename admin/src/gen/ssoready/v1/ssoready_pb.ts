@@ -582,6 +582,11 @@ export class SCIMDirectory extends Message<SCIMDirectory> {
    */
   clientBearerToken = "";
 
+  /**
+   * @generated from field: bool has_client_bearer_token = 6;
+   */
+  hasClientBearerToken = false;
+
   constructor(data?: PartialMessage<SCIMDirectory>) {
     super();
     proto3.util.initPartial(data, this);
@@ -595,6 +600,7 @@ export class SCIMDirectory extends Message<SCIMDirectory> {
     { no: 3, name: "primary", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 4, name: "scim_base_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "client_bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "has_client_bearer_token", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SCIMDirectory {
