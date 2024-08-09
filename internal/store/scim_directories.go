@@ -133,11 +133,63 @@ func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateS
 		return nil, fmt.Errorf("create scim directory: %w", err)
 	}
 
+	if qSCIMDirectory.IsPrimary {
+		if err := q.UpdatePrimarySCIMDirectory(ctx, queries.UpdatePrimarySCIMDirectoryParams{
+			ID:             qSCIMDirectory.ID,
+			OrganizationID: qSCIMDirectory.OrganizationID,
+		}); err != nil {
+			return nil, fmt.Errorf("update primary scim directory: %w", err)
+		}
+	}
+
 	if err := commit(); err != nil {
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
 	return parseSCIMDirectory(qSCIMDirectory), nil
+}
+
+func (s *Store) UpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.UpdateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectory.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                scimDirID,
+	}); err != nil {
+		return nil, fmt.Errorf("get scim directory: %w", err)
+	}
+
+	qSCIMDir, err := q.UpdateSCIMDirectory(ctx, queries.UpdateSCIMDirectoryParams{
+		ID:        scimDirID,
+		IsPrimary: req.ScimDirectory.Primary,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("update scim directory: %w", err)
+	}
+
+	if qSCIMDir.IsPrimary {
+		if err := q.UpdatePrimarySCIMDirectory(ctx, queries.UpdatePrimarySCIMDirectoryParams{
+			ID:             qSCIMDir.ID,
+			OrganizationID: qSCIMDir.OrganizationID,
+		}); err != nil {
+			return nil, fmt.Errorf("update primary scim directory: %w", err)
+		}
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return parseSCIMDirectory(qSCIMDir), nil
 }
 
 func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoreadyv1.RotateSCIMDirectoryBearerTokenRequest) (*ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse, error) {

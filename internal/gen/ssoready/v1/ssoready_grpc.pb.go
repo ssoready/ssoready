@@ -63,6 +63,7 @@ const (
 	SSOReadyService_ListSCIMDirectories_FullMethodName            = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
 	SSOReadyService_GetSCIMDirectory_FullMethodName               = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
 	SSOReadyService_CreateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	SSOReadyService_UpdateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
 	SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
 	SSOReadyService_AppListSCIMUsers_FullMethodName               = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
 	SSOReadyService_AppGetSCIMUser_FullMethodName                 = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
@@ -123,6 +124,7 @@ type SSOReadyServiceClient interface {
 	ListSCIMDirectories(ctx context.Context, in *ListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*ListSCIMDirectoriesResponse, error)
 	GetSCIMDirectory(ctx context.Context, in *GetSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error)
 	CreateSCIMDirectory(ctx context.Context, in *CreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error)
+	UpdateSCIMDirectory(ctx context.Context, in *UpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error)
 	RotateSCIMDirectoryBearerToken(ctx context.Context, in *RotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*RotateSCIMDirectoryBearerTokenResponse, error)
 	AppListSCIMUsers(ctx context.Context, in *AppListSCIMUsersRequest, opts ...grpc.CallOption) (*AppListSCIMUsersResponse, error)
 	AppGetSCIMUser(ctx context.Context, in *AppGetSCIMUserRequest, opts ...grpc.CallOption) (*SCIMUser, error)
@@ -574,6 +576,16 @@ func (c *sSOReadyServiceClient) CreateSCIMDirectory(ctx context.Context, in *Cre
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) UpdateSCIMDirectory(ctx context.Context, in *UpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMDirectory)
+	err := c.cc.Invoke(ctx, SSOReadyService_UpdateSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) RotateSCIMDirectoryBearerToken(ctx context.Context, in *RotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*RotateSCIMDirectoryBearerTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RotateSCIMDirectoryBearerTokenResponse)
@@ -731,6 +743,7 @@ type SSOReadyServiceServer interface {
 	ListSCIMDirectories(context.Context, *ListSCIMDirectoriesRequest) (*ListSCIMDirectoriesResponse, error)
 	GetSCIMDirectory(context.Context, *GetSCIMDirectoryRequest) (*SCIMDirectory, error)
 	CreateSCIMDirectory(context.Context, *CreateSCIMDirectoryRequest) (*SCIMDirectory, error)
+	UpdateSCIMDirectory(context.Context, *UpdateSCIMDirectoryRequest) (*SCIMDirectory, error)
 	RotateSCIMDirectoryBearerToken(context.Context, *RotateSCIMDirectoryBearerTokenRequest) (*RotateSCIMDirectoryBearerTokenResponse, error)
 	AppListSCIMUsers(context.Context, *AppListSCIMUsersRequest) (*AppListSCIMUsersResponse, error)
 	AppGetSCIMUser(context.Context, *AppGetSCIMUserRequest) (*SCIMUser, error)
@@ -880,6 +893,9 @@ func (UnimplementedSSOReadyServiceServer) GetSCIMDirectory(context.Context, *Get
 }
 func (UnimplementedSSOReadyServiceServer) CreateSCIMDirectory(context.Context, *CreateSCIMDirectoryRequest) (*SCIMDirectory, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) UpdateSCIMDirectory(context.Context, *UpdateSCIMDirectoryRequest) (*SCIMDirectory, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSCIMDirectory not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) RotateSCIMDirectoryBearerToken(context.Context, *RotateSCIMDirectoryBearerTokenRequest) (*RotateSCIMDirectoryBearerTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RotateSCIMDirectoryBearerToken not implemented")
@@ -1709,6 +1725,24 @@ func _SSOReadyService_CreateSCIMDirectory_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_UpdateSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).UpdateSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_UpdateSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).UpdateSCIMDirectory(ctx, req.(*UpdateSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_RotateSCIMDirectoryBearerToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RotateSCIMDirectoryBearerTokenRequest)
 	if err := dec(in); err != nil {
@@ -2085,6 +2119,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateSCIMDirectory",
 			Handler:    _SSOReadyService_CreateSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "UpdateSCIMDirectory",
+			Handler:    _SSOReadyService_UpdateSCIMDirectory_Handler,
 		},
 		{
 			MethodName: "RotateSCIMDirectoryBearerToken",

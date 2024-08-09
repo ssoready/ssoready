@@ -3333,6 +3333,43 @@ export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryReque
 }
 
 /**
+ * @generated from message ssoready.v1.UpdateSCIMDirectoryRequest
+ */
+export class UpdateSCIMDirectoryRequest extends Message<UpdateSCIMDirectoryRequest> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<UpdateSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSCIMDirectoryRequest {
+    return new UpdateSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryRequest {
+    return new UpdateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryRequest {
+    return new UpdateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateSCIMDirectoryRequest | PlainMessage<UpdateSCIMDirectoryRequest> | undefined, b: UpdateSCIMDirectoryRequest | PlainMessage<UpdateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenRequest
  */
 export class RotateSCIMDirectoryBearerTokenRequest extends Message<RotateSCIMDirectoryBearerTokenRequest> {

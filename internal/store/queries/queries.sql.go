@@ -2780,6 +2780,22 @@ func (q *Queries) UpdatePrimarySAMLConnection(ctx context.Context, arg UpdatePri
 	return err
 }
 
+const updatePrimarySCIMDirectory = `-- name: UpdatePrimarySCIMDirectory :exec
+update scim_directories
+set is_primary = (id = $1)
+where organization_id = $2
+`
+
+type UpdatePrimarySCIMDirectoryParams struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+}
+
+func (q *Queries) UpdatePrimarySCIMDirectory(ctx context.Context, arg UpdatePrimarySCIMDirectoryParams) error {
+	_, err := q.db.Exec(ctx, updatePrimarySCIMDirectory, arg.ID, arg.OrganizationID)
+	return err
+}
+
 const updateSAMLConnection = `-- name: UpdateSAMLConnection :one
 update saml_connections
 set idp_entity_id        = $1,
@@ -2923,6 +2939,31 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 		&i.ErrorUnsignedAssertion,
 		&i.AccessCodeSha256,
 		&i.IsOauth,
+	)
+	return i, err
+}
+
+const updateSCIMDirectory = `-- name: UpdateSCIMDirectory :one
+update scim_directories
+set is_primary = $1
+where id = $2
+returning id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+`
+
+type UpdateSCIMDirectoryParams struct {
+	IsPrimary bool
+	ID        uuid.UUID
+}
+
+func (q *Queries) UpdateSCIMDirectory(ctx context.Context, arg UpdateSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, updateSCIMDirectory, arg.IsPrimary, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
 	)
 	return i, err
 }

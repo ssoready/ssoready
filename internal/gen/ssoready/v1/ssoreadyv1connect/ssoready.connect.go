@@ -160,6 +160,9 @@ const (
 	// SSOReadyServiceCreateSCIMDirectoryProcedure is the fully-qualified name of the SSOReadyService's
 	// CreateSCIMDirectory RPC.
 	SSOReadyServiceCreateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	// SSOReadyServiceUpdateSCIMDirectoryProcedure is the fully-qualified name of the SSOReadyService's
+	// UpdateSCIMDirectory RPC.
+	SSOReadyServiceUpdateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
 	// SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's RotateSCIMDirectoryBearerToken RPC.
 	SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
@@ -240,6 +243,7 @@ type SSOReadyServiceClient interface {
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
 	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
+	UpdateSCIMDirectory(context.Context, *connect.Request[v1.UpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppGetSCIMUser(context.Context, *connect.Request[v1.AppGetSCIMUserRequest]) (*connect.Response[v1.SCIMUser], error)
@@ -478,6 +482,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceCreateSCIMDirectoryProcedure,
 			opts...,
 		),
+		updateSCIMDirectory: connect.NewClient[v1.UpdateSCIMDirectoryRequest, v1.SCIMDirectory](
+			httpClient,
+			baseURL+SSOReadyServiceUpdateSCIMDirectoryProcedure,
+			opts...,
+		),
 		rotateSCIMDirectoryBearerToken: connect.NewClient[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse](
 			httpClient,
 			baseURL+SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure,
@@ -581,6 +590,7 @@ type sSOReadyServiceClient struct {
 	listSCIMDirectories            *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
 	getSCIMDirectory               *connect.Client[v1.GetSCIMDirectoryRequest, v1.SCIMDirectory]
 	createSCIMDirectory            *connect.Client[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory]
+	updateSCIMDirectory            *connect.Client[v1.UpdateSCIMDirectoryRequest, v1.SCIMDirectory]
 	rotateSCIMDirectoryBearerToken *connect.Client[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse]
 	appListSCIMUsers               *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
 	appGetSCIMUser                 *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
@@ -809,6 +819,11 @@ func (c *sSOReadyServiceClient) CreateSCIMDirectory(ctx context.Context, req *co
 	return c.createSCIMDirectory.CallUnary(ctx, req)
 }
 
+// UpdateSCIMDirectory calls ssoready.v1.SSOReadyService.UpdateSCIMDirectory.
+func (c *sSOReadyServiceClient) UpdateSCIMDirectory(ctx context.Context, req *connect.Request[v1.UpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
+	return c.updateSCIMDirectory.CallUnary(ctx, req)
+}
+
 // RotateSCIMDirectoryBearerToken calls ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken.
 func (c *sSOReadyServiceClient) RotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error) {
 	return c.rotateSCIMDirectoryBearerToken.CallUnary(ctx, req)
@@ -909,6 +924,7 @@ type SSOReadyServiceHandler interface {
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
 	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
+	UpdateSCIMDirectory(context.Context, *connect.Request[v1.UpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppGetSCIMUser(context.Context, *connect.Request[v1.AppGetSCIMUserRequest]) (*connect.Response[v1.SCIMUser], error)
@@ -1143,6 +1159,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.CreateSCIMDirectory,
 		opts...,
 	)
+	sSOReadyServiceUpdateSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceUpdateSCIMDirectoryProcedure,
+		svc.UpdateSCIMDirectory,
+		opts...,
+	)
 	sSOReadyServiceRotateSCIMDirectoryBearerTokenHandler := connect.NewUnaryHandler(
 		SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure,
 		svc.RotateSCIMDirectoryBearerToken,
@@ -1286,6 +1307,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceGetSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceCreateSCIMDirectoryProcedure:
 			sSOReadyServiceCreateSCIMDirectoryHandler.ServeHTTP(w, r)
+		case SSOReadyServiceUpdateSCIMDirectoryProcedure:
+			sSOReadyServiceUpdateSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceRotateSCIMDirectoryBearerTokenProcedure:
 			sSOReadyServiceRotateSCIMDirectoryBearerTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSCIMUsersProcedure:
@@ -1487,6 +1510,10 @@ func (UnimplementedSSOReadyServiceHandler) GetSCIMDirectory(context.Context, *co
 
 func (UnimplementedSSOReadyServiceHandler) CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.CreateSCIMDirectory is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) UpdateSCIMDirectory(context.Context, *connect.Request[v1.UpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.UpdateSCIMDirectory is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error) {

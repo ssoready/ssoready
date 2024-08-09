@@ -676,6 +676,17 @@ insert into scim_directories (id, organization_id, bearer_token_sha256, is_prima
 values ($1, $2, $3, $4, $5)
 returning *;
 
+-- name: UpdateSCIMDirectory :one
+update scim_directories
+set is_primary = $1
+where id = $2
+returning *;
+
+-- name: UpdatePrimarySCIMDirectory :exec
+update scim_directories
+set is_primary = (id = $1)
+where organization_id = $2;
+
 -- name: ListSCIMDirectories :many
 select *
 from scim_directories

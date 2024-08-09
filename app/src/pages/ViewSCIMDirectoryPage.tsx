@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useMatch, useParams } from "react-router";
 import {
+  createConnectQueryKey,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -8,9 +9,12 @@ import {
 import {
   appListSCIMGroups,
   appListSCIMUsers,
+  getSAMLConnection,
   getSCIMDirectory,
   listSAMLFlows,
   rotateSCIMDirectoryBearerToken,
+  updateSAMLConnection,
+  updateSCIMDirectory,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -32,7 +36,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import moment from "moment/moment";
-import { SAMLFlowStatus } from "@/gen/ssoready/v1/ssoready_pb";
+import {
+  SAMLConnection,
+  SAMLFlowStatus,
+  SCIMDirectory,
+} from "@/gen/ssoready/v1/ssoready_pb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +52,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleAlert } from "lucide-react";
@@ -55,6 +64,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -154,7 +177,11 @@ export function ViewSCIMDirectoryPage() {
                 </CardDescription>
               </div>
 
-              <div></div>
+              <div>
+                {scimDirectory && (
+                  <EditSCIMDirectoryAlertDialog scimDirectory={scimDirectory} />
+                )}
+              </div>
             </div>
           </CardHeader>
 
@@ -226,6 +253,96 @@ export function ViewSCIMDirectoryPage() {
         </Tabs>
       </div>
     </>
+  );
+}
+
+const FormSchema = z.object({
+  primary: z.boolean(),
+});
+
+function EditSCIMDirectoryAlertDialog({
+  scimDirectory,
+}: {
+  scimDirectory: SCIMDirectory;
+}) {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      primary: scimDirectory.primary,
+    },
+  });
+
+  const [open, setOpen] = useState(false);
+  const updateSCIMDirectoryMutation = useMutation(updateSCIMDirectory);
+  const queryClient = useQueryClient();
+  const handleSubmit = useCallback(
+    async (values: z.infer<typeof FormSchema>, e: any) => {
+      e.preventDefault();
+      await updateSCIMDirectoryMutation.mutateAsync({
+        scimDirectory: {
+          id: scimDirectory.id,
+          primary: values.primary,
+        },
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getSCIMDirectory, {
+          id: scimDirectory.id,
+        }),
+      });
+
+      setOpen(false);
+    },
+    [setOpen, scimDirectory, updateSCIMDirectoryMutation, queryClient],
+  );
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Edit</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Edit SCIM directory</AlertDialogTitle>
+            </AlertDialogHeader>
+
+            <div className="my-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="primary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary</FormLabel>
+                    <FormControl className="block">
+                      <Switch
+                        name={field.name}
+                        id={field.name}
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Every organization can have one primary SCIM directory.
+                      When you use SSOReady's API, you can list SCIM users or
+                      groups by organization; when you do that, SSOReady will
+                      return data for the primary SCIM directory in that
+                      organization.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit">Save</Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
