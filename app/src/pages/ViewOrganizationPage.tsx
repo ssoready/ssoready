@@ -416,7 +416,10 @@ function OrganizationSCIMDirectoriesPage() {
     const scimDirectory = await createSCIMDirectoryMutation.mutateAsync({
       scimDirectory: {
         organizationId,
-        primary: true,
+        primary:
+          listSCIMDirectoriesPages?.pages.flatMap(
+            (page) => page.scimDirectories,
+          ).length === 0,
       },
     });
 
