@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -36,6 +37,8 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		}
 		panic(err)
 	}
+
+	slog.InfoContext(ctx, "scim_list_users", "scim_directory_id", scimDirectoryID, "filter", r.URL.Query().Get("filter"))
 
 	if r.URL.Query().Has("filter") {
 		filterEmailPat := regexp.MustCompile(`userName eq "(.*)"`)
