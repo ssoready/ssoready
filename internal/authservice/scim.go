@@ -365,7 +365,18 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	fmt.Println("patch user", scimUserID, patch)
+	// this is how entra deactivates users
+	if len(patch.Operations) == 1 && patch.Operations[0].Op == "Replace" && patch.Operations[0].Path == "active" && patch.Operations[0].Value == "False" {
+		if err := s.Store.AuthDeleteSCIMUser(ctx, &store.AuthDeleteSCIMUserRequest{
+			SCIMDirectoryID: scimDirectoryID,
+			SCIMUserID:      scimUserID,
+		}); err != nil {
+			panic(err)
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 
 	panic("unsupported group PATCH operation type")
 }
