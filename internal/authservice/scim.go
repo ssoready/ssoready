@@ -336,6 +336,37 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
+	scimUserID := mux.Vars(r)["scim_user_id"]
+
+	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
+		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
+			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
+			return
+		}
+		panic(err)
+	}
+
+	var patch struct {
+		Operations []struct {
+			Op    string `json:"op"`
+			Path  string `json:"path"`
+			Value any    `json:"value"`
+		} `json:"operations"`
+	}
+
+	defer r.Body.Close()
+	if err := json.NewDecoder(r.Body).Decode(&patch); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("patch user", scimUserID, patch)
+
+	panic("unsupported group PATCH operation type")
+}
+
 func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
