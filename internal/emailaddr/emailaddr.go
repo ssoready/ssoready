@@ -3,6 +3,7 @@ package emailaddr
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 var pat = regexp.MustCompile(`^[a-zA-Z0-9_.-]+@([a-zA-Z0-9_.-]+)$`)
@@ -13,5 +14,5 @@ func Parse(s string) (string, error) {
 		return "", fmt.Errorf("invalid email address: %q", s)
 	}
 
-	return match[1], nil
+	return strings.ToLower(match[1]), nil
 }
