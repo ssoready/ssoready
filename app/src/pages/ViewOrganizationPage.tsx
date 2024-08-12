@@ -440,7 +440,10 @@ function OrganizationSCIMDirectoriesPage() {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div className="flex flex-col space-y-1.5">
-            <CardTitle>SCIM Directories</CardTitle>
+            <CardTitle className="flex gap-x-4 items-center">
+              <span>SCIM Directories</span>
+              <Badge variant="secondary">Beta</Badge>
+            </CardTitle>
             <CardDescription>
               SCIM Directories within this organization.
             </CardDescription>
