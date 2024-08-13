@@ -1,0 +1,298 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: SSOReadyService API
+    version: 0.0.1
+paths:
+    /v1/saml/redeem:
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_RedeemSAMLAccessCode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RedeemSAMLAccessCodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RedeemSAMLAccessCodeResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/saml/redirect:
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_GetSAMLRedirectURL
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetSAMLRedirectURLRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSAMLRedirectURLResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim/groups:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_ListSCIMGroups
+            parameters:
+                - name: scimDirectoryId
+                  in: query
+                  schema:
+                    type: string
+                - name: organizationId
+                  in: query
+                  schema:
+                    type: string
+                - name: organizationExternalId
+                  in: query
+                  schema:
+                    type: string
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListSCIMGroupsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim/groups/{id}:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_GetSCIMGroup
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSCIMGroupResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim/users:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_ListSCIMUsers
+            parameters:
+                - name: scimDirectoryId
+                  in: query
+                  schema:
+                    type: string
+                - name: organizationId
+                  in: query
+                  schema:
+                    type: string
+                - name: organizationExternalId
+                  in: query
+                  schema:
+                    type: string
+                - name: scimGroupId
+                  in: query
+                  schema:
+                    type: string
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListSCIMUsersResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim/users/{id}:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_GetSCIMUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSCIMUserResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        GetSAMLRedirectURLRequest:
+            type: object
+            properties:
+                samlConnectionId:
+                    type: string
+                organizationId:
+                    type: string
+                organizationExternalId:
+                    type: string
+                state:
+                    type: string
+        GetSAMLRedirectURLResponse:
+            type: object
+            properties:
+                redirectUrl:
+                    type: string
+        GetSCIMGroupResponse:
+            type: object
+            properties:
+                scimGroup:
+                    $ref: '#/components/schemas/SCIMGroup'
+        GetSCIMUserResponse:
+            type: object
+            properties:
+                scimUser:
+                    $ref: '#/components/schemas/SCIMUser'
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListSCIMGroupsResponse:
+            type: object
+            properties:
+                scimGroups:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SCIMGroup'
+                nextPageToken:
+                    type: string
+        ListSCIMUsersResponse:
+            type: object
+            properties:
+                scimUsers:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SCIMUser'
+                nextPageToken:
+                    type: string
+        RedeemSAMLAccessCodeRequest:
+            type: object
+            properties:
+                samlAccessCode:
+                    type: string
+        RedeemSAMLAccessCodeResponse:
+            type: object
+            properties:
+                email:
+                    type: string
+                state:
+                    type: string
+                attributes:
+                    type: object
+                    additionalProperties:
+                        type: string
+                organizationId:
+                    type: string
+                organizationExternalId:
+                    type: string
+                samlFlowId:
+                    type: string
+        SCIMGroup:
+            type: object
+            properties:
+                id:
+                    type: string
+                scimDirectoryId:
+                    type: string
+                displayName:
+                    type: string
+                deleted:
+                    type: boolean
+                attributes:
+                    type: object
+        SCIMUser:
+            type: object
+            properties:
+                id:
+                    type: string
+                scimDirectoryId:
+                    type: string
+                email:
+                    type: string
+                deleted:
+                    type: boolean
+                attributes:
+                    type: object
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+tags:
+    - name: SSOReadyService
