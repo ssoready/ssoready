@@ -100,7 +100,7 @@
   "cpu": "256",
   "memory": "512",
   "runtimePlatform": {
-    "cpuArchitecture": "X86_64",
+    "cpuArchitecture": "ARM64",
     "operatingSystemFamily": "LINUX"
   },
   "registeredAt": "",
