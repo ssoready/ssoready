@@ -31,7 +31,7 @@ service SSOReadyService {
 
   rpc GetSCIMUser(GetSCIMUserRequest) returns (GetSCIMUserResponse) {
     option (google.api.http) = {
-      get: "/v1/scim/users/{id=*}"
+      get: "/v1/scim/users/{id}"
     };
   };
 
@@ -43,7 +43,7 @@ service SSOReadyService {
 
   rpc GetSCIMGroup(GetSCIMGroupRequest) returns (GetSCIMGroupResponse) {
     option (google.api.http) = {
-      get: "/v1/scim/groups/{id=*}"
+      get: "/v1/scim/groups/{id}"
     };
   };
 

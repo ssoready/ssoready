@@ -38,3 +38,6 @@ plugins:
   - local: protoc-gen-connect-query
     out: app/src/gen
     opt: target=ts
+  - remote: buf.build/community/google-gnostic-openapi:v0.7.0
+    out: internal/gen
+    opt: paths=source_relative

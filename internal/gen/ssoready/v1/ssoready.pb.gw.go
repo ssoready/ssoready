@@ -349,7 +349,7 @@ func RegisterSSOReadyServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMUser", runtime.WithHTTPPathPattern("/v1/scim/users/{id=*}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMUser", runtime.WithHTTPPathPattern("/v1/scim/users/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -399,7 +399,7 @@ func RegisterSSOReadyServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMGroup", runtime.WithHTTPPathPattern("/v1/scim/groups/{id=*}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMGroup", runtime.WithHTTPPathPattern("/v1/scim/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -529,7 +529,7 @@ func RegisterSSOReadyServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMUser", runtime.WithHTTPPathPattern("/v1/scim/users/{id=*}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMUser", runtime.WithHTTPPathPattern("/v1/scim/users/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -573,7 +573,7 @@ func RegisterSSOReadyServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMGroup", runtime.WithHTTPPathPattern("/v1/scim/groups/{id=*}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/ssoready.v1.SSOReadyService/GetSCIMGroup", runtime.WithHTTPPathPattern("/v1/scim/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
