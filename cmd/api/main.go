@@ -142,10 +142,42 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	}))
 	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))
+
+	mux.Handle("/v1/scim/", scimCamelToSnake(transcoder)) // hack workaround for camel-cased query params
 	mux.Handle("/", transcoder)
 
 	slog.Info("serve")
 	if err := http.ListenAndServe(config.ServeAddr, mux); err != nil {
 		panic(err)
 	}
+}
+
+var scimCamelToSnakeMapping = map[string]string{
+	"scimDirectoryId":        "scim_directory_id",
+	"organizationId":         "organization_id",
+	"organizationExternalId": "organization_external_id",
+	"scimGroupId":            "scim_group_id",
+	"pageToken":              "page_token",
+}
+
+// scimCamelToSnake converts public SCIM-related endpoint parameters from camel to snake.
+//
+// Workaround for: https://github.com/connectrpc/vanguard-go/issues/131
+func scimCamelToSnake(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			q := r.URL.Query()
+			for camel, snake := range scimCamelToSnakeMapping {
+				if q.Has(camel) {
+					v := q.Get(camel)
+					q.Del(camel)
+					q.Set(snake, v)
+				}
+			}
+
+			r.URL.RawQuery = q.Encode()
+		}
+
+		h.ServeHTTP(w, r)
+	})
 }
