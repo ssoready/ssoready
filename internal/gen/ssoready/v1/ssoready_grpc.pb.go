@@ -22,6 +22,10 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	SSOReadyService_GetSAMLRedirectURL_FullMethodName             = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
 	SSOReadyService_RedeemSAMLAccessCode_FullMethodName           = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_ListSCIMUsers_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
+	SSOReadyService_GetSCIMUser_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSCIMUser"
+	SSOReadyService_ListSCIMGroups_FullMethodName                 = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
+	SSOReadyService_GetSCIMGroup_FullMethodName                   = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
 	SSOReadyService_VerifyEmail_FullMethodName                    = "/ssoready.v1.SSOReadyService/VerifyEmail"
 	SSOReadyService_SignIn_FullMethodName                         = "/ssoready.v1.SSOReadyService/SignIn"
 	SSOReadyService_SignOut_FullMethodName                        = "/ssoready.v1.SSOReadyService/SignOut"
@@ -56,6 +60,15 @@ const (
 	SSOReadyService_ListSAMLFlows_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
 	SSOReadyService_GetSAMLFlow_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
 	SSOReadyService_ParseSAMLMetadata_FullMethodName              = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	SSOReadyService_ListSCIMDirectories_FullMethodName            = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
+	SSOReadyService_GetSCIMDirectory_FullMethodName               = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
+	SSOReadyService_CreateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	SSOReadyService_UpdateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
+	SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
+	SSOReadyService_AppListSCIMUsers_FullMethodName               = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
+	SSOReadyService_AppGetSCIMUser_FullMethodName                 = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
+	SSOReadyService_AppListSCIMGroups_FullMethodName              = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
+	SSOReadyService_AppGetSCIMGroup_FullMethodName                = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
 	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName        = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
 	SSOReadyService_AdminListSAMLConnections_FullMethodName       = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
 	SSOReadyService_AdminGetSAMLConnection_FullMethodName         = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
@@ -70,6 +83,10 @@ const (
 type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(ctx context.Context, in *GetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
 	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
+	ListSCIMUsers(ctx context.Context, in *ListSCIMUsersRequest, opts ...grpc.CallOption) (*ListSCIMUsersResponse, error)
+	GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error)
+	ListSCIMGroups(ctx context.Context, in *ListSCIMGroupsRequest, opts ...grpc.CallOption) (*ListSCIMGroupsResponse, error)
+	GetSCIMGroup(ctx context.Context, in *GetSCIMGroupRequest, opts ...grpc.CallOption) (*GetSCIMGroupResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	SignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*SignOutResponse, error)
@@ -104,6 +121,15 @@ type SSOReadyServiceClient interface {
 	ListSAMLFlows(ctx context.Context, in *ListSAMLFlowsRequest, opts ...grpc.CallOption) (*ListSAMLFlowsResponse, error)
 	GetSAMLFlow(ctx context.Context, in *GetSAMLFlowRequest, opts ...grpc.CallOption) (*SAMLFlow, error)
 	ParseSAMLMetadata(ctx context.Context, in *ParseSAMLMetadataRequest, opts ...grpc.CallOption) (*ParseSAMLMetadataResponse, error)
+	ListSCIMDirectories(ctx context.Context, in *ListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*ListSCIMDirectoriesResponse, error)
+	GetSCIMDirectory(ctx context.Context, in *GetSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error)
+	CreateSCIMDirectory(ctx context.Context, in *CreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error)
+	UpdateSCIMDirectory(ctx context.Context, in *UpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error)
+	RotateSCIMDirectoryBearerToken(ctx context.Context, in *RotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*RotateSCIMDirectoryBearerTokenResponse, error)
+	AppListSCIMUsers(ctx context.Context, in *AppListSCIMUsersRequest, opts ...grpc.CallOption) (*AppListSCIMUsersResponse, error)
+	AppGetSCIMUser(ctx context.Context, in *AppGetSCIMUserRequest, opts ...grpc.CallOption) (*SCIMUser, error)
+	AppListSCIMGroups(ctx context.Context, in *AppListSCIMGroupsRequest, opts ...grpc.CallOption) (*AppListSCIMGroupsResponse, error)
+	AppGetSCIMGroup(ctx context.Context, in *AppGetSCIMGroupRequest, opts ...grpc.CallOption) (*SCIMGroup, error)
 	AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error)
 	AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(ctx context.Context, in *AdminGetSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminGetSAMLConnectionResponse, error)
@@ -134,6 +160,46 @@ func (c *sSOReadyServiceClient) RedeemSAMLAccessCode(ctx context.Context, in *Re
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RedeemSAMLAccessCodeResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_RedeemSAMLAccessCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) ListSCIMUsers(ctx context.Context, in *ListSCIMUsersRequest, opts ...grpc.CallOption) (*ListSCIMUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSCIMUsersResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSCIMUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSCIMUserResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetSCIMUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) ListSCIMGroups(ctx context.Context, in *ListSCIMGroupsRequest, opts ...grpc.CallOption) (*ListSCIMGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSCIMGroupsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSCIMGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) GetSCIMGroup(ctx context.Context, in *GetSCIMGroupRequest, opts ...grpc.CallOption) (*GetSCIMGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSCIMGroupResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetSCIMGroup_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -480,6 +546,96 @@ func (c *sSOReadyServiceClient) ParseSAMLMetadata(ctx context.Context, in *Parse
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) ListSCIMDirectories(ctx context.Context, in *ListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*ListSCIMDirectoriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSCIMDirectoriesResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_ListSCIMDirectories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) GetSCIMDirectory(ctx context.Context, in *GetSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMDirectory)
+	err := c.cc.Invoke(ctx, SSOReadyService_GetSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) CreateSCIMDirectory(ctx context.Context, in *CreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMDirectory)
+	err := c.cc.Invoke(ctx, SSOReadyService_CreateSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) UpdateSCIMDirectory(ctx context.Context, in *UpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*SCIMDirectory, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMDirectory)
+	err := c.cc.Invoke(ctx, SSOReadyService_UpdateSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) RotateSCIMDirectoryBearerToken(ctx context.Context, in *RotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*RotateSCIMDirectoryBearerTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RotateSCIMDirectoryBearerTokenResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AppListSCIMUsers(ctx context.Context, in *AppListSCIMUsersRequest, opts ...grpc.CallOption) (*AppListSCIMUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppListSCIMUsersResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppListSCIMUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AppGetSCIMUser(ctx context.Context, in *AppGetSCIMUserRequest, opts ...grpc.CallOption) (*SCIMUser, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMUser)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppGetSCIMUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AppListSCIMGroups(ctx context.Context, in *AppListSCIMGroupsRequest, opts ...grpc.CallOption) (*AppListSCIMGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppListSCIMGroupsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppListSCIMGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AppGetSCIMGroup(ctx context.Context, in *AppGetSCIMGroupRequest, opts ...grpc.CallOption) (*SCIMGroup, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SCIMGroup)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppGetSCIMGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminRedeemOneTimeTokenResponse)
@@ -546,6 +702,10 @@ func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, in *
 type SSOReadyServiceServer interface {
 	GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
 	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
+	ListSCIMUsers(context.Context, *ListSCIMUsersRequest) (*ListSCIMUsersResponse, error)
+	GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error)
+	ListSCIMGroups(context.Context, *ListSCIMGroupsRequest) (*ListSCIMGroupsResponse, error)
+	GetSCIMGroup(context.Context, *GetSCIMGroupRequest) (*GetSCIMGroupResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	SignOut(context.Context, *SignOutRequest) (*SignOutResponse, error)
@@ -580,6 +740,15 @@ type SSOReadyServiceServer interface {
 	ListSAMLFlows(context.Context, *ListSAMLFlowsRequest) (*ListSAMLFlowsResponse, error)
 	GetSAMLFlow(context.Context, *GetSAMLFlowRequest) (*SAMLFlow, error)
 	ParseSAMLMetadata(context.Context, *ParseSAMLMetadataRequest) (*ParseSAMLMetadataResponse, error)
+	ListSCIMDirectories(context.Context, *ListSCIMDirectoriesRequest) (*ListSCIMDirectoriesResponse, error)
+	GetSCIMDirectory(context.Context, *GetSCIMDirectoryRequest) (*SCIMDirectory, error)
+	CreateSCIMDirectory(context.Context, *CreateSCIMDirectoryRequest) (*SCIMDirectory, error)
+	UpdateSCIMDirectory(context.Context, *UpdateSCIMDirectoryRequest) (*SCIMDirectory, error)
+	RotateSCIMDirectoryBearerToken(context.Context, *RotateSCIMDirectoryBearerTokenRequest) (*RotateSCIMDirectoryBearerTokenResponse, error)
+	AppListSCIMUsers(context.Context, *AppListSCIMUsersRequest) (*AppListSCIMUsersResponse, error)
+	AppGetSCIMUser(context.Context, *AppGetSCIMUserRequest) (*SCIMUser, error)
+	AppListSCIMGroups(context.Context, *AppListSCIMGroupsRequest) (*AppListSCIMGroupsResponse, error)
+	AppGetSCIMGroup(context.Context, *AppGetSCIMGroupRequest) (*SCIMGroup, error)
 	AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error)
 	AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(context.Context, *AdminGetSAMLConnectionRequest) (*AdminGetSAMLConnectionResponse, error)
@@ -601,6 +770,18 @@ func (UnimplementedSSOReadyServiceServer) GetSAMLRedirectURL(context.Context, *G
 }
 func (UnimplementedSSOReadyServiceServer) RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RedeemSAMLAccessCode not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListSCIMUsers(context.Context, *ListSCIMUsersRequest) (*ListSCIMUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSCIMUsers not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSCIMUser not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) ListSCIMGroups(context.Context, *ListSCIMGroupsRequest) (*ListSCIMGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSCIMGroups not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetSCIMGroup(context.Context, *GetSCIMGroupRequest) (*GetSCIMGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSCIMGroup not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
@@ -704,6 +885,33 @@ func (UnimplementedSSOReadyServiceServer) GetSAMLFlow(context.Context, *GetSAMLF
 func (UnimplementedSSOReadyServiceServer) ParseSAMLMetadata(context.Context, *ParseSAMLMetadataRequest) (*ParseSAMLMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParseSAMLMetadata not implemented")
 }
+func (UnimplementedSSOReadyServiceServer) ListSCIMDirectories(context.Context, *ListSCIMDirectoriesRequest) (*ListSCIMDirectoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSCIMDirectories not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) GetSCIMDirectory(context.Context, *GetSCIMDirectoryRequest) (*SCIMDirectory, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) CreateSCIMDirectory(context.Context, *CreateSCIMDirectoryRequest) (*SCIMDirectory, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) UpdateSCIMDirectory(context.Context, *UpdateSCIMDirectoryRequest) (*SCIMDirectory, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) RotateSCIMDirectoryBearerToken(context.Context, *RotateSCIMDirectoryBearerTokenRequest) (*RotateSCIMDirectoryBearerTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RotateSCIMDirectoryBearerToken not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppListSCIMUsers(context.Context, *AppListSCIMUsersRequest) (*AppListSCIMUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppListSCIMUsers not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppGetSCIMUser(context.Context, *AppGetSCIMUserRequest) (*SCIMUser, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppGetSCIMUser not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppListSCIMGroups(context.Context, *AppListSCIMGroupsRequest) (*AppListSCIMGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppListSCIMGroups not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppGetSCIMGroup(context.Context, *AppGetSCIMGroupRequest) (*SCIMGroup, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppGetSCIMGroup not implemented")
+}
 func (UnimplementedSSOReadyServiceServer) AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminRedeemOneTimeToken not implemented")
 }
@@ -775,6 +983,78 @@ func _SSOReadyService_RedeemSAMLAccessCode_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).RedeemSAMLAccessCode(ctx, req.(*RedeemSAMLAccessCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_ListSCIMUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSCIMUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListSCIMUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListSCIMUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListSCIMUsers(ctx, req.(*ListSCIMUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_GetSCIMUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSCIMUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetSCIMUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetSCIMUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetSCIMUser(ctx, req.(*GetSCIMUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_ListSCIMGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSCIMGroupsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListSCIMGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListSCIMGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListSCIMGroups(ctx, req.(*ListSCIMGroupsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_GetSCIMGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSCIMGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetSCIMGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetSCIMGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetSCIMGroup(ctx, req.(*GetSCIMGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1391,6 +1671,168 @@ func _SSOReadyService_ParseSAMLMetadata_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_ListSCIMDirectories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSCIMDirectoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).ListSCIMDirectories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_ListSCIMDirectories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).ListSCIMDirectories(ctx, req.(*ListSCIMDirectoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_GetSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).GetSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_GetSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).GetSCIMDirectory(ctx, req.(*GetSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_CreateSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).CreateSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_CreateSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).CreateSCIMDirectory(ctx, req.(*CreateSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_UpdateSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).UpdateSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_UpdateSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).UpdateSCIMDirectory(ctx, req.(*UpdateSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_RotateSCIMDirectoryBearerToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RotateSCIMDirectoryBearerTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).RotateSCIMDirectoryBearerToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).RotateSCIMDirectoryBearerToken(ctx, req.(*RotateSCIMDirectoryBearerTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AppListSCIMUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppListSCIMUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppListSCIMUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppListSCIMUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppListSCIMUsers(ctx, req.(*AppListSCIMUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AppGetSCIMUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppGetSCIMUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppGetSCIMUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppGetSCIMUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppGetSCIMUser(ctx, req.(*AppGetSCIMUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AppListSCIMGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppListSCIMGroupsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppListSCIMGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppListSCIMGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppListSCIMGroups(ctx, req.(*AppListSCIMGroupsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AppGetSCIMGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppGetSCIMGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppGetSCIMGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppGetSCIMGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppGetSCIMGroup(ctx, req.(*AppGetSCIMGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AdminRedeemOneTimeToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminRedeemOneTimeTokenRequest)
 	if err := dec(in); err != nil {
@@ -1513,6 +1955,22 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RedeemSAMLAccessCode",
 			Handler:    _SSOReadyService_RedeemSAMLAccessCode_Handler,
+		},
+		{
+			MethodName: "ListSCIMUsers",
+			Handler:    _SSOReadyService_ListSCIMUsers_Handler,
+		},
+		{
+			MethodName: "GetSCIMUser",
+			Handler:    _SSOReadyService_GetSCIMUser_Handler,
+		},
+		{
+			MethodName: "ListSCIMGroups",
+			Handler:    _SSOReadyService_ListSCIMGroups_Handler,
+		},
+		{
+			MethodName: "GetSCIMGroup",
+			Handler:    _SSOReadyService_GetSCIMGroup_Handler,
 		},
 		{
 			MethodName: "VerifyEmail",
@@ -1649,6 +2107,42 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ParseSAMLMetadata",
 			Handler:    _SSOReadyService_ParseSAMLMetadata_Handler,
+		},
+		{
+			MethodName: "ListSCIMDirectories",
+			Handler:    _SSOReadyService_ListSCIMDirectories_Handler,
+		},
+		{
+			MethodName: "GetSCIMDirectory",
+			Handler:    _SSOReadyService_GetSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "CreateSCIMDirectory",
+			Handler:    _SSOReadyService_CreateSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "UpdateSCIMDirectory",
+			Handler:    _SSOReadyService_UpdateSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "RotateSCIMDirectoryBearerToken",
+			Handler:    _SSOReadyService_RotateSCIMDirectoryBearerToken_Handler,
+		},
+		{
+			MethodName: "AppListSCIMUsers",
+			Handler:    _SSOReadyService_AppListSCIMUsers_Handler,
+		},
+		{
+			MethodName: "AppGetSCIMUser",
+			Handler:    _SSOReadyService_AppGetSCIMUser_Handler,
+		},
+		{
+			MethodName: "AppListSCIMGroups",
+			Handler:    _SSOReadyService_AppListSCIMGroups_Handler,
+		},
+		{
+			MethodName: "AppGetSCIMGroup",
+			Handler:    _SSOReadyService_AppGetSCIMGroup_Handler,
 		},
 		{
 			MethodName: "AdminRedeemOneTimeToken",

@@ -466,3 +466,263 @@ select *
 from saml_connections
 where organization_id = $1
   and id = $2;
+
+-- name: AuthGetSCIMDirectory :one
+select *
+from scim_directories
+where id = $1;
+
+-- name: AuthGetSCIMDirectoryOrganizationDomains :many
+select organization_domains.domain
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join organization_domains on organizations.id = organization_domains.organization_id
+where scim_directories.id = $1;
+
+-- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
+select *
+from scim_directories
+where id = $1
+  and bearer_token_sha256 = $2;
+
+-- name: AuthCountSCIMUsers :one
+select count(*)
+from scim_users
+where scim_directory_id = $1
+  and deleted = false;
+
+-- name: AuthListSCIMUsers :many
+select *
+from scim_users
+where scim_directory_id = $1
+  and deleted = false
+order by id
+offset $2 limit $3;
+
+-- name: AuthGetSCIMUserByEmail :one
+select *
+from scim_users
+where scim_directory_id = $1
+  and email = $2
+  and deleted = false;
+
+-- name: AuthGetSCIMUser :one
+select *
+from scim_users
+where scim_directory_id = $1
+  and id = $2
+  and deleted = false;
+
+-- name: AuthGetSCIMUserIncludeDeleted :one
+select *
+from scim_users
+where scim_directory_id = $1
+  and id = $2;
+
+-- name: AuthUpsertSCIMUser :one
+insert into scim_users (id, scim_directory_id, email, deleted, attributes)
+values ($1, $2, $3, $4, $5)
+on conflict (scim_directory_id, email) do update set deleted    = excluded.deleted,
+                                                     attributes = excluded.attributes
+returning *;
+
+-- name: AuthUpdateSCIMUser :one
+update scim_users
+set email      = $1,
+    attributes = $2,
+    deleted    = $5
+where scim_directory_id = $3
+  and id = $4
+returning *;
+
+-- name: AuthMarkSCIMUserDeleted :one
+update scim_users
+set deleted = true
+where id = $1
+returning *;
+
+-- name: AuthCountSCIMGroups :one
+select count(*)
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false;
+
+-- name: AuthListSCIMGroups :many
+select *
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+order by id
+offset $2 limit $3;
+
+-- name: AuthGetSCIMGroup :one
+select *
+from scim_groups
+where scim_directory_id = $1
+  and id = $2;
+
+-- name: AuthCreateSCIMGroup :one
+insert into scim_groups (id, scim_directory_id, display_name, attributes, deleted)
+values ($1, $2, $3, $4, $5)
+returning *;
+
+-- name: AuthUpdateSCIMGroup :one
+update scim_groups
+set display_name = $1,
+    attributes   = $2
+where id = $3
+returning *;
+
+-- name: AuthUpdateSCIMGroupDisplayName :one
+update scim_groups
+set display_name = $1
+where id = $2
+returning *;
+
+-- name: AuthClearSCIMGroupMembers :exec
+delete
+from scim_user_group_memberships
+where scim_group_id = $1;
+
+-- name: AuthMarkSCIMGroupDeleted :one
+update scim_groups
+set deleted = true
+where id = $1
+returning *;
+
+-- name: AuthUpsertSCIMUserGroupMembership :exec
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+values ($1, $2, $3, $4)
+on conflict (scim_user_id, scim_group_id) do nothing;
+
+-- name: GetSCIMDirectoryByIDAndEnvironmentID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_directories.id = $2;
+
+-- name: GetPrimarySCIMDirectoryIDByOrganizationID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.id = $2
+  and scim_directories.is_primary = true;
+
+-- name: GetPrimarySCIMDirectoryIDByOrganizationExternalID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.external_id = $2
+  and scim_directories.is_primary = true;
+
+-- name: ListSCIMUsers :many
+select *
+from scim_users
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3;
+
+-- name: ListSCIMUsersInSCIMGroup :many
+select *
+from scim_users
+where scim_users.scim_directory_id = $1
+  and scim_users.id >= $2
+  and exists(select * from scim_user_group_memberships where scim_group_id = $4 and scim_user_id = scim_users.id)
+order by scim_users.id
+limit $3;
+
+-- name: GetSCIMUser :one
+select scim_users.*
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_users.id = $2;
+
+-- name: ListSCIMGroups :many
+select *
+from scim_groups
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3;
+
+-- name: ListSCIMGroupsBySCIMUserID :many
+select *
+from scim_groups
+where scim_groups.scim_directory_id = $1
+  and scim_groups.id >= $2
+  and exists(select *
+             from scim_user_group_memberships
+             where scim_user_group_memberships.scim_user_id = $3
+               and scim_user_group_memberships.scim_group_id = scim_groups.id)
+order by scim_groups.id
+limit $4;
+
+-- name: GetSCIMGroup :one
+select scim_groups.*
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_groups.id = $2;
+
+-- name: CreateSCIMDirectory :one
+insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
+values ($1, $2, $3, $4, $5)
+returning *;
+
+-- name: UpdateSCIMDirectory :one
+update scim_directories
+set is_primary = $1
+where id = $2
+returning *;
+
+-- name: UpdatePrimarySCIMDirectory :exec
+update scim_directories
+set is_primary = (id = $1)
+where organization_id = $2;
+
+-- name: ListSCIMDirectories :many
+select *
+from scim_directories
+where organization_id = $1
+  and id >= $2
+order by id
+limit $3;
+
+-- name: GetSCIMDirectory :one
+select scim_directories.*
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_directories.id = $2;
+
+-- name: AppGetSCIMUser :one
+select scim_users.*
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_users.id = $2;
+
+-- name: AppGetSCIMGroup :one
+select scim_groups.*
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_groups.id = $2;
+
+-- name: UpdateSCIMDirectoryBearerToken :one
+update scim_directories
+set bearer_token_sha256 = $1
+where id = $2
+returning *;

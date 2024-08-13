@@ -106,6 +106,62 @@ func (q *Queries) AdminGetSAMLConnection(ctx context.Context, arg AdminGetSAMLCo
 	return i, err
 }
 
+const appGetSCIMGroup = `-- name: AppGetSCIMGroup :one
+select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_groups.id = $2
+`
+
+type AppGetSCIMGroupParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) AppGetSCIMGroup(ctx context.Context, arg AppGetSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, appGetSCIMGroup, arg.AppOrganizationID, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const appGetSCIMUser = `-- name: AppGetSCIMUser :one
+select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_users.id = $2
+`
+
+type AppGetSCIMUserParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) AppGetSCIMUser(ctx context.Context, arg AppGetSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, appGetSCIMUser, arg.AppOrganizationID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
 select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth from saml_flows where id = $1 and access_code_sha256 is not null)
 `
@@ -115,6 +171,78 @@ func (q *Queries) AuthCheckAssertionAlreadyProcessed(ctx context.Context, id uui
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const authClearSCIMGroupMembers = `-- name: AuthClearSCIMGroupMembers :exec
+delete
+from scim_user_group_memberships
+where scim_group_id = $1
+`
+
+func (q *Queries) AuthClearSCIMGroupMembers(ctx context.Context, scimGroupID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, authClearSCIMGroupMembers, scimGroupID)
+	return err
+}
+
+const authCountSCIMGroups = `-- name: AuthCountSCIMGroups :one
+select count(*)
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+`
+
+func (q *Queries) AuthCountSCIMGroups(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, authCountSCIMGroups, scimDirectoryID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const authCountSCIMUsers = `-- name: AuthCountSCIMUsers :one
+select count(*)
+from scim_users
+where scim_directory_id = $1
+  and deleted = false
+`
+
+func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, authCountSCIMUsers, scimDirectoryID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const authCreateSCIMGroup = `-- name: AuthCreateSCIMGroup :one
+insert into scim_groups (id, scim_directory_id, display_name, attributes, deleted)
+values ($1, $2, $3, $4, $5)
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+type AuthCreateSCIMGroupParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+	Attributes      []byte
+	Deleted         bool
+}
+
+func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authCreateSCIMGroup,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.DisplayName,
+		arg.Attributes,
+		arg.Deleted,
+	)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
 }
 
 const authGetInitData = `-- name: AuthGetInitData :one
@@ -261,6 +389,180 @@ func (q *Queries) AuthGetSAMLOAuthClientWithSecret(ctx context.Context, arg Auth
 	return i, err
 }
 
+const authGetSCIMDirectory = `-- name: AuthGetSCIMDirectory :one
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+from scim_directories
+where id = $1
+`
+
+func (q *Queries) AuthGetSCIMDirectory(ctx context.Context, id uuid.UUID) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMDirectory, id)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
+const authGetSCIMDirectoryByIDAndBearerToken = `-- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+from scim_directories
+where id = $1
+  and bearer_token_sha256 = $2
+`
+
+type AuthGetSCIMDirectoryByIDAndBearerTokenParams struct {
+	ID                uuid.UUID
+	BearerTokenSha256 []byte
+}
+
+func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, arg AuthGetSCIMDirectoryByIDAndBearerTokenParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMDirectoryByIDAndBearerToken, arg.ID, arg.BearerTokenSha256)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
+const authGetSCIMDirectoryOrganizationDomains = `-- name: AuthGetSCIMDirectoryOrganizationDomains :many
+select organization_domains.domain
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join organization_domains on organizations.id = organization_domains.organization_id
+where scim_directories.id = $1
+`
+
+func (q *Queries) AuthGetSCIMDirectoryOrganizationDomains(ctx context.Context, id uuid.UUID) ([]string, error) {
+	rows, err := q.db.Query(ctx, authGetSCIMDirectoryOrganizationDomains, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var domain string
+		if err := rows.Scan(&domain); err != nil {
+			return nil, err
+		}
+		items = append(items, domain)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const authGetSCIMGroup = `-- name: AuthGetSCIMGroup :one
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_directory_id = $1
+  and id = $2
+`
+
+type AuthGetSCIMGroupParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthGetSCIMGroup(ctx context.Context, arg AuthGetSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMGroup, arg.ScimDirectoryID, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authGetSCIMUser = `-- name: AuthGetSCIMUser :one
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and id = $2
+  and deleted = false
+`
+
+type AuthGetSCIMUserParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthGetSCIMUser(ctx context.Context, arg AuthGetSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMUser, arg.ScimDirectoryID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authGetSCIMUserByEmail = `-- name: AuthGetSCIMUserByEmail :one
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and email = $2
+  and deleted = false
+`
+
+type AuthGetSCIMUserByEmailParams struct {
+	ScimDirectoryID uuid.UUID
+	Email           string
+}
+
+func (q *Queries) AuthGetSCIMUserByEmail(ctx context.Context, arg AuthGetSCIMUserByEmailParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMUserByEmail, arg.ScimDirectoryID, arg.Email)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authGetSCIMUserIncludeDeleted = `-- name: AuthGetSCIMUserIncludeDeleted :one
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and id = $2
+`
+
+type AuthGetSCIMUserIncludeDeletedParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthGetSCIMUserIncludeDeleted(ctx context.Context, arg AuthGetSCIMUserIncludeDeletedParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authGetSCIMUserIncludeDeleted, arg.ScimDirectoryID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authGetValidateData = `-- name: AuthGetValidateData :one
 select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
@@ -292,6 +594,275 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 		&i.OauthRedirectUri,
 	)
 	return i, err
+}
+
+const authListSCIMGroups = `-- name: AuthListSCIMGroups :many
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+order by id
+offset $2 limit $3
+`
+
+type AuthListSCIMGroupsParams struct {
+	ScimDirectoryID uuid.UUID
+	Offset          int32
+	Limit           int32
+}
+
+func (q *Queries) AuthListSCIMGroups(ctx context.Context, arg AuthListSCIMGroupsParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, authListSCIMGroups, arg.ScimDirectoryID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const authListSCIMUsers = `-- name: AuthListSCIMUsers :many
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and deleted = false
+order by id
+offset $2 limit $3
+`
+
+type AuthListSCIMUsersParams struct {
+	ScimDirectoryID uuid.UUID
+	Offset          int32
+	Limit           int32
+}
+
+func (q *Queries) AuthListSCIMUsers(ctx context.Context, arg AuthListSCIMUsersParams) ([]ScimUser, error) {
+	rows, err := q.db.Query(ctx, authListSCIMUsers, arg.ScimDirectoryID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimUser
+	for rows.Next() {
+		var i ScimUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Email,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const authMarkSCIMGroupDeleted = `-- name: AuthMarkSCIMGroupDeleted :one
+update scim_groups
+set deleted = true
+where id = $1
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+func (q *Queries) AuthMarkSCIMGroupDeleted(ctx context.Context, id uuid.UUID) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authMarkSCIMGroupDeleted, id)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authMarkSCIMUserDeleted = `-- name: AuthMarkSCIMUserDeleted :one
+update scim_users
+set deleted = true
+where id = $1
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+func (q *Queries) AuthMarkSCIMUserDeleted(ctx context.Context, id uuid.UUID) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authMarkSCIMUserDeleted, id)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpdateSCIMGroup = `-- name: AuthUpdateSCIMGroup :one
+update scim_groups
+set display_name = $1,
+    attributes   = $2
+where id = $3
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+type AuthUpdateSCIMGroupParams struct {
+	DisplayName string
+	Attributes  []byte
+	ID          uuid.UUID
+}
+
+func (q *Queries) AuthUpdateSCIMGroup(ctx context.Context, arg AuthUpdateSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMGroup, arg.DisplayName, arg.Attributes, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpdateSCIMGroupDisplayName = `-- name: AuthUpdateSCIMGroupDisplayName :one
+update scim_groups
+set display_name = $1
+where id = $2
+returning id, scim_directory_id, display_name, deleted, attributes
+`
+
+type AuthUpdateSCIMGroupDisplayNameParams struct {
+	DisplayName string
+	ID          uuid.UUID
+}
+
+func (q *Queries) AuthUpdateSCIMGroupDisplayName(ctx context.Context, arg AuthUpdateSCIMGroupDisplayNameParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMGroupDisplayName, arg.DisplayName, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpdateSCIMUser = `-- name: AuthUpdateSCIMUser :one
+update scim_users
+set email      = $1,
+    attributes = $2,
+    deleted    = $5
+where scim_directory_id = $3
+  and id = $4
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+type AuthUpdateSCIMUserParams struct {
+	Email           string
+	Attributes      []byte
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Deleted         bool
+}
+
+func (q *Queries) AuthUpdateSCIMUser(ctx context.Context, arg AuthUpdateSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMUser,
+		arg.Email,
+		arg.Attributes,
+		arg.ScimDirectoryID,
+		arg.ID,
+		arg.Deleted,
+	)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpsertSCIMUser = `-- name: AuthUpsertSCIMUser :one
+insert into scim_users (id, scim_directory_id, email, deleted, attributes)
+values ($1, $2, $3, $4, $5)
+on conflict (scim_directory_id, email) do update set deleted    = excluded.deleted,
+                                                     attributes = excluded.attributes
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+type AuthUpsertSCIMUserParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	Email           string
+	Deleted         bool
+	Attributes      []byte
+}
+
+func (q *Queries) AuthUpsertSCIMUser(ctx context.Context, arg AuthUpsertSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authUpsertSCIMUser,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.Email,
+		arg.Deleted,
+		arg.Attributes,
+	)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const authUpsertSCIMUserGroupMembership = `-- name: AuthUpsertSCIMUserGroupMembership :exec
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+values ($1, $2, $3, $4)
+on conflict (scim_user_id, scim_group_id) do nothing
+`
+
+type AuthUpsertSCIMUserGroupMembershipParams struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	ScimUserID      uuid.UUID
+	ScimGroupID     uuid.UUID
+}
+
+func (q *Queries) AuthUpsertSCIMUserGroupMembership(ctx context.Context, arg AuthUpsertSCIMUserGroupMembershipParams) error {
+	_, err := q.db.Exec(ctx, authUpsertSCIMUserGroupMembership,
+		arg.ID,
+		arg.ScimDirectoryID,
+		arg.ScimUserID,
+		arg.ScimGroupID,
+	)
+	return err
 }
 
 const checkExistsEmailVerificationChallenge = `-- name: CheckExistsEmailVerificationChallenge :one
@@ -692,6 +1263,39 @@ func (q *Queries) CreateSAMLOAuthClient(ctx context.Context, arg CreateSAMLOAuth
 	return i, err
 }
 
+const createSCIMDirectory = `-- name: CreateSCIMDirectory :one
+insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
+values ($1, $2, $3, $4, $5)
+returning id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+`
+
+type CreateSCIMDirectoryParams struct {
+	ID                uuid.UUID
+	OrganizationID    uuid.UUID
+	BearerTokenSha256 []byte
+	IsPrimary         bool
+	ScimBaseUrl       string
+}
+
+func (q *Queries) CreateSCIMDirectory(ctx context.Context, arg CreateSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, createSCIMDirectory,
+		arg.ID,
+		arg.OrganizationID,
+		arg.BearerTokenSha256,
+		arg.IsPrimary,
+		arg.ScimBaseUrl,
+	)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
 const deleteAPIKey = `-- name: DeleteAPIKey :exec
 delete
 from api_keys
@@ -1078,6 +1682,48 @@ func (q *Queries) GetPrimarySAMLConnectionIDByOrganizationID(ctx context.Context
 	return id, err
 }
 
+const getPrimarySCIMDirectoryIDByOrganizationExternalID = `-- name: GetPrimarySCIMDirectoryIDByOrganizationExternalID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.external_id = $2
+  and scim_directories.is_primary = true
+`
+
+type GetPrimarySCIMDirectoryIDByOrganizationExternalIDParams struct {
+	EnvironmentID uuid.UUID
+	ExternalID    *string
+}
+
+func (q *Queries) GetPrimarySCIMDirectoryIDByOrganizationExternalID(ctx context.Context, arg GetPrimarySCIMDirectoryIDByOrganizationExternalIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getPrimarySCIMDirectoryIDByOrganizationExternalID, arg.EnvironmentID, arg.ExternalID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getPrimarySCIMDirectoryIDByOrganizationID = `-- name: GetPrimarySCIMDirectoryIDByOrganizationID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and organizations.id = $2
+  and scim_directories.is_primary = true
+`
+
+type GetPrimarySCIMDirectoryIDByOrganizationIDParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetPrimarySCIMDirectoryIDByOrganizationID(ctx context.Context, arg GetPrimarySCIMDirectoryIDByOrganizationIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getPrimarySCIMDirectoryIDByOrganizationID, arg.EnvironmentID, arg.ID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getSAMLAccessCodeData = `-- name: GetSAMLAccessCodeData :one
 select saml_flows.id             as saml_flow_id,
        saml_flows.email,
@@ -1268,6 +1914,107 @@ func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirec
 	var auth_url *string
 	err := row.Scan(&auth_url)
 	return auth_url, err
+}
+
+const getSCIMDirectory = `-- name: GetSCIMDirectory :one
+select scim_directories.id, scim_directories.organization_id, scim_directories.bearer_token_sha256, scim_directories.is_primary, scim_directories.scim_base_url
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_directories.id = $2
+`
+
+type GetSCIMDirectoryParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) GetSCIMDirectory(ctx context.Context, arg GetSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, getSCIMDirectory, arg.AppOrganizationID, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
+const getSCIMDirectoryByIDAndEnvironmentID = `-- name: GetSCIMDirectoryByIDAndEnvironmentID :one
+select scim_directories.id
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_directories.id = $2
+`
+
+type GetSCIMDirectoryByIDAndEnvironmentIDParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetSCIMDirectoryByIDAndEnvironmentID(ctx context.Context, arg GetSCIMDirectoryByIDAndEnvironmentIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getSCIMDirectoryByIDAndEnvironmentID, arg.EnvironmentID, arg.ID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getSCIMGroup = `-- name: GetSCIMGroup :one
+select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
+from scim_groups
+         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_groups.id = $2
+`
+
+type GetSCIMGroupParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetSCIMGroup(ctx context.Context, arg GetSCIMGroupParams) (ScimGroup, error) {
+	row := q.db.QueryRow(ctx, getSCIMGroup, arg.EnvironmentID, arg.ID)
+	var i ScimGroup
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.DisplayName,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
+const getSCIMUser = `-- name: GetSCIMUser :one
+select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
+from scim_users
+         join scim_directories on scim_users.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_users.id = $2
+`
+
+type GetSCIMUserParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) GetSCIMUser(ctx context.Context, arg GetSCIMUserParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, getSCIMUser, arg.EnvironmentID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
 }
 
 const listAPIKeys = `-- name: ListAPIKeys :many
@@ -1652,6 +2399,228 @@ func (q *Queries) ListSAMLOAuthClients(ctx context.Context, arg ListSAMLOAuthCli
 	return items, nil
 }
 
+const listSCIMDirectories = `-- name: ListSCIMDirectories :many
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+from scim_directories
+where organization_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type ListSCIMDirectoriesParams struct {
+	OrganizationID uuid.UUID
+	ID             uuid.UUID
+	Limit          int32
+}
+
+func (q *Queries) ListSCIMDirectories(ctx context.Context, arg ListSCIMDirectoriesParams) ([]ScimDirectory, error) {
+	rows, err := q.db.Query(ctx, listSCIMDirectories, arg.OrganizationID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimDirectory
+	for rows.Next() {
+		var i ScimDirectory
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrganizationID,
+			&i.BearerTokenSha256,
+			&i.IsPrimary,
+			&i.ScimBaseUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSCIMGroups = `-- name: ListSCIMGroups :many
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type ListSCIMGroupsParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+}
+
+func (q *Queries) ListSCIMGroups(ctx context.Context, arg ListSCIMGroupsParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, listSCIMGroups, arg.ScimDirectoryID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSCIMGroupsBySCIMUserID = `-- name: ListSCIMGroupsBySCIMUserID :many
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_groups.scim_directory_id = $1
+  and scim_groups.id >= $2
+  and exists(select id, scim_directory_id, scim_user_id, scim_group_id
+             from scim_user_group_memberships
+             where scim_user_group_memberships.scim_user_id = $3
+               and scim_user_group_memberships.scim_group_id = scim_groups.id)
+order by scim_groups.id
+limit $4
+`
+
+type ListSCIMGroupsBySCIMUserIDParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	ScimUserID      uuid.UUID
+	Limit           int32
+}
+
+func (q *Queries) ListSCIMGroupsBySCIMUserID(ctx context.Context, arg ListSCIMGroupsBySCIMUserIDParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, listSCIMGroupsBySCIMUserID,
+		arg.ScimDirectoryID,
+		arg.ID,
+		arg.ScimUserID,
+		arg.Limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSCIMUsers = `-- name: ListSCIMUsers :many
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type ListSCIMUsersParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+}
+
+func (q *Queries) ListSCIMUsers(ctx context.Context, arg ListSCIMUsersParams) ([]ScimUser, error) {
+	rows, err := q.db.Query(ctx, listSCIMUsers, arg.ScimDirectoryID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimUser
+	for rows.Next() {
+		var i ScimUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Email,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSCIMUsersInSCIMGroup = `-- name: ListSCIMUsersInSCIMGroup :many
+select id, scim_directory_id, email, deleted, attributes
+from scim_users
+where scim_users.scim_directory_id = $1
+  and scim_users.id >= $2
+  and exists(select id, scim_directory_id, scim_user_id, scim_group_id from scim_user_group_memberships where scim_group_id = $4 and scim_user_id = scim_users.id)
+order by scim_users.id
+limit $3
+`
+
+type ListSCIMUsersInSCIMGroupParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+	ScimGroupID     uuid.UUID
+}
+
+func (q *Queries) ListSCIMUsersInSCIMGroup(ctx context.Context, arg ListSCIMUsersInSCIMGroupParams) ([]ScimUser, error) {
+	rows, err := q.db.Query(ctx, listSCIMUsersInSCIMGroup,
+		arg.ScimDirectoryID,
+		arg.ID,
+		arg.Limit,
+		arg.ScimGroupID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimUser
+	for rows.Next() {
+		var i ScimUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Email,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const revokeAppSessionByID = `-- name: RevokeAppSessionByID :one
 update app_sessions
 set revoked = true
@@ -1811,6 +2780,22 @@ func (q *Queries) UpdatePrimarySAMLConnection(ctx context.Context, arg UpdatePri
 	return err
 }
 
+const updatePrimarySCIMDirectory = `-- name: UpdatePrimarySCIMDirectory :exec
+update scim_directories
+set is_primary = (id = $1)
+where organization_id = $2
+`
+
+type UpdatePrimarySCIMDirectoryParams struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+}
+
+func (q *Queries) UpdatePrimarySCIMDirectory(ctx context.Context, arg UpdatePrimarySCIMDirectoryParams) error {
+	_, err := q.db.Exec(ctx, updatePrimarySCIMDirectory, arg.ID, arg.OrganizationID)
+	return err
+}
+
 const updateSAMLConnection = `-- name: UpdateSAMLConnection :one
 update saml_connections
 set idp_entity_id        = $1,
@@ -1954,6 +2939,56 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 		&i.ErrorUnsignedAssertion,
 		&i.AccessCodeSha256,
 		&i.IsOauth,
+	)
+	return i, err
+}
+
+const updateSCIMDirectory = `-- name: UpdateSCIMDirectory :one
+update scim_directories
+set is_primary = $1
+where id = $2
+returning id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+`
+
+type UpdateSCIMDirectoryParams struct {
+	IsPrimary bool
+	ID        uuid.UUID
+}
+
+func (q *Queries) UpdateSCIMDirectory(ctx context.Context, arg UpdateSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, updateSCIMDirectory, arg.IsPrimary, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
+const updateSCIMDirectoryBearerToken = `-- name: UpdateSCIMDirectoryBearerToken :one
+update scim_directories
+set bearer_token_sha256 = $1
+where id = $2
+returning id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+`
+
+type UpdateSCIMDirectoryBearerTokenParams struct {
+	BearerTokenSha256 []byte
+	ID                uuid.UUID
+}
+
+func (q *Queries) UpdateSCIMDirectoryBearerToken(ctx context.Context, arg UpdateSCIMDirectoryBearerTokenParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, updateSCIMDirectoryBearerToken, arg.BearerTokenSha256, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
 	)
 	return i, err
 }

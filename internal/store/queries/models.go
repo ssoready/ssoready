@@ -182,3 +182,34 @@ type SchemaMigration struct {
 	Version int64
 	Dirty   bool
 }
+
+type ScimDirectory struct {
+	ID                uuid.UUID
+	OrganizationID    uuid.UUID
+	BearerTokenSha256 []byte
+	IsPrimary         bool
+	ScimBaseUrl       string
+}
+
+type ScimGroup struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+	Deleted         bool
+	Attributes      []byte
+}
+
+type ScimUser struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	Email           string
+	Deleted         bool
+	Attributes      []byte
+}
+
+type ScimUserGroupMembership struct {
+	ID              uuid.UUID
+	ScimDirectoryID uuid.UUID
+	ScimUserID      uuid.UUID
+	ScimGroupID     uuid.UUID
+}

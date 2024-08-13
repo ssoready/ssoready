@@ -10,12 +10,14 @@ import {
   createAdminSetupURL,
   createOrganization,
   createSAMLConnection,
+  createSCIMDirectory,
   getEnvironment,
   getOrganization,
   getSAMLConnection,
   listOrganizations,
   listSAMLConnections,
   listSAMLFlows,
+  listSCIMDirectories,
   updateEnvironment,
   updateOrganization,
   updateSAMLConnection,
@@ -44,6 +46,7 @@ import {
   Environment,
   Organization,
   SAMLConnection,
+  SCIMDirectory,
 } from "@/gen/ssoready/v1/ssoready_pb";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -272,6 +275,8 @@ export function ViewOrganizationPage() {
           )}
         </CardContent>
       </Card>
+
+      <OrganizationSCIMDirectoriesPage />
     </div>
   );
 }
@@ -384,5 +389,111 @@ function EditOrganizationAlertDialog({
         </Form>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function OrganizationSCIMDirectoriesPage() {
+  const { environmentId, organizationId } = useParams();
+  const { data: organization } = useQuery(getOrganization, {
+    id: organizationId,
+  });
+  const {
+    data: listSCIMDirectoriesPages,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    listSCIMDirectories,
+    { organizationId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
+
+  const createSCIMDirectoryMutation = useMutation(createSCIMDirectory);
+  const navigate = useNavigate();
+  const handleCreateSCIMDirectory = useCallback(async () => {
+    const scimDirectory = await createSCIMDirectoryMutation.mutateAsync({
+      scimDirectory: {
+        organizationId,
+        primary:
+          listSCIMDirectoriesPages?.pages.flatMap(
+            (page) => page.scimDirectories,
+          ).length === 0,
+      },
+    });
+
+    toast("SCIM Directory has been created.");
+    navigate(
+      `/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectory.id}`,
+    );
+  }, [
+    // listSAMLConnectionResponses,
+    environmentId,
+    organizationId,
+    createSCIMDirectoryMutation,
+    navigate,
+  ]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col space-y-1.5">
+            <CardTitle className="flex gap-x-4 items-center">
+              <span>SCIM Directories</span>
+              <Badge variant="secondary">Beta</Badge>
+            </CardTitle>
+            <CardDescription>
+              SCIM Directories within this organization.
+            </CardDescription>
+          </div>
+
+          <Button variant="outline" onClick={handleCreateSCIMDirectory}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create SCIM directory
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>SCIM Directory ID</TableHead>
+              <TableHead>SCIM Base URL</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {listSCIMDirectoriesPages?.pages
+              .flatMap((page) => page.scimDirectories)
+              ?.map((scimDirectory) => (
+                <TableRow key={scimDirectory.id}>
+                  <TableCell>
+                    <Link
+                      to={`/environments/${organization?.environmentId}/organizations/${organization?.id}/scim-directories/${scimDirectory.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
+                    >
+                      {scimDirectory.id}
+                    </Link>
+                    {scimDirectory.primary && (
+                      <Badge className="ml-2">Primary</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="max-w-[300px] truncate">
+                    {scimDirectory.scimBaseUrl}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+        {hasNextPage && (
+          <Button variant="secondary" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

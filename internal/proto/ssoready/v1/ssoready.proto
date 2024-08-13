@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 
 service SSOReadyService {
   rpc GetSAMLRedirectURL(GetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse) {
@@ -19,6 +20,30 @@ service SSOReadyService {
     option (google.api.http) = {
       post: "/v1/saml/redeem",
       body: "*"
+    };
+  };
+
+  rpc ListSCIMUsers(ListSCIMUsersRequest) returns (ListSCIMUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/users"
+    };
+  };
+
+  rpc GetSCIMUser(GetSCIMUserRequest) returns (GetSCIMUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/users/{id=*}"
+    };
+  };
+
+  rpc ListSCIMGroups(ListSCIMGroupsRequest) returns (ListSCIMGroupsResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/groups"
+    };
+  };
+
+  rpc GetSCIMGroup(GetSCIMGroupRequest) returns (GetSCIMGroupResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim/groups/{id=*}"
     };
   };
 
@@ -65,6 +90,17 @@ service SSOReadyService {
   rpc GetSAMLFlow(GetSAMLFlowRequest) returns (SAMLFlow);
 
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
+
+  rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse);
+  rpc GetSCIMDirectory(GetSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc UpdateSCIMDirectory(UpdateSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc RotateSCIMDirectoryBearerToken(RotateSCIMDirectoryBearerTokenRequest) returns (RotateSCIMDirectoryBearerTokenResponse);
+
+  rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
+  rpc AppGetSCIMUser(AppGetSCIMUserRequest) returns (SCIMUser);
+  rpc AppListSCIMGroups(AppListSCIMGroupsRequest) returns (AppListSCIMGroupsResponse);
+  rpc AppGetSCIMGroup(AppGetSCIMGroupRequest) returns (SCIMGroup);
 
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
   rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
@@ -159,6 +195,31 @@ enum SAMLFlowStatus {
   SAML_FLOW_STATUS_SUCCEEDED = 3;
 }
 
+message SCIMDirectory {
+  string id = 1;
+  string organization_id = 2;
+  bool primary = 3;
+  string scim_base_url = 4;
+  string client_bearer_token = 5;
+  bool has_client_bearer_token = 6;
+}
+
+message SCIMUser {
+  string id = 1;
+  string scim_directory_id = 2;
+  string email = 3;
+  bool deleted = 4;
+  google.protobuf.Struct attributes = 5;
+}
+
+message SCIMGroup {
+  string id = 1;
+  string scim_directory_id = 2;
+  string display_name = 3;
+  bool deleted = 6;
+  google.protobuf.Struct attributes = 4;
+}
+
 message GetSAMLRedirectURLRequest {
   string saml_connection_id = 1;
   string organization_id = 2;
@@ -181,6 +242,47 @@ message RedeemSAMLAccessCodeResponse {
   string organization_id = 4;
   string organization_external_id = 5;
   string saml_flow_id = 6;
+}
+
+message ListSCIMUsersRequest {
+  string scim_directory_id = 1;
+  string organization_id = 2;
+  string organization_external_id = 3;
+  string scim_group_id = 4;
+  string page_token = 5;
+}
+
+message ListSCIMUsersResponse {
+  repeated SCIMUser scim_users = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMUserRequest {
+  string id = 1;
+}
+
+message GetSCIMUserResponse {
+  SCIMUser scim_user = 1;
+}
+
+message ListSCIMGroupsRequest {
+  string scim_directory_id = 1;
+  string organization_id = 2;
+  string organization_external_id = 3;
+  string page_token = 4;
+}
+
+message ListSCIMGroupsResponse {
+  repeated SCIMGroup scim_groups = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMGroupRequest {
+  string id = 1;
+}
+
+message GetSCIMGroupResponse {
+  SCIMGroup scim_group = 1;
 }
 
 message VerifyEmailRequest {
@@ -392,6 +494,66 @@ message ParseSAMLMetadataResponse {
   string idp_redirect_url = 1;
   string idp_certificate = 2;
   string idp_entity_id = 3;
+}
+
+message ListSCIMDirectoriesRequest {
+  string organization_id = 1;
+  string page_token = 2;
+}
+
+message ListSCIMDirectoriesResponse {
+  repeated SCIMDirectory scim_directories = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMDirectoryRequest {
+  string id = 1;
+}
+
+message CreateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
+}
+
+message UpdateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
+}
+
+message RotateSCIMDirectoryBearerTokenRequest {
+  string scim_directory_id = 1;
+}
+
+message RotateSCIMDirectoryBearerTokenResponse {
+  string bearer_token = 1;
+}
+
+message AppListSCIMUsersRequest {
+  string scim_directory_id = 1;
+  string page_token = 2;
+  string scim_group_id = 3;
+}
+
+message AppListSCIMUsersResponse {
+  repeated SCIMUser scim_users = 1;
+  string next_page_token = 2;
+}
+
+message AppGetSCIMUserRequest {
+  string id = 1;
+}
+
+message AppListSCIMGroupsRequest {
+  string scim_directory_id = 1;
+  string page_token = 2;
+  string scim_user_id = 3;
+}
+
+message AppGetSCIMGroupRequest {
+  string id = 1;
+}
+
+message AppListSCIMGroupsResponse {
+  repeated SCIMGroup scim_groups = 1;
+  string next_page_token = 2;
 }
 
 message AdminRedeemOneTimeTokenRequest {
