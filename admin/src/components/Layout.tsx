@@ -9,15 +9,20 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Outlet } from "react-router";
-
-const navigation = [{ name: "SAML Settings", href: "/", current: true }];
+import { Outlet, useLocation } from "react-router";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export function Layout() {
+  const location = useLocation();
+  const isSCIM = location.pathname.startsWith("/scim");
+
+  const navigation = [
+    { name: "SAML Settings", href: "/", current: !isSCIM },
+    { name: "SCIM Settings", href: "/scim", current: isSCIM },
+  ];
   return (
     <>
       {/*

@@ -93,3 +93,39 @@ func (s *Service) AdminParseSAMLMetadata(ctx context.Context, req *connect.Reque
 		})),
 	}), nil
 }
+
+func (s *Service) AdminListSCIMDirectories(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSCIMDirectoriesRequest]) (*connect.Response[ssoreadyv1.AdminListSCIMDirectoriesResponse], error) {
+	res, err := s.Store.AdminListSCIMDirectories(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminGetSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AdminGetSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.AdminGetSCIMDirectoryResponse], error) {
+	res, err := s.Store.AdminGetSCIMDirectory(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminCreateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.AdminCreateSCIMDirectoryResponse], error) {
+	res, err := s.Store.AdminCreateSCIMDirectory(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminUpdateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AdminUpdateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.AdminUpdateSCIMDirectoryResponse], error) {
+	res, err := s.Store.AdminUpdateSCIMDirectory(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminRotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[ssoreadyv1.AdminRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[ssoreadyv1.AdminRotateSCIMDirectoryBearerTokenResponse], error) {
+	res, err := s.Store.AdminRotateSCIMDirectoryBearerToken(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}

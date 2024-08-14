@@ -106,6 +106,31 @@ func (q *Queries) AdminGetSAMLConnection(ctx context.Context, arg AdminGetSAMLCo
 	return i, err
 }
 
+const adminGetSCIMDirectory = `-- name: AdminGetSCIMDirectory :one
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+from scim_directories
+where organization_id = $1
+  and id = $2
+`
+
+type AdminGetSCIMDirectoryParams struct {
+	OrganizationID uuid.UUID
+	ID             uuid.UUID
+}
+
+func (q *Queries) AdminGetSCIMDirectory(ctx context.Context, arg AdminGetSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, adminGetSCIMDirectory, arg.OrganizationID, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
 const appGetSCIMGroup = `-- name: AppGetSCIMGroup :one
 select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
 from scim_groups
@@ -1932,6 +1957,25 @@ type GetSCIMDirectoryParams struct {
 
 func (q *Queries) GetSCIMDirectory(ctx context.Context, arg GetSCIMDirectoryParams) (ScimDirectory, error) {
 	row := q.db.QueryRow(ctx, getSCIMDirectory, arg.AppOrganizationID, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
+const getSCIMDirectoryByID = `-- name: GetSCIMDirectoryByID :one
+select id, organization_id, bearer_token_sha256, is_primary, scim_base_url
+from scim_directories
+where id = $1
+`
+
+func (q *Queries) GetSCIMDirectoryByID(ctx context.Context, id uuid.UUID) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, getSCIMDirectoryByID, id)
 	var i ScimDirectory
 	err := row.Scan(
 		&i.ID,

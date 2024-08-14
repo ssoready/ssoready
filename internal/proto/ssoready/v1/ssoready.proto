@@ -108,6 +108,11 @@ service SSOReadyService {
   rpc AdminCreateSAMLConnection(AdminCreateSAMLConnectionRequest) returns (AdminCreateSAMLConnectionResponse);
   rpc AdminUpdateSAMLConnection(AdminUpdateSAMLConnectionRequest) returns (AdminUpdateSAMLConnectionResponse);
   rpc AdminParseSAMLMetadata(AdminParseSAMLMetadataRequest) returns (AdminParseSAMLMetadataResponse);
+  rpc AdminListSCIMDirectories(AdminListSCIMDirectoriesRequest) returns (AdminListSCIMDirectoriesResponse);
+  rpc AdminGetSCIMDirectory(AdminGetSCIMDirectoryRequest) returns (AdminGetSCIMDirectoryResponse);
+  rpc AdminCreateSCIMDirectory(AdminCreateSCIMDirectoryRequest) returns (AdminCreateSCIMDirectoryResponse);
+  rpc AdminUpdateSCIMDirectory(AdminUpdateSCIMDirectoryRequest) returns (AdminUpdateSCIMDirectoryResponse);
+  rpc AdminRotateSCIMDirectoryBearerToken(AdminRotateSCIMDirectoryBearerTokenRequest) returns (AdminRotateSCIMDirectoryBearerTokenResponse);
 }
 
 message AppUser {
@@ -605,4 +610,45 @@ message AdminParseSAMLMetadataResponse {
   string idp_redirect_url = 1;
   string idp_certificate = 2;
   string idp_entity_id = 3;
+}
+
+message AdminListSCIMDirectoriesRequest {
+  string page_token = 1;
+}
+
+message AdminListSCIMDirectoriesResponse {
+  repeated SCIMDirectory scim_directories = 1;
+  string next_page_token = 2;
+}
+
+message AdminGetSCIMDirectoryRequest {
+  string id = 1;
+}
+
+message AdminGetSCIMDirectoryResponse {
+  SCIMDirectory scim_directory = 1;
+}
+
+message AdminCreateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
+}
+
+message AdminCreateSCIMDirectoryResponse {
+  SCIMDirectory scim_directory = 1;
+}
+
+message AdminUpdateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
+}
+
+message AdminUpdateSCIMDirectoryResponse {
+  SCIMDirectory scim_directory = 1;
+}
+
+message AdminRotateSCIMDirectoryBearerTokenRequest {
+  string scim_directory_id = 1;
+}
+
+message AdminRotateSCIMDirectoryBearerTokenResponse {
+  string bearer_token = 1;
 }

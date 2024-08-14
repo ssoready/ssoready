@@ -23,6 +23,11 @@ var adminRPCs = []string{
 	"/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata",
+	"/ssoready.v1.SSOReadyService/AdminListSCIMDirectories",
+	"/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory",
+	"/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory",
+	"/ssoready.v1.SSOReadyService/AdminUpdateSCIMDirectory",
+	"/ssoready.v1.SSOReadyService/AdminRotateSCIMDirectoryBearerToken",
 }
 
 func New(s *store.Store) connect.UnaryInterceptorFunc {

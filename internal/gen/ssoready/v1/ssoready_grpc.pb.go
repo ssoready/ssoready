@@ -20,61 +20,66 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SSOReadyService_GetSAMLRedirectURL_FullMethodName             = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	SSOReadyService_RedeemSAMLAccessCode_FullMethodName           = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
-	SSOReadyService_ListSCIMUsers_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
-	SSOReadyService_GetSCIMUser_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSCIMUser"
-	SSOReadyService_ListSCIMGroups_FullMethodName                 = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
-	SSOReadyService_GetSCIMGroup_FullMethodName                   = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
-	SSOReadyService_VerifyEmail_FullMethodName                    = "/ssoready.v1.SSOReadyService/VerifyEmail"
-	SSOReadyService_SignIn_FullMethodName                         = "/ssoready.v1.SSOReadyService/SignIn"
-	SSOReadyService_SignOut_FullMethodName                        = "/ssoready.v1.SSOReadyService/SignOut"
-	SSOReadyService_Whoami_FullMethodName                         = "/ssoready.v1.SSOReadyService/Whoami"
-	SSOReadyService_GetOnboardingState_FullMethodName             = "/ssoready.v1.SSOReadyService/GetOnboardingState"
-	SSOReadyService_UpdateOnboardingState_FullMethodName          = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
-	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName   = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
-	SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
-	SSOReadyService_GetAppOrganization_FullMethodName             = "/ssoready.v1.SSOReadyService/GetAppOrganization"
-	SSOReadyService_ListAppUsers_FullMethodName                   = "/ssoready.v1.SSOReadyService/ListAppUsers"
-	SSOReadyService_ListEnvironments_FullMethodName               = "/ssoready.v1.SSOReadyService/ListEnvironments"
-	SSOReadyService_GetEnvironment_FullMethodName                 = "/ssoready.v1.SSOReadyService/GetEnvironment"
-	SSOReadyService_CreateEnvironment_FullMethodName              = "/ssoready.v1.SSOReadyService/CreateEnvironment"
-	SSOReadyService_UpdateEnvironment_FullMethodName              = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
-	SSOReadyService_ListAPIKeys_FullMethodName                    = "/ssoready.v1.SSOReadyService/ListAPIKeys"
-	SSOReadyService_GetAPIKey_FullMethodName                      = "/ssoready.v1.SSOReadyService/GetAPIKey"
-	SSOReadyService_CreateAPIKey_FullMethodName                   = "/ssoready.v1.SSOReadyService/CreateAPIKey"
-	SSOReadyService_DeleteAPIKey_FullMethodName                   = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
-	SSOReadyService_ListSAMLOAuthClients_FullMethodName           = "/ssoready.v1.SSOReadyService/ListSAMLOAuthClients"
-	SSOReadyService_GetSAMLOAuthClient_FullMethodName             = "/ssoready.v1.SSOReadyService/GetSAMLOAuthClient"
-	SSOReadyService_CreateSAMLOAuthClient_FullMethodName          = "/ssoready.v1.SSOReadyService/CreateSAMLOAuthClient"
-	SSOReadyService_DeleteSAMLOAuthClient_FullMethodName          = "/ssoready.v1.SSOReadyService/DeleteSAMLOAuthClient"
-	SSOReadyService_ListOrganizations_FullMethodName              = "/ssoready.v1.SSOReadyService/ListOrganizations"
-	SSOReadyService_GetOrganization_FullMethodName                = "/ssoready.v1.SSOReadyService/GetOrganization"
-	SSOReadyService_CreateOrganization_FullMethodName             = "/ssoready.v1.SSOReadyService/CreateOrganization"
-	SSOReadyService_UpdateOrganization_FullMethodName             = "/ssoready.v1.SSOReadyService/UpdateOrganization"
-	SSOReadyService_CreateAdminSetupURL_FullMethodName            = "/ssoready.v1.SSOReadyService/CreateAdminSetupURL"
-	SSOReadyService_ListSAMLConnections_FullMethodName            = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
-	SSOReadyService_GetSAMLConnection_FullMethodName              = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
-	SSOReadyService_CreateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
-	SSOReadyService_UpdateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
-	SSOReadyService_ListSAMLFlows_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
-	SSOReadyService_GetSAMLFlow_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
-	SSOReadyService_ParseSAMLMetadata_FullMethodName              = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
-	SSOReadyService_ListSCIMDirectories_FullMethodName            = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
-	SSOReadyService_GetSCIMDirectory_FullMethodName               = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
-	SSOReadyService_CreateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
-	SSOReadyService_UpdateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
-	SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
-	SSOReadyService_AppListSCIMUsers_FullMethodName               = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
-	SSOReadyService_AppGetSCIMUser_FullMethodName                 = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
-	SSOReadyService_AppListSCIMGroups_FullMethodName              = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
-	SSOReadyService_AppGetSCIMGroup_FullMethodName                = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
-	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName        = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
-	SSOReadyService_AdminListSAMLConnections_FullMethodName       = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
-	SSOReadyService_AdminGetSAMLConnection_FullMethodName         = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
-	SSOReadyService_AdminCreateSAMLConnection_FullMethodName      = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
-	SSOReadyService_AdminUpdateSAMLConnection_FullMethodName      = "/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection"
-	SSOReadyService_AdminParseSAMLMetadata_FullMethodName         = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
+	SSOReadyService_GetSAMLRedirectURL_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
+	SSOReadyService_RedeemSAMLAccessCode_FullMethodName                = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_ListSCIMUsers_FullMethodName                       = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
+	SSOReadyService_GetSCIMUser_FullMethodName                         = "/ssoready.v1.SSOReadyService/GetSCIMUser"
+	SSOReadyService_ListSCIMGroups_FullMethodName                      = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
+	SSOReadyService_GetSCIMGroup_FullMethodName                        = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
+	SSOReadyService_VerifyEmail_FullMethodName                         = "/ssoready.v1.SSOReadyService/VerifyEmail"
+	SSOReadyService_SignIn_FullMethodName                              = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_SignOut_FullMethodName                             = "/ssoready.v1.SSOReadyService/SignOut"
+	SSOReadyService_Whoami_FullMethodName                              = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_GetOnboardingState_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetOnboardingState"
+	SSOReadyService_UpdateOnboardingState_FullMethodName               = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
+	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName        = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
+	SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName      = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
+	SSOReadyService_GetAppOrganization_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetAppOrganization"
+	SSOReadyService_ListAppUsers_FullMethodName                        = "/ssoready.v1.SSOReadyService/ListAppUsers"
+	SSOReadyService_ListEnvironments_FullMethodName                    = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName                      = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_CreateEnvironment_FullMethodName                   = "/ssoready.v1.SSOReadyService/CreateEnvironment"
+	SSOReadyService_UpdateEnvironment_FullMethodName                   = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
+	SSOReadyService_ListAPIKeys_FullMethodName                         = "/ssoready.v1.SSOReadyService/ListAPIKeys"
+	SSOReadyService_GetAPIKey_FullMethodName                           = "/ssoready.v1.SSOReadyService/GetAPIKey"
+	SSOReadyService_CreateAPIKey_FullMethodName                        = "/ssoready.v1.SSOReadyService/CreateAPIKey"
+	SSOReadyService_DeleteAPIKey_FullMethodName                        = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
+	SSOReadyService_ListSAMLOAuthClients_FullMethodName                = "/ssoready.v1.SSOReadyService/ListSAMLOAuthClients"
+	SSOReadyService_GetSAMLOAuthClient_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetSAMLOAuthClient"
+	SSOReadyService_CreateSAMLOAuthClient_FullMethodName               = "/ssoready.v1.SSOReadyService/CreateSAMLOAuthClient"
+	SSOReadyService_DeleteSAMLOAuthClient_FullMethodName               = "/ssoready.v1.SSOReadyService/DeleteSAMLOAuthClient"
+	SSOReadyService_ListOrganizations_FullMethodName                   = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_GetOrganization_FullMethodName                     = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_CreateOrganization_FullMethodName                  = "/ssoready.v1.SSOReadyService/CreateOrganization"
+	SSOReadyService_UpdateOrganization_FullMethodName                  = "/ssoready.v1.SSOReadyService/UpdateOrganization"
+	SSOReadyService_CreateAdminSetupURL_FullMethodName                 = "/ssoready.v1.SSOReadyService/CreateAdminSetupURL"
+	SSOReadyService_ListSAMLConnections_FullMethodName                 = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
+	SSOReadyService_GetSAMLConnection_FullMethodName                   = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName                = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
+	SSOReadyService_UpdateSAMLConnection_FullMethodName                = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
+	SSOReadyService_ListSAMLFlows_FullMethodName                       = "/ssoready.v1.SSOReadyService/ListSAMLFlows"
+	SSOReadyService_GetSAMLFlow_FullMethodName                         = "/ssoready.v1.SSOReadyService/GetSAMLFlow"
+	SSOReadyService_ParseSAMLMetadata_FullMethodName                   = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	SSOReadyService_ListSCIMDirectories_FullMethodName                 = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
+	SSOReadyService_GetSCIMDirectory_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
+	SSOReadyService_CreateSCIMDirectory_FullMethodName                 = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	SSOReadyService_UpdateSCIMDirectory_FullMethodName                 = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
+	SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName      = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
+	SSOReadyService_AppListSCIMUsers_FullMethodName                    = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
+	SSOReadyService_AppGetSCIMUser_FullMethodName                      = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
+	SSOReadyService_AppListSCIMGroups_FullMethodName                   = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
+	SSOReadyService_AppGetSCIMGroup_FullMethodName                     = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
+	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName             = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
+	SSOReadyService_AdminListSAMLConnections_FullMethodName            = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
+	SSOReadyService_AdminGetSAMLConnection_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
+	SSOReadyService_AdminCreateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
+	SSOReadyService_AdminUpdateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection"
+	SSOReadyService_AdminParseSAMLMetadata_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
+	SSOReadyService_AdminListSCIMDirectories_FullMethodName            = "/ssoready.v1.SSOReadyService/AdminListSCIMDirectories"
+	SSOReadyService_AdminGetSCIMDirectory_FullMethodName               = "/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory"
+	SSOReadyService_AdminCreateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory"
+	SSOReadyService_AdminUpdateSCIMDirectory_FullMethodName            = "/ssoready.v1.SSOReadyService/AdminUpdateSCIMDirectory"
+	SSOReadyService_AdminRotateSCIMDirectoryBearerToken_FullMethodName = "/ssoready.v1.SSOReadyService/AdminRotateSCIMDirectoryBearerToken"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -136,6 +141,11 @@ type SSOReadyServiceClient interface {
 	AdminCreateSAMLConnection(ctx context.Context, in *AdminCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminCreateSAMLConnectionResponse, error)
 	AdminUpdateSAMLConnection(ctx context.Context, in *AdminUpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminUpdateSAMLConnectionResponse, error)
 	AdminParseSAMLMetadata(ctx context.Context, in *AdminParseSAMLMetadataRequest, opts ...grpc.CallOption) (*AdminParseSAMLMetadataResponse, error)
+	AdminListSCIMDirectories(ctx context.Context, in *AdminListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*AdminListSCIMDirectoriesResponse, error)
+	AdminGetSCIMDirectory(ctx context.Context, in *AdminGetSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminGetSCIMDirectoryResponse, error)
+	AdminCreateSCIMDirectory(ctx context.Context, in *AdminCreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminCreateSCIMDirectoryResponse, error)
+	AdminUpdateSCIMDirectory(ctx context.Context, in *AdminUpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminUpdateSCIMDirectoryResponse, error)
+	AdminRotateSCIMDirectoryBearerToken(ctx context.Context, in *AdminRotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*AdminRotateSCIMDirectoryBearerTokenResponse, error)
 }
 
 type sSOReadyServiceClient struct {
@@ -696,6 +706,56 @@ func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AdminListSCIMDirectories(ctx context.Context, in *AdminListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*AdminListSCIMDirectoriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminListSCIMDirectoriesResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminListSCIMDirectories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminGetSCIMDirectory(ctx context.Context, in *AdminGetSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminGetSCIMDirectoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetSCIMDirectoryResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminGetSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminCreateSCIMDirectory(ctx context.Context, in *AdminCreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminCreateSCIMDirectoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCreateSCIMDirectoryResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminCreateSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminUpdateSCIMDirectory(ctx context.Context, in *AdminUpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminUpdateSCIMDirectoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminUpdateSCIMDirectoryResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminUpdateSCIMDirectory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminRotateSCIMDirectoryBearerToken(ctx context.Context, in *AdminRotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*AdminRotateSCIMDirectoryBearerTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminRotateSCIMDirectoryBearerTokenResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminRotateSCIMDirectoryBearerToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SSOReadyServiceServer is the server API for SSOReadyService service.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility.
@@ -755,6 +815,11 @@ type SSOReadyServiceServer interface {
 	AdminCreateSAMLConnection(context.Context, *AdminCreateSAMLConnectionRequest) (*AdminCreateSAMLConnectionResponse, error)
 	AdminUpdateSAMLConnection(context.Context, *AdminUpdateSAMLConnectionRequest) (*AdminUpdateSAMLConnectionResponse, error)
 	AdminParseSAMLMetadata(context.Context, *AdminParseSAMLMetadataRequest) (*AdminParseSAMLMetadataResponse, error)
+	AdminListSCIMDirectories(context.Context, *AdminListSCIMDirectoriesRequest) (*AdminListSCIMDirectoriesResponse, error)
+	AdminGetSCIMDirectory(context.Context, *AdminGetSCIMDirectoryRequest) (*AdminGetSCIMDirectoryResponse, error)
+	AdminCreateSCIMDirectory(context.Context, *AdminCreateSCIMDirectoryRequest) (*AdminCreateSCIMDirectoryResponse, error)
+	AdminUpdateSCIMDirectory(context.Context, *AdminUpdateSCIMDirectoryRequest) (*AdminUpdateSCIMDirectoryResponse, error)
+	AdminRotateSCIMDirectoryBearerToken(context.Context, *AdminRotateSCIMDirectoryBearerTokenRequest) (*AdminRotateSCIMDirectoryBearerTokenResponse, error)
 	mustEmbedUnimplementedSSOReadyServiceServer()
 }
 
@@ -929,6 +994,21 @@ func (UnimplementedSSOReadyServiceServer) AdminUpdateSAMLConnection(context.Cont
 }
 func (UnimplementedSSOReadyServiceServer) AdminParseSAMLMetadata(context.Context, *AdminParseSAMLMetadataRequest) (*AdminParseSAMLMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminParseSAMLMetadata not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminListSCIMDirectories(context.Context, *AdminListSCIMDirectoriesRequest) (*AdminListSCIMDirectoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminListSCIMDirectories not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminGetSCIMDirectory(context.Context, *AdminGetSCIMDirectoryRequest) (*AdminGetSCIMDirectoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminGetSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminCreateSCIMDirectory(context.Context, *AdminCreateSCIMDirectoryRequest) (*AdminCreateSCIMDirectoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminCreateSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminUpdateSCIMDirectory(context.Context, *AdminUpdateSCIMDirectoryRequest) (*AdminUpdateSCIMDirectoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminUpdateSCIMDirectory not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminRotateSCIMDirectoryBearerToken(context.Context, *AdminRotateSCIMDirectoryBearerTokenRequest) (*AdminRotateSCIMDirectoryBearerTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminRotateSCIMDirectoryBearerToken not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) mustEmbedUnimplementedSSOReadyServiceServer() {}
 func (UnimplementedSSOReadyServiceServer) testEmbeddedByValue()                         {}
@@ -1941,6 +2021,96 @@ func _SSOReadyService_AdminParseSAMLMetadata_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AdminListSCIMDirectories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminListSCIMDirectoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminListSCIMDirectories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminListSCIMDirectories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminListSCIMDirectories(ctx, req.(*AdminListSCIMDirectoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminGetSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminGetSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminGetSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminGetSCIMDirectory(ctx, req.(*AdminGetSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminCreateSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminCreateSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminCreateSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminCreateSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminCreateSCIMDirectory(ctx, req.(*AdminCreateSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminUpdateSCIMDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminUpdateSCIMDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminUpdateSCIMDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminUpdateSCIMDirectory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminUpdateSCIMDirectory(ctx, req.(*AdminUpdateSCIMDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminRotateSCIMDirectoryBearerToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminRotateSCIMDirectoryBearerTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminRotateSCIMDirectoryBearerToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminRotateSCIMDirectoryBearerToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminRotateSCIMDirectoryBearerToken(ctx, req.(*AdminRotateSCIMDirectoryBearerTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SSOReadyService_ServiceDesc is the grpc.ServiceDesc for SSOReadyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2167,6 +2337,26 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminParseSAMLMetadata",
 			Handler:    _SSOReadyService_AdminParseSAMLMetadata_Handler,
+		},
+		{
+			MethodName: "AdminListSCIMDirectories",
+			Handler:    _SSOReadyService_AdminListSCIMDirectories_Handler,
+		},
+		{
+			MethodName: "AdminGetSCIMDirectory",
+			Handler:    _SSOReadyService_AdminGetSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "AdminCreateSCIMDirectory",
+			Handler:    _SSOReadyService_AdminCreateSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "AdminUpdateSCIMDirectory",
+			Handler:    _SSOReadyService_AdminUpdateSCIMDirectory_Handler,
+		},
+		{
+			MethodName: "AdminRotateSCIMDirectoryBearerToken",
+			Handler:    _SSOReadyService_AdminRotateSCIMDirectoryBearerToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

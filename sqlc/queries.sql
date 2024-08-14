@@ -467,6 +467,17 @@ from saml_connections
 where organization_id = $1
   and id = $2;
 
+-- name: AdminGetSCIMDirectory :one
+select *
+from scim_directories
+where organization_id = $1
+  and id = $2;
+
+-- name: GetSCIMDirectoryByID :one
+select *
+from scim_directories
+where id = $1;
+
 -- name: AuthGetSCIMDirectory :one
 select *
 from scim_directories

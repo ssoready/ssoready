@@ -4169,3 +4169,379 @@ export class AdminParseSAMLMetadataResponse extends Message<AdminParseSAMLMetada
   }
 }
 
+/**
+ * @generated from message ssoready.v1.AdminListSCIMDirectoriesRequest
+ */
+export class AdminListSCIMDirectoriesRequest extends Message<AdminListSCIMDirectoriesRequest> {
+  /**
+   * @generated from field: string page_token = 1;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<AdminListSCIMDirectoriesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminListSCIMDirectoriesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminListSCIMDirectoriesRequest {
+    return new AdminListSCIMDirectoriesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminListSCIMDirectoriesRequest {
+    return new AdminListSCIMDirectoriesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminListSCIMDirectoriesRequest {
+    return new AdminListSCIMDirectoriesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminListSCIMDirectoriesRequest | PlainMessage<AdminListSCIMDirectoriesRequest> | undefined, b: AdminListSCIMDirectoriesRequest | PlainMessage<AdminListSCIMDirectoriesRequest> | undefined): boolean {
+    return proto3.util.equals(AdminListSCIMDirectoriesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminListSCIMDirectoriesResponse
+ */
+export class AdminListSCIMDirectoriesResponse extends Message<AdminListSCIMDirectoriesResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SCIMDirectory scim_directories = 1;
+   */
+  scimDirectories: SCIMDirectory[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<AdminListSCIMDirectoriesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminListSCIMDirectoriesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directories", kind: "message", T: SCIMDirectory, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminListSCIMDirectoriesResponse {
+    return new AdminListSCIMDirectoriesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminListSCIMDirectoriesResponse {
+    return new AdminListSCIMDirectoriesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminListSCIMDirectoriesResponse {
+    return new AdminListSCIMDirectoriesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminListSCIMDirectoriesResponse | PlainMessage<AdminListSCIMDirectoriesResponse> | undefined, b: AdminListSCIMDirectoriesResponse | PlainMessage<AdminListSCIMDirectoriesResponse> | undefined): boolean {
+    return proto3.util.equals(AdminListSCIMDirectoriesResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminGetSCIMDirectoryRequest
+ */
+export class AdminGetSCIMDirectoryRequest extends Message<AdminGetSCIMDirectoryRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<AdminGetSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminGetSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminGetSCIMDirectoryRequest {
+    return new AdminGetSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminGetSCIMDirectoryRequest {
+    return new AdminGetSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminGetSCIMDirectoryRequest {
+    return new AdminGetSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminGetSCIMDirectoryRequest | PlainMessage<AdminGetSCIMDirectoryRequest> | undefined, b: AdminGetSCIMDirectoryRequest | PlainMessage<AdminGetSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(AdminGetSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminGetSCIMDirectoryResponse
+ */
+export class AdminGetSCIMDirectoryResponse extends Message<AdminGetSCIMDirectoryResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<AdminGetSCIMDirectoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminGetSCIMDirectoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminGetSCIMDirectoryResponse {
+    return new AdminGetSCIMDirectoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminGetSCIMDirectoryResponse {
+    return new AdminGetSCIMDirectoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminGetSCIMDirectoryResponse {
+    return new AdminGetSCIMDirectoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminGetSCIMDirectoryResponse | PlainMessage<AdminGetSCIMDirectoryResponse> | undefined, b: AdminGetSCIMDirectoryResponse | PlainMessage<AdminGetSCIMDirectoryResponse> | undefined): boolean {
+    return proto3.util.equals(AdminGetSCIMDirectoryResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminCreateSCIMDirectoryRequest
+ */
+export class AdminCreateSCIMDirectoryRequest extends Message<AdminCreateSCIMDirectoryRequest> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<AdminCreateSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminCreateSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCreateSCIMDirectoryRequest {
+    return new AdminCreateSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCreateSCIMDirectoryRequest {
+    return new AdminCreateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCreateSCIMDirectoryRequest {
+    return new AdminCreateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminCreateSCIMDirectoryRequest | PlainMessage<AdminCreateSCIMDirectoryRequest> | undefined, b: AdminCreateSCIMDirectoryRequest | PlainMessage<AdminCreateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(AdminCreateSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminCreateSCIMDirectoryResponse
+ */
+export class AdminCreateSCIMDirectoryResponse extends Message<AdminCreateSCIMDirectoryResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<AdminCreateSCIMDirectoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminCreateSCIMDirectoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCreateSCIMDirectoryResponse {
+    return new AdminCreateSCIMDirectoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCreateSCIMDirectoryResponse {
+    return new AdminCreateSCIMDirectoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCreateSCIMDirectoryResponse {
+    return new AdminCreateSCIMDirectoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminCreateSCIMDirectoryResponse | PlainMessage<AdminCreateSCIMDirectoryResponse> | undefined, b: AdminCreateSCIMDirectoryResponse | PlainMessage<AdminCreateSCIMDirectoryResponse> | undefined): boolean {
+    return proto3.util.equals(AdminCreateSCIMDirectoryResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminUpdateSCIMDirectoryRequest
+ */
+export class AdminUpdateSCIMDirectoryRequest extends Message<AdminUpdateSCIMDirectoryRequest> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<AdminUpdateSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminUpdateSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminUpdateSCIMDirectoryRequest {
+    return new AdminUpdateSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminUpdateSCIMDirectoryRequest {
+    return new AdminUpdateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminUpdateSCIMDirectoryRequest {
+    return new AdminUpdateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminUpdateSCIMDirectoryRequest | PlainMessage<AdminUpdateSCIMDirectoryRequest> | undefined, b: AdminUpdateSCIMDirectoryRequest | PlainMessage<AdminUpdateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(AdminUpdateSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminUpdateSCIMDirectoryResponse
+ */
+export class AdminUpdateSCIMDirectoryResponse extends Message<AdminUpdateSCIMDirectoryResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<AdminUpdateSCIMDirectoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminUpdateSCIMDirectoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminUpdateSCIMDirectoryResponse {
+    return new AdminUpdateSCIMDirectoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminUpdateSCIMDirectoryResponse {
+    return new AdminUpdateSCIMDirectoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminUpdateSCIMDirectoryResponse {
+    return new AdminUpdateSCIMDirectoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminUpdateSCIMDirectoryResponse | PlainMessage<AdminUpdateSCIMDirectoryResponse> | undefined, b: AdminUpdateSCIMDirectoryResponse | PlainMessage<AdminUpdateSCIMDirectoryResponse> | undefined): boolean {
+    return proto3.util.equals(AdminUpdateSCIMDirectoryResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminRotateSCIMDirectoryBearerTokenRequest
+ */
+export class AdminRotateSCIMDirectoryBearerTokenRequest extends Message<AdminRotateSCIMDirectoryBearerTokenRequest> {
+  /**
+   * @generated from field: string scim_directory_id = 1;
+   */
+  scimDirectoryId = "";
+
+  constructor(data?: PartialMessage<AdminRotateSCIMDirectoryBearerTokenRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminRotateSCIMDirectoryBearerTokenRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminRotateSCIMDirectoryBearerTokenRequest {
+    return new AdminRotateSCIMDirectoryBearerTokenRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminRotateSCIMDirectoryBearerTokenRequest {
+    return new AdminRotateSCIMDirectoryBearerTokenRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminRotateSCIMDirectoryBearerTokenRequest {
+    return new AdminRotateSCIMDirectoryBearerTokenRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminRotateSCIMDirectoryBearerTokenRequest | PlainMessage<AdminRotateSCIMDirectoryBearerTokenRequest> | undefined, b: AdminRotateSCIMDirectoryBearerTokenRequest | PlainMessage<AdminRotateSCIMDirectoryBearerTokenRequest> | undefined): boolean {
+    return proto3.util.equals(AdminRotateSCIMDirectoryBearerTokenRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminRotateSCIMDirectoryBearerTokenResponse
+ */
+export class AdminRotateSCIMDirectoryBearerTokenResponse extends Message<AdminRotateSCIMDirectoryBearerTokenResponse> {
+  /**
+   * @generated from field: string bearer_token = 1;
+   */
+  bearerToken = "";
+
+  constructor(data?: PartialMessage<AdminRotateSCIMDirectoryBearerTokenResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminRotateSCIMDirectoryBearerTokenResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminRotateSCIMDirectoryBearerTokenResponse {
+    return new AdminRotateSCIMDirectoryBearerTokenResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminRotateSCIMDirectoryBearerTokenResponse {
+    return new AdminRotateSCIMDirectoryBearerTokenResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminRotateSCIMDirectoryBearerTokenResponse {
+    return new AdminRotateSCIMDirectoryBearerTokenResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminRotateSCIMDirectoryBearerTokenResponse | PlainMessage<AdminRotateSCIMDirectoryBearerTokenResponse> | undefined, b: AdminRotateSCIMDirectoryBearerTokenResponse | PlainMessage<AdminRotateSCIMDirectoryBearerTokenResponse> | undefined): boolean {
+    return proto3.util.equals(AdminRotateSCIMDirectoryBearerTokenResponse, a, b);
+  }
+}
+
