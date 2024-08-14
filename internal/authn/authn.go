@@ -33,6 +33,8 @@ type SAMLOAuthClientData struct {
 
 type AdminAccessTokenData struct {
 	OrganizationID uuid.UUID
+	CanManageSAML  bool
+	CanManageSCIM  bool
 }
 
 type ctxKey struct{}

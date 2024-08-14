@@ -18,6 +18,7 @@ var skipRPCs = []string{
 }
 
 var adminRPCs = []string{
+	"/ssoready.v1.SSOReadyService/AdminWhoami",
 	"/ssoready.v1.SSOReadyService/AdminListSAMLConnections",
 	"/ssoready.v1.SSOReadyService/AdminGetSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection",
@@ -59,6 +60,8 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 					ctx = authn.NewContext(ctx, authn.ContextData{
 						AdminAccessToken: &authn.AdminAccessTokenData{
 							OrganizationID: res.OrganizationID,
+							CanManageSAML:  res.CanManageSAML,
+							CanManageSCIM:  res.CanManageSCIM,
 						},
 					})
 					return next(ctx, req)

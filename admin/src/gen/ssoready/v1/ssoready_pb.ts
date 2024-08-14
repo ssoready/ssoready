@@ -2707,6 +2707,16 @@ export class CreateAdminSetupURLRequest extends Message<CreateAdminSetupURLReque
    */
   organizationId = "";
 
+  /**
+   * @generated from field: bool can_manage_saml = 2;
+   */
+  canManageSaml = false;
+
+  /**
+   * @generated from field: bool can_manage_scim = 3;
+   */
+  canManageScim = false;
+
   constructor(data?: PartialMessage<CreateAdminSetupURLRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -2716,6 +2726,8 @@ export class CreateAdminSetupURLRequest extends Message<CreateAdminSetupURLReque
   static readonly typeName = "ssoready.v1.CreateAdminSetupURLRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "can_manage_saml", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "can_manage_scim", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAdminSetupURLRequest {
@@ -3778,6 +3790,80 @@ export class AdminRedeemOneTimeTokenResponse extends Message<AdminRedeemOneTimeT
 
   static equals(a: AdminRedeemOneTimeTokenResponse | PlainMessage<AdminRedeemOneTimeTokenResponse> | undefined, b: AdminRedeemOneTimeTokenResponse | PlainMessage<AdminRedeemOneTimeTokenResponse> | undefined): boolean {
     return proto3.util.equals(AdminRedeemOneTimeTokenResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminWhoamiRequest
+ */
+export class AdminWhoamiRequest extends Message<AdminWhoamiRequest> {
+  constructor(data?: PartialMessage<AdminWhoamiRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminWhoamiRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminWhoamiRequest {
+    return new AdminWhoamiRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminWhoamiRequest {
+    return new AdminWhoamiRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminWhoamiRequest {
+    return new AdminWhoamiRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminWhoamiRequest | PlainMessage<AdminWhoamiRequest> | undefined, b: AdminWhoamiRequest | PlainMessage<AdminWhoamiRequest> | undefined): boolean {
+    return proto3.util.equals(AdminWhoamiRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminWhoamiResponse
+ */
+export class AdminWhoamiResponse extends Message<AdminWhoamiResponse> {
+  /**
+   * @generated from field: bool can_manage_saml = 1;
+   */
+  canManageSaml = false;
+
+  /**
+   * @generated from field: bool can_manage_scim = 2;
+   */
+  canManageScim = false;
+
+  constructor(data?: PartialMessage<AdminWhoamiResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminWhoamiResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "can_manage_saml", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 2, name: "can_manage_scim", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminWhoamiResponse {
+    return new AdminWhoamiResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminWhoamiResponse {
+    return new AdminWhoamiResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminWhoamiResponse {
+    return new AdminWhoamiResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminWhoamiResponse | PlainMessage<AdminWhoamiResponse> | undefined, b: AdminWhoamiResponse | PlainMessage<AdminWhoamiResponse> | undefined): boolean {
+    return proto3.util.equals(AdminWhoamiResponse, a, b);
   }
 }
 

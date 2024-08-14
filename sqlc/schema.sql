@@ -43,7 +43,9 @@ CREATE TABLE public.admin_access_tokens (
     one_time_token_sha256 bytea,
     access_token_sha256 bytea,
     create_time timestamp with time zone NOT NULL,
-    expire_time timestamp with time zone NOT NULL
+    expire_time timestamp with time zone NOT NULL,
+    can_manage_saml boolean,
+    can_manage_scim boolean
 );
 
 

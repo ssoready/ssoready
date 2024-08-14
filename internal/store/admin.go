@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"time"
 
+	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
@@ -48,6 +49,8 @@ func (s *Store) CreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.CreateA
 		OneTimeTokenSha256: oneTimeTokenSHA[:],
 		CreateTime:         time.Now(),
 		ExpireTime:         time.Now().Add(time.Hour * 24),
+		CanManageSaml:      &req.CanManageSaml,
+		CanManageScim:      &req.CanManageScim,
 	}); err != nil {
 		return nil, fmt.Errorf("create admin access token: %w", err)
 	}
@@ -115,6 +118,8 @@ func (s *Store) AdminRedeemOneTimeToken(ctx context.Context, req *ssoreadyv1.Adm
 
 type AdminGetAdminSessionResponse struct {
 	OrganizationID uuid.UUID
+	CanManageSAML  bool
+	CanManageSCIM  bool
 }
 
 func (s *Store) AdminGetAdminSession(ctx context.Context, sessionToken string) (*AdminGetAdminSessionResponse, error) {
@@ -124,7 +129,7 @@ func (s *Store) AdminGetAdminSession(ctx context.Context, sessionToken string) (
 	}
 
 	sha := sha256.Sum256(token)
-	orgID, err := s.q.AdminGetOrganizationByAccessToken(ctx, queries.AdminGetOrganizationByAccessTokenParams{
+	qAdminAccessToken, err := s.q.AdminGetAdminAccessTokenByAccessToken(ctx, queries.AdminGetAdminAccessTokenByAccessTokenParams{
 		AccessTokenSha256: sha[:],
 		ExpireTime:        time.Now(),
 	})
@@ -132,7 +137,19 @@ func (s *Store) AdminGetAdminSession(ctx context.Context, sessionToken string) (
 		return nil, fmt.Errorf("get organization by admin access token: %w", err)
 	}
 
-	return &AdminGetAdminSessionResponse{OrganizationID: orgID}, nil
+	return &AdminGetAdminSessionResponse{
+		OrganizationID: qAdminAccessToken.OrganizationID,
+		CanManageSAML:  derefOrEmpty(qAdminAccessToken.CanManageSaml),
+		CanManageSCIM:  derefOrEmpty(qAdminAccessToken.CanManageScim),
+	}, nil
+}
+
+func (s *Store) AdminWhoami(ctx context.Context, req *ssoreadyv1.AdminWhoamiRequest) (*ssoreadyv1.AdminWhoamiResponse, error) {
+	tokenAuthnData := authn.FullContextData(ctx).AdminAccessToken
+	return &ssoreadyv1.AdminWhoamiResponse{
+		CanManageSaml: tokenAuthnData.CanManageSAML,
+		CanManageScim: tokenAuthnData.CanManageSCIM,
+	}, nil
 }
 
 func (s *Store) AdminListSAMLConnections(ctx context.Context, req *ssoreadyv1.AdminListSAMLConnectionsRequest) (*ssoreadyv1.AdminListSAMLConnectionsResponse, error) {
@@ -141,6 +158,10 @@ func (s *Store) AdminListSAMLConnections(ctx context.Context, req *ssoreadyv1.Ad
 		return nil, err
 	}
 	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
 
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
@@ -182,6 +203,10 @@ func (s *Store) AdminGetSAMLConnection(ctx context.Context, req *ssoreadyv1.Admi
 		return nil, err
 	}
 
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
+
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
 	_, q, _, rollback, err := s.tx(ctx)
@@ -207,6 +232,10 @@ func (s *Store) AdminCreateSAMLConnection(ctx context.Context, req *ssoreadyv1.A
 		return nil, err
 	}
 	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
 
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
@@ -277,6 +306,10 @@ func (s *Store) AdminUpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.A
 	}
 	defer rollback()
 
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
+
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
 	id, err := idformat.SAMLConnection.Parse(req.SamlConnection.Id)
@@ -340,6 +373,10 @@ func (s *Store) AdminListSCIMDirectories(ctx context.Context, req *ssoreadyv1.Ad
 	}
 	defer rollback()
 
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
+
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
 	org, err := q.GetOrganizationByID(ctx, orgID)
@@ -385,6 +422,10 @@ func (s *Store) AdminGetSCIMDirectory(ctx context.Context, req *ssoreadyv1.Admin
 		return nil, err
 	}
 
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSCIM {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage scim"))
+	}
+
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
 	_, q, _, rollback, err := s.tx(ctx)
@@ -410,6 +451,10 @@ func (s *Store) AdminCreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.Ad
 		return nil, err
 	}
 	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSCIM {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage scim"))
+	}
 
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
@@ -463,6 +508,10 @@ func (s *Store) AdminUpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.Ad
 	}
 	defer rollback()
 
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSCIM {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage scim"))
+	}
+
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 
 	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectory.Id)
@@ -510,6 +559,10 @@ func (s *Store) AdminRotateSCIMDirectoryBearerToken(ctx context.Context, req *ss
 		return nil, err
 	}
 	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSCIM {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage scim"))
+	}
 
 	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
 

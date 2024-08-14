@@ -17,7 +17,7 @@ update admin_access_tokens
 set one_time_token_sha256 = null,
     access_token_sha256   = $1
 where id = $2
-returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time, can_manage_saml, can_manage_scim
 `
 
 type AdminConvertAdminAccessTokenToSessionParams struct {
@@ -35,12 +35,42 @@ func (q *Queries) AdminConvertAdminAccessTokenToSession(ctx context.Context, arg
 		&i.AccessTokenSha256,
 		&i.CreateTime,
 		&i.ExpireTime,
+		&i.CanManageSaml,
+		&i.CanManageScim,
+	)
+	return i, err
+}
+
+const adminGetAdminAccessTokenByAccessToken = `-- name: AdminGetAdminAccessTokenByAccessToken :one
+select id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time, can_manage_saml, can_manage_scim
+from admin_access_tokens
+where access_token_sha256 = $1
+  and expire_time > $2
+`
+
+type AdminGetAdminAccessTokenByAccessTokenParams struct {
+	AccessTokenSha256 []byte
+	ExpireTime        time.Time
+}
+
+func (q *Queries) AdminGetAdminAccessTokenByAccessToken(ctx context.Context, arg AdminGetAdminAccessTokenByAccessTokenParams) (AdminAccessToken, error) {
+	row := q.db.QueryRow(ctx, adminGetAdminAccessTokenByAccessToken, arg.AccessTokenSha256, arg.ExpireTime)
+	var i AdminAccessToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.OneTimeTokenSha256,
+		&i.AccessTokenSha256,
+		&i.CreateTime,
+		&i.ExpireTime,
+		&i.CanManageSaml,
+		&i.CanManageScim,
 	)
 	return i, err
 }
 
 const adminGetAdminAccessTokenByOneTimeToken = `-- name: AdminGetAdminAccessTokenByOneTimeToken :one
-select id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+select id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time, can_manage_saml, can_manage_scim
 from admin_access_tokens
 where one_time_token_sha256 = $1
 `
@@ -55,27 +85,10 @@ func (q *Queries) AdminGetAdminAccessTokenByOneTimeToken(ctx context.Context, on
 		&i.AccessTokenSha256,
 		&i.CreateTime,
 		&i.ExpireTime,
+		&i.CanManageSaml,
+		&i.CanManageScim,
 	)
 	return i, err
-}
-
-const adminGetOrganizationByAccessToken = `-- name: AdminGetOrganizationByAccessToken :one
-select organization_id
-from admin_access_tokens
-where access_token_sha256 = $1
-  and expire_time > $2
-`
-
-type AdminGetOrganizationByAccessTokenParams struct {
-	AccessTokenSha256 []byte
-	ExpireTime        time.Time
-}
-
-func (q *Queries) AdminGetOrganizationByAccessToken(ctx context.Context, arg AdminGetOrganizationByAccessTokenParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, adminGetOrganizationByAccessToken, arg.AccessTokenSha256, arg.ExpireTime)
-	var organization_id uuid.UUID
-	err := row.Scan(&organization_id)
-	return organization_id, err
 }
 
 const adminGetSAMLConnection = `-- name: AdminGetSAMLConnection :one
@@ -935,9 +948,10 @@ func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (Api
 }
 
 const createAdminAccessToken = `-- name: CreateAdminAccessToken :one
-insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time)
-values ($1, $2, $3, $4, $5)
-returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time, can_manage_saml,
+                                 can_manage_scim)
+values ($1, $2, $3, $4, $5, $6, $7)
+returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time, can_manage_saml, can_manage_scim
 `
 
 type CreateAdminAccessTokenParams struct {
@@ -946,6 +960,8 @@ type CreateAdminAccessTokenParams struct {
 	OneTimeTokenSha256 []byte
 	CreateTime         time.Time
 	ExpireTime         time.Time
+	CanManageSaml      *bool
+	CanManageScim      *bool
 }
 
 func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAccessTokenParams) (AdminAccessToken, error) {
@@ -955,6 +971,8 @@ func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAcc
 		arg.OneTimeTokenSha256,
 		arg.CreateTime,
 		arg.ExpireTime,
+		arg.CanManageSaml,
+		arg.CanManageScim,
 	)
 	var i AdminAccessToken
 	err := row.Scan(
@@ -964,6 +982,8 @@ func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAcc
 		&i.AccessTokenSha256,
 		&i.CreateTime,
 		&i.ExpireTime,
+		&i.CanManageSaml,
+		&i.CanManageScim,
 	)
 	return i, err
 }

@@ -90,9 +90,8 @@ export function ViewSCIMDirectoryPage() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               Rotating a SCIM directory's bearer token will break any existing
-              syncs from your customer's Identity Provider. After proceeding,
-              you'll need to have your customer input the new bearer token into
-              their Identity Provider's settings.
+              syncs until you input the new bearer token into your identity
+              provider settings.
             </AlertDialogDescription>
           </AlertDialogHeader>
 
@@ -121,8 +120,8 @@ export function ViewSCIMDirectoryPage() {
             <CircleAlert className="h-4 w-4" />
             <AlertTitle>Copy this bearer token</AlertTitle>
             <AlertDescription>
-              Give this secret to your customer's IT admin. They will input it
-              into their Identity Provider.
+              Input this authentication bearer token into your identity provider
+              settings.
             </AlertDescription>
           </Alert>
 
@@ -152,11 +151,6 @@ export function ViewSCIMDirectoryPage() {
                     {scimDirectoryId}
                   </span>
                 </div>
-
-                <CardDescription>
-                  A SCIM directory is a connection between your product and your
-                  customer's employee directory.
-                </CardDescription>
               </div>
 
               <div>
@@ -191,10 +185,10 @@ export function ViewSCIMDirectoryPage() {
           <CardHeader>
             <CardTitle>SCIM Authentication</CardTitle>
             <CardDescription>
-              To set up SCIM, your customer's IT admin will need to configure a
-              Bearer authentication token in their Identity Provider. You can
-              generate these here. You can only view a bearer token immediately
-              after creating it; SSOReady only stores a hash.
+              To configure a SCIM directory with our product, you need to input
+              a authentication bearer token into your identity provider. You can
+              only view a bearer token immediately after creating it; we only
+              store a hash.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -285,11 +279,8 @@ function EditSCIMDirectoryAlertDialog({
                       />
                     </FormControl>
                     <FormDescription>
-                      Every organization can have one primary SCIM directory.
-                      When you use SSOReady's API, you can list SCIM users or
-                      groups by organization; when you do that, SSOReady will
-                      return data for the primary SCIM directory in that
-                      organization.
+                      Whether this is the preferred SCIM directory to use by
+                      default.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

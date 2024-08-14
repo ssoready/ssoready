@@ -284,9 +284,8 @@ function EditSAMLConnectionAlertDialog({
                       />
                     </FormControl>
                     <FormDescription>
-                      Every organization can have one primary SAML connection.
-                      If you start a SAML login and provide only an
-                      organization, SSOReady uses the primary connection.
+                      Whether this is the preferred SAML connection to use by
+                      default.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

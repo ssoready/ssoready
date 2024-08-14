@@ -30,6 +30,15 @@ func (s *Service) AdminRedeemOneTimeToken(ctx context.Context, req *connect.Requ
 	return connect.NewResponse(res), nil
 }
 
+func (s *Service) AdminWhoami(ctx context.Context, req *connect.Request[ssoreadyv1.AdminWhoamiRequest]) (*connect.Response[ssoreadyv1.AdminWhoamiResponse], error) {
+	res, err := s.Store.AdminWhoami(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}
+
 func (s *Service) AdminListSAMLConnections(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSAMLConnectionsRequest]) (*connect.Response[ssoreadyv1.AdminListSAMLConnectionsResponse], error) {
 	res, err := s.Store.AdminListSAMLConnections(ctx, req.Msg)
 	if err != nil {

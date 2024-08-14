@@ -70,6 +70,7 @@ const (
 	SSOReadyService_AppListSCIMGroups_FullMethodName                   = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
 	SSOReadyService_AppGetSCIMGroup_FullMethodName                     = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
 	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName             = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
+	SSOReadyService_AdminWhoami_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminWhoami"
 	SSOReadyService_AdminListSAMLConnections_FullMethodName            = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
 	SSOReadyService_AdminGetSAMLConnection_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
 	SSOReadyService_AdminCreateSAMLConnection_FullMethodName           = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
@@ -136,6 +137,7 @@ type SSOReadyServiceClient interface {
 	AppListSCIMGroups(ctx context.Context, in *AppListSCIMGroupsRequest, opts ...grpc.CallOption) (*AppListSCIMGroupsResponse, error)
 	AppGetSCIMGroup(ctx context.Context, in *AppGetSCIMGroupRequest, opts ...grpc.CallOption) (*SCIMGroup, error)
 	AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error)
+	AdminWhoami(ctx context.Context, in *AdminWhoamiRequest, opts ...grpc.CallOption) (*AdminWhoamiResponse, error)
 	AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(ctx context.Context, in *AdminGetSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminGetSAMLConnectionResponse, error)
 	AdminCreateSAMLConnection(ctx context.Context, in *AdminCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminCreateSAMLConnectionResponse, error)
@@ -656,6 +658,16 @@ func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AdminWhoami(ctx context.Context, in *AdminWhoamiRequest, opts ...grpc.CallOption) (*AdminWhoamiResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminWhoamiResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminWhoami_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminListSAMLConnectionsResponse)
@@ -810,6 +822,7 @@ type SSOReadyServiceServer interface {
 	AppListSCIMGroups(context.Context, *AppListSCIMGroupsRequest) (*AppListSCIMGroupsResponse, error)
 	AppGetSCIMGroup(context.Context, *AppGetSCIMGroupRequest) (*SCIMGroup, error)
 	AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error)
+	AdminWhoami(context.Context, *AdminWhoamiRequest) (*AdminWhoamiResponse, error)
 	AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(context.Context, *AdminGetSAMLConnectionRequest) (*AdminGetSAMLConnectionResponse, error)
 	AdminCreateSAMLConnection(context.Context, *AdminCreateSAMLConnectionRequest) (*AdminCreateSAMLConnectionResponse, error)
@@ -979,6 +992,9 @@ func (UnimplementedSSOReadyServiceServer) AppGetSCIMGroup(context.Context, *AppG
 }
 func (UnimplementedSSOReadyServiceServer) AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminRedeemOneTimeToken not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminWhoami(context.Context, *AdminWhoamiRequest) (*AdminWhoamiResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminWhoami not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminListSAMLConnections not implemented")
@@ -1931,6 +1947,24 @@ func _SSOReadyService_AdminRedeemOneTimeToken_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AdminWhoami_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminWhoamiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminWhoami(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminWhoami_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminWhoami(ctx, req.(*AdminWhoamiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AdminListSAMLConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminListSAMLConnectionsRequest)
 	if err := dec(in); err != nil {
@@ -2317,6 +2351,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminRedeemOneTimeToken",
 			Handler:    _SSOReadyService_AdminRedeemOneTimeToken_Handler,
+		},
+		{
+			MethodName: "AdminWhoami",
+			Handler:    _SSOReadyService_AdminWhoami_Handler,
 		},
 		{
 			MethodName: "AdminListSAMLConnections",

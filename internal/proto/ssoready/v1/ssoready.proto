@@ -103,6 +103,7 @@ service SSOReadyService {
   rpc AppGetSCIMGroup(AppGetSCIMGroupRequest) returns (SCIMGroup);
 
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
+  rpc AdminWhoami(AdminWhoamiRequest) returns (AdminWhoamiResponse);
   rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
   rpc AdminGetSAMLConnection(AdminGetSAMLConnectionRequest) returns (AdminGetSAMLConnectionResponse);
   rpc AdminCreateSAMLConnection(AdminCreateSAMLConnectionRequest) returns (AdminCreateSAMLConnectionResponse);
@@ -449,6 +450,8 @@ message UpdateOrganizationRequest {
 
 message CreateAdminSetupURLRequest {
   string organization_id = 1;
+  bool can_manage_saml = 2;
+  bool can_manage_scim = 3;
 }
 
 message CreateAdminSetupURLResponse {
@@ -567,6 +570,13 @@ message AdminRedeemOneTimeTokenRequest {
 
 message AdminRedeemOneTimeTokenResponse {
   string admin_session_token = 1;
+}
+
+message AdminWhoamiRequest {}
+
+message AdminWhoamiResponse {
+  bool can_manage_saml = 1;
+  bool can_manage_scim = 2;
 }
 
 message AdminListSAMLConnectionsRequest {

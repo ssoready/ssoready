@@ -439,8 +439,9 @@ where saml_oauth_clients.id = $1
   and saml_oauth_clients.client_secret_sha256 = $2;
 
 -- name: CreateAdminAccessToken :one
-insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time)
-values ($1, $2, $3, $4, $5)
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time, can_manage_saml,
+                                 can_manage_scim)
+values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
 
 -- name: AdminGetAdminAccessTokenByOneTimeToken :one
@@ -448,8 +449,8 @@ select *
 from admin_access_tokens
 where one_time_token_sha256 = $1;
 
--- name: AdminGetOrganizationByAccessToken :one
-select organization_id
+-- name: AdminGetAdminAccessTokenByAccessToken :one
+select *
 from admin_access_tokens
 where access_token_sha256 = $1
   and expire_time > $2;

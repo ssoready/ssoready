@@ -11,6 +11,8 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Outlet, useLocation } from "react-router";
 import { Link } from "react-router-dom";
+import { useQuery } from "@connectrpc/connect-query";
+import { adminWhoami } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -18,19 +20,29 @@ function classNames(...classes: any[]) {
 
 export function Layout() {
   const location = useLocation();
+  const { data: whoami } = useQuery(adminWhoami, {});
 
   const navigation = [
-    {
-      name: "SAML Settings",
-      href: "/saml",
-      current: location.pathname.startsWith("/saml"),
-    },
-    {
-      name: "SCIM Settings",
-      href: "/scim",
-      current: location.pathname.startsWith("/scim"),
-    },
+    ...(whoami?.canManageSaml
+      ? [
+          {
+            name: "SAML Settings",
+            href: "/saml",
+            current: location.pathname.startsWith("/saml"),
+          },
+        ]
+      : []),
+    ...(whoami?.canManageScim
+      ? [
+          {
+            name: "SCIM Settings",
+            href: "/scim",
+            current: location.pathname.startsWith("/scim"),
+          },
+        ]
+      : []),
   ];
+
   return (
     <>
       {/*
