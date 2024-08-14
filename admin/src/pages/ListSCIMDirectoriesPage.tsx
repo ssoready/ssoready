@@ -64,11 +64,7 @@ export function ListSCIMDirectoriesPage() {
             <div className="flex flex-col space-y-1.5">
               <CardTitle className="flex gap-x-4 items-center">
                 <span>SCIM Directories</span>
-                <Badge variant="secondary">Beta</Badge>
               </CardTitle>
-              <CardDescription>
-                SCIM Directories within this organization.
-              </CardDescription>
             </div>
 
             <Button variant="outline" onClick={handleCreateSCIMDirectory}>

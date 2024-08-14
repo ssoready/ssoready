@@ -15,6 +15,7 @@ import { Layout } from "@/components/Layout";
 import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 import { ListSCIMDirectoriesPage } from "@/pages/ListSCIMDirectoriesPage";
 import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
+import { ListSAMLConnectionsPage } from "@/pages/ListSAMLConnectionsPage";
 
 const queryClient = new QueryClient();
 
@@ -37,14 +38,15 @@ function AppRoutes() {
       <Route path="/setup" element={<SetupPage />} />
       <Route path="" element={<Layout />}>
         <Route path="/" element={<IndexPage />} />
+        <Route path="/saml" element={<ListSAMLConnectionsPage />} />
+        <Route
+          path="/saml/saml-connections/:samlConnectionId"
+          element={<ViewSAMLConnectionPage />}
+        />
         <Route path="/scim" element={<ListSCIMDirectoriesPage />} />
         <Route
           path="/scim/scim-directories/:scimDirectoryId"
           element={<ViewSCIMDirectoryPage />}
-        />
-        <Route
-          path="/saml-connections/:samlConnectionId"
-          element={<ViewSAMLConnectionPage />}
         />
       </Route>
     </Routes>
