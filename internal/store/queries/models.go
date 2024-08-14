@@ -62,6 +62,8 @@ type AdminAccessToken struct {
 	AccessTokenSha256  []byte
 	CreateTime         time.Time
 	ExpireTime         time.Time
+	CanManageSaml      *bool
+	CanManageScim      *bool
 }
 
 type ApiKey struct {

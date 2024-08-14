@@ -181,6 +181,9 @@ const (
 	// SSOReadyServiceAdminRedeemOneTimeTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminRedeemOneTimeToken RPC.
 	SSOReadyServiceAdminRedeemOneTimeTokenProcedure = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
+	// SSOReadyServiceAdminWhoamiProcedure is the fully-qualified name of the SSOReadyService's
+	// AdminWhoami RPC.
+	SSOReadyServiceAdminWhoamiProcedure = "/ssoready.v1.SSOReadyService/AdminWhoami"
 	// SSOReadyServiceAdminListSAMLConnectionsProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminListSAMLConnections RPC.
 	SSOReadyServiceAdminListSAMLConnectionsProcedure = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
@@ -196,6 +199,21 @@ const (
 	// SSOReadyServiceAdminParseSAMLMetadataProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminParseSAMLMetadata RPC.
 	SSOReadyServiceAdminParseSAMLMetadataProcedure = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
+	// SSOReadyServiceAdminListSCIMDirectoriesProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminListSCIMDirectories RPC.
+	SSOReadyServiceAdminListSCIMDirectoriesProcedure = "/ssoready.v1.SSOReadyService/AdminListSCIMDirectories"
+	// SSOReadyServiceAdminGetSCIMDirectoryProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminGetSCIMDirectory RPC.
+	SSOReadyServiceAdminGetSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory"
+	// SSOReadyServiceAdminCreateSCIMDirectoryProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminCreateSCIMDirectory RPC.
+	SSOReadyServiceAdminCreateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory"
+	// SSOReadyServiceAdminUpdateSCIMDirectoryProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminUpdateSCIMDirectory RPC.
+	SSOReadyServiceAdminUpdateSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/AdminUpdateSCIMDirectory"
+	// SSOReadyServiceAdminRotateSCIMDirectoryBearerTokenProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminRotateSCIMDirectoryBearerToken RPC.
+	SSOReadyServiceAdminRotateSCIMDirectoryBearerTokenProcedure = "/ssoready.v1.SSOReadyService/AdminRotateSCIMDirectoryBearerToken"
 )
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
@@ -250,11 +268,17 @@ type SSOReadyServiceClient interface {
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
 	AppGetSCIMGroup(context.Context, *connect.Request[v1.AppGetSCIMGroupRequest]) (*connect.Response[v1.SCIMGroup], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
+	AdminWhoami(context.Context, *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
 	AdminCreateSAMLConnection(context.Context, *connect.Request[v1.AdminCreateSAMLConnectionRequest]) (*connect.Response[v1.AdminCreateSAMLConnectionResponse], error)
 	AdminUpdateSAMLConnection(context.Context, *connect.Request[v1.AdminUpdateSAMLConnectionRequest]) (*connect.Response[v1.AdminUpdateSAMLConnectionResponse], error)
 	AdminParseSAMLMetadata(context.Context, *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error)
+	AdminListSCIMDirectories(context.Context, *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error)
+	AdminGetSCIMDirectory(context.Context, *connect.Request[v1.AdminGetSCIMDirectoryRequest]) (*connect.Response[v1.AdminGetSCIMDirectoryResponse], error)
+	AdminCreateSCIMDirectory(context.Context, *connect.Request[v1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[v1.AdminCreateSCIMDirectoryResponse], error)
+	AdminUpdateSCIMDirectory(context.Context, *connect.Request[v1.AdminUpdateSCIMDirectoryRequest]) (*connect.Response[v1.AdminUpdateSCIMDirectoryResponse], error)
+	AdminRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AdminRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AdminRotateSCIMDirectoryBearerTokenResponse], error)
 }
 
 // NewSSOReadyServiceClient constructs a client for the ssoready.v1.SSOReadyService service. By
@@ -517,6 +541,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAdminRedeemOneTimeTokenProcedure,
 			opts...,
 		),
+		adminWhoami: connect.NewClient[v1.AdminWhoamiRequest, v1.AdminWhoamiResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminWhoamiProcedure,
+			opts...,
+		),
 		adminListSAMLConnections: connect.NewClient[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAdminListSAMLConnectionsProcedure,
@@ -542,66 +571,97 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAdminParseSAMLMetadataProcedure,
 			opts...,
 		),
+		adminListSCIMDirectories: connect.NewClient[v1.AdminListSCIMDirectoriesRequest, v1.AdminListSCIMDirectoriesResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminListSCIMDirectoriesProcedure,
+			opts...,
+		),
+		adminGetSCIMDirectory: connect.NewClient[v1.AdminGetSCIMDirectoryRequest, v1.AdminGetSCIMDirectoryResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminGetSCIMDirectoryProcedure,
+			opts...,
+		),
+		adminCreateSCIMDirectory: connect.NewClient[v1.AdminCreateSCIMDirectoryRequest, v1.AdminCreateSCIMDirectoryResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminCreateSCIMDirectoryProcedure,
+			opts...,
+		),
+		adminUpdateSCIMDirectory: connect.NewClient[v1.AdminUpdateSCIMDirectoryRequest, v1.AdminUpdateSCIMDirectoryResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminUpdateSCIMDirectoryProcedure,
+			opts...,
+		),
+		adminRotateSCIMDirectoryBearerToken: connect.NewClient[v1.AdminRotateSCIMDirectoryBearerTokenRequest, v1.AdminRotateSCIMDirectoryBearerTokenResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminRotateSCIMDirectoryBearerTokenProcedure,
+			opts...,
+		),
 	}
 }
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
-	getSAMLRedirectURL             *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	redeemSAMLAccessCode           *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	listSCIMUsers                  *connect.Client[v1.ListSCIMUsersRequest, v1.ListSCIMUsersResponse]
-	getSCIMUser                    *connect.Client[v1.GetSCIMUserRequest, v1.GetSCIMUserResponse]
-	listSCIMGroups                 *connect.Client[v1.ListSCIMGroupsRequest, v1.ListSCIMGroupsResponse]
-	getSCIMGroup                   *connect.Client[v1.GetSCIMGroupRequest, v1.GetSCIMGroupResponse]
-	verifyEmail                    *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
-	signIn                         *connect.Client[v1.SignInRequest, v1.SignInResponse]
-	signOut                        *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
-	whoami                         *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
-	getOnboardingState             *connect.Client[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse]
-	updateOnboardingState          *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
-	onboardingGetSAMLRedirectURL   *connect.Client[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	onboardingRedeemSAMLAccessCode *connect.Client[v1.OnboardingRedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	getAppOrganization             *connect.Client[v1.GetAppOrganizationRequest, v1.GetAppOrganizationResponse]
-	listAppUsers                   *connect.Client[v1.ListAppUsersRequest, v1.ListAppUsersResponse]
-	listEnvironments               *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
-	getEnvironment                 *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
-	createEnvironment              *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
-	updateEnvironment              *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
-	listAPIKeys                    *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
-	getAPIKey                      *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
-	createAPIKey                   *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
-	deleteAPIKey                   *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
-	listSAMLOAuthClients           *connect.Client[v1.ListSAMLOAuthClientsRequest, v1.ListSAMLOAuthClientsResponse]
-	getSAMLOAuthClient             *connect.Client[v1.GetSAMLOAuthClientRequest, v1.SAMLOAuthClient]
-	createSAMLOAuthClient          *connect.Client[v1.CreateSAMLOAuthClientRequest, v1.SAMLOAuthClient]
-	deleteSAMLOAuthClient          *connect.Client[v1.DeleteSAMLOAuthClientRequest, emptypb.Empty]
-	listOrganizations              *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
-	getOrganization                *connect.Client[v1.GetOrganizationRequest, v1.Organization]
-	createOrganization             *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
-	updateOrganization             *connect.Client[v1.UpdateOrganizationRequest, v1.Organization]
-	createAdminSetupURL            *connect.Client[v1.CreateAdminSetupURLRequest, v1.CreateAdminSetupURLResponse]
-	listSAMLConnections            *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
-	getSAMLConnection              *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
-	createSAMLConnection           *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
-	updateSAMLConnection           *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
-	listSAMLFlows                  *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
-	getSAMLFlow                    *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
-	parseSAMLMetadata              *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
-	listSCIMDirectories            *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
-	getSCIMDirectory               *connect.Client[v1.GetSCIMDirectoryRequest, v1.SCIMDirectory]
-	createSCIMDirectory            *connect.Client[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory]
-	updateSCIMDirectory            *connect.Client[v1.UpdateSCIMDirectoryRequest, v1.SCIMDirectory]
-	rotateSCIMDirectoryBearerToken *connect.Client[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse]
-	appListSCIMUsers               *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
-	appGetSCIMUser                 *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
-	appListSCIMGroups              *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
-	appGetSCIMGroup                *connect.Client[v1.AppGetSCIMGroupRequest, v1.SCIMGroup]
-	adminRedeemOneTimeToken        *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
-	adminListSAMLConnections       *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
-	adminGetSAMLConnection         *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
-	adminCreateSAMLConnection      *connect.Client[v1.AdminCreateSAMLConnectionRequest, v1.AdminCreateSAMLConnectionResponse]
-	adminUpdateSAMLConnection      *connect.Client[v1.AdminUpdateSAMLConnectionRequest, v1.AdminUpdateSAMLConnectionResponse]
-	adminParseSAMLMetadata         *connect.Client[v1.AdminParseSAMLMetadataRequest, v1.AdminParseSAMLMetadataResponse]
+	getSAMLRedirectURL                  *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	redeemSAMLAccessCode                *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	listSCIMUsers                       *connect.Client[v1.ListSCIMUsersRequest, v1.ListSCIMUsersResponse]
+	getSCIMUser                         *connect.Client[v1.GetSCIMUserRequest, v1.GetSCIMUserResponse]
+	listSCIMGroups                      *connect.Client[v1.ListSCIMGroupsRequest, v1.ListSCIMGroupsResponse]
+	getSCIMGroup                        *connect.Client[v1.GetSCIMGroupRequest, v1.GetSCIMGroupResponse]
+	verifyEmail                         *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
+	signIn                              *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	signOut                             *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
+	whoami                              *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
+	getOnboardingState                  *connect.Client[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse]
+	updateOnboardingState               *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
+	onboardingGetSAMLRedirectURL        *connect.Client[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	onboardingRedeemSAMLAccessCode      *connect.Client[v1.OnboardingRedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	getAppOrganization                  *connect.Client[v1.GetAppOrganizationRequest, v1.GetAppOrganizationResponse]
+	listAppUsers                        *connect.Client[v1.ListAppUsersRequest, v1.ListAppUsersResponse]
+	listEnvironments                    *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
+	getEnvironment                      *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
+	createEnvironment                   *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
+	updateEnvironment                   *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
+	listAPIKeys                         *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
+	getAPIKey                           *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
+	createAPIKey                        *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
+	deleteAPIKey                        *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
+	listSAMLOAuthClients                *connect.Client[v1.ListSAMLOAuthClientsRequest, v1.ListSAMLOAuthClientsResponse]
+	getSAMLOAuthClient                  *connect.Client[v1.GetSAMLOAuthClientRequest, v1.SAMLOAuthClient]
+	createSAMLOAuthClient               *connect.Client[v1.CreateSAMLOAuthClientRequest, v1.SAMLOAuthClient]
+	deleteSAMLOAuthClient               *connect.Client[v1.DeleteSAMLOAuthClientRequest, emptypb.Empty]
+	listOrganizations                   *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
+	getOrganization                     *connect.Client[v1.GetOrganizationRequest, v1.Organization]
+	createOrganization                  *connect.Client[v1.CreateOrganizationRequest, v1.Organization]
+	updateOrganization                  *connect.Client[v1.UpdateOrganizationRequest, v1.Organization]
+	createAdminSetupURL                 *connect.Client[v1.CreateAdminSetupURLRequest, v1.CreateAdminSetupURLResponse]
+	listSAMLConnections                 *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
+	getSAMLConnection                   *connect.Client[v1.GetSAMLConnectionRequest, v1.SAMLConnection]
+	createSAMLConnection                *connect.Client[v1.CreateSAMLConnectionRequest, v1.SAMLConnection]
+	updateSAMLConnection                *connect.Client[v1.UpdateSAMLConnectionRequest, v1.SAMLConnection]
+	listSAMLFlows                       *connect.Client[v1.ListSAMLFlowsRequest, v1.ListSAMLFlowsResponse]
+	getSAMLFlow                         *connect.Client[v1.GetSAMLFlowRequest, v1.SAMLFlow]
+	parseSAMLMetadata                   *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
+	listSCIMDirectories                 *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
+	getSCIMDirectory                    *connect.Client[v1.GetSCIMDirectoryRequest, v1.SCIMDirectory]
+	createSCIMDirectory                 *connect.Client[v1.CreateSCIMDirectoryRequest, v1.SCIMDirectory]
+	updateSCIMDirectory                 *connect.Client[v1.UpdateSCIMDirectoryRequest, v1.SCIMDirectory]
+	rotateSCIMDirectoryBearerToken      *connect.Client[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse]
+	appListSCIMUsers                    *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
+	appGetSCIMUser                      *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
+	appListSCIMGroups                   *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
+	appGetSCIMGroup                     *connect.Client[v1.AppGetSCIMGroupRequest, v1.SCIMGroup]
+	adminRedeemOneTimeToken             *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
+	adminWhoami                         *connect.Client[v1.AdminWhoamiRequest, v1.AdminWhoamiResponse]
+	adminListSAMLConnections            *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
+	adminGetSAMLConnection              *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
+	adminCreateSAMLConnection           *connect.Client[v1.AdminCreateSAMLConnectionRequest, v1.AdminCreateSAMLConnectionResponse]
+	adminUpdateSAMLConnection           *connect.Client[v1.AdminUpdateSAMLConnectionRequest, v1.AdminUpdateSAMLConnectionResponse]
+	adminParseSAMLMetadata              *connect.Client[v1.AdminParseSAMLMetadataRequest, v1.AdminParseSAMLMetadataResponse]
+	adminListSCIMDirectories            *connect.Client[v1.AdminListSCIMDirectoriesRequest, v1.AdminListSCIMDirectoriesResponse]
+	adminGetSCIMDirectory               *connect.Client[v1.AdminGetSCIMDirectoryRequest, v1.AdminGetSCIMDirectoryResponse]
+	adminCreateSCIMDirectory            *connect.Client[v1.AdminCreateSCIMDirectoryRequest, v1.AdminCreateSCIMDirectoryResponse]
+	adminUpdateSCIMDirectory            *connect.Client[v1.AdminUpdateSCIMDirectoryRequest, v1.AdminUpdateSCIMDirectoryResponse]
+	adminRotateSCIMDirectoryBearerToken *connect.Client[v1.AdminRotateSCIMDirectoryBearerTokenRequest, v1.AdminRotateSCIMDirectoryBearerTokenResponse]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -854,6 +914,11 @@ func (c *sSOReadyServiceClient) AdminRedeemOneTimeToken(ctx context.Context, req
 	return c.adminRedeemOneTimeToken.CallUnary(ctx, req)
 }
 
+// AdminWhoami calls ssoready.v1.SSOReadyService.AdminWhoami.
+func (c *sSOReadyServiceClient) AdminWhoami(ctx context.Context, req *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error) {
+	return c.adminWhoami.CallUnary(ctx, req)
+}
+
 // AdminListSAMLConnections calls ssoready.v1.SSOReadyService.AdminListSAMLConnections.
 func (c *sSOReadyServiceClient) AdminListSAMLConnections(ctx context.Context, req *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error) {
 	return c.adminListSAMLConnections.CallUnary(ctx, req)
@@ -877,6 +942,32 @@ func (c *sSOReadyServiceClient) AdminUpdateSAMLConnection(ctx context.Context, r
 // AdminParseSAMLMetadata calls ssoready.v1.SSOReadyService.AdminParseSAMLMetadata.
 func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, req *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error) {
 	return c.adminParseSAMLMetadata.CallUnary(ctx, req)
+}
+
+// AdminListSCIMDirectories calls ssoready.v1.SSOReadyService.AdminListSCIMDirectories.
+func (c *sSOReadyServiceClient) AdminListSCIMDirectories(ctx context.Context, req *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error) {
+	return c.adminListSCIMDirectories.CallUnary(ctx, req)
+}
+
+// AdminGetSCIMDirectory calls ssoready.v1.SSOReadyService.AdminGetSCIMDirectory.
+func (c *sSOReadyServiceClient) AdminGetSCIMDirectory(ctx context.Context, req *connect.Request[v1.AdminGetSCIMDirectoryRequest]) (*connect.Response[v1.AdminGetSCIMDirectoryResponse], error) {
+	return c.adminGetSCIMDirectory.CallUnary(ctx, req)
+}
+
+// AdminCreateSCIMDirectory calls ssoready.v1.SSOReadyService.AdminCreateSCIMDirectory.
+func (c *sSOReadyServiceClient) AdminCreateSCIMDirectory(ctx context.Context, req *connect.Request[v1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[v1.AdminCreateSCIMDirectoryResponse], error) {
+	return c.adminCreateSCIMDirectory.CallUnary(ctx, req)
+}
+
+// AdminUpdateSCIMDirectory calls ssoready.v1.SSOReadyService.AdminUpdateSCIMDirectory.
+func (c *sSOReadyServiceClient) AdminUpdateSCIMDirectory(ctx context.Context, req *connect.Request[v1.AdminUpdateSCIMDirectoryRequest]) (*connect.Response[v1.AdminUpdateSCIMDirectoryResponse], error) {
+	return c.adminUpdateSCIMDirectory.CallUnary(ctx, req)
+}
+
+// AdminRotateSCIMDirectoryBearerToken calls
+// ssoready.v1.SSOReadyService.AdminRotateSCIMDirectoryBearerToken.
+func (c *sSOReadyServiceClient) AdminRotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[v1.AdminRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AdminRotateSCIMDirectoryBearerTokenResponse], error) {
+	return c.adminRotateSCIMDirectoryBearerToken.CallUnary(ctx, req)
 }
 
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
@@ -931,11 +1022,17 @@ type SSOReadyServiceHandler interface {
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
 	AppGetSCIMGroup(context.Context, *connect.Request[v1.AppGetSCIMGroupRequest]) (*connect.Response[v1.SCIMGroup], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
+	AdminWhoami(context.Context, *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
 	AdminCreateSAMLConnection(context.Context, *connect.Request[v1.AdminCreateSAMLConnectionRequest]) (*connect.Response[v1.AdminCreateSAMLConnectionResponse], error)
 	AdminUpdateSAMLConnection(context.Context, *connect.Request[v1.AdminUpdateSAMLConnectionRequest]) (*connect.Response[v1.AdminUpdateSAMLConnectionResponse], error)
 	AdminParseSAMLMetadata(context.Context, *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error)
+	AdminListSCIMDirectories(context.Context, *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error)
+	AdminGetSCIMDirectory(context.Context, *connect.Request[v1.AdminGetSCIMDirectoryRequest]) (*connect.Response[v1.AdminGetSCIMDirectoryResponse], error)
+	AdminCreateSCIMDirectory(context.Context, *connect.Request[v1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[v1.AdminCreateSCIMDirectoryResponse], error)
+	AdminUpdateSCIMDirectory(context.Context, *connect.Request[v1.AdminUpdateSCIMDirectoryRequest]) (*connect.Response[v1.AdminUpdateSCIMDirectoryResponse], error)
+	AdminRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AdminRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AdminRotateSCIMDirectoryBearerTokenResponse], error)
 }
 
 // NewSSOReadyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -1194,6 +1291,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AdminRedeemOneTimeToken,
 		opts...,
 	)
+	sSOReadyServiceAdminWhoamiHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminWhoamiProcedure,
+		svc.AdminWhoami,
+		opts...,
+	)
 	sSOReadyServiceAdminListSAMLConnectionsHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAdminListSAMLConnectionsProcedure,
 		svc.AdminListSAMLConnections,
@@ -1217,6 +1319,31 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceAdminParseSAMLMetadataHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAdminParseSAMLMetadataProcedure,
 		svc.AdminParseSAMLMetadata,
+		opts...,
+	)
+	sSOReadyServiceAdminListSCIMDirectoriesHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminListSCIMDirectoriesProcedure,
+		svc.AdminListSCIMDirectories,
+		opts...,
+	)
+	sSOReadyServiceAdminGetSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminGetSCIMDirectoryProcedure,
+		svc.AdminGetSCIMDirectory,
+		opts...,
+	)
+	sSOReadyServiceAdminCreateSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminCreateSCIMDirectoryProcedure,
+		svc.AdminCreateSCIMDirectory,
+		opts...,
+	)
+	sSOReadyServiceAdminUpdateSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminUpdateSCIMDirectoryProcedure,
+		svc.AdminUpdateSCIMDirectory,
+		opts...,
+	)
+	sSOReadyServiceAdminRotateSCIMDirectoryBearerTokenHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminRotateSCIMDirectoryBearerTokenProcedure,
+		svc.AdminRotateSCIMDirectoryBearerToken,
 		opts...,
 	)
 	return "/ssoready.v1.SSOReadyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1321,6 +1448,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppGetSCIMGroupHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminRedeemOneTimeTokenProcedure:
 			sSOReadyServiceAdminRedeemOneTimeTokenHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminWhoamiProcedure:
+			sSOReadyServiceAdminWhoamiHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminListSAMLConnectionsProcedure:
 			sSOReadyServiceAdminListSAMLConnectionsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminGetSAMLConnectionProcedure:
@@ -1331,6 +1460,16 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAdminUpdateSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminParseSAMLMetadataProcedure:
 			sSOReadyServiceAdminParseSAMLMetadataHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminListSCIMDirectoriesProcedure:
+			sSOReadyServiceAdminListSCIMDirectoriesHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminGetSCIMDirectoryProcedure:
+			sSOReadyServiceAdminGetSCIMDirectoryHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminCreateSCIMDirectoryProcedure:
+			sSOReadyServiceAdminCreateSCIMDirectoryHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminUpdateSCIMDirectoryProcedure:
+			sSOReadyServiceAdminUpdateSCIMDirectoryHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminRotateSCIMDirectoryBearerTokenProcedure:
+			sSOReadyServiceAdminRotateSCIMDirectoryBearerTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1540,6 +1679,10 @@ func (UnimplementedSSOReadyServiceHandler) AdminRedeemOneTimeToken(context.Conte
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken is not implemented"))
 }
 
+func (UnimplementedSSOReadyServiceHandler) AdminWhoami(context.Context, *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminWhoami is not implemented"))
+}
+
 func (UnimplementedSSOReadyServiceHandler) AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminListSAMLConnections is not implemented"))
 }
@@ -1558,4 +1701,24 @@ func (UnimplementedSSOReadyServiceHandler) AdminUpdateSAMLConnection(context.Con
 
 func (UnimplementedSSOReadyServiceHandler) AdminParseSAMLMetadata(context.Context, *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminParseSAMLMetadata is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminListSCIMDirectories(context.Context, *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminListSCIMDirectories is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminGetSCIMDirectory(context.Context, *connect.Request[v1.AdminGetSCIMDirectoryRequest]) (*connect.Response[v1.AdminGetSCIMDirectoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminGetSCIMDirectory is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminCreateSCIMDirectory(context.Context, *connect.Request[v1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[v1.AdminCreateSCIMDirectoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminCreateSCIMDirectory is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminUpdateSCIMDirectory(context.Context, *connect.Request[v1.AdminUpdateSCIMDirectoryRequest]) (*connect.Response[v1.AdminUpdateSCIMDirectoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminUpdateSCIMDirectory is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AdminRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AdminRotateSCIMDirectoryBearerTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminRotateSCIMDirectoryBearerToken is not implemented"))
 }

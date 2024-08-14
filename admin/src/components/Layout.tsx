@@ -9,15 +9,40 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Outlet } from "react-router";
-
-const navigation = [{ name: "SAML Settings", href: "/", current: true }];
+import { Outlet, useLocation } from "react-router";
+import { Link } from "react-router-dom";
+import { useQuery } from "@connectrpc/connect-query";
+import { adminWhoami } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export function Layout() {
+  const location = useLocation();
+  const { data: whoami } = useQuery(adminWhoami, {});
+
+  const navigation = [
+    ...(whoami?.canManageSaml
+      ? [
+          {
+            name: "SAML Settings",
+            href: "/saml",
+            current: location.pathname.startsWith("/saml"),
+          },
+        ]
+      : []),
+    ...(whoami?.canManageScim
+      ? [
+          {
+            name: "SCIM Settings",
+            href: "/scim",
+            current: location.pathname.startsWith("/scim"),
+          },
+        ]
+      : []),
+  ];
+
   return (
     <>
       {/*
@@ -33,9 +58,12 @@ export function Layout() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
               <div className="flex">
-                <div className="flex flex-shrink-0 items-center text-sm">
+                <Link
+                  to="/"
+                  className="flex flex-shrink-0 items-center text-sm"
+                >
                   Settings Panel
-                </div>
+                </Link>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
                     <a
