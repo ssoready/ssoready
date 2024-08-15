@@ -50,7 +50,7 @@ func (s *Store) AppListSCIMUsers(ctx context.Context, req *ssoreadyv1.AppListSCI
 	} else {
 		scimGroupID, err := idformat.SCIMGroup.Parse(req.ScimGroupId)
 		if err != nil {
-			return nil, fmt.Errorf("parse scim group id: %", err)
+			return nil, fmt.Errorf("parse scim group id: %w", err)
 		}
 
 		qSCIMUsers, err = q.ListSCIMUsersInSCIMGroup(ctx, queries.ListSCIMUsersInSCIMGroupParams{
