@@ -2,15 +2,10 @@ import React, { useCallback, useId, useState } from "react";
 import { useMatch, useParams } from "react-router";
 import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
-  getEnvironment,
-  getOrganization,
-  getSAMLConnection,
-  listOrganizations,
-  listSAMLConnections,
-  listSAMLFlows,
+  appGetSAMLConnection,
+  appListSAMLFlows,
+  appUpdateSAMLConnection,
   parseSAMLMetadata,
-  updateOrganization,
-  updateSAMLConnection,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -83,7 +78,7 @@ import { DocsLink } from "@/components/DocsLink";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
-  const { data: samlConnection } = useQuery(getSAMLConnection, {
+  const { data: samlConnection } = useQuery(appGetSAMLConnection, {
     id: samlConnectionId,
   });
   const flowsPathMatch = useMatch(
@@ -270,7 +265,7 @@ function EditSAMLConnectionAlertDialog({
   });
 
   const [open, setOpen] = useState(false);
-  const updateSAMLConnectionMutation = useMutation(updateSAMLConnection);
+  const updateSAMLConnectionMutation = useMutation(appUpdateSAMLConnection);
   const queryClient = useQueryClient();
   const handleSubmit = useCallback(
     async (values: z.infer<typeof FormSchema>, e: any) => {
@@ -286,7 +281,7 @@ function EditSAMLConnectionAlertDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getSAMLConnection, {
+        queryKey: createConnectQueryKey(appGetSAMLConnection, {
           id: samlConnection.id,
         }),
       });
@@ -351,7 +346,7 @@ function ListLoginFlowsTabContent() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    listSAMLFlows,
+    appListSAMLFlows,
     { samlConnectionId, pageToken: "" },
     {
       pageParamKey: "pageToken",
@@ -453,7 +448,7 @@ function EditSAMLConnectionIDPSettingsAlertDialog({
   });
 
   const [open, setOpen] = useState(false);
-  const updateSAMLConnectionMutation = useMutation(updateSAMLConnection);
+  const updateSAMLConnectionMutation = useMutation(appUpdateSAMLConnection);
   const queryClient = useQueryClient();
 
   const handleSubmit = useCallback(
@@ -470,7 +465,7 @@ function EditSAMLConnectionIDPSettingsAlertDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getSAMLConnection, {
+        queryKey: createConnectQueryKey(appGetSAMLConnection, {
           id: samlConnection.id,
         }),
       });

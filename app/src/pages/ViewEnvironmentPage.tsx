@@ -7,12 +7,11 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appCreateOrganization,
+  appListOrganizations,
   createAPIKey,
-  createOrganization,
   getEnvironment,
   listAPIKeys,
-  listOrganizations,
-  listSAMLConnections,
   updateEnvironment,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
@@ -83,7 +82,7 @@ export function ViewEnvironmentPage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    listOrganizations,
+    appListOrganizations,
     { environmentId, pageToken: "" },
     {
       pageParamKey: "pageToken",
@@ -363,7 +362,7 @@ function CreateOrganizationAlertDialog({
   });
 
   const [open, setOpen] = useState(false);
-  const createOrganizationMutation = useMutation(createOrganization);
+  const createOrganizationMutation = useMutation(appCreateOrganization);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const handleSubmit = useCallback(
@@ -378,7 +377,7 @@ function CreateOrganizationAlertDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(listOrganizations, {
+        queryKey: createConnectQueryKey(appListOrganizations, {
           environmentId: environment.id,
         }),
       });

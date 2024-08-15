@@ -167,6 +167,11 @@ export class APIKey extends Message<APIKey> {
    */
   secretToken = "";
 
+  /**
+   * @generated from field: bool has_management_api_access = 4;
+   */
+  hasManagementApiAccess = false;
+
   constructor(data?: PartialMessage<APIKey>) {
     super();
     proto3.util.initPartial(data, this);
@@ -178,6 +183,7 @@ export class APIKey extends Message<APIKey> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "secret_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "has_management_api_access", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): APIKey {
@@ -1289,6 +1295,1102 @@ export class GetSCIMGroupResponse extends Message<GetSCIMGroupResponse> {
 }
 
 /**
+ * @generated from message ssoready.v1.ListOrganizationsRequest
+ */
+export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> {
+  /**
+   * @generated from field: string page_token = 1;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListOrganizationsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListOrganizationsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListOrganizationsRequest {
+    return new ListOrganizationsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListOrganizationsRequest {
+    return new ListOrganizationsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListOrganizationsRequest {
+    return new ListOrganizationsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListOrganizationsRequest | PlainMessage<ListOrganizationsRequest> | undefined, b: ListOrganizationsRequest | PlainMessage<ListOrganizationsRequest> | undefined): boolean {
+    return proto3.util.equals(ListOrganizationsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListOrganizationsResponse
+ */
+export class ListOrganizationsResponse extends Message<ListOrganizationsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.Organization organizations = 1;
+   */
+  organizations: Organization[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListOrganizationsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListOrganizationsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organizations", kind: "message", T: Organization, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListOrganizationsResponse {
+    return new ListOrganizationsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListOrganizationsResponse {
+    return new ListOrganizationsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListOrganizationsResponse {
+    return new ListOrganizationsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListOrganizationsResponse | PlainMessage<ListOrganizationsResponse> | undefined, b: ListOrganizationsResponse | PlainMessage<ListOrganizationsResponse> | undefined): boolean {
+    return proto3.util.equals(ListOrganizationsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetOrganizationRequest
+ */
+export class GetOrganizationRequest extends Message<GetOrganizationRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOrganizationRequest {
+    return new GetOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
+    return new GetOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
+    return new GetOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined, b: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(GetOrganizationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetOrganizationResponse
+ */
+export class GetOrganizationResponse extends Message<GetOrganizationResponse> {
+  /**
+   * @generated from field: ssoready.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+
+  constructor(data?: PartialMessage<GetOrganizationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetOrganizationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization", kind: "message", T: Organization },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOrganizationResponse {
+    return new GetOrganizationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOrganizationResponse {
+    return new GetOrganizationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOrganizationResponse {
+    return new GetOrganizationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetOrganizationResponse | PlainMessage<GetOrganizationResponse> | undefined, b: GetOrganizationResponse | PlainMessage<GetOrganizationResponse> | undefined): boolean {
+    return proto3.util.equals(GetOrganizationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateOrganizationRequest
+ */
+export class CreateOrganizationRequest extends Message<CreateOrganizationRequest> {
+  /**
+   * @generated from field: ssoready.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+
+  constructor(data?: PartialMessage<CreateOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization", kind: "message", T: Organization },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateOrganizationRequest {
+    return new CreateOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateOrganizationRequest {
+    return new CreateOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateOrganizationRequest {
+    return new CreateOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateOrganizationRequest | PlainMessage<CreateOrganizationRequest> | undefined, b: CreateOrganizationRequest | PlainMessage<CreateOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(CreateOrganizationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateOrganizationResponse
+ */
+export class CreateOrganizationResponse extends Message<CreateOrganizationResponse> {
+  /**
+   * @generated from field: ssoready.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+
+  constructor(data?: PartialMessage<CreateOrganizationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateOrganizationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization", kind: "message", T: Organization },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateOrganizationResponse {
+    return new CreateOrganizationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateOrganizationResponse {
+    return new CreateOrganizationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateOrganizationResponse {
+    return new CreateOrganizationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateOrganizationResponse | PlainMessage<CreateOrganizationResponse> | undefined, b: CreateOrganizationResponse | PlainMessage<CreateOrganizationResponse> | undefined): boolean {
+    return proto3.util.equals(CreateOrganizationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateOrganizationRequest
+ */
+export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: ssoready.v1.Organization organization = 2;
+   */
+  organization?: Organization;
+
+  constructor(data?: PartialMessage<UpdateOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "organization", kind: "message", T: Organization },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOrganizationRequest {
+    return new UpdateOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
+    return new UpdateOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
+    return new UpdateOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined, b: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateOrganizationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateOrganizationResponse
+ */
+export class UpdateOrganizationResponse extends Message<UpdateOrganizationResponse> {
+  /**
+   * @generated from field: ssoready.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+
+  constructor(data?: PartialMessage<UpdateOrganizationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateOrganizationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization", kind: "message", T: Organization },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOrganizationResponse {
+    return new UpdateOrganizationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOrganizationResponse {
+    return new UpdateOrganizationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOrganizationResponse {
+    return new UpdateOrganizationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateOrganizationResponse | PlainMessage<UpdateOrganizationResponse> | undefined, b: UpdateOrganizationResponse | PlainMessage<UpdateOrganizationResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateOrganizationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSetupURLRequest
+ */
+export class CreateSetupURLRequest extends Message<CreateSetupURLRequest> {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: bool can_manage_saml = 2;
+   */
+  canManageSaml = false;
+
+  /**
+   * @generated from field: bool can_manage_scim = 3;
+   */
+  canManageScim = false;
+
+  constructor(data?: PartialMessage<CreateSetupURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSetupURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "can_manage_saml", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "can_manage_scim", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSetupURLRequest {
+    return new CreateSetupURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSetupURLRequest {
+    return new CreateSetupURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSetupURLRequest {
+    return new CreateSetupURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSetupURLRequest | PlainMessage<CreateSetupURLRequest> | undefined, b: CreateSetupURLRequest | PlainMessage<CreateSetupURLRequest> | undefined): boolean {
+    return proto3.util.equals(CreateSetupURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSetupURLResponse
+ */
+export class CreateSetupURLResponse extends Message<CreateSetupURLResponse> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<CreateSetupURLResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSetupURLResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSetupURLResponse {
+    return new CreateSetupURLResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSetupURLResponse {
+    return new CreateSetupURLResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSetupURLResponse {
+    return new CreateSetupURLResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSetupURLResponse | PlainMessage<CreateSetupURLResponse> | undefined, b: CreateSetupURLResponse | PlainMessage<CreateSetupURLResponse> | undefined): boolean {
+    return proto3.util.equals(CreateSetupURLResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLConnectionsRequest
+ */
+export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsRequest> {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLConnectionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLConnectionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLConnectionsRequest {
+    return new ListSAMLConnectionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLConnectionsRequest {
+    return new ListSAMLConnectionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLConnectionsRequest {
+    return new ListSAMLConnectionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLConnectionsRequest | PlainMessage<ListSAMLConnectionsRequest> | undefined, b: ListSAMLConnectionsRequest | PlainMessage<ListSAMLConnectionsRequest> | undefined): boolean {
+    return proto3.util.equals(ListSAMLConnectionsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSAMLConnectionsResponse
+ */
+export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SAMLConnection saml_connections = 1;
+   */
+  samlConnections: SAMLConnection[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSAMLConnectionsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSAMLConnectionsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connections", kind: "message", T: SAMLConnection, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLConnectionsResponse {
+    return new ListSAMLConnectionsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLConnectionsResponse {
+    return new ListSAMLConnectionsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLConnectionsResponse {
+    return new ListSAMLConnectionsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined, b: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined): boolean {
+    return proto3.util.equals(ListSAMLConnectionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSAMLConnectionRequest
+ */
+export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLConnectionRequest {
+    return new GetSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
+    return new GetSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
+    return new GetSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined, b: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(GetSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSAMLConnectionResponse
+ */
+export class GetSAMLConnectionResponse extends Message<GetSAMLConnectionResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<GetSAMLConnectionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSAMLConnectionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLConnectionResponse {
+    return new GetSAMLConnectionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLConnectionResponse {
+    return new GetSAMLConnectionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLConnectionResponse {
+    return new GetSAMLConnectionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSAMLConnectionResponse | PlainMessage<GetSAMLConnectionResponse> | undefined, b: GetSAMLConnectionResponse | PlainMessage<GetSAMLConnectionResponse> | undefined): boolean {
+    return proto3.util.equals(GetSAMLConnectionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSAMLConnectionRequest
+ */
+export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionRequest> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<CreateSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
+    return new CreateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined, b: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(CreateSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSAMLConnectionResponse
+ */
+export class CreateSAMLConnectionResponse extends Message<CreateSAMLConnectionResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<CreateSAMLConnectionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSAMLConnectionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLConnectionResponse {
+    return new CreateSAMLConnectionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLConnectionResponse {
+    return new CreateSAMLConnectionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLConnectionResponse {
+    return new CreateSAMLConnectionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSAMLConnectionResponse | PlainMessage<CreateSAMLConnectionResponse> | undefined, b: CreateSAMLConnectionResponse | PlainMessage<CreateSAMLConnectionResponse> | undefined): boolean {
+    return proto3.util.equals(CreateSAMLConnectionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateSAMLConnectionRequest
+ */
+export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 2;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<UpdateSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
+    return new UpdateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined, b: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateSAMLConnectionResponse
+ */
+export class UpdateSAMLConnectionResponse extends Message<UpdateSAMLConnectionResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
+   */
+  samlConnection?: SAMLConnection;
+
+  constructor(data?: PartialMessage<UpdateSAMLConnectionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateSAMLConnectionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSAMLConnectionResponse {
+    return new UpdateSAMLConnectionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionResponse {
+    return new UpdateSAMLConnectionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionResponse {
+    return new UpdateSAMLConnectionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateSAMLConnectionResponse | PlainMessage<UpdateSAMLConnectionResponse> | undefined, b: UpdateSAMLConnectionResponse | PlainMessage<UpdateSAMLConnectionResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateSAMLConnectionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMDirectoriesRequest
+ */
+export class ListSCIMDirectoriesRequest extends Message<ListSCIMDirectoriesRequest> {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMDirectoriesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMDirectoriesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMDirectoriesRequest {
+    return new ListSCIMDirectoriesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesRequest {
+    return new ListSCIMDirectoriesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesRequest {
+    return new ListSCIMDirectoriesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMDirectoriesRequest | PlainMessage<ListSCIMDirectoriesRequest> | undefined, b: ListSCIMDirectoriesRequest | PlainMessage<ListSCIMDirectoriesRequest> | undefined): boolean {
+    return proto3.util.equals(ListSCIMDirectoriesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.ListSCIMDirectoriesResponse
+ */
+export class ListSCIMDirectoriesResponse extends Message<ListSCIMDirectoriesResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SCIMDirectory scim_directories = 1;
+   */
+  scimDirectories: SCIMDirectory[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<ListSCIMDirectoriesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.ListSCIMDirectoriesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directories", kind: "message", T: SCIMDirectory, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMDirectoriesResponse {
+    return new ListSCIMDirectoriesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesResponse {
+    return new ListSCIMDirectoriesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesResponse {
+    return new ListSCIMDirectoriesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListSCIMDirectoriesResponse | PlainMessage<ListSCIMDirectoriesResponse> | undefined, b: ListSCIMDirectoriesResponse | PlainMessage<ListSCIMDirectoriesResponse> | undefined): boolean {
+    return proto3.util.equals(ListSCIMDirectoriesResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSCIMDirectoryRequest
+ */
+export class GetSCIMDirectoryRequest extends Message<GetSCIMDirectoryRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMDirectoryRequest {
+    return new GetSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMDirectoryRequest {
+    return new GetSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMDirectoryRequest {
+    return new GetSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSCIMDirectoryRequest | PlainMessage<GetSCIMDirectoryRequest> | undefined, b: GetSCIMDirectoryRequest | PlainMessage<GetSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(GetSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetSCIMDirectoryResponse
+ */
+export class GetSCIMDirectoryResponse extends Message<GetSCIMDirectoryResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<GetSCIMDirectoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetSCIMDirectoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMDirectoryResponse {
+    return new GetSCIMDirectoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMDirectoryResponse {
+    return new GetSCIMDirectoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMDirectoryResponse {
+    return new GetSCIMDirectoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSCIMDirectoryResponse | PlainMessage<GetSCIMDirectoryResponse> | undefined, b: GetSCIMDirectoryResponse | PlainMessage<GetSCIMDirectoryResponse> | undefined): boolean {
+    return proto3.util.equals(GetSCIMDirectoryResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSCIMDirectoryRequest
+ */
+export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryRequest> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<CreateSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSCIMDirectoryRequest {
+    return new CreateSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryRequest {
+    return new CreateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryRequest {
+    return new CreateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSCIMDirectoryRequest | PlainMessage<CreateSCIMDirectoryRequest> | undefined, b: CreateSCIMDirectoryRequest | PlainMessage<CreateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(CreateSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CreateSCIMDirectoryResponse
+ */
+export class CreateSCIMDirectoryResponse extends Message<CreateSCIMDirectoryResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<CreateSCIMDirectoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CreateSCIMDirectoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSCIMDirectoryResponse {
+    return new CreateSCIMDirectoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryResponse {
+    return new CreateSCIMDirectoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryResponse {
+    return new CreateSCIMDirectoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateSCIMDirectoryResponse | PlainMessage<CreateSCIMDirectoryResponse> | undefined, b: CreateSCIMDirectoryResponse | PlainMessage<CreateSCIMDirectoryResponse> | undefined): boolean {
+    return proto3.util.equals(CreateSCIMDirectoryResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateSCIMDirectoryRequest
+ */
+export class UpdateSCIMDirectoryRequest extends Message<UpdateSCIMDirectoryRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 2;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<UpdateSCIMDirectoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateSCIMDirectoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSCIMDirectoryRequest {
+    return new UpdateSCIMDirectoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryRequest {
+    return new UpdateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryRequest {
+    return new UpdateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateSCIMDirectoryRequest | PlainMessage<UpdateSCIMDirectoryRequest> | undefined, b: UpdateSCIMDirectoryRequest | PlainMessage<UpdateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateSCIMDirectoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateSCIMDirectoryResponse
+ */
+export class UpdateSCIMDirectoryResponse extends Message<UpdateSCIMDirectoryResponse> {
+  /**
+   * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
+   */
+  scimDirectory?: SCIMDirectory;
+
+  constructor(data?: PartialMessage<UpdateSCIMDirectoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateSCIMDirectoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSCIMDirectoryResponse {
+    return new UpdateSCIMDirectoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryResponse {
+    return new UpdateSCIMDirectoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryResponse {
+    return new UpdateSCIMDirectoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateSCIMDirectoryResponse | PlainMessage<UpdateSCIMDirectoryResponse> | undefined, b: UpdateSCIMDirectoryResponse | PlainMessage<UpdateSCIMDirectoryResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateSCIMDirectoryResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenRequest
+ */
+export class RotateSCIMDirectoryBearerTokenRequest extends Message<RotateSCIMDirectoryBearerTokenRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<RotateSCIMDirectoryBearerTokenRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.RotateSCIMDirectoryBearerTokenRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
+    return new RotateSCIMDirectoryBearerTokenRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
+    return new RotateSCIMDirectoryBearerTokenRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
+    return new RotateSCIMDirectoryBearerTokenRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RotateSCIMDirectoryBearerTokenRequest | PlainMessage<RotateSCIMDirectoryBearerTokenRequest> | undefined, b: RotateSCIMDirectoryBearerTokenRequest | PlainMessage<RotateSCIMDirectoryBearerTokenRequest> | undefined): boolean {
+    return proto3.util.equals(RotateSCIMDirectoryBearerTokenRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenResponse
+ */
+export class RotateSCIMDirectoryBearerTokenResponse extends Message<RotateSCIMDirectoryBearerTokenResponse> {
+  /**
+   * @generated from field: string bearer_token = 1;
+   */
+  bearerToken = "";
+
+  constructor(data?: PartialMessage<RotateSCIMDirectoryBearerTokenResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.RotateSCIMDirectoryBearerTokenResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
+    return new RotateSCIMDirectoryBearerTokenResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
+    return new RotateSCIMDirectoryBearerTokenResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
+    return new RotateSCIMDirectoryBearerTokenResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RotateSCIMDirectoryBearerTokenResponse | PlainMessage<RotateSCIMDirectoryBearerTokenResponse> | undefined, b: RotateSCIMDirectoryBearerTokenResponse | PlainMessage<RotateSCIMDirectoryBearerTokenResponse> | undefined): boolean {
+    return proto3.util.equals(RotateSCIMDirectoryBearerTokenResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.VerifyEmailRequest
  */
 export class VerifyEmailRequest extends Message<VerifyEmailRequest> {
@@ -1781,6 +2883,210 @@ export class OnboardingRedeemSAMLAccessCodeRequest extends Message<OnboardingRed
 }
 
 /**
+ * @generated from message ssoready.v1.GetStripeCheckoutURLRequest
+ */
+export class GetStripeCheckoutURLRequest extends Message<GetStripeCheckoutURLRequest> {
+  constructor(data?: PartialMessage<GetStripeCheckoutURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetStripeCheckoutURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStripeCheckoutURLRequest {
+    return new GetStripeCheckoutURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStripeCheckoutURLRequest {
+    return new GetStripeCheckoutURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStripeCheckoutURLRequest {
+    return new GetStripeCheckoutURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetStripeCheckoutURLRequest | PlainMessage<GetStripeCheckoutURLRequest> | undefined, b: GetStripeCheckoutURLRequest | PlainMessage<GetStripeCheckoutURLRequest> | undefined): boolean {
+    return proto3.util.equals(GetStripeCheckoutURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetStripeCheckoutURLResponse
+ */
+export class GetStripeCheckoutURLResponse extends Message<GetStripeCheckoutURLResponse> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<GetStripeCheckoutURLResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetStripeCheckoutURLResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStripeCheckoutURLResponse {
+    return new GetStripeCheckoutURLResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStripeCheckoutURLResponse {
+    return new GetStripeCheckoutURLResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStripeCheckoutURLResponse {
+    return new GetStripeCheckoutURLResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetStripeCheckoutURLResponse | PlainMessage<GetStripeCheckoutURLResponse> | undefined, b: GetStripeCheckoutURLResponse | PlainMessage<GetStripeCheckoutURLResponse> | undefined): boolean {
+    return proto3.util.equals(GetStripeCheckoutURLResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.RedeemStripeCheckoutRequest
+ */
+export class RedeemStripeCheckoutRequest extends Message<RedeemStripeCheckoutRequest> {
+  /**
+   * @generated from field: string stripe_checkout_session_id = 1;
+   */
+  stripeCheckoutSessionId = "";
+
+  constructor(data?: PartialMessage<RedeemStripeCheckoutRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.RedeemStripeCheckoutRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "stripe_checkout_session_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemStripeCheckoutRequest {
+    return new RedeemStripeCheckoutRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemStripeCheckoutRequest {
+    return new RedeemStripeCheckoutRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemStripeCheckoutRequest {
+    return new RedeemStripeCheckoutRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RedeemStripeCheckoutRequest | PlainMessage<RedeemStripeCheckoutRequest> | undefined, b: RedeemStripeCheckoutRequest | PlainMessage<RedeemStripeCheckoutRequest> | undefined): boolean {
+    return proto3.util.equals(RedeemStripeCheckoutRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.RedeemStripeCheckoutResponse
+ */
+export class RedeemStripeCheckoutResponse extends Message<RedeemStripeCheckoutResponse> {
+  constructor(data?: PartialMessage<RedeemStripeCheckoutResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.RedeemStripeCheckoutResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RedeemStripeCheckoutResponse {
+    return new RedeemStripeCheckoutResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RedeemStripeCheckoutResponse {
+    return new RedeemStripeCheckoutResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RedeemStripeCheckoutResponse {
+    return new RedeemStripeCheckoutResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RedeemStripeCheckoutResponse | PlainMessage<RedeemStripeCheckoutResponse> | undefined, b: RedeemStripeCheckoutResponse | PlainMessage<RedeemStripeCheckoutResponse> | undefined): boolean {
+    return proto3.util.equals(RedeemStripeCheckoutResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetStripeBillingPortalURLRequest
+ */
+export class GetStripeBillingPortalURLRequest extends Message<GetStripeBillingPortalURLRequest> {
+  constructor(data?: PartialMessage<GetStripeBillingPortalURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetStripeBillingPortalURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStripeBillingPortalURLRequest {
+    return new GetStripeBillingPortalURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStripeBillingPortalURLRequest {
+    return new GetStripeBillingPortalURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStripeBillingPortalURLRequest {
+    return new GetStripeBillingPortalURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetStripeBillingPortalURLRequest | PlainMessage<GetStripeBillingPortalURLRequest> | undefined, b: GetStripeBillingPortalURLRequest | PlainMessage<GetStripeBillingPortalURLRequest> | undefined): boolean {
+    return proto3.util.equals(GetStripeBillingPortalURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetStripeBillingPortalURLResponse
+ */
+export class GetStripeBillingPortalURLResponse extends Message<GetStripeBillingPortalURLResponse> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<GetStripeBillingPortalURLResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetStripeBillingPortalURLResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStripeBillingPortalURLResponse {
+    return new GetStripeBillingPortalURLResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStripeBillingPortalURLResponse {
+    return new GetStripeBillingPortalURLResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStripeBillingPortalURLResponse {
+    return new GetStripeBillingPortalURLResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetStripeBillingPortalURLResponse | PlainMessage<GetStripeBillingPortalURLResponse> | undefined, b: GetStripeBillingPortalURLResponse | PlainMessage<GetStripeBillingPortalURLResponse> | undefined): boolean {
+    return proto3.util.equals(GetStripeBillingPortalURLResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.GetAppOrganizationRequest
  */
 export class GetAppOrganizationRequest extends Message<GetAppOrganizationRequest> {
@@ -1820,6 +3126,16 @@ export class GetAppOrganizationResponse extends Message<GetAppOrganizationRespon
    */
   googleHostedDomain = "";
 
+  /**
+   * @generated from field: bool entitled_management_api = 2;
+   */
+  entitledManagementApi = false;
+
+  /**
+   * @generated from field: bool has_stripe_customer_id = 3;
+   */
+  hasStripeCustomerId = false;
+
   constructor(data?: PartialMessage<GetAppOrganizationResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1829,6 +3145,8 @@ export class GetAppOrganizationResponse extends Message<GetAppOrganizationRespon
   static readonly typeName = "ssoready.v1.GetAppOrganizationResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "google_hosted_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "entitled_management_api", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "has_stripe_customer_id", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAppOrganizationResponse {
@@ -2502,9 +3820,9 @@ export class DeleteSAMLOAuthClientRequest extends Message<DeleteSAMLOAuthClientR
 }
 
 /**
- * @generated from message ssoready.v1.ListOrganizationsRequest
+ * @generated from message ssoready.v1.AppListOrganizationsRequest
  */
-export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> {
+export class AppListOrganizationsRequest extends Message<AppListOrganizationsRequest> {
   /**
    * @generated from field: string environment_id = 1;
    */
@@ -2515,39 +3833,39 @@ export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> 
    */
   pageToken = "";
 
-  constructor(data?: PartialMessage<ListOrganizationsRequest>) {
+  constructor(data?: PartialMessage<AppListOrganizationsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListOrganizationsRequest";
+  static readonly typeName = "ssoready.v1.AppListOrganizationsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListOrganizationsRequest {
-    return new ListOrganizationsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListOrganizationsRequest {
+    return new AppListOrganizationsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListOrganizationsRequest {
-    return new ListOrganizationsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListOrganizationsRequest {
+    return new AppListOrganizationsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListOrganizationsRequest {
-    return new ListOrganizationsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListOrganizationsRequest {
+    return new AppListOrganizationsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListOrganizationsRequest | PlainMessage<ListOrganizationsRequest> | undefined, b: ListOrganizationsRequest | PlainMessage<ListOrganizationsRequest> | undefined): boolean {
-    return proto3.util.equals(ListOrganizationsRequest, a, b);
+  static equals(a: AppListOrganizationsRequest | PlainMessage<AppListOrganizationsRequest> | undefined, b: AppListOrganizationsRequest | PlainMessage<AppListOrganizationsRequest> | undefined): boolean {
+    return proto3.util.equals(AppListOrganizationsRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListOrganizationsResponse
+ * @generated from message ssoready.v1.AppListOrganizationsResponse
  */
-export class ListOrganizationsResponse extends Message<ListOrganizationsResponse> {
+export class AppListOrganizationsResponse extends Message<AppListOrganizationsResponse> {
   /**
    * @generated from field: repeated ssoready.v1.Organization organizations = 1;
    */
@@ -2558,150 +3876,150 @@ export class ListOrganizationsResponse extends Message<ListOrganizationsResponse
    */
   nextPageToken = "";
 
-  constructor(data?: PartialMessage<ListOrganizationsResponse>) {
+  constructor(data?: PartialMessage<AppListOrganizationsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListOrganizationsResponse";
+  static readonly typeName = "ssoready.v1.AppListOrganizationsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organizations", kind: "message", T: Organization, repeated: true },
     { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListOrganizationsResponse {
-    return new ListOrganizationsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListOrganizationsResponse {
+    return new AppListOrganizationsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListOrganizationsResponse {
-    return new ListOrganizationsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListOrganizationsResponse {
+    return new AppListOrganizationsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListOrganizationsResponse {
-    return new ListOrganizationsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListOrganizationsResponse {
+    return new AppListOrganizationsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListOrganizationsResponse | PlainMessage<ListOrganizationsResponse> | undefined, b: ListOrganizationsResponse | PlainMessage<ListOrganizationsResponse> | undefined): boolean {
-    return proto3.util.equals(ListOrganizationsResponse, a, b);
+  static equals(a: AppListOrganizationsResponse | PlainMessage<AppListOrganizationsResponse> | undefined, b: AppListOrganizationsResponse | PlainMessage<AppListOrganizationsResponse> | undefined): boolean {
+    return proto3.util.equals(AppListOrganizationsResponse, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.GetOrganizationRequest
+ * @generated from message ssoready.v1.AppGetOrganizationRequest
  */
-export class GetOrganizationRequest extends Message<GetOrganizationRequest> {
+export class AppGetOrganizationRequest extends Message<AppGetOrganizationRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<GetOrganizationRequest>) {
+  constructor(data?: PartialMessage<AppGetOrganizationRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.GetOrganizationRequest";
+  static readonly typeName = "ssoready.v1.AppGetOrganizationRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOrganizationRequest {
-    return new GetOrganizationRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetOrganizationRequest {
+    return new AppGetOrganizationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
-    return new GetOrganizationRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetOrganizationRequest {
+    return new AppGetOrganizationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOrganizationRequest {
-    return new GetOrganizationRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetOrganizationRequest {
+    return new AppGetOrganizationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined, b: GetOrganizationRequest | PlainMessage<GetOrganizationRequest> | undefined): boolean {
-    return proto3.util.equals(GetOrganizationRequest, a, b);
+  static equals(a: AppGetOrganizationRequest | PlainMessage<AppGetOrganizationRequest> | undefined, b: AppGetOrganizationRequest | PlainMessage<AppGetOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(AppGetOrganizationRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.CreateOrganizationRequest
+ * @generated from message ssoready.v1.AppCreateOrganizationRequest
  */
-export class CreateOrganizationRequest extends Message<CreateOrganizationRequest> {
+export class AppCreateOrganizationRequest extends Message<AppCreateOrganizationRequest> {
   /**
    * @generated from field: ssoready.v1.Organization organization = 1;
    */
   organization?: Organization;
 
-  constructor(data?: PartialMessage<CreateOrganizationRequest>) {
+  constructor(data?: PartialMessage<AppCreateOrganizationRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.CreateOrganizationRequest";
+  static readonly typeName = "ssoready.v1.AppCreateOrganizationRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organization", kind: "message", T: Organization },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateOrganizationRequest {
-    return new CreateOrganizationRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppCreateOrganizationRequest {
+    return new AppCreateOrganizationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateOrganizationRequest {
-    return new CreateOrganizationRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppCreateOrganizationRequest {
+    return new AppCreateOrganizationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateOrganizationRequest {
-    return new CreateOrganizationRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppCreateOrganizationRequest {
+    return new AppCreateOrganizationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateOrganizationRequest | PlainMessage<CreateOrganizationRequest> | undefined, b: CreateOrganizationRequest | PlainMessage<CreateOrganizationRequest> | undefined): boolean {
-    return proto3.util.equals(CreateOrganizationRequest, a, b);
+  static equals(a: AppCreateOrganizationRequest | PlainMessage<AppCreateOrganizationRequest> | undefined, b: AppCreateOrganizationRequest | PlainMessage<AppCreateOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(AppCreateOrganizationRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.UpdateOrganizationRequest
+ * @generated from message ssoready.v1.AppUpdateOrganizationRequest
  */
-export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest> {
+export class AppUpdateOrganizationRequest extends Message<AppUpdateOrganizationRequest> {
   /**
    * @generated from field: ssoready.v1.Organization organization = 1;
    */
   organization?: Organization;
 
-  constructor(data?: PartialMessage<UpdateOrganizationRequest>) {
+  constructor(data?: PartialMessage<AppUpdateOrganizationRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.UpdateOrganizationRequest";
+  static readonly typeName = "ssoready.v1.AppUpdateOrganizationRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organization", kind: "message", T: Organization },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateOrganizationRequest {
-    return new UpdateOrganizationRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateOrganizationRequest {
+    return new AppUpdateOrganizationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
-    return new UpdateOrganizationRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateOrganizationRequest {
+    return new AppUpdateOrganizationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateOrganizationRequest {
-    return new UpdateOrganizationRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateOrganizationRequest {
+    return new AppUpdateOrganizationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined, b: UpdateOrganizationRequest | PlainMessage<UpdateOrganizationRequest> | undefined): boolean {
-    return proto3.util.equals(UpdateOrganizationRequest, a, b);
+  static equals(a: AppUpdateOrganizationRequest | PlainMessage<AppUpdateOrganizationRequest> | undefined, b: AppUpdateOrganizationRequest | PlainMessage<AppUpdateOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(AppUpdateOrganizationRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.CreateAdminSetupURLRequest
+ * @generated from message ssoready.v1.AppCreateAdminSetupURLRequest
  */
-export class CreateAdminSetupURLRequest extends Message<CreateAdminSetupURLRequest> {
+export class AppCreateAdminSetupURLRequest extends Message<AppCreateAdminSetupURLRequest> {
   /**
    * @generated from field: string organization_id = 1;
    */
@@ -2717,77 +4035,77 @@ export class CreateAdminSetupURLRequest extends Message<CreateAdminSetupURLReque
    */
   canManageScim = false;
 
-  constructor(data?: PartialMessage<CreateAdminSetupURLRequest>) {
+  constructor(data?: PartialMessage<AppCreateAdminSetupURLRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.CreateAdminSetupURLRequest";
+  static readonly typeName = "ssoready.v1.AppCreateAdminSetupURLRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "can_manage_saml", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "can_manage_scim", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAdminSetupURLRequest {
-    return new CreateAdminSetupURLRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppCreateAdminSetupURLRequest {
+    return new AppCreateAdminSetupURLRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateAdminSetupURLRequest {
-    return new CreateAdminSetupURLRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppCreateAdminSetupURLRequest {
+    return new AppCreateAdminSetupURLRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateAdminSetupURLRequest {
-    return new CreateAdminSetupURLRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppCreateAdminSetupURLRequest {
+    return new AppCreateAdminSetupURLRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateAdminSetupURLRequest | PlainMessage<CreateAdminSetupURLRequest> | undefined, b: CreateAdminSetupURLRequest | PlainMessage<CreateAdminSetupURLRequest> | undefined): boolean {
-    return proto3.util.equals(CreateAdminSetupURLRequest, a, b);
+  static equals(a: AppCreateAdminSetupURLRequest | PlainMessage<AppCreateAdminSetupURLRequest> | undefined, b: AppCreateAdminSetupURLRequest | PlainMessage<AppCreateAdminSetupURLRequest> | undefined): boolean {
+    return proto3.util.equals(AppCreateAdminSetupURLRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.CreateAdminSetupURLResponse
+ * @generated from message ssoready.v1.AppCreateAdminSetupURLResponse
  */
-export class CreateAdminSetupURLResponse extends Message<CreateAdminSetupURLResponse> {
+export class AppCreateAdminSetupURLResponse extends Message<AppCreateAdminSetupURLResponse> {
   /**
    * @generated from field: string url = 1;
    */
   url = "";
 
-  constructor(data?: PartialMessage<CreateAdminSetupURLResponse>) {
+  constructor(data?: PartialMessage<AppCreateAdminSetupURLResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.CreateAdminSetupURLResponse";
+  static readonly typeName = "ssoready.v1.AppCreateAdminSetupURLResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAdminSetupURLResponse {
-    return new CreateAdminSetupURLResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppCreateAdminSetupURLResponse {
+    return new AppCreateAdminSetupURLResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateAdminSetupURLResponse {
-    return new CreateAdminSetupURLResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppCreateAdminSetupURLResponse {
+    return new AppCreateAdminSetupURLResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateAdminSetupURLResponse {
-    return new CreateAdminSetupURLResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppCreateAdminSetupURLResponse {
+    return new AppCreateAdminSetupURLResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateAdminSetupURLResponse | PlainMessage<CreateAdminSetupURLResponse> | undefined, b: CreateAdminSetupURLResponse | PlainMessage<CreateAdminSetupURLResponse> | undefined): boolean {
-    return proto3.util.equals(CreateAdminSetupURLResponse, a, b);
+  static equals(a: AppCreateAdminSetupURLResponse | PlainMessage<AppCreateAdminSetupURLResponse> | undefined, b: AppCreateAdminSetupURLResponse | PlainMessage<AppCreateAdminSetupURLResponse> | undefined): boolean {
+    return proto3.util.equals(AppCreateAdminSetupURLResponse, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLConnectionsRequest
+ * @generated from message ssoready.v1.AppListSAMLConnectionsRequest
  */
-export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsRequest> {
+export class AppListSAMLConnectionsRequest extends Message<AppListSAMLConnectionsRequest> {
   /**
    * @generated from field: string organization_id = 1;
    */
@@ -2798,39 +4116,39 @@ export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsReque
    */
   pageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLConnectionsRequest>) {
+  constructor(data?: PartialMessage<AppListSAMLConnectionsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLConnectionsRequest";
+  static readonly typeName = "ssoready.v1.AppListSAMLConnectionsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLConnectionsRequest {
-    return new ListSAMLConnectionsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSAMLConnectionsRequest {
+    return new AppListSAMLConnectionsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLConnectionsRequest {
-    return new ListSAMLConnectionsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListSAMLConnectionsRequest {
+    return new AppListSAMLConnectionsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLConnectionsRequest {
-    return new ListSAMLConnectionsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListSAMLConnectionsRequest {
+    return new AppListSAMLConnectionsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLConnectionsRequest | PlainMessage<ListSAMLConnectionsRequest> | undefined, b: ListSAMLConnectionsRequest | PlainMessage<ListSAMLConnectionsRequest> | undefined): boolean {
-    return proto3.util.equals(ListSAMLConnectionsRequest, a, b);
+  static equals(a: AppListSAMLConnectionsRequest | PlainMessage<AppListSAMLConnectionsRequest> | undefined, b: AppListSAMLConnectionsRequest | PlainMessage<AppListSAMLConnectionsRequest> | undefined): boolean {
+    return proto3.util.equals(AppListSAMLConnectionsRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLConnectionsResponse
+ * @generated from message ssoready.v1.AppListSAMLConnectionsResponse
  */
-export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResponse> {
+export class AppListSAMLConnectionsResponse extends Message<AppListSAMLConnectionsResponse> {
   /**
    * @generated from field: repeated ssoready.v1.SAMLConnection saml_connections = 1;
    */
@@ -2841,150 +4159,150 @@ export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResp
    */
   nextPageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLConnectionsResponse>) {
+  constructor(data?: PartialMessage<AppListSAMLConnectionsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLConnectionsResponse";
+  static readonly typeName = "ssoready.v1.AppListSAMLConnectionsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_connections", kind: "message", T: SAMLConnection, repeated: true },
     { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLConnectionsResponse {
-    return new ListSAMLConnectionsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSAMLConnectionsResponse {
+    return new AppListSAMLConnectionsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLConnectionsResponse {
-    return new ListSAMLConnectionsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListSAMLConnectionsResponse {
+    return new AppListSAMLConnectionsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLConnectionsResponse {
-    return new ListSAMLConnectionsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListSAMLConnectionsResponse {
+    return new AppListSAMLConnectionsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined, b: ListSAMLConnectionsResponse | PlainMessage<ListSAMLConnectionsResponse> | undefined): boolean {
-    return proto3.util.equals(ListSAMLConnectionsResponse, a, b);
+  static equals(a: AppListSAMLConnectionsResponse | PlainMessage<AppListSAMLConnectionsResponse> | undefined, b: AppListSAMLConnectionsResponse | PlainMessage<AppListSAMLConnectionsResponse> | undefined): boolean {
+    return proto3.util.equals(AppListSAMLConnectionsResponse, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.GetSAMLConnectionRequest
+ * @generated from message ssoready.v1.AppGetSAMLConnectionRequest
  */
-export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> {
+export class AppGetSAMLConnectionRequest extends Message<AppGetSAMLConnectionRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<GetSAMLConnectionRequest>) {
+  constructor(data?: PartialMessage<AppGetSAMLConnectionRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.GetSAMLConnectionRequest";
+  static readonly typeName = "ssoready.v1.AppGetSAMLConnectionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLConnectionRequest {
-    return new GetSAMLConnectionRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetSAMLConnectionRequest {
+    return new AppGetSAMLConnectionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
-    return new GetSAMLConnectionRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetSAMLConnectionRequest {
+    return new AppGetSAMLConnectionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLConnectionRequest {
-    return new GetSAMLConnectionRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetSAMLConnectionRequest {
+    return new AppGetSAMLConnectionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined, b: GetSAMLConnectionRequest | PlainMessage<GetSAMLConnectionRequest> | undefined): boolean {
-    return proto3.util.equals(GetSAMLConnectionRequest, a, b);
+  static equals(a: AppGetSAMLConnectionRequest | PlainMessage<AppGetSAMLConnectionRequest> | undefined, b: AppGetSAMLConnectionRequest | PlainMessage<AppGetSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AppGetSAMLConnectionRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.CreateSAMLConnectionRequest
+ * @generated from message ssoready.v1.AppCreateSAMLConnectionRequest
  */
-export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionRequest> {
+export class AppCreateSAMLConnectionRequest extends Message<AppCreateSAMLConnectionRequest> {
   /**
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
    */
   samlConnection?: SAMLConnection;
 
-  constructor(data?: PartialMessage<CreateSAMLConnectionRequest>) {
+  constructor(data?: PartialMessage<AppCreateSAMLConnectionRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.CreateSAMLConnectionRequest";
+  static readonly typeName = "ssoready.v1.AppCreateSAMLConnectionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSAMLConnectionRequest {
-    return new CreateSAMLConnectionRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppCreateSAMLConnectionRequest {
+    return new AppCreateSAMLConnectionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
-    return new CreateSAMLConnectionRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppCreateSAMLConnectionRequest {
+    return new AppCreateSAMLConnectionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSAMLConnectionRequest {
-    return new CreateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppCreateSAMLConnectionRequest {
+    return new AppCreateSAMLConnectionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined, b: CreateSAMLConnectionRequest | PlainMessage<CreateSAMLConnectionRequest> | undefined): boolean {
-    return proto3.util.equals(CreateSAMLConnectionRequest, a, b);
+  static equals(a: AppCreateSAMLConnectionRequest | PlainMessage<AppCreateSAMLConnectionRequest> | undefined, b: AppCreateSAMLConnectionRequest | PlainMessage<AppCreateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AppCreateSAMLConnectionRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.UpdateSAMLConnectionRequest
+ * @generated from message ssoready.v1.AppUpdateSAMLConnectionRequest
  */
-export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionRequest> {
+export class AppUpdateSAMLConnectionRequest extends Message<AppUpdateSAMLConnectionRequest> {
   /**
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
    */
   samlConnection?: SAMLConnection;
 
-  constructor(data?: PartialMessage<UpdateSAMLConnectionRequest>) {
+  constructor(data?: PartialMessage<AppUpdateSAMLConnectionRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.UpdateSAMLConnectionRequest";
+  static readonly typeName = "ssoready.v1.AppUpdateSAMLConnectionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_connection", kind: "message", T: SAMLConnection },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSAMLConnectionRequest {
-    return new UpdateSAMLConnectionRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateSAMLConnectionRequest {
+    return new AppUpdateSAMLConnectionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
-    return new UpdateSAMLConnectionRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateSAMLConnectionRequest {
+    return new AppUpdateSAMLConnectionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSAMLConnectionRequest {
-    return new UpdateSAMLConnectionRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateSAMLConnectionRequest {
+    return new AppUpdateSAMLConnectionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined, b: UpdateSAMLConnectionRequest | PlainMessage<UpdateSAMLConnectionRequest> | undefined): boolean {
-    return proto3.util.equals(UpdateSAMLConnectionRequest, a, b);
+  static equals(a: AppUpdateSAMLConnectionRequest | PlainMessage<AppUpdateSAMLConnectionRequest> | undefined, b: AppUpdateSAMLConnectionRequest | PlainMessage<AppUpdateSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AppUpdateSAMLConnectionRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLFlowsRequest
+ * @generated from message ssoready.v1.AppListSAMLFlowsRequest
  */
-export class ListSAMLFlowsRequest extends Message<ListSAMLFlowsRequest> {
+export class AppListSAMLFlowsRequest extends Message<AppListSAMLFlowsRequest> {
   /**
    * @generated from field: string saml_connection_id = 1;
    */
@@ -2995,39 +4313,39 @@ export class ListSAMLFlowsRequest extends Message<ListSAMLFlowsRequest> {
    */
   pageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLFlowsRequest>) {
+  constructor(data?: PartialMessage<AppListSAMLFlowsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLFlowsRequest";
+  static readonly typeName = "ssoready.v1.AppListSAMLFlowsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowsRequest {
-    return new ListSAMLFlowsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSAMLFlowsRequest {
+    return new AppListSAMLFlowsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowsRequest {
-    return new ListSAMLFlowsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListSAMLFlowsRequest {
+    return new AppListSAMLFlowsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowsRequest {
-    return new ListSAMLFlowsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListSAMLFlowsRequest {
+    return new AppListSAMLFlowsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined, b: ListSAMLFlowsRequest | PlainMessage<ListSAMLFlowsRequest> | undefined): boolean {
-    return proto3.util.equals(ListSAMLFlowsRequest, a, b);
+  static equals(a: AppListSAMLFlowsRequest | PlainMessage<AppListSAMLFlowsRequest> | undefined, b: AppListSAMLFlowsRequest | PlainMessage<AppListSAMLFlowsRequest> | undefined): boolean {
+    return proto3.util.equals(AppListSAMLFlowsRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSAMLFlowsResponse
+ * @generated from message ssoready.v1.AppListSAMLFlowsResponse
  */
-export class ListSAMLFlowsResponse extends Message<ListSAMLFlowsResponse> {
+export class AppListSAMLFlowsResponse extends Message<AppListSAMLFlowsResponse> {
   /**
    * @generated from field: repeated ssoready.v1.SAMLFlow saml_flows = 1;
    */
@@ -3038,69 +4356,69 @@ export class ListSAMLFlowsResponse extends Message<ListSAMLFlowsResponse> {
    */
   nextPageToken = "";
 
-  constructor(data?: PartialMessage<ListSAMLFlowsResponse>) {
+  constructor(data?: PartialMessage<AppListSAMLFlowsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSAMLFlowsResponse";
+  static readonly typeName = "ssoready.v1.AppListSAMLFlowsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "saml_flows", kind: "message", T: SAMLFlow, repeated: true },
     { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSAMLFlowsResponse {
-    return new ListSAMLFlowsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSAMLFlowsResponse {
+    return new AppListSAMLFlowsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSAMLFlowsResponse {
-    return new ListSAMLFlowsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListSAMLFlowsResponse {
+    return new AppListSAMLFlowsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSAMLFlowsResponse {
-    return new ListSAMLFlowsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListSAMLFlowsResponse {
+    return new AppListSAMLFlowsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined, b: ListSAMLFlowsResponse | PlainMessage<ListSAMLFlowsResponse> | undefined): boolean {
-    return proto3.util.equals(ListSAMLFlowsResponse, a, b);
+  static equals(a: AppListSAMLFlowsResponse | PlainMessage<AppListSAMLFlowsResponse> | undefined, b: AppListSAMLFlowsResponse | PlainMessage<AppListSAMLFlowsResponse> | undefined): boolean {
+    return proto3.util.equals(AppListSAMLFlowsResponse, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.GetSAMLFlowRequest
+ * @generated from message ssoready.v1.AppGetSAMLFlowRequest
  */
-export class GetSAMLFlowRequest extends Message<GetSAMLFlowRequest> {
+export class AppGetSAMLFlowRequest extends Message<AppGetSAMLFlowRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<GetSAMLFlowRequest>) {
+  constructor(data?: PartialMessage<AppGetSAMLFlowRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.GetSAMLFlowRequest";
+  static readonly typeName = "ssoready.v1.AppGetSAMLFlowRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSAMLFlowRequest {
-    return new GetSAMLFlowRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetSAMLFlowRequest {
+    return new AppGetSAMLFlowRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSAMLFlowRequest {
-    return new GetSAMLFlowRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetSAMLFlowRequest {
+    return new AppGetSAMLFlowRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSAMLFlowRequest {
-    return new GetSAMLFlowRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetSAMLFlowRequest {
+    return new AppGetSAMLFlowRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined, b: GetSAMLFlowRequest | PlainMessage<GetSAMLFlowRequest> | undefined): boolean {
-    return proto3.util.equals(GetSAMLFlowRequest, a, b);
+  static equals(a: AppGetSAMLFlowRequest | PlainMessage<AppGetSAMLFlowRequest> | undefined, b: AppGetSAMLFlowRequest | PlainMessage<AppGetSAMLFlowRequest> | undefined): boolean {
+    return proto3.util.equals(AppGetSAMLFlowRequest, a, b);
   }
 }
 
@@ -3191,9 +4509,9 @@ export class ParseSAMLMetadataResponse extends Message<ParseSAMLMetadataResponse
 }
 
 /**
- * @generated from message ssoready.v1.ListSCIMDirectoriesRequest
+ * @generated from message ssoready.v1.AppListSCIMDirectoriesRequest
  */
-export class ListSCIMDirectoriesRequest extends Message<ListSCIMDirectoriesRequest> {
+export class AppListSCIMDirectoriesRequest extends Message<AppListSCIMDirectoriesRequest> {
   /**
    * @generated from field: string organization_id = 1;
    */
@@ -3204,39 +4522,39 @@ export class ListSCIMDirectoriesRequest extends Message<ListSCIMDirectoriesReque
    */
   pageToken = "";
 
-  constructor(data?: PartialMessage<ListSCIMDirectoriesRequest>) {
+  constructor(data?: PartialMessage<AppListSCIMDirectoriesRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSCIMDirectoriesRequest";
+  static readonly typeName = "ssoready.v1.AppListSCIMDirectoriesRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMDirectoriesRequest {
-    return new ListSCIMDirectoriesRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSCIMDirectoriesRequest {
+    return new AppListSCIMDirectoriesRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesRequest {
-    return new ListSCIMDirectoriesRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListSCIMDirectoriesRequest {
+    return new AppListSCIMDirectoriesRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesRequest {
-    return new ListSCIMDirectoriesRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListSCIMDirectoriesRequest {
+    return new AppListSCIMDirectoriesRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSCIMDirectoriesRequest | PlainMessage<ListSCIMDirectoriesRequest> | undefined, b: ListSCIMDirectoriesRequest | PlainMessage<ListSCIMDirectoriesRequest> | undefined): boolean {
-    return proto3.util.equals(ListSCIMDirectoriesRequest, a, b);
+  static equals(a: AppListSCIMDirectoriesRequest | PlainMessage<AppListSCIMDirectoriesRequest> | undefined, b: AppListSCIMDirectoriesRequest | PlainMessage<AppListSCIMDirectoriesRequest> | undefined): boolean {
+    return proto3.util.equals(AppListSCIMDirectoriesRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.ListSCIMDirectoriesResponse
+ * @generated from message ssoready.v1.AppListSCIMDirectoriesResponse
  */
-export class ListSCIMDirectoriesResponse extends Message<ListSCIMDirectoriesResponse> {
+export class AppListSCIMDirectoriesResponse extends Message<AppListSCIMDirectoriesResponse> {
   /**
    * @generated from field: repeated ssoready.v1.SCIMDirectory scim_directories = 1;
    */
@@ -3247,217 +4565,217 @@ export class ListSCIMDirectoriesResponse extends Message<ListSCIMDirectoriesResp
    */
   nextPageToken = "";
 
-  constructor(data?: PartialMessage<ListSCIMDirectoriesResponse>) {
+  constructor(data?: PartialMessage<AppListSCIMDirectoriesResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.ListSCIMDirectoriesResponse";
+  static readonly typeName = "ssoready.v1.AppListSCIMDirectoriesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "scim_directories", kind: "message", T: SCIMDirectory, repeated: true },
     { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSCIMDirectoriesResponse {
-    return new ListSCIMDirectoriesResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppListSCIMDirectoriesResponse {
+    return new AppListSCIMDirectoriesResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesResponse {
-    return new ListSCIMDirectoriesResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppListSCIMDirectoriesResponse {
+    return new AppListSCIMDirectoriesResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSCIMDirectoriesResponse {
-    return new ListSCIMDirectoriesResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppListSCIMDirectoriesResponse {
+    return new AppListSCIMDirectoriesResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListSCIMDirectoriesResponse | PlainMessage<ListSCIMDirectoriesResponse> | undefined, b: ListSCIMDirectoriesResponse | PlainMessage<ListSCIMDirectoriesResponse> | undefined): boolean {
-    return proto3.util.equals(ListSCIMDirectoriesResponse, a, b);
+  static equals(a: AppListSCIMDirectoriesResponse | PlainMessage<AppListSCIMDirectoriesResponse> | undefined, b: AppListSCIMDirectoriesResponse | PlainMessage<AppListSCIMDirectoriesResponse> | undefined): boolean {
+    return proto3.util.equals(AppListSCIMDirectoriesResponse, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.GetSCIMDirectoryRequest
+ * @generated from message ssoready.v1.AppGetSCIMDirectoryRequest
  */
-export class GetSCIMDirectoryRequest extends Message<GetSCIMDirectoryRequest> {
+export class AppGetSCIMDirectoryRequest extends Message<AppGetSCIMDirectoryRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<GetSCIMDirectoryRequest>) {
+  constructor(data?: PartialMessage<AppGetSCIMDirectoryRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.GetSCIMDirectoryRequest";
+  static readonly typeName = "ssoready.v1.AppGetSCIMDirectoryRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSCIMDirectoryRequest {
-    return new GetSCIMDirectoryRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetSCIMDirectoryRequest {
+    return new AppGetSCIMDirectoryRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSCIMDirectoryRequest {
-    return new GetSCIMDirectoryRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetSCIMDirectoryRequest {
+    return new AppGetSCIMDirectoryRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSCIMDirectoryRequest {
-    return new GetSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetSCIMDirectoryRequest {
+    return new AppGetSCIMDirectoryRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetSCIMDirectoryRequest | PlainMessage<GetSCIMDirectoryRequest> | undefined, b: GetSCIMDirectoryRequest | PlainMessage<GetSCIMDirectoryRequest> | undefined): boolean {
-    return proto3.util.equals(GetSCIMDirectoryRequest, a, b);
+  static equals(a: AppGetSCIMDirectoryRequest | PlainMessage<AppGetSCIMDirectoryRequest> | undefined, b: AppGetSCIMDirectoryRequest | PlainMessage<AppGetSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(AppGetSCIMDirectoryRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.CreateSCIMDirectoryRequest
+ * @generated from message ssoready.v1.AppCreateSCIMDirectoryRequest
  */
-export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryRequest> {
+export class AppCreateSCIMDirectoryRequest extends Message<AppCreateSCIMDirectoryRequest> {
   /**
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
    */
   scimDirectory?: SCIMDirectory;
 
-  constructor(data?: PartialMessage<CreateSCIMDirectoryRequest>) {
+  constructor(data?: PartialMessage<AppCreateSCIMDirectoryRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.CreateSCIMDirectoryRequest";
+  static readonly typeName = "ssoready.v1.AppCreateSCIMDirectoryRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateSCIMDirectoryRequest {
-    return new CreateSCIMDirectoryRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppCreateSCIMDirectoryRequest {
+    return new AppCreateSCIMDirectoryRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryRequest {
-    return new CreateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppCreateSCIMDirectoryRequest {
+    return new AppCreateSCIMDirectoryRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateSCIMDirectoryRequest {
-    return new CreateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppCreateSCIMDirectoryRequest {
+    return new AppCreateSCIMDirectoryRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateSCIMDirectoryRequest | PlainMessage<CreateSCIMDirectoryRequest> | undefined, b: CreateSCIMDirectoryRequest | PlainMessage<CreateSCIMDirectoryRequest> | undefined): boolean {
-    return proto3.util.equals(CreateSCIMDirectoryRequest, a, b);
+  static equals(a: AppCreateSCIMDirectoryRequest | PlainMessage<AppCreateSCIMDirectoryRequest> | undefined, b: AppCreateSCIMDirectoryRequest | PlainMessage<AppCreateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(AppCreateSCIMDirectoryRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.UpdateSCIMDirectoryRequest
+ * @generated from message ssoready.v1.AppUpdateSCIMDirectoryRequest
  */
-export class UpdateSCIMDirectoryRequest extends Message<UpdateSCIMDirectoryRequest> {
+export class AppUpdateSCIMDirectoryRequest extends Message<AppUpdateSCIMDirectoryRequest> {
   /**
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
    */
   scimDirectory?: SCIMDirectory;
 
-  constructor(data?: PartialMessage<UpdateSCIMDirectoryRequest>) {
+  constructor(data?: PartialMessage<AppUpdateSCIMDirectoryRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.UpdateSCIMDirectoryRequest";
+  static readonly typeName = "ssoready.v1.AppUpdateSCIMDirectoryRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "scim_directory", kind: "message", T: SCIMDirectory },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateSCIMDirectoryRequest {
-    return new UpdateSCIMDirectoryRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateSCIMDirectoryRequest {
+    return new AppUpdateSCIMDirectoryRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryRequest {
-    return new UpdateSCIMDirectoryRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateSCIMDirectoryRequest {
+    return new AppUpdateSCIMDirectoryRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateSCIMDirectoryRequest {
-    return new UpdateSCIMDirectoryRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateSCIMDirectoryRequest {
+    return new AppUpdateSCIMDirectoryRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateSCIMDirectoryRequest | PlainMessage<UpdateSCIMDirectoryRequest> | undefined, b: UpdateSCIMDirectoryRequest | PlainMessage<UpdateSCIMDirectoryRequest> | undefined): boolean {
-    return proto3.util.equals(UpdateSCIMDirectoryRequest, a, b);
+  static equals(a: AppUpdateSCIMDirectoryRequest | PlainMessage<AppUpdateSCIMDirectoryRequest> | undefined, b: AppUpdateSCIMDirectoryRequest | PlainMessage<AppUpdateSCIMDirectoryRequest> | undefined): boolean {
+    return proto3.util.equals(AppUpdateSCIMDirectoryRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenRequest
+ * @generated from message ssoready.v1.AppRotateSCIMDirectoryBearerTokenRequest
  */
-export class RotateSCIMDirectoryBearerTokenRequest extends Message<RotateSCIMDirectoryBearerTokenRequest> {
+export class AppRotateSCIMDirectoryBearerTokenRequest extends Message<AppRotateSCIMDirectoryBearerTokenRequest> {
   /**
    * @generated from field: string scim_directory_id = 1;
    */
   scimDirectoryId = "";
 
-  constructor(data?: PartialMessage<RotateSCIMDirectoryBearerTokenRequest>) {
+  constructor(data?: PartialMessage<AppRotateSCIMDirectoryBearerTokenRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.RotateSCIMDirectoryBearerTokenRequest";
+  static readonly typeName = "ssoready.v1.AppRotateSCIMDirectoryBearerTokenRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "scim_directory_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
-    return new RotateSCIMDirectoryBearerTokenRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppRotateSCIMDirectoryBearerTokenRequest {
+    return new AppRotateSCIMDirectoryBearerTokenRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
-    return new RotateSCIMDirectoryBearerTokenRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppRotateSCIMDirectoryBearerTokenRequest {
+    return new AppRotateSCIMDirectoryBearerTokenRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenRequest {
-    return new RotateSCIMDirectoryBearerTokenRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppRotateSCIMDirectoryBearerTokenRequest {
+    return new AppRotateSCIMDirectoryBearerTokenRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RotateSCIMDirectoryBearerTokenRequest | PlainMessage<RotateSCIMDirectoryBearerTokenRequest> | undefined, b: RotateSCIMDirectoryBearerTokenRequest | PlainMessage<RotateSCIMDirectoryBearerTokenRequest> | undefined): boolean {
-    return proto3.util.equals(RotateSCIMDirectoryBearerTokenRequest, a, b);
+  static equals(a: AppRotateSCIMDirectoryBearerTokenRequest | PlainMessage<AppRotateSCIMDirectoryBearerTokenRequest> | undefined, b: AppRotateSCIMDirectoryBearerTokenRequest | PlainMessage<AppRotateSCIMDirectoryBearerTokenRequest> | undefined): boolean {
+    return proto3.util.equals(AppRotateSCIMDirectoryBearerTokenRequest, a, b);
   }
 }
 
 /**
- * @generated from message ssoready.v1.RotateSCIMDirectoryBearerTokenResponse
+ * @generated from message ssoready.v1.AppRotateSCIMDirectoryBearerTokenResponse
  */
-export class RotateSCIMDirectoryBearerTokenResponse extends Message<RotateSCIMDirectoryBearerTokenResponse> {
+export class AppRotateSCIMDirectoryBearerTokenResponse extends Message<AppRotateSCIMDirectoryBearerTokenResponse> {
   /**
    * @generated from field: string bearer_token = 1;
    */
   bearerToken = "";
 
-  constructor(data?: PartialMessage<RotateSCIMDirectoryBearerTokenResponse>) {
+  constructor(data?: PartialMessage<AppRotateSCIMDirectoryBearerTokenResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "ssoready.v1.RotateSCIMDirectoryBearerTokenResponse";
+  static readonly typeName = "ssoready.v1.AppRotateSCIMDirectoryBearerTokenResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
-    return new RotateSCIMDirectoryBearerTokenResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppRotateSCIMDirectoryBearerTokenResponse {
+    return new AppRotateSCIMDirectoryBearerTokenResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
-    return new RotateSCIMDirectoryBearerTokenResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppRotateSCIMDirectoryBearerTokenResponse {
+    return new AppRotateSCIMDirectoryBearerTokenResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RotateSCIMDirectoryBearerTokenResponse {
-    return new RotateSCIMDirectoryBearerTokenResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppRotateSCIMDirectoryBearerTokenResponse {
+    return new AppRotateSCIMDirectoryBearerTokenResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RotateSCIMDirectoryBearerTokenResponse | PlainMessage<RotateSCIMDirectoryBearerTokenResponse> | undefined, b: RotateSCIMDirectoryBearerTokenResponse | PlainMessage<RotateSCIMDirectoryBearerTokenResponse> | undefined): boolean {
-    return proto3.util.equals(RotateSCIMDirectoryBearerTokenResponse, a, b);
+  static equals(a: AppRotateSCIMDirectoryBearerTokenResponse | PlainMessage<AppRotateSCIMDirectoryBearerTokenResponse> | undefined, b: AppRotateSCIMDirectoryBearerTokenResponse | PlainMessage<AppRotateSCIMDirectoryBearerTokenResponse> | undefined): boolean {
+    return proto3.util.equals(AppRotateSCIMDirectoryBearerTokenResponse, a, b);
   }
 }
 

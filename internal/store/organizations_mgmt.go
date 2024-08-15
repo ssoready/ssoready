@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"sort"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
@@ -11,23 +10,15 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) AppListOrganizations(ctx context.Context, req *ssoreadyv1.AppListOrganizationsRequest) (*ssoreadyv1.AppListOrganizationsResponse, error) {
+func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrganizationsRequest) (*ssoreadyv1.ListOrganizationsResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	envID, err := idformat.Environment.Parse(req.EnvironmentId)
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
 	if err != nil {
-		return nil, err
-	}
-
-	// idor check
-	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                envID,
-	}); err != nil {
 		return nil, err
 	}
 
@@ -67,14 +58,19 @@ func (s *Store) AppListOrganizations(ctx context.Context, req *ssoreadyv1.AppLis
 		orgs = orgs[:limit]
 	}
 
-	return &ssoreadyv1.AppListOrganizationsResponse{
+	return &ssoreadyv1.ListOrganizationsResponse{
 		Organizations: orgs,
 		NextPageToken: nextPageToken,
 	}, nil
 }
 
-func (s *Store) AppGetOrganization(ctx context.Context, req *ssoreadyv1.AppGetOrganizationRequest) (*ssoreadyv1.Organization, error) {
+func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganizationRequest) (*ssoreadyv1.GetOrganizationResponse, error) {
 	id, err := idformat.Organization.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,9 +81,9 @@ func (s *Store) AppGetOrganization(ctx context.Context, req *ssoreadyv1.AppGetOr
 	}
 	defer rollback()
 
-	qOrg, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                id,
+	qOrg, err := q.ManagementGetOrganization(ctx, queries.ManagementGetOrganizationParams{
+		EnvironmentID: envID,
+		ID:            id,
 	})
 	if err != nil {
 		return nil, err
@@ -98,26 +94,18 @@ func (s *Store) AppGetOrganization(ctx context.Context, req *ssoreadyv1.AppGetOr
 		return nil, err
 	}
 
-	return parseOrganization(qOrg, qOrgDomains), nil
+	return &ssoreadyv1.GetOrganizationResponse{Organization: parseOrganization(qOrg, qOrgDomains)}, nil
 }
 
-func (s *Store) AppCreateOrganization(ctx context.Context, req *ssoreadyv1.AppCreateOrganizationRequest) (*ssoreadyv1.Organization, error) {
+func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOrganizationRequest) (*ssoreadyv1.CreateOrganizationResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	envID, err := idformat.Environment.Parse(req.Organization.EnvironmentId)
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
 	if err != nil {
-		return nil, err
-	}
-
-	// idor check
-	if _, err = q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                envID,
-	}); err != nil {
 		return nil, err
 	}
 
@@ -152,25 +140,30 @@ func (s *Store) AppCreateOrganization(ctx context.Context, req *ssoreadyv1.AppCr
 		return nil, err
 	}
 
-	return parseOrganization(qOrg, qOrgDomains), nil
+	return &ssoreadyv1.CreateOrganizationResponse{Organization: parseOrganization(qOrg, qOrgDomains)}, nil
 }
 
-func (s *Store) AppUpdateOrganization(ctx context.Context, req *ssoreadyv1.AppUpdateOrganizationRequest) (*ssoreadyv1.Organization, error) {
+func (s *Store) UpdateOrganization(ctx context.Context, req *ssoreadyv1.UpdateOrganizationRequest) (*ssoreadyv1.UpdateOrganizationResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	id, err := idformat.Organization.Parse(req.Organization.Id)
+	id, err := idformat.Organization.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
 	if err != nil {
 		return nil, err
 	}
 
 	// authz check
-	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                id,
+	if _, err = q.ManagementGetOrganization(ctx, queries.ManagementGetOrganizationParams{
+		EnvironmentID: envID,
+		ID:            id,
 	}); err != nil {
 		return nil, err
 	}
@@ -209,22 +202,5 @@ func (s *Store) AppUpdateOrganization(ctx context.Context, req *ssoreadyv1.AppUp
 		return nil, err
 	}
 
-	return parseOrganization(qOrg, qOrgDomains), nil
-}
-
-func parseOrganization(qOrg queries.Organization, qOrgDomains []queries.OrganizationDomain) *ssoreadyv1.Organization {
-	var domains []string
-	for _, qOrgDomain := range qOrgDomains {
-		if qOrgDomain.OrganizationID == qOrg.ID {
-			domains = append(domains, qOrgDomain.Domain)
-		}
-	}
-	sort.Strings(domains)
-
-	return &ssoreadyv1.Organization{
-		Id:            idformat.Organization.Format(qOrg.ID),
-		EnvironmentId: idformat.Environment.Format(qOrg.EnvironmentID),
-		ExternalId:    derefOrEmpty(qOrg.ExternalID),
-		Domains:       domains,
-	}
+	return &ssoreadyv1.UpdateOrganizationResponse{Organization: parseOrganization(qOrg, qOrgDomains)}, nil
 }

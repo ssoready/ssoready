@@ -7,20 +7,13 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
-  createAdminSetupURL,
-  createOrganization,
-  createSAMLConnection,
-  createSCIMDirectory,
-  getEnvironment,
-  getOrganization,
-  getSAMLConnection,
-  listOrganizations,
-  listSAMLConnections,
-  listSAMLFlows,
-  listSCIMDirectories,
-  updateEnvironment,
-  updateOrganization,
-  updateSAMLConnection,
+  appCreateAdminSetupURL,
+  appCreateSAMLConnection,
+  appCreateSCIMDirectory,
+  appGetOrganization,
+  appListSAMLConnections,
+  appListSCIMDirectories,
+  appUpdateOrganization,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -86,7 +79,7 @@ import { Switch } from "@/components/ui/switch";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
-  const { data: organization } = useQuery(getOrganization, {
+  const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
   const {
@@ -94,7 +87,7 @@ export function ViewOrganizationPage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    listSAMLConnections,
+    appListSAMLConnections,
     { organizationId, pageToken: "" },
     {
       pageParamKey: "pageToken",
@@ -102,7 +95,7 @@ export function ViewOrganizationPage() {
     },
   );
 
-  const createSAMLConnectionMutation = useMutation(createSAMLConnection);
+  const createSAMLConnectionMutation = useMutation(appCreateSAMLConnection);
   const navigate = useNavigate();
   const handleCreateSAMLConnection = useCallback(async () => {
     const samlConnection = await createSAMLConnectionMutation.mutateAsync({
@@ -260,7 +253,7 @@ const AdminSetupURLFormSchema = z.object({
 
 function AdminSetupURLCard() {
   const { organizationId } = useParams();
-  const createAdminSetupURLMutation = useMutation(createAdminSetupURL);
+  const createAdminSetupURLMutation = useMutation(appCreateAdminSetupURL);
   const handleSubmit = async (
     values: z.infer<typeof AdminSetupURLFormSchema>,
     e: any,
@@ -401,7 +394,7 @@ function EditOrganizationAlertDialog({
   });
 
   const [open, setOpen] = useState(false);
-  const updateOrganizationMutation = useMutation(updateOrganization);
+  const updateOrganizationMutation = useMutation(appUpdateOrganization);
   const queryClient = useQueryClient();
   const handleSubmit = useCallback(
     async (values: z.infer<typeof FormSchema>, e: any) => {
@@ -415,7 +408,7 @@ function EditOrganizationAlertDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getOrganization, {
+        queryKey: createConnectQueryKey(appGetOrganization, {
           id: organization.id,
         }),
       });
@@ -493,7 +486,7 @@ function EditOrganizationAlertDialog({
 
 function OrganizationSCIMDirectoriesPage() {
   const { environmentId, organizationId } = useParams();
-  const { data: organization } = useQuery(getOrganization, {
+  const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
   const {
@@ -501,7 +494,7 @@ function OrganizationSCIMDirectoriesPage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    listSCIMDirectories,
+    appListSCIMDirectories,
     { organizationId, pageToken: "" },
     {
       pageParamKey: "pageToken",
@@ -509,7 +502,7 @@ function OrganizationSCIMDirectoriesPage() {
     },
   );
 
-  const createSCIMDirectoryMutation = useMutation(createSCIMDirectory);
+  const createSCIMDirectoryMutation = useMutation(appCreateSCIMDirectory);
   const navigate = useNavigate();
   const handleCreateSCIMDirectory = useCallback(async () => {
     const scimDirectory = await createSCIMDirectoryMutation.mutateAsync({

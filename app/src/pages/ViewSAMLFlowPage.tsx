@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
 import { disableQuery, useQuery } from "@connectrpc/connect-query";
 import {
-  getSAMLConnection,
-  getSAMLFlow,
+  appGetSAMLConnection,
+  appGetSAMLFlow,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import React from "react";
 import {
@@ -32,10 +32,10 @@ import { OctagonX } from "lucide-react";
 export function ViewSAMLFlowPage() {
   const { environmentId, organizationId, samlConnectionId, samlFlowId } =
     useParams();
-  const { data: samlFlow } = useQuery(getSAMLFlow, {
+  const { data: samlFlow } = useQuery(appGetSAMLFlow, {
     id: samlFlowId,
   });
-  const { data: samlConnection } = useQuery(getSAMLConnection, {
+  const { data: samlConnection } = useQuery(appGetSAMLConnection, {
     id: samlConnectionId,
   });
 

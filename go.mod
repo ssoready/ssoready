@@ -3,8 +3,8 @@ module github.com/ssoready/ssoready
 go 1.21.4
 
 require (
-	connectrpc.com/connect v1.11.1
-	connectrpc.com/vanguard v0.1.0
+	connectrpc.com/connect v1.16.2
+	connectrpc.com/vanguard v0.2.0
 	github.com/alecthomas/participle/v2 v2.1.1
 	github.com/aws/aws-sdk-go-v2/config v1.27.12
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.7
@@ -25,10 +25,10 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/ucarion/cli v0.2.0
 	golang.org/x/crypto v0.24.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237
+	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142
 	google.golang.org/grpc v1.64.1
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
@@ -56,6 +56,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/segmentio/backo-go v1.0.0 // indirect
+	github.com/stripe/stripe-go/v79 v79.7.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect

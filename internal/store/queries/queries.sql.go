@@ -924,25 +924,32 @@ func (q *Queries) CheckExistsEmailVerificationChallenge(ctx context.Context, arg
 }
 
 const createAPIKey = `-- name: CreateAPIKey :one
-insert into api_keys (id, secret_value, secret_value_sha256, environment_id)
-values ($1, '', $2, $3)
-returning id, secret_value, environment_id, secret_value_sha256
+insert into api_keys (id, secret_value, secret_value_sha256, environment_id, has_management_api_access)
+values ($1, '', $2, $3, $4)
+returning id, secret_value, environment_id, secret_value_sha256, has_management_api_access
 `
 
 type CreateAPIKeyParams struct {
-	ID                uuid.UUID
-	SecretValueSha256 []byte
-	EnvironmentID     uuid.UUID
+	ID                     uuid.UUID
+	SecretValueSha256      []byte
+	EnvironmentID          uuid.UUID
+	HasManagementApiAccess *bool
 }
 
 func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (ApiKey, error) {
-	row := q.db.QueryRow(ctx, createAPIKey, arg.ID, arg.SecretValueSha256, arg.EnvironmentID)
+	row := q.db.QueryRow(ctx, createAPIKey,
+		arg.ID,
+		arg.SecretValueSha256,
+		arg.EnvironmentID,
+		arg.HasManagementApiAccess,
+	)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
 		&i.SecretValue,
 		&i.EnvironmentID,
 		&i.SecretValueSha256,
+		&i.HasManagementApiAccess,
 	)
 	return i, err
 }
@@ -991,7 +998,7 @@ func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAcc
 const createAppOrganization = `-- name: CreateAppOrganization :one
 insert into app_organizations (id, google_hosted_domain, microsoft_tenant_id)
 values ($1, $2, $3)
-returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
+returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api
 `
 
 type CreateAppOrganizationParams struct {
@@ -1008,6 +1015,8 @@ func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrgani
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
+		&i.StripeCustomerID,
+		&i.EntitledManagementApi,
 	)
 	return i, err
 }
@@ -1375,7 +1384,7 @@ func (q *Queries) DeleteSAMLOAuthClient(ctx context.Context, id uuid.UUID) error
 }
 
 const getAPIKey = `-- name: GetAPIKey :one
-select api_keys.id, api_keys.secret_value, api_keys.environment_id, api_keys.secret_value_sha256
+select api_keys.id, api_keys.secret_value, api_keys.environment_id, api_keys.secret_value_sha256, api_keys.has_management_api_access
 from api_keys
          join environments on api_keys.environment_id = environments.id
 where environments.app_organization_id = $1
@@ -1395,23 +1404,25 @@ func (q *Queries) GetAPIKey(ctx context.Context, arg GetAPIKeyParams) (ApiKey, e
 		&i.SecretValue,
 		&i.EnvironmentID,
 		&i.SecretValueSha256,
+		&i.HasManagementApiAccess,
 	)
 	return i, err
 }
 
 const getAPIKeyBySecretValueSHA256 = `-- name: GetAPIKeyBySecretValueSHA256 :one
-select api_keys.id, api_keys.secret_value, api_keys.environment_id, api_keys.secret_value_sha256, environments.app_organization_id
+select api_keys.id, api_keys.secret_value, api_keys.environment_id, api_keys.secret_value_sha256, api_keys.has_management_api_access, environments.app_organization_id
 from api_keys
          join environments on api_keys.environment_id = environments.id
 where secret_value_sha256 = $1
 `
 
 type GetAPIKeyBySecretValueSHA256Row struct {
-	ID                uuid.UUID
-	SecretValue       string
-	EnvironmentID     uuid.UUID
-	SecretValueSha256 []byte
-	AppOrganizationID uuid.UUID
+	ID                     uuid.UUID
+	SecretValue            string
+	EnvironmentID          uuid.UUID
+	SecretValueSha256      []byte
+	HasManagementApiAccess *bool
+	AppOrganizationID      uuid.UUID
 }
 
 func (q *Queries) GetAPIKeyBySecretValueSHA256(ctx context.Context, secretValueSha256 []byte) (GetAPIKeyBySecretValueSHA256Row, error) {
@@ -1422,13 +1433,14 @@ func (q *Queries) GetAPIKeyBySecretValueSHA256(ctx context.Context, secretValueS
 		&i.SecretValue,
 		&i.EnvironmentID,
 		&i.SecretValueSha256,
+		&i.HasManagementApiAccess,
 		&i.AppOrganizationID,
 	)
 	return i, err
 }
 
 const getAppOrganizationByGoogleHostedDomain = `-- name: GetAppOrganizationByGoogleHostedDomain :one
-select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api
 from app_organizations
 where google_hosted_domain = $1
 `
@@ -1441,12 +1453,14 @@ func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, go
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
+		&i.StripeCustomerID,
+		&i.EntitledManagementApi,
 	)
 	return i, err
 }
 
 const getAppOrganizationByID = `-- name: GetAppOrganizationByID :one
-select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api
 from app_organizations
 where id = $1
 `
@@ -1459,12 +1473,14 @@ func (q *Queries) GetAppOrganizationByID(ctx context.Context, id uuid.UUID) (App
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
+		&i.StripeCustomerID,
+		&i.EntitledManagementApi,
 	)
 	return i, err
 }
 
 const getAppOrganizationByMicrosoftTenantID = `-- name: GetAppOrganizationByMicrosoftTenantID :one
-select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api
 from app_organizations
 where microsoft_tenant_id = $1
 `
@@ -1477,6 +1493,8 @@ func (q *Queries) GetAppOrganizationByMicrosoftTenantID(ctx context.Context, mic
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
+		&i.StripeCustomerID,
+		&i.EntitledManagementApi,
 	)
 	return i, err
 }
@@ -2082,7 +2100,7 @@ func (q *Queries) GetSCIMUser(ctx context.Context, arg GetSCIMUserParams) (ScimU
 }
 
 const listAPIKeys = `-- name: ListAPIKeys :many
-select id, secret_value, environment_id, secret_value_sha256
+select id, secret_value, environment_id, secret_value_sha256, has_management_api_access
 from api_keys
 where environment_id = $1
   and id > $2
@@ -2110,6 +2128,7 @@ func (q *Queries) ListAPIKeys(ctx context.Context, arg ListAPIKeysParams) ([]Api
 			&i.SecretValue,
 			&i.EnvironmentID,
 			&i.SecretValueSha256,
+			&i.HasManagementApiAccess,
 		); err != nil {
 			return nil, err
 		}
@@ -2685,6 +2704,80 @@ func (q *Queries) ListSCIMUsersInSCIMGroup(ctx context.Context, arg ListSCIMUser
 	return items, nil
 }
 
+const managementGetOrganization = `-- name: ManagementGetOrganization :one
+select id, environment_id, external_id
+from organizations
+where environment_id = $1
+  and id = $2
+`
+
+type ManagementGetOrganizationParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) ManagementGetOrganization(ctx context.Context, arg ManagementGetOrganizationParams) (Organization, error) {
+	row := q.db.QueryRow(ctx, managementGetOrganization, arg.EnvironmentID, arg.ID)
+	var i Organization
+	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	return i, err
+}
+
+const managementGetSAMLConnection = `-- name: ManagementGetSAMLConnection :one
+select saml_connections.id, saml_connections.organization_id, saml_connections.idp_redirect_url, saml_connections.idp_x509_certificate, saml_connections.idp_entity_id, saml_connections.sp_entity_id, saml_connections.is_primary, saml_connections.sp_acs_url
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.environment_id = $1
+  and saml_connections.id = $2
+`
+
+type ManagementGetSAMLConnectionParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) ManagementGetSAMLConnection(ctx context.Context, arg ManagementGetSAMLConnectionParams) (SamlConnection, error) {
+	row := q.db.QueryRow(ctx, managementGetSAMLConnection, arg.EnvironmentID, arg.ID)
+	var i SamlConnection
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+		&i.IdpEntityID,
+		&i.SpEntityID,
+		&i.IsPrimary,
+		&i.SpAcsUrl,
+	)
+	return i, err
+}
+
+const managementGetSCIMDirectory = `-- name: ManagementGetSCIMDirectory :one
+select scim_directories.id, scim_directories.organization_id, scim_directories.bearer_token_sha256, scim_directories.is_primary, scim_directories.scim_base_url
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_directories.id = $2
+`
+
+type ManagementGetSCIMDirectoryParams struct {
+	EnvironmentID uuid.UUID
+	ID            uuid.UUID
+}
+
+func (q *Queries) ManagementGetSCIMDirectory(ctx context.Context, arg ManagementGetSCIMDirectoryParams) (ScimDirectory, error) {
+	row := q.db.QueryRow(ctx, managementGetSCIMDirectory, arg.EnvironmentID, arg.ID)
+	var i ScimDirectory
+	err := row.Scan(
+		&i.ID,
+		&i.OrganizationID,
+		&i.BearerTokenSha256,
+		&i.IsPrimary,
+		&i.ScimBaseUrl,
+	)
+	return i, err
+}
+
 const revokeAppSessionByID = `-- name: RevokeAppSessionByID :one
 update app_sessions
 set revoked = true
@@ -2705,6 +2798,48 @@ func (q *Queries) RevokeAppSessionByID(ctx context.Context, id uuid.UUID) (AppSe
 		&i.Revoked,
 	)
 	return i, err
+}
+
+const updateAppOrganizationEntitlementsByStripeCustomerID = `-- name: UpdateAppOrganizationEntitlementsByStripeCustomerID :one
+update app_organizations
+set entitled_management_api = $1
+where stripe_customer_id = $2
+returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api
+`
+
+type UpdateAppOrganizationEntitlementsByStripeCustomerIDParams struct {
+	EntitledManagementApi *bool
+	StripeCustomerID      *string
+}
+
+func (q *Queries) UpdateAppOrganizationEntitlementsByStripeCustomerID(ctx context.Context, arg UpdateAppOrganizationEntitlementsByStripeCustomerIDParams) (AppOrganization, error) {
+	row := q.db.QueryRow(ctx, updateAppOrganizationEntitlementsByStripeCustomerID, arg.EntitledManagementApi, arg.StripeCustomerID)
+	var i AppOrganization
+	err := row.Scan(
+		&i.ID,
+		&i.GoogleHostedDomain,
+		&i.MicrosoftTenantID,
+		&i.EmailLoginsDisabled,
+		&i.StripeCustomerID,
+		&i.EntitledManagementApi,
+	)
+	return i, err
+}
+
+const updateAppOrganizationStripeCustomerID = `-- name: UpdateAppOrganizationStripeCustomerID :exec
+update app_organizations
+set stripe_customer_id = $1
+where id = $2
+`
+
+type UpdateAppOrganizationStripeCustomerIDParams struct {
+	StripeCustomerID *string
+	ID               uuid.UUID
+}
+
+func (q *Queries) UpdateAppOrganizationStripeCustomerID(ctx context.Context, arg UpdateAppOrganizationStripeCustomerIDParams) error {
+	_, err := q.db.Exec(ctx, updateAppOrganizationStripeCustomerID, arg.StripeCustomerID, arg.ID)
+	return err
 }
 
 const updateEmailVerificationChallengeCompleteTime = `-- name: UpdateEmailVerificationChallengeCompleteTime :one

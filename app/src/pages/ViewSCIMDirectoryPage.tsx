@@ -7,14 +7,11 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appGetSCIMDirectory,
   appListSCIMGroups,
   appListSCIMUsers,
-  getSAMLConnection,
-  getSCIMDirectory,
-  listSAMLFlows,
-  rotateSCIMDirectoryBearerToken,
-  updateSAMLConnection,
-  updateSCIMDirectory,
+  appRotateSCIMDirectoryBearerToken,
+  appUpdateSCIMDirectory,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -81,7 +78,7 @@ import { Switch } from "@/components/ui/switch";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
-  const { data: scimDirectory } = useQuery(getSCIMDirectory, {
+  const { data: scimDirectory } = useQuery(appGetSCIMDirectory, {
     id: scimDirectoryId,
   });
 
@@ -95,7 +92,7 @@ export function ViewSCIMDirectoryPage() {
   const [bearerTokenAlertOpen, setBearerTokenAlertOpen] = useState(false);
   const [bearerToken, setBearerToken] = useState("");
   const rotateSCIMDirectoryBearerTokenMutation = useMutation(
-    rotateSCIMDirectoryBearerToken,
+    appRotateSCIMDirectoryBearerToken,
   );
   const queryClient = useQueryClient();
   const handleRotateBearerToken = async () => {
@@ -107,7 +104,7 @@ export function ViewSCIMDirectoryPage() {
     setBearerTokenAlertOpen(true);
 
     await queryClient.invalidateQueries({
-      queryKey: createConnectQueryKey(getSCIMDirectory, {
+      queryKey: createConnectQueryKey(appGetSCIMDirectory, {
         id: scimDirectory!.id,
       }),
     });
@@ -311,7 +308,7 @@ function EditSCIMDirectoryAlertDialog({
   });
 
   const [open, setOpen] = useState(false);
-  const updateSCIMDirectoryMutation = useMutation(updateSCIMDirectory);
+  const updateSCIMDirectoryMutation = useMutation(appUpdateSCIMDirectory);
   const queryClient = useQueryClient();
   const handleSubmit = useCallback(
     async (values: z.infer<typeof FormSchema>, e: any) => {
@@ -324,7 +321,7 @@ function EditSCIMDirectoryAlertDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getSCIMDirectory, {
+        queryKey: createConnectQueryKey(appGetSCIMDirectory, {
           id: scimDirectory.id,
         }),
       });

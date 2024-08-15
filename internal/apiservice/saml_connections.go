@@ -10,8 +10,8 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 )
 
-func (s *Service) ListSAMLConnections(ctx context.Context, req *connect.Request[ssoreadyv1.ListSAMLConnectionsRequest]) (*connect.Response[ssoreadyv1.ListSAMLConnectionsResponse], error) {
-	res, err := s.Store.ListSAMLConnections(ctx, req.Msg)
+func (s *Service) AppListSAMLConnections(ctx context.Context, req *connect.Request[ssoreadyv1.AppListSAMLConnectionsRequest]) (*connect.Response[ssoreadyv1.AppListSAMLConnectionsResponse], error) {
+	res, err := s.Store.AppListSAMLConnections(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}
@@ -19,8 +19,8 @@ func (s *Service) ListSAMLConnections(ctx context.Context, req *connect.Request[
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) GetSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.GetSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
-	res, err := s.Store.GetSAMLConnection(ctx, req.Msg)
+func (s *Service) AppGetSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.AppGetSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
+	res, err := s.Store.AppGetSAMLConnection(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}
@@ -28,8 +28,8 @@ func (s *Service) GetSAMLConnection(ctx context.Context, req *connect.Request[ss
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) CreateSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.CreateSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
-	res, err := s.Store.CreateSAMLConnection(ctx, req.Msg)
+func (s *Service) AppCreateSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.AppCreateSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
+	res, err := s.Store.AppCreateSAMLConnection(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}
@@ -44,8 +44,8 @@ func (s *Service) CreateSAMLConnection(ctx context.Context, req *connect.Request
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) UpdateSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.UpdateSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
-	res, err := s.Store.UpdateSAMLConnection(ctx, req.Msg)
+func (s *Service) AppUpdateSAMLConnection(ctx context.Context, req *connect.Request[ssoreadyv1.AppUpdateSAMLConnectionRequest]) (*connect.Response[ssoreadyv1.SAMLConnection], error) {
+	res, err := s.Store.AppUpdateSAMLConnection(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}

@@ -12,7 +12,12 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) AppListSCIMDirectories(ctx context.Context, req *ssoreadyv1.AppListSCIMDirectoriesRequest) (*ssoreadyv1.AppListSCIMDirectoriesResponse, error) {
+func (s *Store) ListSCIMDirectories(ctx context.Context, req *ssoreadyv1.ListSCIMDirectoriesRequest) (*ssoreadyv1.ListSCIMDirectoriesResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -25,9 +30,9 @@ func (s *Store) AppListSCIMDirectories(ctx context.Context, req *ssoreadyv1.AppL
 	}
 
 	// idor check
-	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                orgID,
+	if _, err = q.ManagementGetOrganization(ctx, queries.ManagementGetOrganizationParams{
+		EnvironmentID: envID,
+		ID:            orgID,
 	}); err != nil {
 		return nil, err
 	}
@@ -58,13 +63,18 @@ func (s *Store) AppListSCIMDirectories(ctx context.Context, req *ssoreadyv1.AppL
 		scimDirectories = scimDirectories[:limit]
 	}
 
-	return &ssoreadyv1.AppListSCIMDirectoriesResponse{
+	return &ssoreadyv1.ListSCIMDirectoriesResponse{
 		ScimDirectories: scimDirectories,
 		NextPageToken:   nextPageToken,
 	}, nil
 }
 
-func (s *Store) AppGetSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppGetSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+func (s *Store) GetSCIMDirectory(ctx context.Context, req *ssoreadyv1.GetSCIMDirectoryRequest) (*ssoreadyv1.GetSCIMDirectoryResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -76,18 +86,23 @@ func (s *Store) AppGetSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppGetS
 		return nil, fmt.Errorf("parse scim directory id: %w", err)
 	}
 
-	qSCIMDir, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                scimDirID,
+	qSCIMDir, err := q.ManagementGetSCIMDirectory(ctx, queries.ManagementGetSCIMDirectoryParams{
+		EnvironmentID: envID,
+		ID:            scimDirID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("get scim directory: %w", err)
 	}
 
-	return parseSCIMDirectory(qSCIMDir), nil
+	return &ssoreadyv1.GetSCIMDirectoryResponse{ScimDirectory: parseSCIMDirectory(qSCIMDir)}, nil
 }
 
-func (s *Store) AppCreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppCreateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateSCIMDirectoryRequest) (*ssoreadyv1.CreateSCIMDirectoryResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -100,18 +115,14 @@ func (s *Store) AppCreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppC
 	}
 
 	// idor check
-	org, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                orgID,
-	})
-	if err != nil {
+	if _, err := q.ManagementGetOrganization(ctx, queries.ManagementGetOrganizationParams{
+		EnvironmentID: envID,
+		ID:            orgID,
+	}); err != nil {
 		return nil, err
 	}
 
-	env, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                org.EnvironmentID,
-	})
+	env, err := q.GetEnvironmentByID(ctx, envID)
 	if err != nil {
 		return nil, err
 	}
@@ -146,24 +157,29 @@ func (s *Store) AppCreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppC
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return parseSCIMDirectory(qSCIMDirectory), nil
+	return &ssoreadyv1.CreateSCIMDirectoryResponse{ScimDirectory: parseSCIMDirectory(qSCIMDirectory)}, nil
 }
 
-func (s *Store) AppUpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppUpdateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+func (s *Store) UpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.UpdateSCIMDirectoryRequest) (*ssoreadyv1.UpdateSCIMDirectoryResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectory.Id)
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.Id)
 	if err != nil {
 		return nil, fmt.Errorf("parse scim directory id: %w", err)
 	}
 
-	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                scimDirID,
+	if _, err := q.ManagementGetSCIMDirectory(ctx, queries.ManagementGetSCIMDirectoryParams{
+		EnvironmentID: envID,
+		ID:            scimDirID,
 	}); err != nil {
 		return nil, fmt.Errorf("get scim directory: %w", err)
 	}
@@ -189,24 +205,29 @@ func (s *Store) AppUpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppU
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return parseSCIMDirectory(qSCIMDir), nil
+	return &ssoreadyv1.UpdateSCIMDirectoryResponse{ScimDirectory: parseSCIMDirectory(qSCIMDir)}, nil
 }
 
-func (s *Store) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoreadyv1.AppRotateSCIMDirectoryBearerTokenRequest) (*ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse, error) {
+func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoreadyv1.RotateSCIMDirectoryBearerTokenRequest) (*ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.Id)
 	if err != nil {
 		return nil, fmt.Errorf("parse scim directory id: %w", err)
 	}
 
-	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                scimDirID,
+	if _, err := q.ManagementGetSCIMDirectory(ctx, queries.ManagementGetSCIMDirectoryParams{
+		EnvironmentID: envID,
+		ID:            scimDirID,
 	}); err != nil {
 		return nil, fmt.Errorf("get scim directory: %w", err)
 	}
@@ -225,18 +246,7 @@ func (s *Store) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *ssor
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return &ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse{
+	return &ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse{
 		BearerToken: idformat.SCIMBearerToken.Format(bearerToken),
 	}, nil
-}
-
-func parseSCIMDirectory(qSCIMDirectory queries.ScimDirectory) *ssoreadyv1.SCIMDirectory {
-	return &ssoreadyv1.SCIMDirectory{
-		Id:                   idformat.SCIMDirectory.Format(qSCIMDirectory.ID),
-		OrganizationId:       idformat.Organization.Format(qSCIMDirectory.OrganizationID),
-		Primary:              qSCIMDirectory.IsPrimary,
-		ScimBaseUrl:          qSCIMDirectory.ScimBaseUrl,
-		ClientBearerToken:    "", // intentionally left blank
-		HasClientBearerToken: len(qSCIMDirectory.BearerTokenSha256) > 0,
-	}
 }

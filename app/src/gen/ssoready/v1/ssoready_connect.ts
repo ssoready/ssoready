@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AdminCreateSAMLConnectionRequest, AdminCreateSAMLConnectionResponse, AdminCreateSCIMDirectoryRequest, AdminCreateSCIMDirectoryResponse, AdminGetSAMLConnectionRequest, AdminGetSAMLConnectionResponse, AdminGetSCIMDirectoryRequest, AdminGetSCIMDirectoryResponse, AdminListSAMLConnectionsRequest, AdminListSAMLConnectionsResponse, AdminListSCIMDirectoriesRequest, AdminListSCIMDirectoriesResponse, AdminParseSAMLMetadataRequest, AdminParseSAMLMetadataResponse, AdminRedeemOneTimeTokenRequest, AdminRedeemOneTimeTokenResponse, AdminRotateSCIMDirectoryBearerTokenRequest, AdminRotateSCIMDirectoryBearerTokenResponse, AdminUpdateSAMLConnectionRequest, AdminUpdateSAMLConnectionResponse, AdminUpdateSCIMDirectoryRequest, AdminUpdateSCIMDirectoryResponse, AdminWhoamiRequest, AdminWhoamiResponse, APIKey, AppGetSCIMGroupRequest, AppGetSCIMUserRequest, AppListSCIMGroupsRequest, AppListSCIMGroupsResponse, AppListSCIMUsersRequest, AppListSCIMUsersResponse, CreateAdminSetupURLRequest, CreateAdminSetupURLResponse, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateSAMLConnectionRequest, CreateSAMLOAuthClientRequest, CreateSCIMDirectoryRequest, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetAppOrganizationRequest, GetAppOrganizationResponse, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetSAMLConnectionRequest, GetSAMLFlowRequest, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, GetSCIMDirectoryRequest, GetSCIMGroupRequest, GetSCIMGroupResponse, GetSCIMUserRequest, GetSCIMUserResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListAppUsersRequest, ListAppUsersResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLFlowsRequest, ListSAMLFlowsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, ListSCIMDirectoriesRequest, ListSCIMDirectoriesResponse, ListSCIMGroupsRequest, ListSCIMGroupsResponse, ListSCIMUsersRequest, ListSCIMUsersResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, RotateSCIMDirectoryBearerTokenRequest, RotateSCIMDirectoryBearerTokenResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SCIMDirectory, SCIMGroup, SCIMUser, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateSAMLConnectionRequest, UpdateSCIMDirectoryRequest, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { AdminCreateSAMLConnectionRequest, AdminCreateSAMLConnectionResponse, AdminCreateSCIMDirectoryRequest, AdminCreateSCIMDirectoryResponse, AdminGetSAMLConnectionRequest, AdminGetSAMLConnectionResponse, AdminGetSCIMDirectoryRequest, AdminGetSCIMDirectoryResponse, AdminListSAMLConnectionsRequest, AdminListSAMLConnectionsResponse, AdminListSCIMDirectoriesRequest, AdminListSCIMDirectoriesResponse, AdminParseSAMLMetadataRequest, AdminParseSAMLMetadataResponse, AdminRedeemOneTimeTokenRequest, AdminRedeemOneTimeTokenResponse, AdminRotateSCIMDirectoryBearerTokenRequest, AdminRotateSCIMDirectoryBearerTokenResponse, AdminUpdateSAMLConnectionRequest, AdminUpdateSAMLConnectionResponse, AdminUpdateSCIMDirectoryRequest, AdminUpdateSCIMDirectoryResponse, AdminWhoamiRequest, AdminWhoamiResponse, APIKey, AppCreateAdminSetupURLRequest, AppCreateAdminSetupURLResponse, AppCreateOrganizationRequest, AppCreateSAMLConnectionRequest, AppCreateSCIMDirectoryRequest, AppGetOrganizationRequest, AppGetSAMLConnectionRequest, AppGetSAMLFlowRequest, AppGetSCIMDirectoryRequest, AppGetSCIMGroupRequest, AppGetSCIMUserRequest, AppListOrganizationsRequest, AppListOrganizationsResponse, AppListSAMLConnectionsRequest, AppListSAMLConnectionsResponse, AppListSAMLFlowsRequest, AppListSAMLFlowsResponse, AppListSCIMDirectoriesRequest, AppListSCIMDirectoriesResponse, AppListSCIMGroupsRequest, AppListSCIMGroupsResponse, AppListSCIMUsersRequest, AppListSCIMUsersResponse, AppRotateSCIMDirectoryBearerTokenRequest, AppRotateSCIMDirectoryBearerTokenResponse, AppUpdateOrganizationRequest, AppUpdateSAMLConnectionRequest, AppUpdateSCIMDirectoryRequest, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateOrganizationResponse, CreateSAMLConnectionRequest, CreateSAMLConnectionResponse, CreateSAMLOAuthClientRequest, CreateSCIMDirectoryRequest, CreateSCIMDirectoryResponse, CreateSetupURLRequest, CreateSetupURLResponse, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetAppOrganizationRequest, GetAppOrganizationResponse, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetOrganizationResponse, GetSAMLConnectionRequest, GetSAMLConnectionResponse, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, GetSCIMDirectoryRequest, GetSCIMDirectoryResponse, GetSCIMGroupRequest, GetSCIMGroupResponse, GetSCIMUserRequest, GetSCIMUserResponse, GetStripeBillingPortalURLRequest, GetStripeBillingPortalURLResponse, GetStripeCheckoutURLRequest, GetStripeCheckoutURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListAppUsersRequest, ListAppUsersResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, ListSCIMDirectoriesRequest, ListSCIMDirectoriesResponse, ListSCIMGroupsRequest, ListSCIMGroupsResponse, ListSCIMUsersRequest, ListSCIMUsersResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, RedeemStripeCheckoutRequest, RedeemStripeCheckoutResponse, RotateSCIMDirectoryBearerTokenRequest, RotateSCIMDirectoryBearerTokenResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SCIMDirectory, SCIMGroup, SCIMUser, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateOrganizationResponse, UpdateSAMLConnectionRequest, UpdateSAMLConnectionResponse, UpdateSCIMDirectoryRequest, UpdateSCIMDirectoryResponse, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -64,6 +64,132 @@ export const SSOReadyService = {
       name: "GetSCIMGroup",
       I: GetSCIMGroupRequest,
       O: GetSCIMGroupResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.ListOrganizations
+     */
+    listOrganizations: {
+      name: "ListOrganizations",
+      I: ListOrganizationsRequest,
+      O: ListOrganizationsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.GetOrganization
+     */
+    getOrganization: {
+      name: "GetOrganization",
+      I: GetOrganizationRequest,
+      O: GetOrganizationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.CreateOrganization
+     */
+    createOrganization: {
+      name: "CreateOrganization",
+      I: CreateOrganizationRequest,
+      O: CreateOrganizationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.UpdateOrganization
+     */
+    updateOrganization: {
+      name: "UpdateOrganization",
+      I: UpdateOrganizationRequest,
+      O: UpdateOrganizationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.CreateSetupURL
+     */
+    createSetupURL: {
+      name: "CreateSetupURL",
+      I: CreateSetupURLRequest,
+      O: CreateSetupURLResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLConnections
+     */
+    listSAMLConnections: {
+      name: "ListSAMLConnections",
+      I: ListSAMLConnectionsRequest,
+      O: ListSAMLConnectionsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLConnection
+     */
+    getSAMLConnection: {
+      name: "GetSAMLConnection",
+      I: GetSAMLConnectionRequest,
+      O: GetSAMLConnectionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.CreateSAMLConnection
+     */
+    createSAMLConnection: {
+      name: "CreateSAMLConnection",
+      I: CreateSAMLConnectionRequest,
+      O: CreateSAMLConnectionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.UpdateSAMLConnection
+     */
+    updateSAMLConnection: {
+      name: "UpdateSAMLConnection",
+      I: UpdateSAMLConnectionRequest,
+      O: UpdateSAMLConnectionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMDirectories
+     */
+    listSCIMDirectories: {
+      name: "ListSCIMDirectories",
+      I: ListSCIMDirectoriesRequest,
+      O: ListSCIMDirectoriesResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMDirectory
+     */
+    getSCIMDirectory: {
+      name: "GetSCIMDirectory",
+      I: GetSCIMDirectoryRequest,
+      O: GetSCIMDirectoryResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.CreateSCIMDirectory
+     */
+    createSCIMDirectory: {
+      name: "CreateSCIMDirectory",
+      I: CreateSCIMDirectoryRequest,
+      O: CreateSCIMDirectoryResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.UpdateSCIMDirectory
+     */
+    updateSCIMDirectory: {
+      name: "UpdateSCIMDirectory",
+      I: UpdateSCIMDirectoryRequest,
+      O: UpdateSCIMDirectoryResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken
+     */
+    rotateSCIMDirectoryBearerToken: {
+      name: "RotateSCIMDirectoryBearerToken",
+      I: RotateSCIMDirectoryBearerTokenRequest,
+      O: RotateSCIMDirectoryBearerTokenResponse,
       kind: MethodKind.Unary,
     },
     /**
@@ -136,6 +262,33 @@ export const SSOReadyService = {
       name: "OnboardingRedeemSAMLAccessCode",
       I: OnboardingRedeemSAMLAccessCodeRequest,
       O: RedeemSAMLAccessCodeResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.GetStripeCheckoutURL
+     */
+    getStripeCheckoutURL: {
+      name: "GetStripeCheckoutURL",
+      I: GetStripeCheckoutURLRequest,
+      O: GetStripeCheckoutURLResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.RedeemStripeCheckout
+     */
+    redeemStripeCheckout: {
+      name: "RedeemStripeCheckout",
+      I: RedeemStripeCheckoutRequest,
+      O: RedeemStripeCheckoutResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc ssoready.v1.SSOReadyService.GetStripeBillingPortalURL
+     */
+    getStripeBillingPortalURL: {
+      name: "GetStripeBillingPortalURL",
+      I: GetStripeBillingPortalURLRequest,
+      O: GetStripeBillingPortalURLResponse,
       kind: MethodKind.Unary,
     },
     /**
@@ -265,101 +418,101 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.ListOrganizations
+     * @generated from rpc ssoready.v1.SSOReadyService.AppListOrganizations
      */
-    listOrganizations: {
-      name: "ListOrganizations",
-      I: ListOrganizationsRequest,
-      O: ListOrganizationsResponse,
+    appListOrganizations: {
+      name: "AppListOrganizations",
+      I: AppListOrganizationsRequest,
+      O: AppListOrganizationsResponse,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.GetOrganization
+     * @generated from rpc ssoready.v1.SSOReadyService.AppGetOrganization
      */
-    getOrganization: {
-      name: "GetOrganization",
-      I: GetOrganizationRequest,
+    appGetOrganization: {
+      name: "AppGetOrganization",
+      I: AppGetOrganizationRequest,
       O: Organization,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.CreateOrganization
+     * @generated from rpc ssoready.v1.SSOReadyService.AppCreateOrganization
      */
-    createOrganization: {
-      name: "CreateOrganization",
-      I: CreateOrganizationRequest,
+    appCreateOrganization: {
+      name: "AppCreateOrganization",
+      I: AppCreateOrganizationRequest,
       O: Organization,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.UpdateOrganization
+     * @generated from rpc ssoready.v1.SSOReadyService.AppUpdateOrganization
      */
-    updateOrganization: {
-      name: "UpdateOrganization",
-      I: UpdateOrganizationRequest,
+    appUpdateOrganization: {
+      name: "AppUpdateOrganization",
+      I: AppUpdateOrganizationRequest,
       O: Organization,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.CreateAdminSetupURL
+     * @generated from rpc ssoready.v1.SSOReadyService.AppCreateAdminSetupURL
      */
-    createAdminSetupURL: {
-      name: "CreateAdminSetupURL",
-      I: CreateAdminSetupURLRequest,
-      O: CreateAdminSetupURLResponse,
+    appCreateAdminSetupURL: {
+      name: "AppCreateAdminSetupURL",
+      I: AppCreateAdminSetupURLRequest,
+      O: AppCreateAdminSetupURLResponse,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLConnections
+     * @generated from rpc ssoready.v1.SSOReadyService.AppListSAMLConnections
      */
-    listSAMLConnections: {
-      name: "ListSAMLConnections",
-      I: ListSAMLConnectionsRequest,
-      O: ListSAMLConnectionsResponse,
+    appListSAMLConnections: {
+      name: "AppListSAMLConnections",
+      I: AppListSAMLConnectionsRequest,
+      O: AppListSAMLConnectionsResponse,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLConnection
+     * @generated from rpc ssoready.v1.SSOReadyService.AppGetSAMLConnection
      */
-    getSAMLConnection: {
-      name: "GetSAMLConnection",
-      I: GetSAMLConnectionRequest,
+    appGetSAMLConnection: {
+      name: "AppGetSAMLConnection",
+      I: AppGetSAMLConnectionRequest,
       O: SAMLConnection,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.CreateSAMLConnection
+     * @generated from rpc ssoready.v1.SSOReadyService.AppCreateSAMLConnection
      */
-    createSAMLConnection: {
-      name: "CreateSAMLConnection",
-      I: CreateSAMLConnectionRequest,
+    appCreateSAMLConnection: {
+      name: "AppCreateSAMLConnection",
+      I: AppCreateSAMLConnectionRequest,
       O: SAMLConnection,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.UpdateSAMLConnection
+     * @generated from rpc ssoready.v1.SSOReadyService.AppUpdateSAMLConnection
      */
-    updateSAMLConnection: {
-      name: "UpdateSAMLConnection",
-      I: UpdateSAMLConnectionRequest,
+    appUpdateSAMLConnection: {
+      name: "AppUpdateSAMLConnection",
+      I: AppUpdateSAMLConnectionRequest,
       O: SAMLConnection,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLFlows
+     * @generated from rpc ssoready.v1.SSOReadyService.AppListSAMLFlows
      */
-    listSAMLFlows: {
-      name: "ListSAMLFlows",
-      I: ListSAMLFlowsRequest,
-      O: ListSAMLFlowsResponse,
+    appListSAMLFlows: {
+      name: "AppListSAMLFlows",
+      I: AppListSAMLFlowsRequest,
+      O: AppListSAMLFlowsResponse,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLFlow
+     * @generated from rpc ssoready.v1.SSOReadyService.AppGetSAMLFlow
      */
-    getSAMLFlow: {
-      name: "GetSAMLFlow",
-      I: GetSAMLFlowRequest,
+    appGetSAMLFlow: {
+      name: "AppGetSAMLFlow",
+      I: AppGetSAMLFlowRequest,
       O: SAMLFlow,
       kind: MethodKind.Unary,
     },
@@ -373,48 +526,48 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMDirectories
+     * @generated from rpc ssoready.v1.SSOReadyService.AppListSCIMDirectories
      */
-    listSCIMDirectories: {
-      name: "ListSCIMDirectories",
-      I: ListSCIMDirectoriesRequest,
-      O: ListSCIMDirectoriesResponse,
+    appListSCIMDirectories: {
+      name: "AppListSCIMDirectories",
+      I: AppListSCIMDirectoriesRequest,
+      O: AppListSCIMDirectoriesResponse,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMDirectory
+     * @generated from rpc ssoready.v1.SSOReadyService.AppGetSCIMDirectory
      */
-    getSCIMDirectory: {
-      name: "GetSCIMDirectory",
-      I: GetSCIMDirectoryRequest,
+    appGetSCIMDirectory: {
+      name: "AppGetSCIMDirectory",
+      I: AppGetSCIMDirectoryRequest,
       O: SCIMDirectory,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.CreateSCIMDirectory
+     * @generated from rpc ssoready.v1.SSOReadyService.AppCreateSCIMDirectory
      */
-    createSCIMDirectory: {
-      name: "CreateSCIMDirectory",
-      I: CreateSCIMDirectoryRequest,
+    appCreateSCIMDirectory: {
+      name: "AppCreateSCIMDirectory",
+      I: AppCreateSCIMDirectoryRequest,
       O: SCIMDirectory,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.UpdateSCIMDirectory
+     * @generated from rpc ssoready.v1.SSOReadyService.AppUpdateSCIMDirectory
      */
-    updateSCIMDirectory: {
-      name: "UpdateSCIMDirectory",
-      I: UpdateSCIMDirectoryRequest,
+    appUpdateSCIMDirectory: {
+      name: "AppUpdateSCIMDirectory",
+      I: AppUpdateSCIMDirectoryRequest,
       O: SCIMDirectory,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken
+     * @generated from rpc ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken
      */
-    rotateSCIMDirectoryBearerToken: {
-      name: "RotateSCIMDirectoryBearerToken",
-      I: RotateSCIMDirectoryBearerTokenRequest,
-      O: RotateSCIMDirectoryBearerTokenResponse,
+    appRotateSCIMDirectoryBearerToken: {
+      name: "AppRotateSCIMDirectoryBearerToken",
+      I: AppRotateSCIMDirectoryBearerTokenRequest,
+      O: AppRotateSCIMDirectoryBearerTokenResponse,
       kind: MethodKind.Unary,
     },
     /**

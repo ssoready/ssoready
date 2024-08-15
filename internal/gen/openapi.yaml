@@ -6,6 +6,208 @@ info:
     title: SSOReadyService API
     version: 0.0.1
 paths:
+    /v1/organizations:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_ListOrganizations
+            parameters:
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListOrganizationsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_CreateOrganization
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Organization'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateOrganizationResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/organizations/{id}:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_GetOrganization
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetOrganizationResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        patch:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_UpdateOrganization
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Organization'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateOrganizationResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/saml-connections:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_ListSAMLConnections
+            parameters:
+                - name: organizationId
+                  in: query
+                  schema:
+                    type: string
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListSAMLConnectionsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_CreateSAMLConnection
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SAMLConnection'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateSAMLConnectionResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/saml-connections/{id}:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_GetSAMLConnection
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSAMLConnectionResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        patch:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_UpdateSAMLConnection
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SAMLConnection'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateSAMLConnectionResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /v1/saml/redeem:
         post:
             tags:
@@ -48,6 +250,133 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/GetSAMLRedirectURLResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim-directories:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_ListSCIMDirectories
+            parameters:
+                - name: organizationId
+                  in: query
+                  schema:
+                    type: string
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListSCIMDirectoriesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_CreateSCIMDirectory
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SCIMDirectory'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateSCIMDirectoryResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim-directories/{id}:
+        get:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_GetSCIMDirectory
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSCIMDirectoryResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        patch:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_UpdateSCIMDirectory
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SCIMDirectory'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateSCIMDirectoryResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/scim-directories/{id}/rotate-bearer-token:
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_RotateSCIMDirectoryBearerToken
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RotateSCIMDirectoryBearerTokenResponse'
                 default:
                     description: Default error response
                     content:
@@ -176,8 +505,71 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /v1/setup-urls:
+        post:
+            tags:
+                - SSOReadyService
+            operationId: SSOReadyService_CreateSetupURL
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateSetupURLRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateSetupURLResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
+        CreateOrganizationResponse:
+            type: object
+            properties:
+                organization:
+                    $ref: '#/components/schemas/Organization'
+        CreateSAMLConnectionResponse:
+            type: object
+            properties:
+                samlConnection:
+                    $ref: '#/components/schemas/SAMLConnection'
+        CreateSCIMDirectoryResponse:
+            type: object
+            properties:
+                scimDirectory:
+                    $ref: '#/components/schemas/SCIMDirectory'
+        CreateSetupURLRequest:
+            type: object
+            properties:
+                organizationId:
+                    type: string
+                canManageSaml:
+                    type: boolean
+                canManageScim:
+                    type: boolean
+        CreateSetupURLResponse:
+            type: object
+            properties:
+                url:
+                    type: string
+        GetOrganizationResponse:
+            type: object
+            properties:
+                organization:
+                    $ref: '#/components/schemas/Organization'
+        GetSAMLConnectionResponse:
+            type: object
+            properties:
+                samlConnection:
+                    $ref: '#/components/schemas/SAMLConnection'
         GetSAMLRedirectURLRequest:
             type: object
             properties:
@@ -194,6 +586,11 @@ components:
             properties:
                 redirectUrl:
                     type: string
+        GetSCIMDirectoryResponse:
+            type: object
+            properties:
+                scimDirectory:
+                    $ref: '#/components/schemas/SCIMDirectory'
         GetSCIMGroupResponse:
             type: object
             properties:
@@ -212,6 +609,33 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListOrganizationsResponse:
+            type: object
+            properties:
+                organizations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Organization'
+                nextPageToken:
+                    type: string
+        ListSAMLConnectionsResponse:
+            type: object
+            properties:
+                samlConnections:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SAMLConnection'
+                nextPageToken:
+                    type: string
+        ListSCIMDirectoriesResponse:
+            type: object
+            properties:
+                scimDirectories:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SCIMDirectory'
+                nextPageToken:
+                    type: string
         ListSCIMGroupsResponse:
             type: object
             properties:
@@ -230,6 +654,19 @@ components:
                         $ref: '#/components/schemas/SCIMUser'
                 nextPageToken:
                     type: string
+        Organization:
+            type: object
+            properties:
+                id:
+                    type: string
+                environmentId:
+                    type: string
+                externalId:
+                    type: string
+                domains:
+                    type: array
+                    items:
+                        type: string
         RedeemSAMLAccessCodeRequest:
             type: object
             properties:
@@ -252,6 +689,45 @@ components:
                     type: string
                 samlFlowId:
                     type: string
+        RotateSCIMDirectoryBearerTokenResponse:
+            type: object
+            properties:
+                bearerToken:
+                    type: string
+        SAMLConnection:
+            type: object
+            properties:
+                id:
+                    type: string
+                organizationId:
+                    type: string
+                primary:
+                    type: boolean
+                idpRedirectUrl:
+                    type: string
+                idpCertificate:
+                    type: string
+                idpEntityId:
+                    type: string
+                spEntityId:
+                    type: string
+                spAcsUrl:
+                    type: string
+        SCIMDirectory:
+            type: object
+            properties:
+                id:
+                    type: string
+                organizationId:
+                    type: string
+                primary:
+                    type: boolean
+                scimBaseUrl:
+                    type: string
+                clientBearerToken:
+                    type: string
+                hasClientBearerToken:
+                    type: boolean
         SCIMGroup:
             type: object
             properties:
@@ -294,5 +770,20 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        UpdateOrganizationResponse:
+            type: object
+            properties:
+                organization:
+                    $ref: '#/components/schemas/Organization'
+        UpdateSAMLConnectionResponse:
+            type: object
+            properties:
+                samlConnection:
+                    $ref: '#/components/schemas/SAMLConnection'
+        UpdateSCIMDirectoryResponse:
+            type: object
+            properties:
+                scimDirectory:
+                    $ref: '#/components/schemas/SCIMDirectory'
 tags:
     - name: SSOReadyService
