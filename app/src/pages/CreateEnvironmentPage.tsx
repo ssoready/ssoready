@@ -38,9 +38,14 @@ const FormSchema = z.object({
   displayName: z.string().min(1, {
     message: "Display name is required.",
   }),
-  redirectUrl: z.string().url({
-    message: "Redirect URL must be a valid URL.",
-  }),
+  redirectUrl: z
+    .string()
+    .url({
+      message: "Redirect URL must be a valid URL.",
+    })
+    .refine((arg) => !arg.includes(" "), {
+      message: "Redirect URL must be a valid URL.",
+    }),
   authUrl: z.string(),
 });
 
