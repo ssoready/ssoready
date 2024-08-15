@@ -15,7 +15,8 @@ export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
 
     const addPendingDataPoint = () => {
       if (pendingDataPoint) {
-        const newDataPoints = new Set([...value, pendingDataPoint]);
+        // trim() because a copy-pasted input may still contain leading/trailing whitespace
+        const newDataPoints = new Set([...value, pendingDataPoint.trim()]);
         onChange(Array.from(newDataPoints));
         setPendingDataPoint("");
       }
