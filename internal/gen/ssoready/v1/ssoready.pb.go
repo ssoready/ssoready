@@ -1068,10 +1068,27 @@ type GetSAMLRedirectURLRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	SamlConnectionId       string `protobuf:"bytes,1,opt,name=saml_connection_id,json=samlConnectionId,proto3" json:"saml_connection_id,omitempty"`
-	OrganizationId         string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The SAML connection to start a SAML login for.
+	//
+	// One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+	SamlConnectionId string `protobuf:"bytes,1,opt,name=saml_connection_id,json=samlConnectionId,proto3" json:"saml_connection_id,omitempty"`
+	// The ID of the organization to start a SAML login for.
+	//
+	// The primary SAML connection in this organization will be used for logins.
+	//
+	// One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId` of the organization to start a SAML login for.
+	//
+	// The primary SAML connection in this organization will be used for logins.
+	//
+	// One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
 	OrganizationExternalId string `protobuf:"bytes,3,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	State                  string `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
+	// This string will be returned back to you when you redeem this login's SAML access code.
+	//
+	// You can do anything you like with this `state`, but the most common use-case is to keep track of where to redirect
+	// your user back to after logging in with SAML.
+	State string `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
 }
 
 func (x *GetSAMLRedirectURLRequest) Reset() {
@@ -1139,6 +1156,7 @@ type GetSAMLRedirectURLResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Redirect your user to this URL to start a SAML login.
 	RedirectUrl string `protobuf:"bytes,1,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
 }
 
@@ -1186,6 +1204,7 @@ type RedeemSAMLAccessCodeRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The SAML access code to redeem.
 	SamlAccessCode string `protobuf:"bytes,1,opt,name=saml_access_code,json=samlAccessCode,proto3" json:"saml_access_code,omitempty"`
 }
 
@@ -1233,12 +1252,29 @@ type RedeemSAMLAccessCodeResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email                  string            `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	State                  string            `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
-	Attributes             map[string]string `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	OrganizationId         string            `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	OrganizationExternalId string            `protobuf:"bytes,5,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	SamlFlowId             string            `protobuf:"bytes,6,opt,name=saml_flow_id,json=samlFlowId,proto3" json:"saml_flow_id,omitempty"`
+	// The user's email address.
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	// The `state` you provided when getting a SAML initiation URL, if any.
+	//
+	// If your user logged in to your product using Identity Provider-initiated SAML (e.g. they clicked on your app inside
+	// their corporate Okta dashboard), then `state` will be empty.
+	//
+	// SSOReady validates the authenticity of non-empty `state` values. You do not need to implement your own CSRF on top
+	// of it, but doing so anyway will have no bad consequences.
+	State string `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
+	// Arbitrary key-value pairs the Identity Provider included about the user.
+	//
+	// Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+	// considered an admin within their company.
+	Attributes map[string]string `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// The ID of the organization this user belongs to.
+	OrganizationId string `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId`, if any, of the organization this user belongs to.
+	OrganizationExternalId string `protobuf:"bytes,5,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
+	// A unique identifier of this particular SAML login. It is not a secret. You can safely log it.
+	//
+	// SSOReady maintains an audit log of every SAML login. Use this SAML flow ID to find this login in the audit logs.
+	SamlFlowId string `protobuf:"bytes,6,opt,name=saml_flow_id,json=samlFlowId,proto3" json:"saml_flow_id,omitempty"`
 }
 
 func (x *RedeemSAMLAccessCodeResponse) Reset() {

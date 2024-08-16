@@ -804,21 +804,42 @@ export class SCIMGroup extends Message<SCIMGroup> {
  */
 export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest> {
   /**
+   * The SAML connection to start a SAML login for.
+   *
+   * One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string saml_connection_id = 1;
    */
   samlConnectionId = "";
 
   /**
+   * The ID of the organization to start a SAML login for.
+   *
+   * The primary SAML connection in this organization will be used for logins.
+   *
+   * One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * The `externalId` of the organization to start a SAML login for.
+   *
+   * The primary SAML connection in this organization will be used for logins.
+   *
+   * One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_external_id = 3;
    */
   organizationExternalId = "";
 
   /**
+   * This string will be returned back to you when you redeem this login's SAML access code.
+   *
+   * You can do anything you like with this `state`, but the most common use-case is to keep track of where to redirect
+   * your user back to after logging in with SAML.
+   *
    * @generated from field: string state = 4;
    */
   state = "";
@@ -859,6 +880,8 @@ export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest
  */
 export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLResponse> {
   /**
+   * Redirect your user to this URL to start a SAML login.
+   *
    * @generated from field: string redirect_url = 1;
    */
   redirectUrl = "";
@@ -896,6 +919,8 @@ export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLRespon
  */
 export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeRequest> {
   /**
+   * The SAML access code to redeem.
+   *
    * @generated from field: string saml_access_code = 1;
    */
   samlAccessCode = "";
@@ -933,31 +958,54 @@ export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeReq
  */
 export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeResponse> {
   /**
+   * The user's email address.
+   *
    * @generated from field: string email = 1;
    */
   email = "";
 
   /**
+   * The `state` you provided when getting a SAML initiation URL, if any.
+   *
+   * If your user logged in to your product using Identity Provider-initiated SAML (e.g. they clicked on your app inside
+   * their corporate Okta dashboard), then `state` will be empty.
+   *
+   * SSOReady validates the authenticity of non-empty `state` values. You do not need to implement your own CSRF on top
+   * of it, but doing so anyway will have no bad consequences.
+   *
    * @generated from field: string state = 2;
    */
   state = "";
 
   /**
+   * Arbitrary key-value pairs the Identity Provider included about the user.
+   *
+   * Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+   * considered an admin within their company.
+   *
    * @generated from field: map<string, string> attributes = 3;
    */
   attributes: { [key: string]: string } = {};
 
   /**
+   * The ID of the organization this user belongs to.
+   *
    * @generated from field: string organization_id = 4;
    */
   organizationId = "";
 
   /**
+   * The `externalId`, if any, of the organization this user belongs to.
+   *
    * @generated from field: string organization_external_id = 5;
    */
   organizationExternalId = "";
 
   /**
+   * A unique identifier of this particular SAML login. It is not a secret. You can safely log it.
+   *
+   * SSOReady maintains an audit log of every SAML login. Use this SAML flow ID to find this login in the audit logs.
+   *
    * @generated from field: string saml_flow_id = 6;
    */
   samlFlowId = "";

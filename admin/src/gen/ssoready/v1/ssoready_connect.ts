@@ -13,6 +13,8 @@ export const SSOReadyService = {
   typeName: "ssoready.v1.SSOReadyService",
   methods: {
     /**
+     * Gets a SAML initiation URL to redirect your users to.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
      */
     getSAMLRedirectURL: {
@@ -22,6 +24,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Exchanges a SAML access code for details about your user's SAML login details.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessCode
      */
     redeemSAMLAccessCode: {

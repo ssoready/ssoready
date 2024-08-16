@@ -104,7 +104,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SSOReadyServiceClient interface {
+	// Gets a SAML initiation URL to redirect your users to.
 	GetSAMLRedirectURL(ctx context.Context, in *GetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
+	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
 	ListSCIMUsers(ctx context.Context, in *ListSCIMUsersRequest, opts ...grpc.CallOption) (*ListSCIMUsersResponse, error)
 	GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error)
@@ -1002,7 +1004,9 @@ func (c *sSOReadyServiceClient) AdminRotateSCIMDirectoryBearerToken(ctx context.
 // All implementations must embed UnimplementedSSOReadyServiceServer
 // for forward compatibility.
 type SSOReadyServiceServer interface {
+	// Gets a SAML initiation URL to redirect your users to.
 	GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
+	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
 	ListSCIMUsers(context.Context, *ListSCIMUsersRequest) (*ListSCIMUsersResponse, error)
 	GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error)

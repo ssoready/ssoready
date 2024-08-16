@@ -269,7 +269,9 @@ const (
 
 // SSOReadyServiceClient is a client for the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceClient interface {
+	// Gets a SAML initiation URL to redirect your users to.
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
+	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error)
 	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
@@ -1254,7 +1256,9 @@ func (c *sSOReadyServiceClient) AdminRotateSCIMDirectoryBearerToken(ctx context.
 
 // SSOReadyServiceHandler is an implementation of the ssoready.v1.SSOReadyService service.
 type SSOReadyServiceHandler interface {
+	// Gets a SAML initiation URL to redirect your users to.
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
+	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
 	ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error)
 	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
