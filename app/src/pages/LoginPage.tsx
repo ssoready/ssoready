@@ -165,7 +165,7 @@ function MicrosoftLogin() {
   return (
     <Button variant="outline" asChild>
       <a
-        className="flex items-center gap-x-2"
+        className="flex items-center gap-x-[0.3rem] pl-[0.4rem] pr-[0.4rem]"
         href={microsoftRedirectUri.toString()}
       >
         <span>Continue with Microsoft</span>
