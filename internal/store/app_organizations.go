@@ -15,6 +15,8 @@ func (s *Store) GetAppOrganization(ctx context.Context, req *ssoreadyv1.GetAppOr
 	}
 
 	return &ssoreadyv1.GetAppOrganizationResponse{
-		GoogleHostedDomain: derefOrEmpty(qAppOrg.GoogleHostedDomain),
+		GoogleHostedDomain:    derefOrEmpty(qAppOrg.GoogleHostedDomain),
+		EntitledManagementApi: derefOrEmpty(qAppOrg.EntitledManagementApi),
+		HasStripeCustomerId:   qAppOrg.StripeCustomerID != nil && *qAppOrg.StripeCustomerID != "",
 	}, nil
 }

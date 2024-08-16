@@ -14,7 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlowsRequest) (*ssoreadyv1.ListSAMLFlowsResponse, error) {
+func (s *Store) AppListSAMLFlows(ctx context.Context, req *ssoreadyv1.AppListSAMLFlowsRequest) (*ssoreadyv1.AppListSAMLFlowsResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -80,13 +80,13 @@ func (s *Store) ListSAMLFlows(ctx context.Context, req *ssoreadyv1.ListSAMLFlows
 		flows = flows[:limit]
 	}
 
-	return &ssoreadyv1.ListSAMLFlowsResponse{
+	return &ssoreadyv1.AppListSAMLFlowsResponse{
 		SamlFlows:     flows,
 		NextPageToken: nextPageToken,
 	}, nil
 }
 
-func (s *Store) GetSAMLFlow(ctx context.Context, req *ssoreadyv1.GetSAMLFlowRequest) (*ssoreadyv1.SAMLFlow, error) {
+func (s *Store) AppGetSAMLFlow(ctx context.Context, req *ssoreadyv1.AppGetSAMLFlowRequest) (*ssoreadyv1.SAMLFlow, error) {
 	id, err := idformat.SAMLFlow.Parse(req.Id)
 	if err != nil {
 		return nil, err

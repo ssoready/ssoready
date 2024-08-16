@@ -13,12 +13,17 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) AppListSAMLConnections(ctx context.Context, req *ssoreadyv1.AppListSAMLConnectionsRequest) (*ssoreadyv1.AppListSAMLConnectionsResponse, error) {
+func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAMLConnectionsRequest) (*ssoreadyv1.ListSAMLConnectionsResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
+
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
 
 	orgID, err := idformat.Organization.Parse(req.OrganizationId)
 	if err != nil {
@@ -26,9 +31,9 @@ func (s *Store) AppListSAMLConnections(ctx context.Context, req *ssoreadyv1.AppL
 	}
 
 	// idor check
-	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                orgID,
+	if _, err = q.ManagementGetOrganization(ctx, queries.ManagementGetOrganizationParams{
+		EnvironmentID: envID,
+		ID:            orgID,
 	}); err != nil {
 		return nil, err
 	}
@@ -59,13 +64,18 @@ func (s *Store) AppListSAMLConnections(ctx context.Context, req *ssoreadyv1.AppL
 		samlConns = samlConns[:limit]
 	}
 
-	return &ssoreadyv1.AppListSAMLConnectionsResponse{
+	return &ssoreadyv1.ListSAMLConnectionsResponse{
 		SamlConnections: samlConns,
 		NextPageToken:   nextPageToken,
 	}, nil
 }
 
-func (s *Store) AppGetSAMLConnection(ctx context.Context, req *ssoreadyv1.AppGetSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLConnectionRequest) (*ssoreadyv1.GetSAMLConnectionResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	id, err := idformat.SAMLConnection.Parse(req.Id)
 	if err != nil {
 		return nil, err
@@ -77,18 +87,23 @@ func (s *Store) AppGetSAMLConnection(ctx context.Context, req *ssoreadyv1.AppGet
 	}
 	defer rollback()
 
-	qSAMLConn, err := q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                id,
+	qSAMLConn, err := q.ManagementGetSAMLConnection(ctx, queries.ManagementGetSAMLConnectionParams{
+		EnvironmentID: envID,
+		ID:            id,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return parseSAMLConnection(qSAMLConn), nil
+	return &ssoreadyv1.GetSAMLConnectionResponse{SamlConnection: parseSAMLConnection(qSAMLConn)}, nil
 }
 
-func (s *Store) AppCreateSAMLConnection(ctx context.Context, req *ssoreadyv1.AppCreateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.CreateSAMLConnectionRequest) (*ssoreadyv1.CreateSAMLConnectionResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -101,18 +116,14 @@ func (s *Store) AppCreateSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 	}
 
 	// idor check
-	org, err := q.GetOrganization(ctx, queries.GetOrganizationParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                orgID,
-	})
-	if err != nil {
+	if _, err := q.ManagementGetOrganization(ctx, queries.ManagementGetOrganizationParams{
+		EnvironmentID: envID,
+		ID:            orgID,
+	}); err != nil {
 		return nil, err
 	}
 
-	env, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                org.EnvironmentID,
-	})
+	env, err := q.GetEnvironmentByID(ctx, envID)
 	if err != nil {
 		return nil, err
 	}
@@ -164,25 +175,30 @@ func (s *Store) AppCreateSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return parseSAMLConnection(qSAMLConn), nil
+	return &ssoreadyv1.CreateSAMLConnectionResponse{SamlConnection: parseSAMLConnection(qSAMLConn)}, nil
 }
 
-func (s *Store) AppUpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.AppUpdateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.UpdateSAMLConnectionRequest) (*ssoreadyv1.UpdateSAMLConnectionResponse, error) {
+	envID, err := idformat.Environment.Parse(authn.FullContextData(ctx).APIKey.EnvID)
+	if err != nil {
+		return nil, err
+	}
+
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback()
 
-	id, err := idformat.SAMLConnection.Parse(req.SamlConnection.Id)
+	id, err := idformat.SAMLConnection.Parse(req.Id)
 	if err != nil {
 		return nil, fmt.Errorf("parse saml connection id: %w", err)
 	}
 
 	// idor check
-	if _, err = q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                id,
+	if _, err = q.ManagementGetSAMLConnection(ctx, queries.ManagementGetSAMLConnectionParams{
+		EnvironmentID: envID,
+		ID:            id,
 	}); err != nil {
 		return nil, fmt.Errorf("get saml connection: %w", err)
 	}
@@ -223,31 +239,5 @@ func (s *Store) AppUpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return parseSAMLConnection(qSAMLConn), nil
-}
-
-func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConnection {
-	var certPEM string
-	if len(qSAMLConn.IdpX509Certificate) != 0 {
-		cert, err := x509.ParseCertificate(qSAMLConn.IdpX509Certificate)
-		if err != nil {
-			panic(err)
-		}
-
-		certPEM = string(pem.EncodeToMemory(&pem.Block{
-			Type:  "CERTIFICATE",
-			Bytes: cert.Raw,
-		}))
-	}
-
-	return &ssoreadyv1.SAMLConnection{
-		Id:             idformat.SAMLConnection.Format(qSAMLConn.ID),
-		OrganizationId: idformat.Organization.Format(qSAMLConn.OrganizationID),
-		Primary:        qSAMLConn.IsPrimary,
-		IdpRedirectUrl: derefOrEmpty(qSAMLConn.IdpRedirectUrl),
-		IdpCertificate: certPEM,
-		IdpEntityId:    derefOrEmpty(qSAMLConn.IdpEntityID),
-		SpEntityId:     qSAMLConn.SpEntityID,
-		SpAcsUrl:       qSAMLConn.SpAcsUrl,
-	}
+	return &ssoreadyv1.UpdateSAMLConnectionResponse{SamlConnection: parseSAMLConnection(qSAMLConn)}, nil
 }

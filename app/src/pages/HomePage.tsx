@@ -3,7 +3,6 @@ import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
   getOnboardingState,
   listEnvironments,
-  listOrganizations,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Table,

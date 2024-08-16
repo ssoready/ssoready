@@ -47,6 +47,97 @@ service SSOReadyService {
     };
   };
 
+  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse) {
+    option (google.api.http) = {
+      get: "/v1/organizations"
+    };
+  }
+
+  rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse) {
+    option (google.api.http) = {
+      get: "/v1/organizations/{id}"
+    };
+  }
+
+  rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse) {
+    option (google.api.http) = {
+      post: "/v1/organizations",
+      body: "organization"
+    };
+  }
+
+  rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse) {
+    option (google.api.http) = {
+      patch: "/v1/organizations/{id}",
+      body: "organization"
+    };
+  }
+
+  rpc CreateSetupURL(CreateSetupURLRequest) returns (CreateSetupURLResponse) {
+    option (google.api.http) = {
+      post: "/v1/setup-urls",
+      body: "*"
+    };
+  }
+
+  rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/saml-connections"
+    };
+  }
+
+  rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (GetSAMLConnectionResponse) {
+    option (google.api.http) = {
+      get: "/v1/saml-connections/{id}"
+    };
+  }
+
+  rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (CreateSAMLConnectionResponse) {
+    option (google.api.http) = {
+      post: "/v1/saml-connections",
+      body: "saml_connection"
+    };
+  }
+
+  rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (UpdateSAMLConnectionResponse) {
+    option (google.api.http) = {
+      patch: "/v1/saml-connections/{id}",
+      body: "saml_connection"
+    };
+  }
+
+  rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim-directories"
+    };
+  }
+
+  rpc GetSCIMDirectory(GetSCIMDirectoryRequest) returns (GetSCIMDirectoryResponse) {
+    option (google.api.http) = {
+      get: "/v1/scim-directories/{id}"
+    };
+  }
+
+  rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (CreateSCIMDirectoryResponse) {
+    option (google.api.http) = {
+      post: "/v1/scim-directories",
+      body: "scim_directory"
+    };
+  }
+
+  rpc UpdateSCIMDirectory(UpdateSCIMDirectoryRequest) returns (UpdateSCIMDirectoryResponse) {
+    option (google.api.http) = {
+      patch: "/v1/scim-directories/{id}",
+      body: "scim_directory"
+    };
+  }
+
+  rpc RotateSCIMDirectoryBearerToken(RotateSCIMDirectoryBearerTokenRequest) returns (RotateSCIMDirectoryBearerTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/scim-directories/{id}/rotate-bearer-token",
+    };
+  }
+
   rpc VerifyEmail(VerifyEmailRequest) returns (google.protobuf.Empty);
   rpc SignIn(SignInRequest) returns (SignInResponse);
   rpc SignOut(SignOutRequest) returns (SignOutResponse);
@@ -55,6 +146,10 @@ service SSOReadyService {
   rpc UpdateOnboardingState(UpdateOnboardingStateRequest) returns (google.protobuf.Empty);
   rpc OnboardingGetSAMLRedirectURL(OnboardingGetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse);
   rpc OnboardingRedeemSAMLAccessCode(OnboardingRedeemSAMLAccessCodeRequest) returns (RedeemSAMLAccessCodeResponse);
+
+  rpc GetStripeCheckoutURL(GetStripeCheckoutURLRequest) returns (GetStripeCheckoutURLResponse);
+  rpc RedeemStripeCheckout(RedeemStripeCheckoutRequest) returns (RedeemStripeCheckoutResponse);
+  rpc GetStripeBillingPortalURL(GetStripeBillingPortalURLRequest) returns (GetStripeBillingPortalURLResponse);
 
   rpc GetAppOrganization(GetAppOrganizationRequest) returns (GetAppOrganizationResponse);
   rpc ListAppUsers(ListAppUsersRequest) returns (ListAppUsersResponse);
@@ -74,28 +169,28 @@ service SSOReadyService {
   rpc CreateSAMLOAuthClient(CreateSAMLOAuthClientRequest) returns (SAMLOAuthClient);
   rpc DeleteSAMLOAuthClient(DeleteSAMLOAuthClientRequest) returns (google.protobuf.Empty);
 
-  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
-  rpc GetOrganization(GetOrganizationRequest) returns (Organization);
-  rpc CreateOrganization(CreateOrganizationRequest) returns (Organization);
-  rpc UpdateOrganization(UpdateOrganizationRequest) returns (Organization);
+  rpc AppListOrganizations(AppListOrganizationsRequest) returns (AppListOrganizationsResponse);
+  rpc AppGetOrganization(AppGetOrganizationRequest) returns (Organization);
+  rpc AppCreateOrganization(AppCreateOrganizationRequest) returns (Organization);
+  rpc AppUpdateOrganization(AppUpdateOrganizationRequest) returns (Organization);
 
-  rpc CreateAdminSetupURL(CreateAdminSetupURLRequest) returns (CreateAdminSetupURLResponse);
+  rpc AppCreateAdminSetupURL(AppCreateAdminSetupURLRequest) returns (AppCreateAdminSetupURLResponse);
 
-  rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse);
-  rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (SAMLConnection);
-  rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (SAMLConnection);
-  rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (SAMLConnection);
+  rpc AppListSAMLConnections(AppListSAMLConnectionsRequest) returns (AppListSAMLConnectionsResponse);
+  rpc AppGetSAMLConnection(AppGetSAMLConnectionRequest) returns (SAMLConnection);
+  rpc AppCreateSAMLConnection(AppCreateSAMLConnectionRequest) returns (SAMLConnection);
+  rpc AppUpdateSAMLConnection(AppUpdateSAMLConnectionRequest) returns (SAMLConnection);
 
-  rpc ListSAMLFlows(ListSAMLFlowsRequest) returns (ListSAMLFlowsResponse);
-  rpc GetSAMLFlow(GetSAMLFlowRequest) returns (SAMLFlow);
+  rpc AppListSAMLFlows(AppListSAMLFlowsRequest) returns (AppListSAMLFlowsResponse);
+  rpc AppGetSAMLFlow(AppGetSAMLFlowRequest) returns (SAMLFlow);
 
   rpc ParseSAMLMetadata(ParseSAMLMetadataRequest) returns (ParseSAMLMetadataResponse);
 
-  rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse);
-  rpc GetSCIMDirectory(GetSCIMDirectoryRequest) returns (SCIMDirectory);
-  rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (SCIMDirectory);
-  rpc UpdateSCIMDirectory(UpdateSCIMDirectoryRequest) returns (SCIMDirectory);
-  rpc RotateSCIMDirectoryBearerToken(RotateSCIMDirectoryBearerTokenRequest) returns (RotateSCIMDirectoryBearerTokenResponse);
+  rpc AppListSCIMDirectories(AppListSCIMDirectoriesRequest) returns (AppListSCIMDirectoriesResponse);
+  rpc AppGetSCIMDirectory(AppGetSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc AppCreateSCIMDirectory(AppCreateSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc AppUpdateSCIMDirectory(AppUpdateSCIMDirectoryRequest) returns (SCIMDirectory);
+  rpc AppRotateSCIMDirectoryBearerToken(AppRotateSCIMDirectoryBearerTokenRequest) returns (AppRotateSCIMDirectoryBearerTokenResponse);
 
   rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
   rpc AppGetSCIMUser(AppGetSCIMUserRequest) returns (SCIMUser);
@@ -134,6 +229,7 @@ message APIKey {
   string id = 1;
   string environment_id = 2;
   string secret_token = 3;
+  bool has_management_api_access = 4;
 }
 
 message SAMLOAuthClient {
@@ -291,6 +387,130 @@ message GetSCIMGroupResponse {
   SCIMGroup scim_group = 1;
 }
 
+message ListOrganizationsRequest {
+  string page_token = 1;
+}
+
+message ListOrganizationsResponse {
+  repeated Organization organizations = 1;
+  string next_page_token = 2;
+}
+
+message GetOrganizationRequest {
+  string id = 1;
+}
+
+message GetOrganizationResponse {
+  Organization organization = 1;
+}
+
+message CreateOrganizationRequest {
+  Organization organization = 1;
+}
+
+message CreateOrganizationResponse {
+  Organization organization = 1;
+}
+
+message UpdateOrganizationRequest {
+  string id = 1;
+  Organization organization = 2;
+}
+
+message UpdateOrganizationResponse {
+  Organization organization = 1;
+}
+
+message CreateSetupURLRequest {
+  string organization_id = 1;
+  bool can_manage_saml = 2;
+  bool can_manage_scim = 3;
+}
+
+message CreateSetupURLResponse {
+  string url = 1;
+}
+
+message ListSAMLConnectionsRequest {
+  string organization_id = 1;
+  string page_token = 2;
+}
+
+message ListSAMLConnectionsResponse {
+  repeated SAMLConnection saml_connections = 1;
+  string next_page_token = 2;
+}
+
+message GetSAMLConnectionRequest {
+  string id = 1;
+}
+
+message GetSAMLConnectionResponse {
+  SAMLConnection saml_connection = 1;
+}
+
+message CreateSAMLConnectionRequest {
+  SAMLConnection saml_connection = 1;
+}
+
+message CreateSAMLConnectionResponse {
+  SAMLConnection saml_connection = 1;
+}
+
+message UpdateSAMLConnectionRequest {
+  string id = 1;
+  SAMLConnection saml_connection = 2;
+}
+
+message UpdateSAMLConnectionResponse {
+  SAMLConnection saml_connection = 1;
+}
+
+message ListSCIMDirectoriesRequest {
+  string organization_id = 1;
+  string page_token = 2;
+}
+
+message ListSCIMDirectoriesResponse {
+  repeated SCIMDirectory scim_directories = 1;
+  string next_page_token = 2;
+}
+
+message GetSCIMDirectoryRequest {
+  string id = 1;
+}
+
+message GetSCIMDirectoryResponse {
+  SCIMDirectory scim_directory = 1;
+}
+
+message CreateSCIMDirectoryRequest {
+  SCIMDirectory scim_directory = 1;
+}
+
+message CreateSCIMDirectoryResponse {
+  SCIMDirectory scim_directory = 1;
+}
+
+message UpdateSCIMDirectoryRequest {
+  string id = 1;
+  SCIMDirectory scim_directory = 2;
+}
+
+message UpdateSCIMDirectoryResponse {
+  SCIMDirectory scim_directory = 1;
+}
+
+message RotateSCIMDirectoryBearerTokenRequest {
+  string id = 1;
+}
+
+message RotateSCIMDirectoryBearerTokenResponse {
+  string bearer_token = 1;
+}
+
+// below this point is internal
+
 message VerifyEmailRequest {
   string email = 1;
 }
@@ -347,11 +567,32 @@ message OnboardingRedeemSAMLAccessCodeRequest {
   string saml_access_code = 2;
 }
 
+message GetStripeCheckoutURLRequest {
+}
+
+message GetStripeCheckoutURLResponse {
+  string url = 1;
+}
+
+message RedeemStripeCheckoutRequest {
+  string stripe_checkout_session_id = 1;
+}
+
+message RedeemStripeCheckoutResponse {}
+
+message GetStripeBillingPortalURLRequest {}
+
+message GetStripeBillingPortalURLResponse {
+  string url = 1;
+}
+
 message GetAppOrganizationRequest {
 }
 
 message GetAppOrganizationResponse {
   string google_hosted_domain = 1;
+  bool entitled_management_api = 2;
+  bool has_stripe_customer_id = 3;
 }
 
 message ListAppUsersRequest {
@@ -426,71 +667,71 @@ message DeleteSAMLOAuthClientRequest {
   string id = 1;
 }
 
-message ListOrganizationsRequest {
+message AppListOrganizationsRequest {
   string environment_id = 1;
   string page_token = 2;
 }
 
-message ListOrganizationsResponse {
+message AppListOrganizationsResponse {
   repeated Organization organizations = 1;
   string next_page_token = 2;
 }
 
-message GetOrganizationRequest {
+message AppGetOrganizationRequest {
   string id = 1;
 }
 
-message CreateOrganizationRequest {
+message AppCreateOrganizationRequest {
   Organization organization = 1;
 }
 
-message UpdateOrganizationRequest {
+message AppUpdateOrganizationRequest {
   Organization organization = 1;
 }
 
-message CreateAdminSetupURLRequest {
+message AppCreateAdminSetupURLRequest {
   string organization_id = 1;
   bool can_manage_saml = 2;
   bool can_manage_scim = 3;
 }
 
-message CreateAdminSetupURLResponse {
+message AppCreateAdminSetupURLResponse {
   string url = 1;
 }
 
-message ListSAMLConnectionsRequest {
+message AppListSAMLConnectionsRequest {
   string organization_id = 1;
   string page_token = 2;
 }
 
-message ListSAMLConnectionsResponse {
+message AppListSAMLConnectionsResponse {
   repeated SAMLConnection saml_connections = 1;
   string next_page_token = 2;
 }
 
-message GetSAMLConnectionRequest {
+message AppGetSAMLConnectionRequest {
   string id = 1;
 }
 
-message CreateSAMLConnectionRequest {
+message AppCreateSAMLConnectionRequest {
   SAMLConnection saml_connection = 1;
 }
 
-message UpdateSAMLConnectionRequest {
+message AppUpdateSAMLConnectionRequest {
   SAMLConnection saml_connection = 1;
 }
 
-message ListSAMLFlowsRequest {
+message AppListSAMLFlowsRequest {
   string saml_connection_id = 1;
   string page_token = 2;
 }
 
-message ListSAMLFlowsResponse {
+message AppListSAMLFlowsResponse {
   repeated SAMLFlow saml_flows = 1;
   string next_page_token = 2;
 }
 
-message GetSAMLFlowRequest {
+message AppGetSAMLFlowRequest {
   string id = 1;
 }
 
@@ -504,33 +745,33 @@ message ParseSAMLMetadataResponse {
   string idp_entity_id = 3;
 }
 
-message ListSCIMDirectoriesRequest {
+message AppListSCIMDirectoriesRequest {
   string organization_id = 1;
   string page_token = 2;
 }
 
-message ListSCIMDirectoriesResponse {
+message AppListSCIMDirectoriesResponse {
   repeated SCIMDirectory scim_directories = 1;
   string next_page_token = 2;
 }
 
-message GetSCIMDirectoryRequest {
+message AppGetSCIMDirectoryRequest {
   string id = 1;
 }
 
-message CreateSCIMDirectoryRequest {
+message AppCreateSCIMDirectoryRequest {
   SCIMDirectory scim_directory = 1;
 }
 
-message UpdateSCIMDirectoryRequest {
+message AppUpdateSCIMDirectoryRequest {
   SCIMDirectory scim_directory = 1;
 }
 
-message RotateSCIMDirectoryBearerTokenRequest {
+message AppRotateSCIMDirectoryBearerTokenRequest {
   string scim_directory_id = 1;
 }
 
-message RotateSCIMDirectoryBearerTokenResponse {
+message AppRotateSCIMDirectoryBearerTokenResponse {
   string bearer_token = 1;
 }
 

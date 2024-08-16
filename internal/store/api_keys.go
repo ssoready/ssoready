@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 
+	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
@@ -18,9 +19,10 @@ type GetAPIKeyBySecretTokenRequest struct {
 }
 
 type GetAPIKeyBySecretTokenResponse struct {
-	AppOrganizationID uuid.UUID
-	EnvironmentID     string
-	ID                string
+	AppOrganizationID      uuid.UUID
+	EnvironmentID          string
+	ID                     string
+	HasManagementAPIAccess bool
 }
 
 func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecretTokenRequest) (*GetAPIKeyBySecretTokenResponse, error) {
@@ -37,9 +39,10 @@ func (s *Store) GetAPIKeyBySecretToken(ctx context.Context, req *GetAPIKeyBySecr
 	}
 
 	return &GetAPIKeyBySecretTokenResponse{
-		AppOrganizationID: apiKey.AppOrganizationID,
-		EnvironmentID:     idformat.Environment.Format(apiKey.EnvironmentID),
-		ID:                idformat.APIKey.Format(apiKey.ID),
+		AppOrganizationID:      apiKey.AppOrganizationID,
+		EnvironmentID:          idformat.Environment.Format(apiKey.EnvironmentID),
+		ID:                     idformat.APIKey.Format(apiKey.ID),
+		HasManagementAPIAccess: derefOrEmpty(apiKey.HasManagementApiAccess),
 	}, nil
 }
 
@@ -139,13 +142,24 @@ func (s *Store) CreateAPIKey(ctx context.Context, req *ssoreadyv1.CreateAPIKeyRe
 		return nil, err
 	}
 
+	// entitlement check
+	qAppOrg, err := q.GetAppOrganizationByID(ctx, authn.AppOrgID(ctx))
+	if err != nil {
+		return nil, fmt.Errorf("get app org by id: %w", err)
+	}
+
+	if req.ApiKey.HasManagementApiAccess && !derefOrEmpty(qAppOrg.EntitledManagementApi) {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("app organization is not entitled to management api"))
+	}
+
 	secretValue := uuid.New()
 	secretValueSHA := sha256.Sum256(secretValue[:])
 
 	qAPIKey, err := q.CreateAPIKey(ctx, queries.CreateAPIKeyParams{
-		EnvironmentID:     envID,
-		ID:                uuid.New(),
-		SecretValueSha256: secretValueSHA[:],
+		EnvironmentID:          envID,
+		ID:                     uuid.New(),
+		SecretValueSha256:      secretValueSHA[:],
+		HasManagementApiAccess: &req.ApiKey.HasManagementApiAccess,
 	})
 	if err != nil {
 		return nil, err
@@ -193,8 +207,9 @@ func (s *Store) DeleteAPIKey(ctx context.Context, req *ssoreadyv1.DeleteAPIKeyRe
 
 func parseAPIKey(qAPIKey queries.ApiKey) *ssoreadyv1.APIKey {
 	return &ssoreadyv1.APIKey{
-		Id:            idformat.APIKey.Format(qAPIKey.ID),
-		EnvironmentId: idformat.Environment.Format(qAPIKey.EnvironmentID),
-		SecretToken:   "", // intentionally left blank
+		Id:                     idformat.APIKey.Format(qAPIKey.ID),
+		EnvironmentId:          idformat.Environment.Format(qAPIKey.EnvironmentID),
+		SecretToken:            "", // intentionally left blank
+		HasManagementApiAccess: derefOrEmpty(qAPIKey.HasManagementApiAccess),
 	}
 }

@@ -19,7 +19,7 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) CreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.CreateAdminSetupURLRequest) (*ssoreadyv1.CreateAdminSetupURLResponse, error) {
+func (s *Store) AppCreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.AppCreateAdminSetupURLRequest) (*ssoreadyv1.AppCreateAdminSetupURLResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *Store) CreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.CreateA
 
 	loginURL.RawQuery = query.Encode()
 
-	return &ssoreadyv1.CreateAdminSetupURLResponse{
+	return &ssoreadyv1.AppCreateAdminSetupURLResponse{
 		Url: loginURL.String(),
 	}, nil
 }

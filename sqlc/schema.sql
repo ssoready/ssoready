@@ -59,7 +59,8 @@ CREATE TABLE public.api_keys (
     id uuid NOT NULL,
     secret_value character varying NOT NULL,
     environment_id uuid NOT NULL,
-    secret_value_sha256 bytea
+    secret_value_sha256 bytea,
+    has_management_api_access boolean
 );
 
 
@@ -73,7 +74,9 @@ CREATE TABLE public.app_organizations (
     id uuid NOT NULL,
     google_hosted_domain character varying,
     microsoft_tenant_id character varying,
-    email_logins_disabled boolean
+    email_logins_disabled boolean,
+    stripe_customer_id character varying,
+    entitled_management_api boolean
 );
 
 

@@ -289,8 +289,8 @@ where environments.app_organization_id = $1
   and api_keys.id = $2;
 
 -- name: CreateAPIKey :one
-insert into api_keys (id, secret_value, secret_value_sha256, environment_id)
-values ($1, '', $2, $3)
+insert into api_keys (id, secret_value, secret_value_sha256, environment_id, has_management_api_access)
+values ($1, '', $2, $3, $4)
 returning *;
 
 -- name: DeleteAPIKey :exec
@@ -312,6 +312,12 @@ from organizations
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and organizations.id = $2;
+
+-- name: ManagementGetOrganization :one
+select *
+from organizations
+where environment_id = $1
+  and id = $2;
 
 -- name: ListOrganizationDomains :many
 select *
@@ -353,6 +359,13 @@ from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
+  and saml_connections.id = $2;
+
+-- name: ManagementGetSAMLConnection :one
+select saml_connections.*
+from saml_connections
+         join organizations on saml_connections.organization_id = organizations.id
+where organizations.environment_id = $1
   and saml_connections.id = $2;
 
 -- name: CreateSAMLConnection :one
@@ -715,6 +728,13 @@ from scim_directories
 where environments.app_organization_id = $1
   and scim_directories.id = $2;
 
+-- name: ManagementGetSCIMDirectory :one
+select scim_directories.*
+from scim_directories
+         join organizations on scim_directories.organization_id = organizations.id
+where organizations.environment_id = $1
+  and scim_directories.id = $2;
+
 -- name: AppGetSCIMUser :one
 select scim_users.*
 from scim_users
@@ -737,4 +757,15 @@ where environments.app_organization_id = $1
 update scim_directories
 set bearer_token_sha256 = $1
 where id = $2
+returning *;
+
+-- name: UpdateAppOrganizationStripeCustomerID :exec
+update app_organizations
+set stripe_customer_id = $1
+where id = $2;
+
+-- name: UpdateAppOrganizationEntitlementsByStripeCustomerID :one
+update app_organizations
+set entitled_management_api = $1
+where stripe_customer_id = $2
 returning *;
