@@ -10,10 +10,12 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a list of organizations.
             operationId: SSOReadyService_ListOrganizations
             parameters:
                 - name: pageToken
                   in: query
+                  description: Pagination token. Leave empty to get the first page of results.
                   schema:
                     type: string
             responses:
@@ -32,6 +34,7 @@ paths:
         post:
             tags:
                 - SSOReadyService
+            description: Creates an organization.
             operationId: SSOReadyService_CreateOrganization
             requestBody:
                 content:
@@ -56,10 +59,12 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets an organization.
             operationId: SSOReadyService_GetOrganization
             parameters:
                 - name: id
                   in: path
+                  description: ID of the organization to get.
                   required: true
                   schema:
                     type: string
@@ -79,10 +84,12 @@ paths:
         patch:
             tags:
                 - SSOReadyService
+            description: Updates an organization.
             operationId: SSOReadyService_UpdateOrganization
             parameters:
                 - name: id
                   in: path
+                  description: ID of the organization to update.
                   required: true
                   schema:
                     type: string
@@ -109,14 +116,17 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Lists SAML connections in an organization.
             operationId: SSOReadyService_ListSAMLConnections
             parameters:
                 - name: organizationId
                   in: query
+                  description: The organization the SAML connections belong to.
                   schema:
                     type: string
                 - name: pageToken
                   in: query
+                  description: Pagination token. Leave empty to get the first page of results.
                   schema:
                     type: string
             responses:
@@ -135,6 +145,7 @@ paths:
         post:
             tags:
                 - SSOReadyService
+            description: Creates a SAML connection.
             operationId: SSOReadyService_CreateSAMLConnection
             requestBody:
                 content:
@@ -159,10 +170,12 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a SAML connection.
             operationId: SSOReadyService_GetSAMLConnection
             parameters:
                 - name: id
                   in: path
+                  description: ID of the SAML connection to get.
                   required: true
                   schema:
                     type: string
@@ -182,10 +195,12 @@ paths:
         patch:
             tags:
                 - SSOReadyService
+            description: Updates a SAML connection.
             operationId: SSOReadyService_UpdateSAMLConnection
             parameters:
                 - name: id
                   in: path
+                  description: The ID of the SAML connection to update.
                   required: true
                   schema:
                     type: string
@@ -260,14 +275,17 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a list of SCIM directories in an organization.
             operationId: SSOReadyService_ListSCIMDirectories
             parameters:
                 - name: organizationId
                   in: query
+                  description: The organization the SCIM directories belong to.
                   schema:
                     type: string
                 - name: pageToken
                   in: query
+                  description: Pagination token. Leave empty to get the first page of results.
                   schema:
                     type: string
             responses:
@@ -286,6 +304,7 @@ paths:
         post:
             tags:
                 - SSOReadyService
+            description: Creates a SCIM directory.
             operationId: SSOReadyService_CreateSCIMDirectory
             requestBody:
                 content:
@@ -310,10 +329,12 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a SCIM directory.
             operationId: SSOReadyService_GetSCIMDirectory
             parameters:
                 - name: id
                   in: path
+                  description: The ID of the SCIM directory.
                   required: true
                   schema:
                     type: string
@@ -333,10 +354,12 @@ paths:
         patch:
             tags:
                 - SSOReadyService
+            description: Updates a SCIM directory.
             operationId: SSOReadyService_UpdateSCIMDirectory
             parameters:
                 - name: id
                   in: path
+                  description: The ID of the SCIM directory to update.
                   required: true
                   schema:
                     type: string
@@ -363,10 +386,23 @@ paths:
         post:
             tags:
                 - SSOReadyService
+            description: |-
+                Rotates a SCIM directory's bearer token.
+
+                 Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+                 Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+                 not have any bearer token at all; you must use this endpoint to get an initial value.
+
+                 Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+                 will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+
+                 SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+                 endpoint to generate a new one.
             operationId: SSOReadyService_RotateSCIMDirectoryBearerToken
             parameters:
                 - name: id
                   in: path
+                  description: The ID of the SCIM directory whose bearer token to rotate.
                   required: true
                   schema:
                     type: string
@@ -509,6 +545,10 @@ paths:
         post:
             tags:
                 - SSOReadyService
+            description: |-
+                Creates a short-lived self-serve setup URL that you can send to your customer.
+
+                 Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
             operationId: SSOReadyService_CreateSetupURL
             requestBody:
                 content:
@@ -535,41 +575,59 @@ components:
             type: object
             properties:
                 organization:
-                    $ref: '#/components/schemas/Organization'
+                    allOf:
+                        - $ref: '#/components/schemas/Organization'
+                    description: The created organization.
         CreateSAMLConnectionResponse:
             type: object
             properties:
                 samlConnection:
-                    $ref: '#/components/schemas/SAMLConnection'
+                    allOf:
+                        - $ref: '#/components/schemas/SAMLConnection'
+                    description: The created SAML connection.
         CreateSCIMDirectoryResponse:
             type: object
             properties:
                 scimDirectory:
-                    $ref: '#/components/schemas/SCIMDirectory'
+                    allOf:
+                        - $ref: '#/components/schemas/SCIMDirectory'
+                    description: The updated SCIM directory.
         CreateSetupURLRequest:
             type: object
             properties:
                 organizationId:
                     type: string
+                    description: The organization that the setup URL is for.
                 canManageSaml:
                     type: boolean
+                    description: Whether the setup URL lets the user manage SAML connections.
                 canManageScim:
                     type: boolean
+                    description: Whether the setup URL lets the user manage SCIM directories.
         CreateSetupURLResponse:
             type: object
             properties:
                 url:
                     type: string
+                    description: |-
+                        The one-time, short-lived self-serve setup URL.
+
+                         Do not log or store this URL. Because this URL is one-time, loading it yourself means your customer will not be
+                         able to load it after you.
         GetOrganizationResponse:
             type: object
             properties:
                 organization:
-                    $ref: '#/components/schemas/Organization'
+                    allOf:
+                        - $ref: '#/components/schemas/Organization'
+                    description: The requested organization.
         GetSAMLConnectionResponse:
             type: object
             properties:
                 samlConnection:
-                    $ref: '#/components/schemas/SAMLConnection'
+                    allOf:
+                        - $ref: '#/components/schemas/SAMLConnection'
+                    description: The requested SAML connection.
         GetSAMLRedirectURLRequest:
             type: object
             properties:
@@ -590,7 +648,9 @@ components:
             type: object
             properties:
                 scimDirectory:
-                    $ref: '#/components/schemas/SCIMDirectory'
+                    allOf:
+                        - $ref: '#/components/schemas/SCIMDirectory'
+                    description: The requested SCIM directory.
         GetSCIMGroupResponse:
             type: object
             properties:
@@ -616,8 +676,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Organization'
+                    description: List of organizations.
                 nextPageToken:
                     type: string
+                    description: Value to use as `pageToken` for the next page of data. Empty if there is no more data.
         ListSAMLConnectionsResponse:
             type: object
             properties:
@@ -625,8 +687,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/SAMLConnection'
+                    description: The list of SAML connections.
                 nextPageToken:
                     type: string
+                    description: Value to use as `pageToken` for the next page of data. Empty if there is no more data.
         ListSCIMDirectoriesResponse:
             type: object
             properties:
@@ -634,8 +698,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/SCIMDirectory'
+                    description: The list of SCIM directories.
                 nextPageToken:
                     type: string
+                    description: Value to use as `pageToken` for the next page of data. Empty if there is no more data.
         ListSCIMGroupsResponse:
             type: object
             properties:
@@ -659,14 +725,27 @@ components:
             properties:
                 id:
                     type: string
+                    description: Unique identifier for this organization.
                 environmentId:
                     type: string
+                    description: The environment this organization belongs to.
                 externalId:
                     type: string
+                    description: |-
+                        An identifier you can attach to an organization. Meant to be used to correlate an SSOReady organization to your
+                         internal equivalent concept.
+
+                         External IDs are unique within an environment. No two organizations in the same environment can have
+                         the same external ID.
                 domains:
                     type: array
                     items:
                         type: string
+                    description: |-
+                        A list of domains that users from this organization use.
+
+                         SAML connections and SCIM directories within this organization will only produce users whose email are included in
+                         `domains`. SSOReady will reject SAML and SCIM users that do not fall within `domains`.
         RedeemSAMLAccessCodeRequest:
             type: object
             properties:
@@ -694,40 +773,79 @@ components:
             properties:
                 bearerToken:
                     type: string
+                    description: |-
+                        The new, updated bearer token.
+
+                         Do not log or store this bearer token. It is an authentication token that your customer should securely input into
+                         their Identity Provider.
         SAMLConnection:
             type: object
             properties:
                 id:
                     type: string
+                    description: Unique identifier for this SAML connection.
                 organizationId:
                     type: string
+                    description: The organization this SAML connection belongs to.
                 primary:
                     type: boolean
+                    description: Whether this is the primary SAML connection for the organization.
                 idpRedirectUrl:
                     type: string
+                    description: |-
+                        URL to redirect to when initiating SAML flows.
+
+                         IDP redirect URLs are assigned by an Identity Provider, and need to be inputted into SSOReady.
                 idpCertificate:
                     type: string
+                    description: |-
+                        Certificate to authenticate SAML assertions. This is a PEM-encoded X.509 certificate.
+
+                         IDP certificates are assigned by an Identity Provider, and need to be inputted into SSOReady.
                 idpEntityId:
                     type: string
+                    description: |-
+                        Identifier for the identity provider when handling SAML operations.
+
+                         IDP entity IDs are assigned by an Identity Provider, and need to be inputted into SSOReady.
                 spEntityId:
                     type: string
+                    description: |-
+                        Identifier for the SAML connection when handling SAML operations.
+
+                         SP entity IDs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
                 spAcsUrl:
                     type: string
+                    description: |-
+                        URL the Identity Provider redirects to when transmitting SAML assertions. Stands for "Service Provider Assertion
+                         Consumer Service" URL.
+
+                         SP ACS URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
         SCIMDirectory:
             type: object
             properties:
                 id:
                     type: string
+                    description: Unique identifier for this SCIM directory.
                 organizationId:
                     type: string
+                    description: The organization this SCIM directory belongs to.
                 primary:
                     type: boolean
+                    description: Whether this is the primary SCIM directory for the organization.
                 scimBaseUrl:
                     type: string
-                clientBearerToken:
-                    type: string
+                    description: |-
+                        Base URL the Identity Provider uses to perform SCIM HTTP requests.
+
+                         SCIM base URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
                 hasClientBearerToken:
                     type: boolean
+                    description: |-
+                        Whether this SCIM directory has a bearer token assigned.
+
+                         SSOReady only stores a hash of the bearer token. To get a bearer token value, you must rotate this SCIM directory's
+                         bearer token.
         SCIMGroup:
             type: object
             properties:
@@ -774,16 +892,22 @@ components:
             type: object
             properties:
                 organization:
-                    $ref: '#/components/schemas/Organization'
+                    allOf:
+                        - $ref: '#/components/schemas/Organization'
+                    description: The updated organization.
         UpdateSAMLConnectionResponse:
             type: object
             properties:
                 samlConnection:
-                    $ref: '#/components/schemas/SAMLConnection'
+                    allOf:
+                        - $ref: '#/components/schemas/SAMLConnection'
+                    description: The updated SAML connection.
         UpdateSCIMDirectoryResponse:
             type: object
             properties:
                 scimDirectory:
-                    $ref: '#/components/schemas/SCIMDirectory'
+                    allOf:
+                        - $ref: '#/components/schemas/SCIMDirectory'
+                    description: The updated SCIM directory.
 tags:
     - name: SSOReadyService

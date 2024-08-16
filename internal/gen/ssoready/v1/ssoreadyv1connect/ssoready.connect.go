@@ -275,19 +275,45 @@ type SSOReadyServiceClient interface {
 	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
 	ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error)
 	GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error)
+	// Gets a list of organizations.
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
+	// Gets an organization.
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.GetOrganizationResponse], error)
+	// Creates an organization.
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
+	// Updates an organization.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
+	// Creates a short-lived self-serve setup URL that you can send to your customer.
+	//
+	// Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
 	CreateSetupURL(context.Context, *connect.Request[v1.CreateSetupURLRequest]) (*connect.Response[v1.CreateSetupURLResponse], error)
+	// Lists SAML connections in an organization.
 	ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error)
+	// Gets a SAML connection.
 	GetSAMLConnection(context.Context, *connect.Request[v1.GetSAMLConnectionRequest]) (*connect.Response[v1.GetSAMLConnectionResponse], error)
+	// Creates a SAML connection.
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.CreateSAMLConnectionResponse], error)
+	// Updates a SAML connection.
 	UpdateSAMLConnection(context.Context, *connect.Request[v1.UpdateSAMLConnectionRequest]) (*connect.Response[v1.UpdateSAMLConnectionResponse], error)
+	// Gets a list of SCIM directories in an organization.
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
+	// Gets a SCIM directory.
 	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.GetSCIMDirectoryResponse], error)
+	// Creates a SCIM directory.
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.CreateSCIMDirectoryResponse], error)
+	// Updates a SCIM directory.
 	UpdateSCIMDirectory(context.Context, *connect.Request[v1.UpdateSCIMDirectoryRequest]) (*connect.Response[v1.UpdateSCIMDirectoryResponse], error)
+	// Rotates a SCIM directory's bearer token.
+	//
+	// Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+	// Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+	// not have any bearer token at all; you must use this endpoint to get an initial value.
+	//
+	// Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+	// will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+	//
+	// SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+	// endpoint to generate a new one.
 	RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error)
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)
@@ -1234,19 +1260,45 @@ type SSOReadyServiceHandler interface {
 	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
 	ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error)
 	GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error)
+	// Gets a list of organizations.
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
+	// Gets an organization.
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.GetOrganizationResponse], error)
+	// Creates an organization.
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
+	// Updates an organization.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
+	// Creates a short-lived self-serve setup URL that you can send to your customer.
+	//
+	// Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
 	CreateSetupURL(context.Context, *connect.Request[v1.CreateSetupURLRequest]) (*connect.Response[v1.CreateSetupURLResponse], error)
+	// Lists SAML connections in an organization.
 	ListSAMLConnections(context.Context, *connect.Request[v1.ListSAMLConnectionsRequest]) (*connect.Response[v1.ListSAMLConnectionsResponse], error)
+	// Gets a SAML connection.
 	GetSAMLConnection(context.Context, *connect.Request[v1.GetSAMLConnectionRequest]) (*connect.Response[v1.GetSAMLConnectionResponse], error)
+	// Creates a SAML connection.
 	CreateSAMLConnection(context.Context, *connect.Request[v1.CreateSAMLConnectionRequest]) (*connect.Response[v1.CreateSAMLConnectionResponse], error)
+	// Updates a SAML connection.
 	UpdateSAMLConnection(context.Context, *connect.Request[v1.UpdateSAMLConnectionRequest]) (*connect.Response[v1.UpdateSAMLConnectionResponse], error)
+	// Gets a list of SCIM directories in an organization.
 	ListSCIMDirectories(context.Context, *connect.Request[v1.ListSCIMDirectoriesRequest]) (*connect.Response[v1.ListSCIMDirectoriesResponse], error)
+	// Gets a SCIM directory.
 	GetSCIMDirectory(context.Context, *connect.Request[v1.GetSCIMDirectoryRequest]) (*connect.Response[v1.GetSCIMDirectoryResponse], error)
+	// Creates a SCIM directory.
 	CreateSCIMDirectory(context.Context, *connect.Request[v1.CreateSCIMDirectoryRequest]) (*connect.Response[v1.CreateSCIMDirectoryResponse], error)
+	// Updates a SCIM directory.
 	UpdateSCIMDirectory(context.Context, *connect.Request[v1.UpdateSCIMDirectoryRequest]) (*connect.Response[v1.UpdateSCIMDirectoryResponse], error)
+	// Rotates a SCIM directory's bearer token.
+	//
+	// Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+	// Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+	// not have any bearer token at all; you must use this endpoint to get an initial value.
+	//
+	// Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+	// will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+	//
+	// SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+	// endpoint to generate a new one.
 	RotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.RotateSCIMDirectoryBearerTokenResponse], error)
 	VerifyEmail(context.Context, *connect.Request[v1.VerifyEmailRequest]) (*connect.Response[emptypb.Empty], error)
 	SignIn(context.Context, *connect.Request[v1.SignInRequest]) (*connect.Response[v1.SignInResponse], error)

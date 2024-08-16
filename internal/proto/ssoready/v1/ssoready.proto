@@ -47,18 +47,21 @@ service SSOReadyService {
     };
   };
 
+  // Gets a list of organizations.
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse) {
     option (google.api.http) = {
       get: "/v1/organizations"
     };
   }
 
+  // Gets an organization.
   rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse) {
     option (google.api.http) = {
       get: "/v1/organizations/{id}"
     };
   }
 
+  // Creates an organization.
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse) {
     option (google.api.http) = {
       post: "/v1/organizations",
@@ -66,6 +69,7 @@ service SSOReadyService {
     };
   }
 
+  // Updates an organization.
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse) {
     option (google.api.http) = {
       patch: "/v1/organizations/{id}",
@@ -73,6 +77,9 @@ service SSOReadyService {
     };
   }
 
+  // Creates a short-lived self-serve setup URL that you can send to your customer.
+  //
+  // Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
   rpc CreateSetupURL(CreateSetupURLRequest) returns (CreateSetupURLResponse) {
     option (google.api.http) = {
       post: "/v1/setup-urls",
@@ -80,18 +87,21 @@ service SSOReadyService {
     };
   }
 
+  // Lists SAML connections in an organization.
   rpc ListSAMLConnections(ListSAMLConnectionsRequest) returns (ListSAMLConnectionsResponse) {
     option (google.api.http) = {
       get: "/v1/saml-connections"
     };
   }
 
+  // Gets a SAML connection.
   rpc GetSAMLConnection(GetSAMLConnectionRequest) returns (GetSAMLConnectionResponse) {
     option (google.api.http) = {
       get: "/v1/saml-connections/{id}"
     };
   }
 
+  // Creates a SAML connection.
   rpc CreateSAMLConnection(CreateSAMLConnectionRequest) returns (CreateSAMLConnectionResponse) {
     option (google.api.http) = {
       post: "/v1/saml-connections",
@@ -99,6 +109,7 @@ service SSOReadyService {
     };
   }
 
+  // Updates a SAML connection.
   rpc UpdateSAMLConnection(UpdateSAMLConnectionRequest) returns (UpdateSAMLConnectionResponse) {
     option (google.api.http) = {
       patch: "/v1/saml-connections/{id}",
@@ -106,18 +117,21 @@ service SSOReadyService {
     };
   }
 
+  // Gets a list of SCIM directories in an organization.
   rpc ListSCIMDirectories(ListSCIMDirectoriesRequest) returns (ListSCIMDirectoriesResponse) {
     option (google.api.http) = {
       get: "/v1/scim-directories"
     };
   }
 
+  // Gets a SCIM directory.
   rpc GetSCIMDirectory(GetSCIMDirectoryRequest) returns (GetSCIMDirectoryResponse) {
     option (google.api.http) = {
       get: "/v1/scim-directories/{id}"
     };
   }
 
+  // Creates a SCIM directory.
   rpc CreateSCIMDirectory(CreateSCIMDirectoryRequest) returns (CreateSCIMDirectoryResponse) {
     option (google.api.http) = {
       post: "/v1/scim-directories",
@@ -125,6 +139,7 @@ service SSOReadyService {
     };
   }
 
+  // Updates a SCIM directory.
   rpc UpdateSCIMDirectory(UpdateSCIMDirectoryRequest) returns (UpdateSCIMDirectoryResponse) {
     option (google.api.http) = {
       patch: "/v1/scim-directories/{id}",
@@ -132,6 +147,17 @@ service SSOReadyService {
     };
   }
 
+  // Rotates a SCIM directory's bearer token.
+  //
+  // Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+  // Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+  // not have any bearer token at all; you must use this endpoint to get an initial value.
+  //
+  // Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+  // will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+  //
+  // SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+  // endpoint to generate a new one.
   rpc RotateSCIMDirectoryBearerToken(RotateSCIMDirectoryBearerTokenRequest) returns (RotateSCIMDirectoryBearerTokenResponse) {
     option (google.api.http) = {
       post: "/v1/scim-directories/{id}/rotate-bearer-token",
@@ -239,20 +265,50 @@ message SAMLOAuthClient {
 }
 
 message Organization {
+  // Unique identifier for this organization.
   string id = 1;
+  // The environment this organization belongs to.
   string environment_id = 2;
+  // An identifier you can attach to an organization. Meant to be used to correlate an SSOReady organization to your
+  // internal equivalent concept.
+  //
+  // External IDs are unique within an environment. No two organizations in the same environment can have
+  // the same external ID.
   string external_id = 3;
+  // A list of domains that users from this organization use.
+  //
+  // SAML connections and SCIM directories within this organization will only produce users whose email are included in
+  // `domains`. SSOReady will reject SAML and SCIM users that do not fall within `domains`.
   repeated string domains = 4;
 }
 
 message SAMLConnection {
+  // Unique identifier for this SAML connection.
   string id = 1;
+  // The organization this SAML connection belongs to.
   string organization_id = 2;
+  // Whether this is the primary SAML connection for the organization.
   bool primary = 8;
+  // URL to redirect to when initiating SAML flows.
+  //
+  // IDP redirect URLs are assigned by an Identity Provider, and need to be inputted into SSOReady.
   string idp_redirect_url = 3;
+  // Certificate to authenticate SAML assertions. This is a PEM-encoded X.509 certificate.
+  //
+  // IDP certificates are assigned by an Identity Provider, and need to be inputted into SSOReady.
   string idp_certificate = 4;
+  // Identifier for the identity provider when handling SAML operations.
+  //
+  // IDP entity IDs are assigned by an Identity Provider, and need to be inputted into SSOReady.
   string idp_entity_id = 5;
+  // Identifier for the SAML connection when handling SAML operations.
+  //
+  // SP entity IDs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
   string sp_entity_id = 6;
+  // URL the Identity Provider redirects to when transmitting SAML assertions. Stands for "Service Provider Assertion
+  // Consumer Service" URL.
+  //
+  // SP ACS URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
   string sp_acs_url = 7;
 }
 
@@ -298,11 +354,20 @@ enum SAMLFlowStatus {
 }
 
 message SCIMDirectory {
+  // Unique identifier for this SCIM directory.
   string id = 1;
+  // The organization this SCIM directory belongs to.
   string organization_id = 2;
+  // Whether this is the primary SCIM directory for the organization.
   bool primary = 3;
+  // Base URL the Identity Provider uses to perform SCIM HTTP requests.
+  //
+  // SCIM base URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
   string scim_base_url = 4;
-  string client_bearer_token = 5;
+  // Whether this SCIM directory has a bearer token assigned.
+  //
+  // SSOReady only stores a hash of the bearer token. To get a bearer token value, you must rotate this SCIM directory's
+  // bearer token.
   bool has_client_bearer_token = 6;
 }
 
@@ -388,19 +453,24 @@ message GetSCIMGroupResponse {
 }
 
 message ListOrganizationsRequest {
+  // Pagination token. Leave empty to get the first page of results.
   string page_token = 1;
 }
 
 message ListOrganizationsResponse {
+  // List of organizations.
   repeated Organization organizations = 1;
+  // Value to use as `pageToken` for the next page of data. Empty if there is no more data.
   string next_page_token = 2;
 }
 
 message GetOrganizationRequest {
+  // ID of the organization to get.
   string id = 1;
 }
 
 message GetOrganizationResponse {
+  // The requested organization.
   Organization organization = 1;
 }
 
@@ -409,103 +479,141 @@ message CreateOrganizationRequest {
 }
 
 message CreateOrganizationResponse {
+  // The created organization.
   Organization organization = 1;
 }
 
 message UpdateOrganizationRequest {
+  // ID of the organization to update.
   string id = 1;
+  // The updated organization.
   Organization organization = 2;
 }
 
 message UpdateOrganizationResponse {
+  // The updated organization.
   Organization organization = 1;
 }
 
 message CreateSetupURLRequest {
+  // The organization that the setup URL is for.
   string organization_id = 1;
+  // Whether the setup URL lets the user manage SAML connections.
   bool can_manage_saml = 2;
+  // Whether the setup URL lets the user manage SCIM directories.
   bool can_manage_scim = 3;
 }
 
 message CreateSetupURLResponse {
+  // The one-time, short-lived self-serve setup URL.
+  //
+  // Do not log or store this URL. Because this URL is one-time, loading it yourself means your customer will not be
+  // able to load it after you.
   string url = 1;
 }
 
 message ListSAMLConnectionsRequest {
+  // The organization the SAML connections belong to.
   string organization_id = 1;
+  // Pagination token. Leave empty to get the first page of results.
   string page_token = 2;
 }
 
 message ListSAMLConnectionsResponse {
+  // The list of SAML connections.
   repeated SAMLConnection saml_connections = 1;
+  // Value to use as `pageToken` for the next page of data. Empty if there is no more data.
   string next_page_token = 2;
 }
 
 message GetSAMLConnectionRequest {
+  // ID of the SAML connection to get.
   string id = 1;
 }
 
 message GetSAMLConnectionResponse {
+  // The requested SAML connection.
   SAMLConnection saml_connection = 1;
 }
 
 message CreateSAMLConnectionRequest {
+  // The SAML connection to create.
   SAMLConnection saml_connection = 1;
 }
 
 message CreateSAMLConnectionResponse {
+  // The created SAML connection.
   SAMLConnection saml_connection = 1;
 }
 
 message UpdateSAMLConnectionRequest {
+  // The ID of the SAML connection to update.
   string id = 1;
+  // The updated SAML connection.
   SAMLConnection saml_connection = 2;
 }
 
 message UpdateSAMLConnectionResponse {
+  // The updated SAML connection.
   SAMLConnection saml_connection = 1;
 }
 
 message ListSCIMDirectoriesRequest {
+  // The organization the SCIM directories belong to.
   string organization_id = 1;
+  // Pagination token. Leave empty to get the first page of results.
   string page_token = 2;
 }
 
 message ListSCIMDirectoriesResponse {
+  // The list of SCIM directories.
   repeated SCIMDirectory scim_directories = 1;
+  // Value to use as `pageToken` for the next page of data. Empty if there is no more data.
   string next_page_token = 2;
 }
 
 message GetSCIMDirectoryRequest {
+  // The ID of the SCIM directory.
   string id = 1;
 }
 
 message GetSCIMDirectoryResponse {
+  // The requested SCIM directory.
   SCIMDirectory scim_directory = 1;
 }
 
 message CreateSCIMDirectoryRequest {
+  // The SCIM directory to create.
   SCIMDirectory scim_directory = 1;
 }
 
 message CreateSCIMDirectoryResponse {
+  // The updated SCIM directory.
   SCIMDirectory scim_directory = 1;
 }
 
 message UpdateSCIMDirectoryRequest {
+  // The ID of the SCIM directory to update.
   string id = 1;
+  // The updated SCIM directory.
   SCIMDirectory scim_directory = 2;
 }
 
 message UpdateSCIMDirectoryResponse {
+  // The updated SCIM directory.
   SCIMDirectory scim_directory = 1;
 }
 
 message RotateSCIMDirectoryBearerTokenRequest {
+  // The ID of the SCIM directory whose bearer token to rotate.
   string id = 1;
 }
 
 message RotateSCIMDirectoryBearerTokenResponse {
+  // The new, updated bearer token.
+  //
+  // Do not log or store this bearer token. It is an authentication token that your customer should securely input into
+  // their Identity Provider.
   string bearer_token = 1;
 }
 

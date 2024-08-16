@@ -110,19 +110,45 @@ type SSOReadyServiceClient interface {
 	GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error)
 	ListSCIMGroups(ctx context.Context, in *ListSCIMGroupsRequest, opts ...grpc.CallOption) (*ListSCIMGroupsResponse, error)
 	GetSCIMGroup(ctx context.Context, in *GetSCIMGroupRequest, opts ...grpc.CallOption) (*GetSCIMGroupResponse, error)
+	// Gets a list of organizations.
 	ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error)
+	// Gets an organization.
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*GetOrganizationResponse, error)
+	// Creates an organization.
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
+	// Updates an organization.
 	UpdateOrganization(ctx context.Context, in *UpdateOrganizationRequest, opts ...grpc.CallOption) (*UpdateOrganizationResponse, error)
+	// Creates a short-lived self-serve setup URL that you can send to your customer.
+	//
+	// Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
 	CreateSetupURL(ctx context.Context, in *CreateSetupURLRequest, opts ...grpc.CallOption) (*CreateSetupURLResponse, error)
+	// Lists SAML connections in an organization.
 	ListSAMLConnections(ctx context.Context, in *ListSAMLConnectionsRequest, opts ...grpc.CallOption) (*ListSAMLConnectionsResponse, error)
+	// Gets a SAML connection.
 	GetSAMLConnection(ctx context.Context, in *GetSAMLConnectionRequest, opts ...grpc.CallOption) (*GetSAMLConnectionResponse, error)
+	// Creates a SAML connection.
 	CreateSAMLConnection(ctx context.Context, in *CreateSAMLConnectionRequest, opts ...grpc.CallOption) (*CreateSAMLConnectionResponse, error)
+	// Updates a SAML connection.
 	UpdateSAMLConnection(ctx context.Context, in *UpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*UpdateSAMLConnectionResponse, error)
+	// Gets a list of SCIM directories in an organization.
 	ListSCIMDirectories(ctx context.Context, in *ListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*ListSCIMDirectoriesResponse, error)
+	// Gets a SCIM directory.
 	GetSCIMDirectory(ctx context.Context, in *GetSCIMDirectoryRequest, opts ...grpc.CallOption) (*GetSCIMDirectoryResponse, error)
+	// Creates a SCIM directory.
 	CreateSCIMDirectory(ctx context.Context, in *CreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*CreateSCIMDirectoryResponse, error)
+	// Updates a SCIM directory.
 	UpdateSCIMDirectory(ctx context.Context, in *UpdateSCIMDirectoryRequest, opts ...grpc.CallOption) (*UpdateSCIMDirectoryResponse, error)
+	// Rotates a SCIM directory's bearer token.
+	//
+	// Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+	// Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+	// not have any bearer token at all; you must use this endpoint to get an initial value.
+	//
+	// Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+	// will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+	//
+	// SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+	// endpoint to generate a new one.
 	RotateSCIMDirectoryBearerToken(ctx context.Context, in *RotateSCIMDirectoryBearerTokenRequest, opts ...grpc.CallOption) (*RotateSCIMDirectoryBearerTokenResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
@@ -982,19 +1008,45 @@ type SSOReadyServiceServer interface {
 	GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error)
 	ListSCIMGroups(context.Context, *ListSCIMGroupsRequest) (*ListSCIMGroupsResponse, error)
 	GetSCIMGroup(context.Context, *GetSCIMGroupRequest) (*GetSCIMGroupResponse, error)
+	// Gets a list of organizations.
 	ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error)
+	// Gets an organization.
 	GetOrganization(context.Context, *GetOrganizationRequest) (*GetOrganizationResponse, error)
+	// Creates an organization.
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
+	// Updates an organization.
 	UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error)
+	// Creates a short-lived self-serve setup URL that you can send to your customer.
+	//
+	// Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
 	CreateSetupURL(context.Context, *CreateSetupURLRequest) (*CreateSetupURLResponse, error)
+	// Lists SAML connections in an organization.
 	ListSAMLConnections(context.Context, *ListSAMLConnectionsRequest) (*ListSAMLConnectionsResponse, error)
+	// Gets a SAML connection.
 	GetSAMLConnection(context.Context, *GetSAMLConnectionRequest) (*GetSAMLConnectionResponse, error)
+	// Creates a SAML connection.
 	CreateSAMLConnection(context.Context, *CreateSAMLConnectionRequest) (*CreateSAMLConnectionResponse, error)
+	// Updates a SAML connection.
 	UpdateSAMLConnection(context.Context, *UpdateSAMLConnectionRequest) (*UpdateSAMLConnectionResponse, error)
+	// Gets a list of SCIM directories in an organization.
 	ListSCIMDirectories(context.Context, *ListSCIMDirectoriesRequest) (*ListSCIMDirectoriesResponse, error)
+	// Gets a SCIM directory.
 	GetSCIMDirectory(context.Context, *GetSCIMDirectoryRequest) (*GetSCIMDirectoryResponse, error)
+	// Creates a SCIM directory.
 	CreateSCIMDirectory(context.Context, *CreateSCIMDirectoryRequest) (*CreateSCIMDirectoryResponse, error)
+	// Updates a SCIM directory.
 	UpdateSCIMDirectory(context.Context, *UpdateSCIMDirectoryRequest) (*UpdateSCIMDirectoryResponse, error)
+	// Rotates a SCIM directory's bearer token.
+	//
+	// Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+	// Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+	// not have any bearer token at all; you must use this endpoint to get an initial value.
+	//
+	// Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+	// will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+	//
+	// SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+	// endpoint to generate a new one.
 	RotateSCIMDirectoryBearerToken(context.Context, *RotateSCIMDirectoryBearerTokenRequest) (*RotateSCIMDirectoryBearerTokenResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
