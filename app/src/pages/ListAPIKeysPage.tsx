@@ -312,7 +312,7 @@ function CreateAPIKeyButton() {
           <AlertDialogFooter>
             <AlertDialogAction asChild>
               <Link to={`/environments/${environmentId}/api-keys/${apiKeyId}`}>
-                OK, I copied
+                Done
               </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
