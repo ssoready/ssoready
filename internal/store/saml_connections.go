@@ -13,7 +13,7 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAMLConnectionsRequest) (*ssoreadyv1.ListSAMLConnectionsResponse, error) {
+func (s *Store) AppListSAMLConnections(ctx context.Context, req *ssoreadyv1.AppListSAMLConnectionsRequest) (*ssoreadyv1.AppListSAMLConnectionsResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -59,13 +59,13 @@ func (s *Store) ListSAMLConnections(ctx context.Context, req *ssoreadyv1.ListSAM
 		samlConns = samlConns[:limit]
 	}
 
-	return &ssoreadyv1.ListSAMLConnectionsResponse{
+	return &ssoreadyv1.AppListSAMLConnectionsResponse{
 		SamlConnections: samlConns,
 		NextPageToken:   nextPageToken,
 	}, nil
 }
 
-func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+func (s *Store) AppGetSAMLConnection(ctx context.Context, req *ssoreadyv1.AppGetSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
 	id, err := idformat.SAMLConnection.Parse(req.Id)
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (s *Store) GetSAMLConnection(ctx context.Context, req *ssoreadyv1.GetSAMLCo
 	return parseSAMLConnection(qSAMLConn), nil
 }
 
-func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.CreateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+func (s *Store) AppCreateSAMLConnection(ctx context.Context, req *ssoreadyv1.AppCreateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -167,7 +167,7 @@ func (s *Store) CreateSAMLConnection(ctx context.Context, req *ssoreadyv1.Create
 	return parseSAMLConnection(qSAMLConn), nil
 }
 
-func (s *Store) UpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.UpdateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
+func (s *Store) AppUpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.AppUpdateSAMLConnectionRequest) (*ssoreadyv1.SAMLConnection, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err

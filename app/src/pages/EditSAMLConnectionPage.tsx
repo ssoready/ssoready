@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
 import {
-  getSAMLConnection,
-  updateSAMLConnection,
+  appGetSAMLConnection,
+  appUpdateSAMLConnection,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -34,7 +34,7 @@ import { SAMLConnection } from "@/gen/ssoready/v1/ssoready_pb";
 
 export function EditSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
-  const { data: samlConnection } = useQuery(getSAMLConnection, {
+  const { data: samlConnection } = useQuery(appGetSAMLConnection, {
     id: samlConnectionId,
   });
 
@@ -105,7 +105,7 @@ function UpdateSAMLConnectionForm({
     },
   });
 
-  const updateSAMLConnectionMutation = useMutation(updateSAMLConnection);
+  const updateSAMLConnectionMutation = useMutation(appUpdateSAMLConnection);
   const handleSubmit = useCallback(
     async (data: z.infer<typeof FormSchema>) => {
       await updateSAMLConnectionMutation.mutateAsync({
@@ -117,7 +117,7 @@ function UpdateSAMLConnectionForm({
         },
       });
     },
-    [updateSAMLConnection],
+    [appUpdateSAMLConnection],
   );
 
   return (

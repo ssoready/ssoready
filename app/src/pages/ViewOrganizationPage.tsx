@@ -7,20 +7,13 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
-  createAdminSetupURL,
-  createOrganization,
-  createSAMLConnection,
-  createSCIMDirectory,
-  getEnvironment,
-  getOrganization,
-  getSAMLConnection,
-  listOrganizations,
-  listSAMLConnections,
-  listSAMLFlows,
-  listSCIMDirectories,
-  updateEnvironment,
-  updateOrganization,
-  updateSAMLConnection,
+  appCreateAdminSetupURL,
+  appCreateSAMLConnection,
+  appCreateSCIMDirectory,
+  appGetOrganization,
+  appListSAMLConnections,
+  appListSCIMDirectories,
+  appUpdateOrganization,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   Card,
@@ -82,10 +75,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { DocsLink } from "@/components/DocsLink";
+import { Switch } from "@/components/ui/switch";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
-  const { data: organization } = useQuery(getOrganization, {
+  const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
   const {
@@ -93,7 +87,7 @@ export function ViewOrganizationPage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    listSAMLConnections,
+    appListSAMLConnections,
     { organizationId, pageToken: "" },
     {
       pageParamKey: "pageToken",
@@ -101,7 +95,7 @@ export function ViewOrganizationPage() {
     },
   );
 
-  const createSAMLConnectionMutation = useMutation(createSAMLConnection);
+  const createSAMLConnectionMutation = useMutation(appCreateSAMLConnection);
   const navigate = useNavigate();
   const handleCreateSAMLConnection = useCallback(async () => {
     const samlConnection = await createSAMLConnectionMutation.mutateAsync({
@@ -125,16 +119,6 @@ export function ViewOrganizationPage() {
     createSAMLConnectionMutation,
     navigate,
   ]);
-
-  const createAdminSetupURLMutation = useMutation(createAdminSetupURL);
-  const handleCreateAdminSetupURL = async () => {
-    const { url } = await createAdminSetupURLMutation.mutateAsync({
-      organizationId,
-    });
-
-    await navigator.clipboard.writeText(url);
-    toast("Setup link copied to clipboard");
-  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -191,26 +175,7 @@ export function ViewOrganizationPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex gap-x-4 items-center">
-            <span>Customer self-serve setup</span>
-            <Badge variant="secondary">Beta</Badge>
-          </CardTitle>
-          <CardDescription>
-            You can invite your customer's IT admin to set up their SAML
-            connection into your product. You can create for them a one-time-use
-            link where they can create and modify this organization's SAML
-            connections.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <Button variant="outline" onClick={handleCreateAdminSetupURL}>
-            Copy setup link
-          </Button>
-        </CardContent>
-      </Card>
+      <AdminSetupURLCard />
 
       <Card>
         <CardHeader>
@@ -281,6 +246,133 @@ export function ViewOrganizationPage() {
   );
 }
 
+const AdminSetupURLFormSchema = z.object({
+  canManageSAML: z.boolean(),
+  canManageSCIM: z.boolean(),
+});
+
+function AdminSetupURLCard() {
+  const { organizationId } = useParams();
+  const createAdminSetupURLMutation = useMutation(appCreateAdminSetupURL);
+  const handleSubmit = async (
+    values: z.infer<typeof AdminSetupURLFormSchema>,
+    e: any,
+  ) => {
+    e.preventDefault();
+
+    const { url } = await createAdminSetupURLMutation.mutateAsync({
+      organizationId,
+      canManageSaml: values.canManageSAML,
+      canManageScim: values.canManageSCIM,
+    });
+
+    await navigator.clipboard.writeText(url);
+    toast("Setup link copied to clipboard");
+    setOpen(false);
+  };
+
+  const [open, setOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof AdminSetupURLFormSchema>>({
+    resolver: zodResolver(AdminSetupURLFormSchema),
+    defaultValues: {
+      canManageSAML: true,
+      canManageSCIM: false,
+    },
+  });
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex gap-x-4 items-center">
+            <span>Customer self-serve setup</span>
+            <Badge variant="secondary">Beta</Badge>
+          </CardTitle>
+          <CardDescription>
+            You can invite your customer's IT admin to set up their SAML
+            connection into your product. You can create for them a one-time-use
+            link where they can create and modify this organization's SAML
+            connections.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <AlertDialog open={open} onOpenChange={setOpen}>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline">Create self-serve setup link</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Configure self-serve setup link
+                    </AlertDialogTitle>
+                  </AlertDialogHeader>
+
+                  <div className="my-4 space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="canManageSAML"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Can manage SAML</FormLabel>
+                          <FormControl className="block">
+                            <Switch
+                              name={field.name}
+                              id={field.name}
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Should your customer be able to configure SAML
+                            connections?
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="canManageSCIM"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Can manage SCIM</FormLabel>
+                          <FormControl className="block">
+                            <Switch
+                              name={field.name}
+                              id={field.name}
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Should your customer be able to configure SCIM
+                            directories?
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <Button type="submit">Create setup link</Button>
+                  </AlertDialogFooter>
+                </form>
+              </Form>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
 const FormSchema = z.object({
   externalId: z.string(),
   domains: z.array(z.string()).min(1, {
@@ -302,7 +394,7 @@ function EditOrganizationAlertDialog({
   });
 
   const [open, setOpen] = useState(false);
-  const updateOrganizationMutation = useMutation(updateOrganization);
+  const updateOrganizationMutation = useMutation(appUpdateOrganization);
   const queryClient = useQueryClient();
   const handleSubmit = useCallback(
     async (values: z.infer<typeof FormSchema>, e: any) => {
@@ -316,7 +408,7 @@ function EditOrganizationAlertDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getOrganization, {
+        queryKey: createConnectQueryKey(appGetOrganization, {
           id: organization.id,
         }),
       });
@@ -394,7 +486,7 @@ function EditOrganizationAlertDialog({
 
 function OrganizationSCIMDirectoriesPage() {
   const { environmentId, organizationId } = useParams();
-  const { data: organization } = useQuery(getOrganization, {
+  const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
   const {
@@ -402,7 +494,7 @@ function OrganizationSCIMDirectoriesPage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    listSCIMDirectories,
+    appListSCIMDirectories,
     { organizationId, pageToken: "" },
     {
       pageParamKey: "pageToken",
@@ -410,7 +502,7 @@ function OrganizationSCIMDirectoriesPage() {
     },
   );
 
-  const createSCIMDirectoryMutation = useMutation(createSCIMDirectory);
+  const createSCIMDirectoryMutation = useMutation(appCreateSCIMDirectory);
   const navigate = useNavigate();
   const handleCreateSCIMDirectory = useCallback(async () => {
     const scimDirectory = await createSCIMDirectoryMutation.mutateAsync({

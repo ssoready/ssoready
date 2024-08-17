@@ -12,7 +12,7 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) ListSCIMDirectories(ctx context.Context, req *ssoreadyv1.ListSCIMDirectoriesRequest) (*ssoreadyv1.ListSCIMDirectoriesResponse, error) {
+func (s *Store) AppListSCIMDirectories(ctx context.Context, req *ssoreadyv1.AppListSCIMDirectoriesRequest) (*ssoreadyv1.AppListSCIMDirectoriesResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -58,13 +58,13 @@ func (s *Store) ListSCIMDirectories(ctx context.Context, req *ssoreadyv1.ListSCI
 		scimDirectories = scimDirectories[:limit]
 	}
 
-	return &ssoreadyv1.ListSCIMDirectoriesResponse{
+	return &ssoreadyv1.AppListSCIMDirectoriesResponse{
 		ScimDirectories: scimDirectories,
 		NextPageToken:   nextPageToken,
 	}, nil
 }
 
-func (s *Store) GetSCIMDirectory(ctx context.Context, req *ssoreadyv1.GetSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+func (s *Store) AppGetSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppGetSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (s *Store) GetSCIMDirectory(ctx context.Context, req *ssoreadyv1.GetSCIMDir
 	return parseSCIMDirectory(qSCIMDir), nil
 }
 
-func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+func (s *Store) AppCreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppCreateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -149,7 +149,7 @@ func (s *Store) CreateSCIMDirectory(ctx context.Context, req *ssoreadyv1.CreateS
 	return parseSCIMDirectory(qSCIMDirectory), nil
 }
 
-func (s *Store) UpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.UpdateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
+func (s *Store) AppUpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppUpdateSCIMDirectoryRequest) (*ssoreadyv1.SCIMDirectory, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func (s *Store) UpdateSCIMDirectory(ctx context.Context, req *ssoreadyv1.UpdateS
 	return parseSCIMDirectory(qSCIMDir), nil
 }
 
-func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoreadyv1.RotateSCIMDirectoryBearerTokenRequest) (*ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse, error) {
+func (s *Store) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoreadyv1.AppRotateSCIMDirectoryBearerTokenRequest) (*ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -225,7 +225,7 @@ func (s *Store) RotateSCIMDirectoryBearerToken(ctx context.Context, req *ssoread
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	return &ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse{
+	return &ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse{
 		BearerToken: idformat.SCIMBearerToken.Format(bearerToken),
 	}, nil
 }

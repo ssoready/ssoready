@@ -17,12 +17,27 @@ var skipRPCs = []string{
 	"/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken",
 }
 
+var nonManagementAPIRPCs = []string{
+	"/ssoready.v1.SSOReadyService/GetSAMLRedirectURL",
+	"/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode",
+	"/ssoready.v1.SSOReadyService/ListSCIMUsers",
+	"/ssoready.v1.SSOReadyService/GetSCIMUser",
+	"/ssoready.v1.SSOReadyService/ListSCIMGroups",
+	"/ssoready.v1.SSOReadyService/GetSCIMGroup",
+}
+
 var adminRPCs = []string{
+	"/ssoready.v1.SSOReadyService/AdminWhoami",
 	"/ssoready.v1.SSOReadyService/AdminListSAMLConnections",
 	"/ssoready.v1.SSOReadyService/AdminGetSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata",
+	"/ssoready.v1.SSOReadyService/AdminListSCIMDirectories",
+	"/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory",
+	"/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory",
+	"/ssoready.v1.SSOReadyService/AdminUpdateSCIMDirectory",
+	"/ssoready.v1.SSOReadyService/AdminRotateSCIMDirectoryBearerToken",
 }
 
 func New(s *store.Store) connect.UnaryInterceptorFunc {
@@ -54,6 +69,8 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 					ctx = authn.NewContext(ctx, authn.ContextData{
 						AdminAccessToken: &authn.AdminAccessTokenData{
 							OrganizationID: res.OrganizationID,
+							CanManageSAML:  res.CanManageSAML,
+							CanManageSCIM:  res.CanManageSCIM,
 						},
 					})
 					return next(ctx, req)
@@ -65,6 +82,20 @@ func New(s *store.Store) connect.UnaryInterceptorFunc {
 				apiKey, err := s.GetAPIKeyBySecretToken(ctx, &store.GetAPIKeyBySecretTokenRequest{Token: secretValue})
 				if err != nil {
 					return nil, err
+				}
+
+				// if it's not a management api key, make sure it's hitting an allowed endpoint
+				if !apiKey.HasManagementAPIAccess {
+					var ok bool
+					for _, rpc := range nonManagementAPIRPCs {
+						if req.Spec().Procedure == rpc {
+							ok = true
+						}
+					}
+
+					if !ok {
+						return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("api key is not authorized to access management api"))
+					}
 				}
 
 				ctx = authn.NewContext(ctx, authn.ContextData{

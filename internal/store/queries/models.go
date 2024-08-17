@@ -62,20 +62,25 @@ type AdminAccessToken struct {
 	AccessTokenSha256  []byte
 	CreateTime         time.Time
 	ExpireTime         time.Time
+	CanManageSaml      *bool
+	CanManageScim      *bool
 }
 
 type ApiKey struct {
-	ID                uuid.UUID
-	SecretValue       string
-	EnvironmentID     uuid.UUID
-	SecretValueSha256 []byte
+	ID                     uuid.UUID
+	SecretValue            string
+	EnvironmentID          uuid.UUID
+	SecretValueSha256      []byte
+	HasManagementApiAccess *bool
 }
 
 type AppOrganization struct {
-	ID                  uuid.UUID
-	GoogleHostedDomain  *string
-	MicrosoftTenantID   *string
-	EmailLoginsDisabled *bool
+	ID                    uuid.UUID
+	GoogleHostedDomain    *string
+	MicrosoftTenantID     *string
+	EmailLoginsDisabled   *bool
+	StripeCustomerID      *string
+	EntitledManagementApi *bool
 }
 
 type AppSession struct {

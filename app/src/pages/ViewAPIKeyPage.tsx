@@ -49,6 +49,16 @@ export function ViewAPIKeyPage() {
             </div>
           </div>
         </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-4 gap-y-2">
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Management API Access
+            </div>
+            <div className="text-sm col-span-3">
+              {apiKey?.hasManagementApiAccess ? "Yes" : "No"}
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
       <Card className="border-destructive">

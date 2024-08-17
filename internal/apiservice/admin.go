@@ -12,8 +12,8 @@ import (
 	"github.com/ssoready/ssoready/internal/saml"
 )
 
-func (s *Service) CreateAdminSetupURL(ctx context.Context, req *connect.Request[ssoreadyv1.CreateAdminSetupURLRequest]) (*connect.Response[ssoreadyv1.CreateAdminSetupURLResponse], error) {
-	res, err := s.Store.CreateAdminSetupURL(ctx, req.Msg)
+func (s *Service) AppCreateAdminSetupURL(ctx context.Context, req *connect.Request[ssoreadyv1.AppCreateAdminSetupURLRequest]) (*connect.Response[ssoreadyv1.AppCreateAdminSetupURLResponse], error) {
+	res, err := s.Store.AppCreateAdminSetupURL(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}
@@ -23,6 +23,15 @@ func (s *Service) CreateAdminSetupURL(ctx context.Context, req *connect.Request[
 
 func (s *Service) AdminRedeemOneTimeToken(ctx context.Context, req *connect.Request[ssoreadyv1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[ssoreadyv1.AdminRedeemOneTimeTokenResponse], error) {
 	res, err := s.Store.AdminRedeemOneTimeToken(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}
+
+func (s *Service) AdminWhoami(ctx context.Context, req *connect.Request[ssoreadyv1.AdminWhoamiRequest]) (*connect.Response[ssoreadyv1.AdminWhoamiResponse], error) {
+	res, err := s.Store.AdminWhoami(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}
@@ -92,4 +101,40 @@ func (s *Service) AdminParseSAMLMetadata(ctx context.Context, req *connect.Reque
 			Bytes: metadataRes.IDPCertificate.Raw,
 		})),
 	}), nil
+}
+
+func (s *Service) AdminListSCIMDirectories(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSCIMDirectoriesRequest]) (*connect.Response[ssoreadyv1.AdminListSCIMDirectoriesResponse], error) {
+	res, err := s.Store.AdminListSCIMDirectories(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminGetSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AdminGetSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.AdminGetSCIMDirectoryResponse], error) {
+	res, err := s.Store.AdminGetSCIMDirectory(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminCreateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.AdminCreateSCIMDirectoryResponse], error) {
+	res, err := s.Store.AdminCreateSCIMDirectory(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminUpdateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AdminUpdateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.AdminUpdateSCIMDirectoryResponse], error) {
+	res, err := s.Store.AdminUpdateSCIMDirectory(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+func (s *Service) AdminRotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[ssoreadyv1.AdminRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[ssoreadyv1.AdminRotateSCIMDirectoryBearerTokenResponse], error) {
+	res, err := s.Store.AdminRotateSCIMDirectoryBearerToken(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
 }

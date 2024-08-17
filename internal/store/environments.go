@@ -2,6 +2,8 @@ package store
 
 import (
 	"context"
+	"fmt"
+	"net/url"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
@@ -67,6 +69,11 @@ func (s *Store) CreateEnvironment(ctx context.Context, req *ssoreadyv1.CreateEnv
 	}
 	defer rollback()
 
+	// attempt to parse redirect URL to ensure it's a URL
+	if _, err := url.Parse(req.Environment.RedirectUrl); err != nil {
+		return nil, fmt.Errorf("invalid redirect url: %w", err)
+	}
+
 	var authURL *string
 	if req.Environment.AuthUrl != "" {
 		authURL = &req.Environment.AuthUrl
@@ -94,6 +101,16 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 	id, err := idformat.Environment.Parse(req.Environment.Id)
 	if err != nil {
 		return nil, err
+	}
+
+	// attempt to parse redirect URL to ensure it's a URL
+	if _, err := url.Parse(req.Environment.RedirectUrl); err != nil {
+		return nil, fmt.Errorf("invalid redirect url: %w", err)
+	}
+
+	// attempt to parse oauth redirect URL to ensure it's a URL
+	if _, err := url.Parse(req.Environment.OauthRedirectUri); err != nil {
+		return nil, fmt.Errorf("invalid redirect url: %w", err)
 	}
 
 	_, q, commit, rollback, err := s.tx(ctx)

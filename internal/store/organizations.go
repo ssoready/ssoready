@@ -11,7 +11,7 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrganizationsRequest) (*ssoreadyv1.ListOrganizationsResponse, error) {
+func (s *Store) AppListOrganizations(ctx context.Context, req *ssoreadyv1.AppListOrganizationsRequest) (*ssoreadyv1.AppListOrganizationsResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -67,13 +67,13 @@ func (s *Store) ListOrganizations(ctx context.Context, req *ssoreadyv1.ListOrgan
 		orgs = orgs[:limit]
 	}
 
-	return &ssoreadyv1.ListOrganizationsResponse{
+	return &ssoreadyv1.AppListOrganizationsResponse{
 		Organizations: orgs,
 		NextPageToken: nextPageToken,
 	}, nil
 }
 
-func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganizationRequest) (*ssoreadyv1.Organization, error) {
+func (s *Store) AppGetOrganization(ctx context.Context, req *ssoreadyv1.AppGetOrganizationRequest) (*ssoreadyv1.Organization, error) {
 	id, err := idformat.Organization.Parse(req.Id)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (s *Store) GetOrganization(ctx context.Context, req *ssoreadyv1.GetOrganiza
 	return parseOrganization(qOrg, qOrgDomains), nil
 }
 
-func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOrganizationRequest) (*ssoreadyv1.Organization, error) {
+func (s *Store) AppCreateOrganization(ctx context.Context, req *ssoreadyv1.AppCreateOrganizationRequest) (*ssoreadyv1.Organization, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err
@@ -155,7 +155,7 @@ func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOr
 	return parseOrganization(qOrg, qOrgDomains), nil
 }
 
-func (s *Store) UpdateOrganization(ctx context.Context, req *ssoreadyv1.UpdateOrganizationRequest) (*ssoreadyv1.Organization, error) {
+func (s *Store) AppUpdateOrganization(ctx context.Context, req *ssoreadyv1.AppUpdateOrganizationRequest) (*ssoreadyv1.Organization, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
 		return nil, err

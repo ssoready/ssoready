@@ -7,8 +7,8 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 )
 
-func (s *Service) ListSCIMDirectories(ctx context.Context, req *connect.Request[ssoreadyv1.ListSCIMDirectoriesRequest]) (*connect.Response[ssoreadyv1.ListSCIMDirectoriesResponse], error) {
-	res, err := s.Store.ListSCIMDirectories(ctx, req.Msg)
+func (s *Service) AppListSCIMDirectories(ctx context.Context, req *connect.Request[ssoreadyv1.AppListSCIMDirectoriesRequest]) (*connect.Response[ssoreadyv1.AppListSCIMDirectoriesResponse], error) {
+	res, err := s.Store.AppListSCIMDirectories(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -16,8 +16,8 @@ func (s *Service) ListSCIMDirectories(ctx context.Context, req *connect.Request[
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) GetSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.GetSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.SCIMDirectory], error) {
-	res, err := s.Store.GetSCIMDirectory(ctx, req.Msg)
+func (s *Service) AppGetSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AppGetSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.SCIMDirectory], error) {
+	res, err := s.Store.AppGetSCIMDirectory(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -25,8 +25,8 @@ func (s *Service) GetSCIMDirectory(ctx context.Context, req *connect.Request[sso
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) CreateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.CreateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.SCIMDirectory], error) {
-	res, err := s.Store.CreateSCIMDirectory(ctx, req.Msg)
+func (s *Service) AppCreateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AppCreateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.SCIMDirectory], error) {
+	res, err := s.Store.AppCreateSCIMDirectory(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +34,8 @@ func (s *Service) CreateSCIMDirectory(ctx context.Context, req *connect.Request[
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) UpdateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.UpdateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.SCIMDirectory], error) {
-	res, err := s.Store.UpdateSCIMDirectory(ctx, req.Msg)
+func (s *Service) AppUpdateSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AppUpdateSCIMDirectoryRequest]) (*connect.Response[ssoreadyv1.SCIMDirectory], error) {
+	res, err := s.Store.AppUpdateSCIMDirectory(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -43,8 +43,8 @@ func (s *Service) UpdateSCIMDirectory(ctx context.Context, req *connect.Request[
 	return connect.NewResponse(res), nil
 }
 
-func (s *Service) RotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[ssoreadyv1.RotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[ssoreadyv1.RotateSCIMDirectoryBearerTokenResponse], error) {
-	res, err := s.Store.RotateSCIMDirectoryBearerToken(ctx, req.Msg)
+func (s *Service) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[ssoreadyv1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse], error) {
+	res, err := s.Store.AppRotateSCIMDirectoryBearerToken(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}

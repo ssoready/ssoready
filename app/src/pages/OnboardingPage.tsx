@@ -16,12 +16,12 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appCreateOrganization,
+  appCreateSAMLConnection,
+  appGetSAMLConnection,
   createAPIKey,
   createEnvironment,
-  createOrganization,
-  createSAMLConnection,
   getOnboardingState,
-  getSAMLConnection,
   onboardingGetSAMLRedirectURL,
   onboardingRedeemSAMLAccessCode,
   updateOnboardingState,
@@ -140,10 +140,10 @@ function DemoCard({
   const queryClient = useQueryClient();
   const { data: onboardingState } = useQuery(getOnboardingState, {});
   const getOnboardingStateMutation = useMutation(getOnboardingState);
-  const getSAMLConnectionMutation = useMutation(getSAMLConnection);
+  const getSAMLConnectionMutation = useMutation(appGetSAMLConnection);
   const createEnvironmentMutation = useMutation(createEnvironment);
-  const createOrganizationMutation = useMutation(createOrganization);
-  const createSAMLConnectionMutation = useMutation(createSAMLConnection);
+  const createOrganizationMutation = useMutation(appCreateOrganization);
+  const createSAMLConnectionMutation = useMutation(appCreateSAMLConnection);
   const createAPIKeyMutation = useMutation(createAPIKey);
   const updateOnboardingStateMutation = useMutation(updateOnboardingState);
   const [email, setEmail] = useState("youruser");
