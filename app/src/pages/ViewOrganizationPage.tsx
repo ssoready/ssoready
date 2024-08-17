@@ -132,14 +132,15 @@ export function ViewOrganizationPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col space-y-1.5">
-              <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="lg:flex flex-col space-y-1.5">
+              <div className="lg:flex gap-4">
                 <CardTitle>Organization</CardTitle>
-
-                <span className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
-                  {organizationId}
-                </span>
+                <div className="shrink mt-1 lg:mt-0">
+                  <span className="mt-4 text-[0.6rem] sm:text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
+                    {organizationId}
+                  </span>
+                </div>
               </div>
 
               <CardDescription>
@@ -148,26 +149,28 @@ export function ViewOrganizationPage() {
             </div>
 
             {organization && (
-              <EditOrganizationAlertDialog organization={organization} />
+              <div className="mt-1 lg:mt-0 mr-[85%] md:mr-0">
+                <EditOrganizationAlertDialog organization={organization} />
+              </div>
             )}
           </div>
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
+          <div className="lg:grid grid-cols-4 gap-y-2">
             <div className="text-sm col-span-1 text-muted-foreground">
               External ID
             </div>
-            <div className="text-sm col-span-3">{organization?.externalId}</div>
+            <div className="text-[0.7rem] sm:text-sm col-span-3">{organization?.externalId}</div>
 
             <div className="text-sm col-span-1 text-muted-foreground">
               Domains
             </div>
             <div className="text-sm col-span-3">
               {" "}
-              <div className="flex gap-1">
+              <div className="lg:flex gap-1">
                 {organization?.domains.map((domain, i) => (
-                  <Badge key={i}>{domain}</Badge>
+                  <Badge key={i} className="mt-1 lg:mt-0 text-[0.6rem] sm:text-xs">{domain}</Badge>
                 ))}
               </div>
             </div>
@@ -179,8 +182,8 @@ export function ViewOrganizationPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col space-y-1.5">
+          <div className="lg:flex justify-between items-center">
+            <div className="lg:flex flex-col space-y-1.5">
               <CardTitle>
                 SAML Connections
                 <DocsLink to="https://ssoready.com/docs/sso-ready-concepts/saml-connections" />
@@ -190,8 +193,8 @@ export function ViewOrganizationPage() {
               </CardDescription>
             </div>
 
-            <Button variant="outline" onClick={handleCreateSAMLConnection}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button variant="outline" className="mt-2 lg:mt-0 text-[11px] h-[2.2rem] px-[5px] py-0 sm:font-medium sm:text-sm sm:leading-5 sm:h-10 sm:px-4 sm:py-2" onClick={handleCreateSAMLConnection}>
+              <Plus className="sm:mr-2 sm:h-4 sm:w-4 w-[0.8rem] h-[0.8rem] mr-[0.1rem]" />
               Create SAML connection
             </Button>
           </div>
@@ -219,7 +222,7 @@ export function ViewOrganizationPage() {
                         {samlConn.id}
                       </Link>
                       {samlConn.primary && (
-                        <Badge className="ml-2">Primary</Badge>
+                        <Badge className="ml-2 mt-2 lg:mt-0">Primary</Badge>
                       )}
                     </TableCell>
                     <TableCell className="max-w-[300px] truncate">
@@ -300,7 +303,7 @@ function AdminSetupURLCard() {
         <CardContent>
           <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-              <Button variant="outline">Create self-serve setup link</Button>
+              <Button className="mt-1 lg:mt-0 text-[11px] h-[2.2rem] px-[5px] py-0 sm:font-medium sm:text-sm sm:leading-5 sm:h-10 sm:px-4 sm:py-2" variant="outline">Create self-serve setup link</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <Form {...form}>
@@ -421,7 +424,7 @@ function EditOrganizationAlertDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Edit</Button>
+        <Button className="h-[3vh] w-[4.5vh] md:h-auto md:w-auto" variant="outline">Edit</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <Form {...form}>
@@ -530,19 +533,19 @@ function OrganizationSCIMDirectoriesPage() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-center">
+        <div className="lg:flex justify-between items-center">
           <div className="flex flex-col space-y-1.5">
             <CardTitle className="flex gap-x-4 items-center">
               <span>SCIM Directories</span>
-              <Badge variant="secondary">Beta</Badge>
+              <Badge className="ml-[-21px] mb-[25px] sm:ml-0 sm:mb-0" variant="secondary">Beta</Badge>
             </CardTitle>
             <CardDescription>
               SCIM Directories within this organization.
             </CardDescription>
           </div>
 
-          <Button variant="outline" onClick={handleCreateSCIMDirectory}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button className="mt-2 lg:mt-0 text-[11px] h-[2.2rem] px-[5px] py-0 sm:font-medium sm:text-sm sm:leading-5 sm:h-10 sm:px-4 sm:py-2" variant="outline" onClick={handleCreateSCIMDirectory}>
+            <Plus className="sm:mr-2 sm:h-4 sm:w-4 w-[0.8rem] h-[0.8rem] mr-[0.1rem]" />
             Create SCIM directory
           </Button>
         </div>
@@ -569,7 +572,7 @@ function OrganizationSCIMDirectoriesPage() {
                       {scimDirectory.id}
                     </Link>
                     {scimDirectory.primary && (
-                      <Badge className="ml-2">Primary</Badge>
+                      <Badge className="ml-2 mt-2 lg:mt-0">Primary</Badge>
                     )}
                   </TableCell>
                   <TableCell className="max-w-[300px] truncate">
