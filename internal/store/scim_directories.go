@@ -236,7 +236,6 @@ func parseSCIMDirectory(qSCIMDirectory queries.ScimDirectory) *ssoreadyv1.SCIMDi
 		OrganizationId:       idformat.Organization.Format(qSCIMDirectory.OrganizationID),
 		Primary:              qSCIMDirectory.IsPrimary,
 		ScimBaseUrl:          qSCIMDirectory.ScimBaseUrl,
-		ClientBearerToken:    "", // intentionally left blank
 		HasClientBearerToken: len(qSCIMDirectory.BearerTokenSha256) > 0,
 	}
 }
