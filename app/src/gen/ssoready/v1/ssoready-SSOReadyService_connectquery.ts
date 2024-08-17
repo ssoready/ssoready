@@ -7,6 +7,8 @@ import { Empty, MethodKind } from "@bufbuild/protobuf";
 import { AdminCreateSAMLConnectionRequest, AdminCreateSAMLConnectionResponse, AdminCreateSCIMDirectoryRequest, AdminCreateSCIMDirectoryResponse, AdminGetSAMLConnectionRequest, AdminGetSAMLConnectionResponse, AdminGetSCIMDirectoryRequest, AdminGetSCIMDirectoryResponse, AdminListSAMLConnectionsRequest, AdminListSAMLConnectionsResponse, AdminListSCIMDirectoriesRequest, AdminListSCIMDirectoriesResponse, AdminParseSAMLMetadataRequest, AdminParseSAMLMetadataResponse, AdminRedeemOneTimeTokenRequest, AdminRedeemOneTimeTokenResponse, AdminRotateSCIMDirectoryBearerTokenRequest, AdminRotateSCIMDirectoryBearerTokenResponse, AdminUpdateSAMLConnectionRequest, AdminUpdateSAMLConnectionResponse, AdminUpdateSCIMDirectoryRequest, AdminUpdateSCIMDirectoryResponse, AdminWhoamiRequest, AdminWhoamiResponse, APIKey, AppCreateAdminSetupURLRequest, AppCreateAdminSetupURLResponse, AppCreateOrganizationRequest, AppCreateSAMLConnectionRequest, AppCreateSCIMDirectoryRequest, AppGetOrganizationRequest, AppGetSAMLConnectionRequest, AppGetSAMLFlowRequest, AppGetSCIMDirectoryRequest, AppGetSCIMGroupRequest, AppGetSCIMUserRequest, AppListOrganizationsRequest, AppListOrganizationsResponse, AppListSAMLConnectionsRequest, AppListSAMLConnectionsResponse, AppListSAMLFlowsRequest, AppListSAMLFlowsResponse, AppListSCIMDirectoriesRequest, AppListSCIMDirectoriesResponse, AppListSCIMGroupsRequest, AppListSCIMGroupsResponse, AppListSCIMUsersRequest, AppListSCIMUsersResponse, AppRotateSCIMDirectoryBearerTokenRequest, AppRotateSCIMDirectoryBearerTokenResponse, AppUpdateOrganizationRequest, AppUpdateSAMLConnectionRequest, AppUpdateSCIMDirectoryRequest, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateOrganizationResponse, CreateSAMLConnectionRequest, CreateSAMLConnectionResponse, CreateSAMLOAuthClientRequest, CreateSCIMDirectoryRequest, CreateSCIMDirectoryResponse, CreateSetupURLRequest, CreateSetupURLResponse, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetAppOrganizationRequest, GetAppOrganizationResponse, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetOrganizationResponse, GetSAMLConnectionRequest, GetSAMLConnectionResponse, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, GetSCIMDirectoryRequest, GetSCIMDirectoryResponse, GetSCIMGroupRequest, GetSCIMGroupResponse, GetSCIMUserRequest, GetSCIMUserResponse, GetStripeBillingPortalURLRequest, GetStripeBillingPortalURLResponse, GetStripeCheckoutURLRequest, GetStripeCheckoutURLResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListAppUsersRequest, ListAppUsersResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, ListSCIMDirectoriesRequest, ListSCIMDirectoriesResponse, ListSCIMGroupsRequest, ListSCIMGroupsResponse, ListSCIMUsersRequest, ListSCIMUsersResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, RedeemStripeCheckoutRequest, RedeemStripeCheckoutResponse, RotateSCIMDirectoryBearerTokenRequest, RotateSCIMDirectoryBearerTokenResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SCIMDirectory, SCIMGroup, SCIMUser, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateOrganizationResponse, UpdateSAMLConnectionRequest, UpdateSAMLConnectionResponse, UpdateSCIMDirectoryRequest, UpdateSCIMDirectoryResponse, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
+ * Gets a SAML initiation URL to redirect your users to.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
  */
 export const getSAMLRedirectURL = {
@@ -21,6 +23,8 @@ export const getSAMLRedirectURL = {
 } as const;
 
 /**
+ * Exchanges a SAML access code for details about your user's SAML login details.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessCode
  */
 export const redeemSAMLAccessCode = {
@@ -35,6 +39,8 @@ export const redeemSAMLAccessCode = {
 } as const;
 
 /**
+ * Gets a list of SCIM users in a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMUsers
  */
 export const listSCIMUsers = {
@@ -49,6 +55,8 @@ export const listSCIMUsers = {
 } as const;
 
 /**
+ * Gets a SCIM user.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMUser
  */
 export const getSCIMUser = {
@@ -63,6 +71,8 @@ export const getSCIMUser = {
 } as const;
 
 /**
+ * Gets a list of SCIM groups in a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMGroups
  */
 export const listSCIMGroups = {
@@ -77,6 +87,8 @@ export const listSCIMGroups = {
 } as const;
 
 /**
+ * Gets a SCIM group in a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMGroup
  */
 export const getSCIMGroup = {
@@ -91,6 +103,8 @@ export const getSCIMGroup = {
 } as const;
 
 /**
+ * Gets a list of organizations.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListOrganizations
  */
 export const listOrganizations = {
@@ -105,6 +119,8 @@ export const listOrganizations = {
 } as const;
 
 /**
+ * Gets an organization.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetOrganization
  */
 export const getOrganization = {
@@ -119,6 +135,8 @@ export const getOrganization = {
 } as const;
 
 /**
+ * Creates an organization.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.CreateOrganization
  */
 export const createOrganization = {
@@ -133,6 +151,8 @@ export const createOrganization = {
 } as const;
 
 /**
+ * Updates an organization.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.UpdateOrganization
  */
 export const updateOrganization = {
@@ -147,6 +167,10 @@ export const updateOrganization = {
 } as const;
 
 /**
+ * Creates a short-lived self-serve setup URL that you can send to your customer.
+ *
+ * Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.CreateSetupURL
  */
 export const createSetupURL = {
@@ -161,6 +185,8 @@ export const createSetupURL = {
 } as const;
 
 /**
+ * Lists SAML connections in an organization.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLConnections
  */
 export const listSAMLConnections = {
@@ -175,6 +201,8 @@ export const listSAMLConnections = {
 } as const;
 
 /**
+ * Gets a SAML connection.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLConnection
  */
 export const getSAMLConnection = {
@@ -189,6 +217,8 @@ export const getSAMLConnection = {
 } as const;
 
 /**
+ * Creates a SAML connection.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.CreateSAMLConnection
  */
 export const createSAMLConnection = {
@@ -203,6 +233,8 @@ export const createSAMLConnection = {
 } as const;
 
 /**
+ * Updates a SAML connection.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.UpdateSAMLConnection
  */
 export const updateSAMLConnection = {
@@ -217,6 +249,8 @@ export const updateSAMLConnection = {
 } as const;
 
 /**
+ * Gets a list of SCIM directories in an organization.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMDirectories
  */
 export const listSCIMDirectories = {
@@ -231,6 +265,8 @@ export const listSCIMDirectories = {
 } as const;
 
 /**
+ * Gets a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMDirectory
  */
 export const getSCIMDirectory = {
@@ -245,6 +281,8 @@ export const getSCIMDirectory = {
 } as const;
 
 /**
+ * Creates a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.CreateSCIMDirectory
  */
 export const createSCIMDirectory = {
@@ -259,6 +297,8 @@ export const createSCIMDirectory = {
 } as const;
 
 /**
+ * Updates a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.UpdateSCIMDirectory
  */
 export const updateSCIMDirectory = {
@@ -273,6 +313,18 @@ export const updateSCIMDirectory = {
 } as const;
 
 /**
+ * Rotates a SCIM directory's bearer token.
+ *
+ * Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+ * Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+ * not have any bearer token at all; you must use this endpoint to get an initial value.
+ *
+ * Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+ * will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+ *
+ * SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+ * endpoint to generate a new one.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken
  */
 export const rotateSCIMDirectoryBearerToken = {

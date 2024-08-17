@@ -13,6 +13,8 @@ export const SSOReadyService = {
   typeName: "ssoready.v1.SSOReadyService",
   methods: {
     /**
+     * Gets a SAML initiation URL to redirect your users to.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLRedirectURL
      */
     getSAMLRedirectURL: {
@@ -22,6 +24,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Exchanges a SAML access code for details about your user's SAML login details.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.RedeemSAMLAccessCode
      */
     redeemSAMLAccessCode: {
@@ -31,6 +35,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a list of SCIM users in a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMUsers
      */
     listSCIMUsers: {
@@ -40,6 +46,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a SCIM user.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMUser
      */
     getSCIMUser: {
@@ -49,6 +57,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a list of SCIM groups in a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMGroups
      */
     listSCIMGroups: {
@@ -58,6 +68,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a SCIM group in a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMGroup
      */
     getSCIMGroup: {
@@ -67,6 +79,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a list of organizations.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListOrganizations
      */
     listOrganizations: {
@@ -76,6 +90,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets an organization.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetOrganization
      */
     getOrganization: {
@@ -85,6 +101,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Creates an organization.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.CreateOrganization
      */
     createOrganization: {
@@ -94,6 +112,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Updates an organization.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.UpdateOrganization
      */
     updateOrganization: {
@@ -103,6 +123,10 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Creates a short-lived self-serve setup URL that you can send to your customer.
+     *
+     * Setup URLs let your customer configure their SAML settings, SCIM settings, or both.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.CreateSetupURL
      */
     createSetupURL: {
@@ -112,6 +136,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Lists SAML connections in an organization.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListSAMLConnections
      */
     listSAMLConnections: {
@@ -121,6 +147,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a SAML connection.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSAMLConnection
      */
     getSAMLConnection: {
@@ -130,6 +158,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Creates a SAML connection.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.CreateSAMLConnection
      */
     createSAMLConnection: {
@@ -139,6 +169,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Updates a SAML connection.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.UpdateSAMLConnection
      */
     updateSAMLConnection: {
@@ -148,6 +180,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a list of SCIM directories in an organization.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMDirectories
      */
     listSCIMDirectories: {
@@ -157,6 +191,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMDirectory
      */
     getSCIMDirectory: {
@@ -166,6 +202,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Creates a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.CreateSCIMDirectory
      */
     createSCIMDirectory: {
@@ -175,6 +213,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Updates a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.UpdateSCIMDirectory
      */
     updateSCIMDirectory: {
@@ -184,6 +224,18 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Rotates a SCIM directory's bearer token.
+     *
+     * Every SCIM directory has a bearer token that SSOReady uses to authenticate requests sent from your customer's
+     * Identity Provider. These bearer tokens are assigned by SSOReady, and are secret. Newly-created SCIM directories do
+     * not have any bearer token at all; you must use this endpoint to get an initial value.
+     *
+     * Rotating a SCIM directory bearer token immediately invalidates the previous bearer token, if any. Your customer
+     * will need to update their SCIM configuration with the new value to make SCIM syncing work again.
+     *
+     * SSOReady only stores the hash of these bearer tokens. If your customer has lost their copy, you must use this
+     * endpoint to generate a new one.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken
      */
     rotateSCIMDirectoryBearerToken: {

@@ -358,10 +358,21 @@ type Organization struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	EnvironmentId string   `protobuf:"bytes,2,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
-	ExternalId    string   `protobuf:"bytes,3,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
-	Domains       []string `protobuf:"bytes,4,rep,name=domains,proto3" json:"domains,omitempty"`
+	// Unique identifier for this organization.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The environment this organization belongs to.
+	EnvironmentId string `protobuf:"bytes,2,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
+	// An identifier you can attach to an organization. Meant to be used to correlate an SSOReady organization to your
+	// internal equivalent concept.
+	//
+	// External IDs are unique within an environment. No two organizations in the same environment can have
+	// the same external ID.
+	ExternalId string `protobuf:"bytes,3,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	// A list of domains that users from this organization use.
+	//
+	// SAML connections and SCIM directories within this organization will only produce users whose email are included in
+	// `domains`. SSOReady will reject SAML and SCIM users that do not fall within `domains`.
+	Domains []string `protobuf:"bytes,4,rep,name=domains,proto3" json:"domains,omitempty"`
 }
 
 func (x *Organization) Reset() {
@@ -429,14 +440,33 @@ type SAMLConnection struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id             string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Unique identifier for this SAML connection.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The organization this SAML connection belongs to.
 	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Primary        bool   `protobuf:"varint,8,opt,name=primary,proto3" json:"primary,omitempty"`
+	// Whether this is the primary SAML connection for the organization.
+	Primary bool `protobuf:"varint,8,opt,name=primary,proto3" json:"primary,omitempty"`
+	// URL to redirect to when initiating SAML flows.
+	//
+	// IDP redirect URLs are assigned by an Identity Provider, and need to be inputted into SSOReady.
 	IdpRedirectUrl string `protobuf:"bytes,3,opt,name=idp_redirect_url,json=idpRedirectUrl,proto3" json:"idp_redirect_url,omitempty"`
+	// Certificate to authenticate SAML assertions. This is a PEM-encoded X.509 certificate.
+	//
+	// IDP certificates are assigned by an Identity Provider, and need to be inputted into SSOReady.
 	IdpCertificate string `protobuf:"bytes,4,opt,name=idp_certificate,json=idpCertificate,proto3" json:"idp_certificate,omitempty"`
-	IdpEntityId    string `protobuf:"bytes,5,opt,name=idp_entity_id,json=idpEntityId,proto3" json:"idp_entity_id,omitempty"`
-	SpEntityId     string `protobuf:"bytes,6,opt,name=sp_entity_id,json=spEntityId,proto3" json:"sp_entity_id,omitempty"`
-	SpAcsUrl       string `protobuf:"bytes,7,opt,name=sp_acs_url,json=spAcsUrl,proto3" json:"sp_acs_url,omitempty"`
+	// Identifier for the identity provider when handling SAML operations.
+	//
+	// IDP entity IDs are assigned by an Identity Provider, and need to be inputted into SSOReady.
+	IdpEntityId string `protobuf:"bytes,5,opt,name=idp_entity_id,json=idpEntityId,proto3" json:"idp_entity_id,omitempty"`
+	// Identifier for the SAML connection when handling SAML operations.
+	//
+	// SP entity IDs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
+	SpEntityId string `protobuf:"bytes,6,opt,name=sp_entity_id,json=spEntityId,proto3" json:"sp_entity_id,omitempty"`
+	// URL the Identity Provider redirects to when transmitting SAML assertions. Stands for "Service Provider Assertion
+	// Consumer Service" URL.
+	//
+	// SP ACS URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
+	SpAcsUrl string `protobuf:"bytes,7,opt,name=sp_acs_url,json=spAcsUrl,proto3" json:"sp_acs_url,omitempty"`
 }
 
 func (x *SAMLConnection) Reset() {
@@ -791,12 +821,21 @@ type SCIMDirectory struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id                   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrganizationId       string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Primary              bool   `protobuf:"varint,3,opt,name=primary,proto3" json:"primary,omitempty"`
-	ScimBaseUrl          string `protobuf:"bytes,4,opt,name=scim_base_url,json=scimBaseUrl,proto3" json:"scim_base_url,omitempty"`
-	ClientBearerToken    string `protobuf:"bytes,5,opt,name=client_bearer_token,json=clientBearerToken,proto3" json:"client_bearer_token,omitempty"`
-	HasClientBearerToken bool   `protobuf:"varint,6,opt,name=has_client_bearer_token,json=hasClientBearerToken,proto3" json:"has_client_bearer_token,omitempty"`
+	// Unique identifier for this SCIM directory.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The organization this SCIM directory belongs to.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// Whether this is the primary SCIM directory for the organization.
+	Primary bool `protobuf:"varint,3,opt,name=primary,proto3" json:"primary,omitempty"`
+	// Base URL the Identity Provider uses to perform SCIM HTTP requests.
+	//
+	// SCIM base URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
+	ScimBaseUrl string `protobuf:"bytes,4,opt,name=scim_base_url,json=scimBaseUrl,proto3" json:"scim_base_url,omitempty"`
+	// Whether this SCIM directory has a bearer token assigned.
+	//
+	// SSOReady only stores a hash of the bearer token. To get a bearer token value, you must rotate this SCIM directory's
+	// bearer token.
+	HasClientBearerToken bool `protobuf:"varint,6,opt,name=has_client_bearer_token,json=hasClientBearerToken,proto3" json:"has_client_bearer_token,omitempty"`
 }
 
 func (x *SCIMDirectory) Reset() {
@@ -859,13 +898,6 @@ func (x *SCIMDirectory) GetScimBaseUrl() string {
 	return ""
 }
 
-func (x *SCIMDirectory) GetClientBearerToken() string {
-	if x != nil {
-		return x.ClientBearerToken
-	}
-	return ""
-}
-
 func (x *SCIMDirectory) GetHasClientBearerToken() bool {
 	if x != nil {
 		return x.HasClientBearerToken
@@ -878,11 +910,19 @@ type SCIMUser struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id              string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ScimDirectoryId string           `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	Email           string           `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Deleted         bool             `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	Attributes      *structpb.Struct `protobuf:"bytes,5,opt,name=attributes,proto3" json:"attributes,omitempty"`
+	// Unique identifier for this SCIM user.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// SCIM directory this SCIM user belongs to.
+	ScimDirectoryId string `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// The SCIM user's email address.
+	Email string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	// Whether the SCIM user has been deleted or deprovisioned from its SCIM directory.
+	Deleted bool `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	// Arbitrary, potentially nested, attributes the Identity Provider included about the user.
+	//
+	// Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+	// considered an admin within their company.
+	Attributes *structpb.Struct `protobuf:"bytes,5,opt,name=attributes,proto3" json:"attributes,omitempty"`
 }
 
 func (x *SCIMUser) Reset() {
@@ -957,11 +997,23 @@ type SCIMGroup struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id              string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ScimDirectoryId string           `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	DisplayName     string           `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Deleted         bool             `protobuf:"varint,6,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	Attributes      *structpb.Struct `protobuf:"bytes,4,opt,name=attributes,proto3" json:"attributes,omitempty"`
+	// Unique identifier for this SCIM group.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// SCIM directory this SCIM group belongs to.
+	ScimDirectoryId string `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// A human-friendly name for the SCIM group.
+	DisplayName string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	// Whether the SCIM group has been deleted or deprovisioned from its SCIM directory.
+	//
+	// Identity Providers are inconsistent about reliably deleting SCIM groups. Many Identity Providers will deprovision
+	// the users inside a group, but not the group itself. For this reason, it's typical to ignore this field until a
+	// specific need arises.
+	Deleted bool `protobuf:"varint,6,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	// Arbitrary, potentially nested, attributes the Identity Provider included about the group.
+	//
+	// Identity Providers are inconsistent about supporting sending custom attributes on groups. For this reason, it's
+	// typical to not rely on them until a specific need arises.
+	Attributes *structpb.Struct `protobuf:"bytes,4,opt,name=attributes,proto3" json:"attributes,omitempty"`
 }
 
 func (x *SCIMGroup) Reset() {
@@ -1036,10 +1088,27 @@ type GetSAMLRedirectURLRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	SamlConnectionId       string `protobuf:"bytes,1,opt,name=saml_connection_id,json=samlConnectionId,proto3" json:"saml_connection_id,omitempty"`
-	OrganizationId         string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The SAML connection to start a SAML login for.
+	//
+	// One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+	SamlConnectionId string `protobuf:"bytes,1,opt,name=saml_connection_id,json=samlConnectionId,proto3" json:"saml_connection_id,omitempty"`
+	// The ID of the organization to start a SAML login for.
+	//
+	// The primary SAML connection in this organization will be used for logins.
+	//
+	// One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId` of the organization to start a SAML login for.
+	//
+	// The primary SAML connection in this organization will be used for logins.
+	//
+	// One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
 	OrganizationExternalId string `protobuf:"bytes,3,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	State                  string `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
+	// This string will be returned back to you when you redeem this login's SAML access code.
+	//
+	// You can do anything you like with this `state`, but the most common use-case is to keep track of where to redirect
+	// your user back to after logging in with SAML.
+	State string `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
 }
 
 func (x *GetSAMLRedirectURLRequest) Reset() {
@@ -1107,6 +1176,7 @@ type GetSAMLRedirectURLResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Redirect your user to this URL to start a SAML login.
 	RedirectUrl string `protobuf:"bytes,1,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
 }
 
@@ -1154,6 +1224,7 @@ type RedeemSAMLAccessCodeRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The SAML access code to redeem.
 	SamlAccessCode string `protobuf:"bytes,1,opt,name=saml_access_code,json=samlAccessCode,proto3" json:"saml_access_code,omitempty"`
 }
 
@@ -1201,12 +1272,29 @@ type RedeemSAMLAccessCodeResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email                  string            `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	State                  string            `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
-	Attributes             map[string]string `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	OrganizationId         string            `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	OrganizationExternalId string            `protobuf:"bytes,5,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	SamlFlowId             string            `protobuf:"bytes,6,opt,name=saml_flow_id,json=samlFlowId,proto3" json:"saml_flow_id,omitempty"`
+	// The user's email address.
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	// The `state` you provided when getting a SAML initiation URL, if any.
+	//
+	// If your user logged in to your product using Identity Provider-initiated SAML (e.g. they clicked on your app inside
+	// their corporate Okta dashboard), then `state` will be empty.
+	//
+	// SSOReady validates the authenticity of non-empty `state` values. You do not need to implement your own CSRF on top
+	// of it, but doing so anyway will have no bad consequences.
+	State string `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
+	// Arbitrary key-value pairs the Identity Provider included about the user.
+	//
+	// Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+	// considered an admin within their company.
+	Attributes map[string]string `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// The ID of the organization this user belongs to.
+	OrganizationId string `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId`, if any, of the organization this user belongs to.
+	OrganizationExternalId string `protobuf:"bytes,5,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
+	// A unique identifier of this particular SAML login. It is not a secret. You can safely log it.
+	//
+	// SSOReady maintains an audit log of every SAML login. Use this SAML flow ID to find this login in the audit logs.
+	SamlFlowId string `protobuf:"bytes,6,opt,name=saml_flow_id,json=samlFlowId,proto3" json:"saml_flow_id,omitempty"`
 }
 
 func (x *RedeemSAMLAccessCodeResponse) Reset() {
@@ -1288,11 +1376,22 @@ type ListSCIMUsersRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimDirectoryId        string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	OrganizationId         string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The SCIM directory to list from.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	ScimDirectoryId string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// The ID of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
 	OrganizationExternalId string `protobuf:"bytes,3,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	ScimGroupId            string `protobuf:"bytes,4,opt,name=scim_group_id,json=scimGroupId,proto3" json:"scim_group_id,omitempty"`
-	PageToken              string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// If specified, only users that are members of this SCIM group are returned.
+	ScimGroupId string `protobuf:"bytes,4,opt,name=scim_group_id,json=scimGroupId,proto3" json:"scim_group_id,omitempty"`
+	// Pagination token. Leave empty to get the first page of results.
+	PageToken string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
 func (x *ListSCIMUsersRequest) Reset() {
@@ -1367,8 +1466,10 @@ type ListSCIMUsersResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimUsers     []*SCIMUser `protobuf:"bytes,1,rep,name=scim_users,json=scimUsers,proto3" json:"scim_users,omitempty"`
-	NextPageToken string      `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// List of SCIM users.
+	ScimUsers []*SCIMUser `protobuf:"bytes,1,rep,name=scim_users,json=scimUsers,proto3" json:"scim_users,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListSCIMUsersResponse) Reset() {
@@ -1422,6 +1523,7 @@ type GetSCIMUserRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the SCIM user to get.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -1469,6 +1571,7 @@ type GetSCIMUserResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested SCIM user.
 	ScimUser *SCIMUser `protobuf:"bytes,1,opt,name=scim_user,json=scimUser,proto3" json:"scim_user,omitempty"`
 }
 
@@ -1516,10 +1619,20 @@ type ListSCIMGroupsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimDirectoryId        string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	OrganizationId         string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The SCIM directory to list from.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	ScimDirectoryId string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// The ID of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
 	OrganizationExternalId string `protobuf:"bytes,3,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	PageToken              string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Pagination token. Leave empty to get the first page of results.
+	PageToken string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
 func (x *ListSCIMGroupsRequest) Reset() {
@@ -1587,8 +1700,10 @@ type ListSCIMGroupsResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimGroups    []*SCIMGroup `protobuf:"bytes,1,rep,name=scim_groups,json=scimGroups,proto3" json:"scim_groups,omitempty"`
-	NextPageToken string       `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// List of SCIM groups.
+	ScimGroups []*SCIMGroup `protobuf:"bytes,1,rep,name=scim_groups,json=scimGroups,proto3" json:"scim_groups,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListSCIMGroupsResponse) Reset() {
@@ -1642,6 +1757,7 @@ type GetSCIMGroupRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the SCIM group to get.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -1689,6 +1805,7 @@ type GetSCIMGroupResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested SCIM group.
 	ScimGroup *SCIMGroup `protobuf:"bytes,1,opt,name=scim_group,json=scimGroup,proto3" json:"scim_group,omitempty"`
 }
 
@@ -1736,6 +1853,7 @@ type ListOrganizationsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Pagination token. Leave empty to get the first page of results.
 	PageToken string `protobuf:"bytes,1,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
@@ -1783,8 +1901,10 @@ type ListOrganizationsResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of organizations.
 	Organizations []*Organization `protobuf:"bytes,1,rep,name=organizations,proto3" json:"organizations,omitempty"`
-	NextPageToken string          `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListOrganizationsResponse) Reset() {
@@ -1838,6 +1958,7 @@ type GetOrganizationRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the organization to get.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -1885,6 +2006,7 @@ type GetOrganizationResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested organization.
 	Organization *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
 }
 
@@ -1979,6 +2101,7 @@ type CreateOrganizationResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The created organization.
 	Organization *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
 }
 
@@ -2026,7 +2149,9 @@ type UpdateOrganizationRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           string        `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// ID of the organization to update.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The updated organization.
 	Organization *Organization `protobuf:"bytes,2,opt,name=organization,proto3" json:"organization,omitempty"`
 }
 
@@ -2081,6 +2206,7 @@ type UpdateOrganizationResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The updated organization.
 	Organization *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
 }
 
@@ -2128,9 +2254,12 @@ type CreateSetupURLRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The organization that the setup URL is for.
 	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	CanManageSaml  bool   `protobuf:"varint,2,opt,name=can_manage_saml,json=canManageSaml,proto3" json:"can_manage_saml,omitempty"`
-	CanManageScim  bool   `protobuf:"varint,3,opt,name=can_manage_scim,json=canManageScim,proto3" json:"can_manage_scim,omitempty"`
+	// Whether the setup URL lets the user manage SAML connections.
+	CanManageSaml bool `protobuf:"varint,2,opt,name=can_manage_saml,json=canManageSaml,proto3" json:"can_manage_saml,omitempty"`
+	// Whether the setup URL lets the user manage SCIM directories.
+	CanManageScim bool `protobuf:"varint,3,opt,name=can_manage_scim,json=canManageScim,proto3" json:"can_manage_scim,omitempty"`
 }
 
 func (x *CreateSetupURLRequest) Reset() {
@@ -2191,6 +2320,10 @@ type CreateSetupURLResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The one-time, short-lived self-serve setup URL.
+	//
+	// Do not log or store this URL. Because this URL is one-time, loading it yourself means your customer will not be
+	// able to load it after you.
 	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 }
 
@@ -2238,8 +2371,10 @@ type ListSAMLConnectionsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The organization the SAML connections belong to.
 	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	PageToken      string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Pagination token. Leave empty to get the first page of results.
+	PageToken string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
 func (x *ListSAMLConnectionsRequest) Reset() {
@@ -2293,8 +2428,10 @@ type ListSAMLConnectionsResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The list of SAML connections.
 	SamlConnections []*SAMLConnection `protobuf:"bytes,1,rep,name=saml_connections,json=samlConnections,proto3" json:"saml_connections,omitempty"`
-	NextPageToken   string            `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListSAMLConnectionsResponse) Reset() {
@@ -2348,6 +2485,7 @@ type GetSAMLConnectionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the SAML connection to get.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -2395,6 +2533,7 @@ type GetSAMLConnectionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested SAML connection.
 	SamlConnection *SAMLConnection `protobuf:"bytes,1,opt,name=saml_connection,json=samlConnection,proto3" json:"saml_connection,omitempty"`
 }
 
@@ -2442,6 +2581,7 @@ type CreateSAMLConnectionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The SAML connection to create.
 	SamlConnection *SAMLConnection `protobuf:"bytes,1,opt,name=saml_connection,json=samlConnection,proto3" json:"saml_connection,omitempty"`
 }
 
@@ -2489,6 +2629,7 @@ type CreateSAMLConnectionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The created SAML connection.
 	SamlConnection *SAMLConnection `protobuf:"bytes,1,opt,name=saml_connection,json=samlConnection,proto3" json:"saml_connection,omitempty"`
 }
 
@@ -2536,7 +2677,9 @@ type UpdateSAMLConnectionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id             string          `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The ID of the SAML connection to update.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The updated SAML connection.
 	SamlConnection *SAMLConnection `protobuf:"bytes,2,opt,name=saml_connection,json=samlConnection,proto3" json:"saml_connection,omitempty"`
 }
 
@@ -2591,6 +2734,7 @@ type UpdateSAMLConnectionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The updated SAML connection.
 	SamlConnection *SAMLConnection `protobuf:"bytes,1,opt,name=saml_connection,json=samlConnection,proto3" json:"saml_connection,omitempty"`
 }
 
@@ -2638,8 +2782,10 @@ type ListSCIMDirectoriesRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The organization the SCIM directories belong to.
 	OrganizationId string `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	PageToken      string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Pagination token. Leave empty to get the first page of results.
+	PageToken string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
 func (x *ListSCIMDirectoriesRequest) Reset() {
@@ -2693,8 +2839,10 @@ type ListSCIMDirectoriesResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The list of SCIM directories.
 	ScimDirectories []*SCIMDirectory `protobuf:"bytes,1,rep,name=scim_directories,json=scimDirectories,proto3" json:"scim_directories,omitempty"`
-	NextPageToken   string           `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListSCIMDirectoriesResponse) Reset() {
@@ -2748,6 +2896,7 @@ type GetSCIMDirectoryRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The ID of the SCIM directory.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -2795,6 +2944,7 @@ type GetSCIMDirectoryResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested SCIM directory.
 	ScimDirectory *SCIMDirectory `protobuf:"bytes,1,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
 }
 
@@ -2842,6 +2992,7 @@ type CreateSCIMDirectoryRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The SCIM directory to create.
 	ScimDirectory *SCIMDirectory `protobuf:"bytes,1,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
 }
 
@@ -2889,6 +3040,7 @@ type CreateSCIMDirectoryResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The updated SCIM directory.
 	ScimDirectory *SCIMDirectory `protobuf:"bytes,1,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
 }
 
@@ -2936,7 +3088,9 @@ type UpdateSCIMDirectoryRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            string         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The ID of the SCIM directory to update.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The updated SCIM directory.
 	ScimDirectory *SCIMDirectory `protobuf:"bytes,2,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
 }
 
@@ -2991,6 +3145,7 @@ type UpdateSCIMDirectoryResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The updated SCIM directory.
 	ScimDirectory *SCIMDirectory `protobuf:"bytes,1,opt,name=scim_directory,json=scimDirectory,proto3" json:"scim_directory,omitempty"`
 }
 
@@ -3038,6 +3193,7 @@ type RotateSCIMDirectoryBearerTokenRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The ID of the SCIM directory whose bearer token to rotate.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -3085,6 +3241,10 @@ type RotateSCIMDirectoryBearerTokenResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The new, updated bearer token.
+	//
+	// Do not log or store this bearer token. It is an authentication token that your customer should securely input into
+	// their Identity Provider.
 	BearerToken string `protobuf:"bytes,1,opt,name=bearer_token,json=bearerToken,proto3" json:"bearer_token,omitempty"`
 }
 
@@ -7798,7 +7958,7 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12,
 	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
 	0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x42, 0x07, 0x0a, 0x05, 0x65, 0x72, 0x72,
-	0x6f, 0x72, 0x22, 0xed, 0x01, 0x0a, 0x0d, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63,
+	0x6f, 0x72, 0x22, 0xbd, 0x01, 0x0a, 0x0d, 0x53, 0x43, 0x49, 0x4d, 0x44, 0x69, 0x72, 0x65, 0x63,
 	0x74, 0x6f, 0x72, 0x79, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x02, 0x69, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x6f, 0x72, 0x67, 0x61, 0x6e, 0x69, 0x7a, 0x61,
 	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x6f,
@@ -7806,10 +7966,7 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x07, 0x70, 0x72, 0x69, 0x6d, 0x61, 0x72, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07,
 	0x70, 0x72, 0x69, 0x6d, 0x61, 0x72, 0x79, 0x12, 0x22, 0x0a, 0x0d, 0x73, 0x63, 0x69, 0x6d, 0x5f,
 	0x62, 0x61, 0x73, 0x65, 0x5f, 0x75, 0x72, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
-	0x73, 0x63, 0x69, 0x6d, 0x42, 0x61, 0x73, 0x65, 0x55, 0x72, 0x6c, 0x12, 0x2e, 0x0a, 0x13, 0x63,
-	0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x62, 0x65, 0x61, 0x72, 0x65, 0x72, 0x5f, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x11, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74,
-	0x42, 0x65, 0x61, 0x72, 0x65, 0x72, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x35, 0x0a, 0x17, 0x68,
+	0x73, 0x63, 0x69, 0x6d, 0x42, 0x61, 0x73, 0x65, 0x55, 0x72, 0x6c, 0x12, 0x35, 0x0a, 0x17, 0x68,
 	0x61, 0x73, 0x5f, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x62, 0x65, 0x61, 0x72, 0x65, 0x72,
 	0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08, 0x52, 0x14, 0x68, 0x61,
 	0x73, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x42, 0x65, 0x61, 0x72, 0x65, 0x72, 0x54, 0x6f, 0x6b,

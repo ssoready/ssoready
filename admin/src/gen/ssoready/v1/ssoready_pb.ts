@@ -257,21 +257,36 @@ export class SAMLOAuthClient extends Message<SAMLOAuthClient> {
  */
 export class Organization extends Message<Organization> {
   /**
+   * Unique identifier for this organization.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * The environment this organization belongs to.
+   *
    * @generated from field: string environment_id = 2;
    */
   environmentId = "";
 
   /**
+   * An identifier you can attach to an organization. Meant to be used to correlate an SSOReady organization to your
+   * internal equivalent concept.
+   *
+   * External IDs are unique within an environment. No two organizations in the same environment can have
+   * the same external ID.
+   *
    * @generated from field: string external_id = 3;
    */
   externalId = "";
 
   /**
+   * A list of domains that users from this organization use.
+   *
+   * SAML connections and SCIM directories within this organization will only produce users whose email are included in
+   * `domains`. SSOReady will reject SAML and SCIM users that do not fall within `domains`.
+   *
    * @generated from field: repeated string domains = 4;
    */
   domains: string[] = [];
@@ -312,41 +327,68 @@ export class Organization extends Message<Organization> {
  */
 export class SAMLConnection extends Message<SAMLConnection> {
   /**
+   * Unique identifier for this SAML connection.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * The organization this SAML connection belongs to.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * Whether this is the primary SAML connection for the organization.
+   *
    * @generated from field: bool primary = 8;
    */
   primary = false;
 
   /**
+   * URL to redirect to when initiating SAML flows.
+   *
+   * IDP redirect URLs are assigned by an Identity Provider, and need to be inputted into SSOReady.
+   *
    * @generated from field: string idp_redirect_url = 3;
    */
   idpRedirectUrl = "";
 
   /**
+   * Certificate to authenticate SAML assertions. This is a PEM-encoded X.509 certificate.
+   *
+   * IDP certificates are assigned by an Identity Provider, and need to be inputted into SSOReady.
+   *
    * @generated from field: string idp_certificate = 4;
    */
   idpCertificate = "";
 
   /**
+   * Identifier for the identity provider when handling SAML operations.
+   *
+   * IDP entity IDs are assigned by an Identity Provider, and need to be inputted into SSOReady.
+   *
    * @generated from field: string idp_entity_id = 5;
    */
   idpEntityId = "";
 
   /**
+   * Identifier for the SAML connection when handling SAML operations.
+   *
+   * SP entity IDs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
+   *
    * @generated from field: string sp_entity_id = 6;
    */
   spEntityId = "";
 
   /**
+   * URL the Identity Provider redirects to when transmitting SAML assertions. Stands for "Service Provider Assertion
+   * Consumer Service" URL.
+   *
+   * SP ACS URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
+   *
    * @generated from field: string sp_acs_url = 7;
    */
   spAcsUrl = "";
@@ -564,31 +606,41 @@ export class SAMLFlow extends Message<SAMLFlow> {
  */
 export class SCIMDirectory extends Message<SCIMDirectory> {
   /**
+   * Unique identifier for this SCIM directory.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * The organization this SCIM directory belongs to.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * Whether this is the primary SCIM directory for the organization.
+   *
    * @generated from field: bool primary = 3;
    */
   primary = false;
 
   /**
+   * Base URL the Identity Provider uses to perform SCIM HTTP requests.
+   *
+   * SCIM base URLs are assigned by SSOReady, and need to be inputted into your customer's Identity Provider.
+   *
    * @generated from field: string scim_base_url = 4;
    */
   scimBaseUrl = "";
 
   /**
-   * @generated from field: string client_bearer_token = 5;
-   */
-  clientBearerToken = "";
-
-  /**
+   * Whether this SCIM directory has a bearer token assigned.
+   *
+   * SSOReady only stores a hash of the bearer token. To get a bearer token value, you must rotate this SCIM directory's
+   * bearer token.
+   *
    * @generated from field: bool has_client_bearer_token = 6;
    */
   hasClientBearerToken = false;
@@ -605,7 +657,6 @@ export class SCIMDirectory extends Message<SCIMDirectory> {
     { no: 2, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "primary", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 4, name: "scim_base_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "client_bearer_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "has_client_bearer_token", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
@@ -631,26 +682,39 @@ export class SCIMDirectory extends Message<SCIMDirectory> {
  */
 export class SCIMUser extends Message<SCIMUser> {
   /**
+   * Unique identifier for this SCIM user.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * SCIM directory this SCIM user belongs to.
+   *
    * @generated from field: string scim_directory_id = 2;
    */
   scimDirectoryId = "";
 
   /**
+   * The SCIM user's email address.
+   *
    * @generated from field: string email = 3;
    */
   email = "";
 
   /**
+   * Whether the SCIM user has been deleted or deprovisioned from its SCIM directory.
+   *
    * @generated from field: bool deleted = 4;
    */
   deleted = false;
 
   /**
+   * Arbitrary, potentially nested, attributes the Identity Provider included about the user.
+   *
+   * Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+   * considered an admin within their company.
+   *
    * @generated from field: google.protobuf.Struct attributes = 5;
    */
   attributes?: Struct;
@@ -692,26 +756,43 @@ export class SCIMUser extends Message<SCIMUser> {
  */
 export class SCIMGroup extends Message<SCIMGroup> {
   /**
+   * Unique identifier for this SCIM group.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * SCIM directory this SCIM group belongs to.
+   *
    * @generated from field: string scim_directory_id = 2;
    */
   scimDirectoryId = "";
 
   /**
+   * A human-friendly name for the SCIM group.
+   *
    * @generated from field: string display_name = 3;
    */
   displayName = "";
 
   /**
+   * Whether the SCIM group has been deleted or deprovisioned from its SCIM directory.
+   *
+   * Identity Providers are inconsistent about reliably deleting SCIM groups. Many Identity Providers will deprovision
+   * the users inside a group, but not the group itself. For this reason, it's typical to ignore this field until a
+   * specific need arises.
+   *
    * @generated from field: bool deleted = 6;
    */
   deleted = false;
 
   /**
+   * Arbitrary, potentially nested, attributes the Identity Provider included about the group.
+   *
+   * Identity Providers are inconsistent about supporting sending custom attributes on groups. For this reason, it's
+   * typical to not rely on them until a specific need arises.
+   *
    * @generated from field: google.protobuf.Struct attributes = 4;
    */
   attributes?: Struct;
@@ -753,21 +834,42 @@ export class SCIMGroup extends Message<SCIMGroup> {
  */
 export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest> {
   /**
+   * The SAML connection to start a SAML login for.
+   *
+   * One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string saml_connection_id = 1;
    */
   samlConnectionId = "";
 
   /**
+   * The ID of the organization to start a SAML login for.
+   *
+   * The primary SAML connection in this organization will be used for logins.
+   *
+   * One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * The `externalId` of the organization to start a SAML login for.
+   *
+   * The primary SAML connection in this organization will be used for logins.
+   *
+   * One of `samlConnectionId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_external_id = 3;
    */
   organizationExternalId = "";
 
   /**
+   * This string will be returned back to you when you redeem this login's SAML access code.
+   *
+   * You can do anything you like with this `state`, but the most common use-case is to keep track of where to redirect
+   * your user back to after logging in with SAML.
+   *
    * @generated from field: string state = 4;
    */
   state = "";
@@ -808,6 +910,8 @@ export class GetSAMLRedirectURLRequest extends Message<GetSAMLRedirectURLRequest
  */
 export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLResponse> {
   /**
+   * Redirect your user to this URL to start a SAML login.
+   *
    * @generated from field: string redirect_url = 1;
    */
   redirectUrl = "";
@@ -845,6 +949,8 @@ export class GetSAMLRedirectURLResponse extends Message<GetSAMLRedirectURLRespon
  */
 export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeRequest> {
   /**
+   * The SAML access code to redeem.
+   *
    * @generated from field: string saml_access_code = 1;
    */
   samlAccessCode = "";
@@ -882,31 +988,54 @@ export class RedeemSAMLAccessCodeRequest extends Message<RedeemSAMLAccessCodeReq
  */
 export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeResponse> {
   /**
+   * The user's email address.
+   *
    * @generated from field: string email = 1;
    */
   email = "";
 
   /**
+   * The `state` you provided when getting a SAML initiation URL, if any.
+   *
+   * If your user logged in to your product using Identity Provider-initiated SAML (e.g. they clicked on your app inside
+   * their corporate Okta dashboard), then `state` will be empty.
+   *
+   * SSOReady validates the authenticity of non-empty `state` values. You do not need to implement your own CSRF on top
+   * of it, but doing so anyway will have no bad consequences.
+   *
    * @generated from field: string state = 2;
    */
   state = "";
 
   /**
+   * Arbitrary key-value pairs the Identity Provider included about the user.
+   *
+   * Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+   * considered an admin within their company.
+   *
    * @generated from field: map<string, string> attributes = 3;
    */
   attributes: { [key: string]: string } = {};
 
   /**
+   * The ID of the organization this user belongs to.
+   *
    * @generated from field: string organization_id = 4;
    */
   organizationId = "";
 
   /**
+   * The `externalId`, if any, of the organization this user belongs to.
+   *
    * @generated from field: string organization_external_id = 5;
    */
   organizationExternalId = "";
 
   /**
+   * A unique identifier of this particular SAML login. It is not a secret. You can safely log it.
+   *
+   * SSOReady maintains an audit log of every SAML login. Use this SAML flow ID to find this login in the audit logs.
+   *
    * @generated from field: string saml_flow_id = 6;
    */
   samlFlowId = "";
@@ -949,26 +1078,42 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
  */
 export class ListSCIMUsersRequest extends Message<ListSCIMUsersRequest> {
   /**
+   * The SCIM directory to list from.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string scim_directory_id = 1;
    */
   scimDirectoryId = "";
 
   /**
+   * The ID of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_external_id = 3;
    */
   organizationExternalId = "";
 
   /**
+   * If specified, only users that are members of this SCIM group are returned.
+   *
    * @generated from field: string scim_group_id = 4;
    */
   scimGroupId = "";
 
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 5;
    */
   pageToken = "";
@@ -1010,11 +1155,15 @@ export class ListSCIMUsersRequest extends Message<ListSCIMUsersRequest> {
  */
 export class ListSCIMUsersResponse extends Message<ListSCIMUsersResponse> {
   /**
+   * List of SCIM users.
+   *
    * @generated from field: repeated ssoready.v1.SCIMUser scim_users = 1;
    */
   scimUsers: SCIMUser[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -1053,6 +1202,8 @@ export class ListSCIMUsersResponse extends Message<ListSCIMUsersResponse> {
  */
 export class GetSCIMUserRequest extends Message<GetSCIMUserRequest> {
   /**
+   * ID of the SCIM user to get.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -1090,6 +1241,8 @@ export class GetSCIMUserRequest extends Message<GetSCIMUserRequest> {
  */
 export class GetSCIMUserResponse extends Message<GetSCIMUserResponse> {
   /**
+   * The requested SCIM user.
+   *
    * @generated from field: ssoready.v1.SCIMUser scim_user = 1;
    */
   scimUser?: SCIMUser;
@@ -1127,21 +1280,35 @@ export class GetSCIMUserResponse extends Message<GetSCIMUserResponse> {
  */
 export class ListSCIMGroupsRequest extends Message<ListSCIMGroupsRequest> {
   /**
+   * The SCIM directory to list from.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string scim_directory_id = 1;
    */
   scimDirectoryId = "";
 
   /**
+   * The ID of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_external_id = 3;
    */
   organizationExternalId = "";
 
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 4;
    */
   pageToken = "";
@@ -1182,11 +1349,15 @@ export class ListSCIMGroupsRequest extends Message<ListSCIMGroupsRequest> {
  */
 export class ListSCIMGroupsResponse extends Message<ListSCIMGroupsResponse> {
   /**
+   * List of SCIM groups.
+   *
    * @generated from field: repeated ssoready.v1.SCIMGroup scim_groups = 1;
    */
   scimGroups: SCIMGroup[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -1225,6 +1396,8 @@ export class ListSCIMGroupsResponse extends Message<ListSCIMGroupsResponse> {
  */
 export class GetSCIMGroupRequest extends Message<GetSCIMGroupRequest> {
   /**
+   * ID of the SCIM group to get.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -1262,6 +1435,8 @@ export class GetSCIMGroupRequest extends Message<GetSCIMGroupRequest> {
  */
 export class GetSCIMGroupResponse extends Message<GetSCIMGroupResponse> {
   /**
+   * The requested SCIM group.
+   *
    * @generated from field: ssoready.v1.SCIMGroup scim_group = 1;
    */
   scimGroup?: SCIMGroup;
@@ -1299,6 +1474,8 @@ export class GetSCIMGroupResponse extends Message<GetSCIMGroupResponse> {
  */
 export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> {
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 1;
    */
   pageToken = "";
@@ -1336,11 +1513,15 @@ export class ListOrganizationsRequest extends Message<ListOrganizationsRequest> 
  */
 export class ListOrganizationsResponse extends Message<ListOrganizationsResponse> {
   /**
+   * List of organizations.
+   *
    * @generated from field: repeated ssoready.v1.Organization organizations = 1;
    */
   organizations: Organization[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -1379,6 +1560,8 @@ export class ListOrganizationsResponse extends Message<ListOrganizationsResponse
  */
 export class GetOrganizationRequest extends Message<GetOrganizationRequest> {
   /**
+   * ID of the organization to get.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -1416,6 +1599,8 @@ export class GetOrganizationRequest extends Message<GetOrganizationRequest> {
  */
 export class GetOrganizationResponse extends Message<GetOrganizationResponse> {
   /**
+   * The requested organization.
+   *
    * @generated from field: ssoready.v1.Organization organization = 1;
    */
   organization?: Organization;
@@ -1490,6 +1675,8 @@ export class CreateOrganizationRequest extends Message<CreateOrganizationRequest
  */
 export class CreateOrganizationResponse extends Message<CreateOrganizationResponse> {
   /**
+   * The created organization.
+   *
    * @generated from field: ssoready.v1.Organization organization = 1;
    */
   organization?: Organization;
@@ -1527,11 +1714,15 @@ export class CreateOrganizationResponse extends Message<CreateOrganizationRespon
  */
 export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest> {
   /**
+   * ID of the organization to update.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * The updated organization.
+   *
    * @generated from field: ssoready.v1.Organization organization = 2;
    */
   organization?: Organization;
@@ -1570,6 +1761,8 @@ export class UpdateOrganizationRequest extends Message<UpdateOrganizationRequest
  */
 export class UpdateOrganizationResponse extends Message<UpdateOrganizationResponse> {
   /**
+   * The updated organization.
+   *
    * @generated from field: ssoready.v1.Organization organization = 1;
    */
   organization?: Organization;
@@ -1607,16 +1800,22 @@ export class UpdateOrganizationResponse extends Message<UpdateOrganizationRespon
  */
 export class CreateSetupURLRequest extends Message<CreateSetupURLRequest> {
   /**
+   * The organization that the setup URL is for.
+   *
    * @generated from field: string organization_id = 1;
    */
   organizationId = "";
 
   /**
+   * Whether the setup URL lets the user manage SAML connections.
+   *
    * @generated from field: bool can_manage_saml = 2;
    */
   canManageSaml = false;
 
   /**
+   * Whether the setup URL lets the user manage SCIM directories.
+   *
    * @generated from field: bool can_manage_scim = 3;
    */
   canManageScim = false;
@@ -1656,6 +1855,11 @@ export class CreateSetupURLRequest extends Message<CreateSetupURLRequest> {
  */
 export class CreateSetupURLResponse extends Message<CreateSetupURLResponse> {
   /**
+   * The one-time, short-lived self-serve setup URL.
+   *
+   * Do not log or store this URL. Because this URL is one-time, loading it yourself means your customer will not be
+   * able to load it after you.
+   *
    * @generated from field: string url = 1;
    */
   url = "";
@@ -1693,11 +1897,15 @@ export class CreateSetupURLResponse extends Message<CreateSetupURLResponse> {
  */
 export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsRequest> {
   /**
+   * The organization the SAML connections belong to.
+   *
    * @generated from field: string organization_id = 1;
    */
   organizationId = "";
 
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 2;
    */
   pageToken = "";
@@ -1736,11 +1944,15 @@ export class ListSAMLConnectionsRequest extends Message<ListSAMLConnectionsReque
  */
 export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResponse> {
   /**
+   * The list of SAML connections.
+   *
    * @generated from field: repeated ssoready.v1.SAMLConnection saml_connections = 1;
    */
   samlConnections: SAMLConnection[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -1779,6 +1991,8 @@ export class ListSAMLConnectionsResponse extends Message<ListSAMLConnectionsResp
  */
 export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> {
   /**
+   * ID of the SAML connection to get.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -1816,6 +2030,8 @@ export class GetSAMLConnectionRequest extends Message<GetSAMLConnectionRequest> 
  */
 export class GetSAMLConnectionResponse extends Message<GetSAMLConnectionResponse> {
   /**
+   * The requested SAML connection.
+   *
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
    */
   samlConnection?: SAMLConnection;
@@ -1853,6 +2069,8 @@ export class GetSAMLConnectionResponse extends Message<GetSAMLConnectionResponse
  */
 export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionRequest> {
   /**
+   * The SAML connection to create.
+   *
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
    */
   samlConnection?: SAMLConnection;
@@ -1890,6 +2108,8 @@ export class CreateSAMLConnectionRequest extends Message<CreateSAMLConnectionReq
  */
 export class CreateSAMLConnectionResponse extends Message<CreateSAMLConnectionResponse> {
   /**
+   * The created SAML connection.
+   *
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
    */
   samlConnection?: SAMLConnection;
@@ -1927,11 +2147,15 @@ export class CreateSAMLConnectionResponse extends Message<CreateSAMLConnectionRe
  */
 export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionRequest> {
   /**
+   * The ID of the SAML connection to update.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * The updated SAML connection.
+   *
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 2;
    */
   samlConnection?: SAMLConnection;
@@ -1970,6 +2194,8 @@ export class UpdateSAMLConnectionRequest extends Message<UpdateSAMLConnectionReq
  */
 export class UpdateSAMLConnectionResponse extends Message<UpdateSAMLConnectionResponse> {
   /**
+   * The updated SAML connection.
+   *
    * @generated from field: ssoready.v1.SAMLConnection saml_connection = 1;
    */
   samlConnection?: SAMLConnection;
@@ -2007,11 +2233,15 @@ export class UpdateSAMLConnectionResponse extends Message<UpdateSAMLConnectionRe
  */
 export class ListSCIMDirectoriesRequest extends Message<ListSCIMDirectoriesRequest> {
   /**
+   * The organization the SCIM directories belong to.
+   *
    * @generated from field: string organization_id = 1;
    */
   organizationId = "";
 
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 2;
    */
   pageToken = "";
@@ -2050,11 +2280,15 @@ export class ListSCIMDirectoriesRequest extends Message<ListSCIMDirectoriesReque
  */
 export class ListSCIMDirectoriesResponse extends Message<ListSCIMDirectoriesResponse> {
   /**
+   * The list of SCIM directories.
+   *
    * @generated from field: repeated ssoready.v1.SCIMDirectory scim_directories = 1;
    */
   scimDirectories: SCIMDirectory[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -2093,6 +2327,8 @@ export class ListSCIMDirectoriesResponse extends Message<ListSCIMDirectoriesResp
  */
 export class GetSCIMDirectoryRequest extends Message<GetSCIMDirectoryRequest> {
   /**
+   * The ID of the SCIM directory.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -2130,6 +2366,8 @@ export class GetSCIMDirectoryRequest extends Message<GetSCIMDirectoryRequest> {
  */
 export class GetSCIMDirectoryResponse extends Message<GetSCIMDirectoryResponse> {
   /**
+   * The requested SCIM directory.
+   *
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
    */
   scimDirectory?: SCIMDirectory;
@@ -2167,6 +2405,8 @@ export class GetSCIMDirectoryResponse extends Message<GetSCIMDirectoryResponse> 
  */
 export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryRequest> {
   /**
+   * The SCIM directory to create.
+   *
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
    */
   scimDirectory?: SCIMDirectory;
@@ -2204,6 +2444,8 @@ export class CreateSCIMDirectoryRequest extends Message<CreateSCIMDirectoryReque
  */
 export class CreateSCIMDirectoryResponse extends Message<CreateSCIMDirectoryResponse> {
   /**
+   * The updated SCIM directory.
+   *
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
    */
   scimDirectory?: SCIMDirectory;
@@ -2241,11 +2483,15 @@ export class CreateSCIMDirectoryResponse extends Message<CreateSCIMDirectoryResp
  */
 export class UpdateSCIMDirectoryRequest extends Message<UpdateSCIMDirectoryRequest> {
   /**
+   * The ID of the SCIM directory to update.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * The updated SCIM directory.
+   *
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 2;
    */
   scimDirectory?: SCIMDirectory;
@@ -2284,6 +2530,8 @@ export class UpdateSCIMDirectoryRequest extends Message<UpdateSCIMDirectoryReque
  */
 export class UpdateSCIMDirectoryResponse extends Message<UpdateSCIMDirectoryResponse> {
   /**
+   * The updated SCIM directory.
+   *
    * @generated from field: ssoready.v1.SCIMDirectory scim_directory = 1;
    */
   scimDirectory?: SCIMDirectory;
@@ -2321,6 +2569,8 @@ export class UpdateSCIMDirectoryResponse extends Message<UpdateSCIMDirectoryResp
  */
 export class RotateSCIMDirectoryBearerTokenRequest extends Message<RotateSCIMDirectoryBearerTokenRequest> {
   /**
+   * The ID of the SCIM directory whose bearer token to rotate.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -2358,6 +2608,11 @@ export class RotateSCIMDirectoryBearerTokenRequest extends Message<RotateSCIMDir
  */
 export class RotateSCIMDirectoryBearerTokenResponse extends Message<RotateSCIMDirectoryBearerTokenResponse> {
   /**
+   * The new, updated bearer token.
+   *
+   * Do not log or store this bearer token. It is an authentication token that your customer should securely input into
+   * their Identity Provider.
+   *
    * @generated from field: string bearer_token = 1;
    */
   bearerToken = "";
