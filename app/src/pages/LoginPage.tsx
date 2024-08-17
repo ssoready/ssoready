@@ -168,7 +168,6 @@ function MicrosoftLogin() {
         className="flex items-center gap-x-[0.3rem] pl-[0.4rem] pr-[0.4rem] font-normal"
         href={microsoftRedirectUri.toString()}
       >
-        <span>Continue with Microsoft</span>
         <svg
           className="h-5 w-5"
           xmlns="http://www.w3.org/2000/svg"
@@ -199,6 +198,7 @@ function MicrosoftLogin() {
             transform="rotate(-180 14 34)"
           ></path>
         </svg>
+        <span>Continue with Microsoft</span>
       </a>
     </Button>
   );
