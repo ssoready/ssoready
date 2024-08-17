@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   createAPIKey,
   createSAMLOAuthClient,
@@ -40,7 +40,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CircleAlert, Plus } from "lucide-react";
+import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import { CircleAlert, Plus, CopyIcon } from "lucide-react";
 import { z } from "zod";
 import { Environment } from "@/gen/ssoready/v1/ssoready_pb";
 import { useForm } from "react-hook-form";
@@ -303,14 +304,15 @@ function CreateAPIKeyButton() {
 
           <div className="text-sm font-medium leading-none">API Key Secret</div>
 
-          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border">
+          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border flex items-center">
             {apiKeySecret}
+            <CopyButton copyText={apiKeySecret}></CopyButton>
           </div>
 
           <AlertDialogFooter>
             <AlertDialogAction asChild>
               <Link to={`/environments/${environmentId}/api-keys/${apiKeyId}`}>
-                View API Key
+                Done
               </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -459,5 +461,50 @@ function ListOAuthClientsCard() {
         </CardContent>
       </Card>
     </>
+  );
+}
+
+function CopyButton({ copyText }: { copyText: string }) {
+  const [open, setOpen] = useState(false);
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: "top",
+    middleware: [offset(5)],
+  });
+  const { isMounted, styles } = useTransitionStyles(context);
+
+  useEffect(() => {
+    if (open) {
+      const timeoutId = setTimeout(() => {
+        setOpen(false);
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [open]);
+
+  return (
+    <div className="ml-auto">
+      <CopyIcon
+        ref={refs.setReference}
+        className="h-4 w-4 cursor-pointer text-muted-foreground"
+        onClick={async () => {
+          await navigator.clipboard.writeText(copyText);
+          setOpen(true);
+        }}
+      />
+      {open && (
+        <div ref={refs.setFloating} style={floatingStyles}>
+          {isMounted && (
+            <div
+              style={styles}
+              className="bg-black text-white p-1 text-xs rounded"
+            >
+              Copied!
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
