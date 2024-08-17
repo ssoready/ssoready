@@ -910,11 +910,19 @@ type SCIMUser struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id              string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ScimDirectoryId string           `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	Email           string           `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Deleted         bool             `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	Attributes      *structpb.Struct `protobuf:"bytes,5,opt,name=attributes,proto3" json:"attributes,omitempty"`
+	// Unique identifier for this SCIM user.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// SCIM directory this SCIM user belongs to.
+	ScimDirectoryId string `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// The SCIM user's email address.
+	Email string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	// Whether the SCIM user has been deleted or deprovisioned from its SCIM directory.
+	Deleted bool `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	// Arbitrary, potentially nested, attributes the Identity Provider included about the user.
+	//
+	// Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+	// considered an admin within their company.
+	Attributes *structpb.Struct `protobuf:"bytes,5,opt,name=attributes,proto3" json:"attributes,omitempty"`
 }
 
 func (x *SCIMUser) Reset() {
@@ -989,11 +997,23 @@ type SCIMGroup struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id              string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ScimDirectoryId string           `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	DisplayName     string           `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Deleted         bool             `protobuf:"varint,6,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	Attributes      *structpb.Struct `protobuf:"bytes,4,opt,name=attributes,proto3" json:"attributes,omitempty"`
+	// Unique identifier for this SCIM group.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// SCIM directory this SCIM group belongs to.
+	ScimDirectoryId string `protobuf:"bytes,2,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// A human-friendly name for the SCIM group.
+	DisplayName string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	// Whether the SCIM group has been deleted or deprovisioned from its SCIM directory.
+	//
+	// Identity Providers are inconsistent about reliably deleting SCIM groups. Many Identity Providers will deprovision
+	// the users inside a group, but not the group itself. For this reason, it's typical to ignore this field until a
+	// specific need arises.
+	Deleted bool `protobuf:"varint,6,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	// Arbitrary, potentially nested, attributes the Identity Provider included about the group.
+	//
+	// Identity Providers are inconsistent about supporting sending custom attributes on groups. For this reason, it's
+	// typical to not rely on them until a specific need arises.
+	Attributes *structpb.Struct `protobuf:"bytes,4,opt,name=attributes,proto3" json:"attributes,omitempty"`
 }
 
 func (x *SCIMGroup) Reset() {
@@ -1356,11 +1376,22 @@ type ListSCIMUsersRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimDirectoryId        string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	OrganizationId         string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The SCIM directory to list from.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	ScimDirectoryId string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// The ID of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
 	OrganizationExternalId string `protobuf:"bytes,3,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	ScimGroupId            string `protobuf:"bytes,4,opt,name=scim_group_id,json=scimGroupId,proto3" json:"scim_group_id,omitempty"`
-	PageToken              string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// If specified, only users that are members of this SCIM group are returned.
+	ScimGroupId string `protobuf:"bytes,4,opt,name=scim_group_id,json=scimGroupId,proto3" json:"scim_group_id,omitempty"`
+	// Pagination token. Leave empty to get the first page of results.
+	PageToken string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
 func (x *ListSCIMUsersRequest) Reset() {
@@ -1435,8 +1466,10 @@ type ListSCIMUsersResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimUsers     []*SCIMUser `protobuf:"bytes,1,rep,name=scim_users,json=scimUsers,proto3" json:"scim_users,omitempty"`
-	NextPageToken string      `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// List of SCIM users.
+	ScimUsers []*SCIMUser `protobuf:"bytes,1,rep,name=scim_users,json=scimUsers,proto3" json:"scim_users,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListSCIMUsersResponse) Reset() {
@@ -1490,6 +1523,7 @@ type GetSCIMUserRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the SCIM user to get.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -1537,6 +1571,7 @@ type GetSCIMUserResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested SCIM user.
 	ScimUser *SCIMUser `protobuf:"bytes,1,opt,name=scim_user,json=scimUser,proto3" json:"scim_user,omitempty"`
 }
 
@@ -1584,10 +1619,20 @@ type ListSCIMGroupsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimDirectoryId        string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
-	OrganizationId         string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The SCIM directory to list from.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	ScimDirectoryId string `protobuf:"bytes,1,opt,name=scim_directory_id,json=scimDirectoryId,proto3" json:"scim_directory_id,omitempty"`
+	// The ID of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+	OrganizationId string `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+	//
+	// One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
 	OrganizationExternalId string `protobuf:"bytes,3,opt,name=organization_external_id,json=organizationExternalId,proto3" json:"organization_external_id,omitempty"`
-	PageToken              string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Pagination token. Leave empty to get the first page of results.
+	PageToken string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 }
 
 func (x *ListSCIMGroupsRequest) Reset() {
@@ -1655,8 +1700,10 @@ type ListSCIMGroupsResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ScimGroups    []*SCIMGroup `protobuf:"bytes,1,rep,name=scim_groups,json=scimGroups,proto3" json:"scim_groups,omitempty"`
-	NextPageToken string       `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// List of SCIM groups.
+	ScimGroups []*SCIMGroup `protobuf:"bytes,1,rep,name=scim_groups,json=scimGroups,proto3" json:"scim_groups,omitempty"`
+	// Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
 
 func (x *ListSCIMGroupsResponse) Reset() {
@@ -1710,6 +1757,7 @@ type GetSCIMGroupRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the SCIM group to get.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -1757,6 +1805,7 @@ type GetSCIMGroupResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The requested SCIM group.
 	ScimGroup *SCIMGroup `protobuf:"bytes,1,opt,name=scim_group,json=scimGroup,proto3" json:"scim_group,omitempty"`
 }
 

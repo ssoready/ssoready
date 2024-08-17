@@ -273,9 +273,13 @@ type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
+	// Gets a list of SCIM users in a SCIM directory.
 	ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error)
+	// Gets a SCIM user.
 	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
+	// Gets a list of SCIM groups in a SCIM directory.
 	ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error)
+	// Gets a SCIM group in a SCIM directory.
 	GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error)
 	// Gets a list of organizations.
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)
@@ -1260,9 +1264,13 @@ type SSOReadyServiceHandler interface {
 	GetSAMLRedirectURL(context.Context, *connect.Request[v1.GetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(context.Context, *connect.Request[v1.RedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
+	// Gets a list of SCIM users in a SCIM directory.
 	ListSCIMUsers(context.Context, *connect.Request[v1.ListSCIMUsersRequest]) (*connect.Response[v1.ListSCIMUsersResponse], error)
+	// Gets a SCIM user.
 	GetSCIMUser(context.Context, *connect.Request[v1.GetSCIMUserRequest]) (*connect.Response[v1.GetSCIMUserResponse], error)
+	// Gets a list of SCIM groups in a SCIM directory.
 	ListSCIMGroups(context.Context, *connect.Request[v1.ListSCIMGroupsRequest]) (*connect.Response[v1.ListSCIMGroupsResponse], error)
+	// Gets a SCIM group in a SCIM directory.
 	GetSCIMGroup(context.Context, *connect.Request[v1.GetSCIMGroupRequest]) (*connect.Response[v1.GetSCIMGroupResponse], error)
 	// Gets a list of organizations.
 	ListOrganizations(context.Context, *connect.Request[v1.ListOrganizationsRequest]) (*connect.Response[v1.ListOrganizationsResponse], error)

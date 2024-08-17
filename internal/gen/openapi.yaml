@@ -425,22 +425,36 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a list of SCIM groups in a SCIM directory.
             operationId: SSOReadyService_ListSCIMGroups
             parameters:
                 - name: scimDirectoryId
                   in: query
+                  description: |-
+                    The SCIM directory to list from.
+
+                     One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
                   schema:
                     type: string
                 - name: organizationId
                   in: query
+                  description: |-
+                    The ID of the organization to list from. The primary SCIM directory of this organization is used.
+
+                     One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
                   schema:
                     type: string
                 - name: organizationExternalId
                   in: query
+                  description: |-
+                    The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+
+                     One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
                   schema:
                     type: string
                 - name: pageToken
                   in: query
+                  description: Pagination token. Leave empty to get the first page of results.
                   schema:
                     type: string
             responses:
@@ -460,10 +474,12 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a SCIM group in a SCIM directory.
             operationId: SSOReadyService_GetSCIMGroup
             parameters:
                 - name: id
                   in: path
+                  description: ID of the SCIM group to get.
                   required: true
                   schema:
                     type: string
@@ -484,26 +500,41 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a list of SCIM users in a SCIM directory.
             operationId: SSOReadyService_ListSCIMUsers
             parameters:
                 - name: scimDirectoryId
                   in: query
+                  description: |-
+                    The SCIM directory to list from.
+
+                     One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
                   schema:
                     type: string
                 - name: organizationId
                   in: query
+                  description: |-
+                    The ID of the organization to list from. The primary SCIM directory of this organization is used.
+
+                     One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
                   schema:
                     type: string
                 - name: organizationExternalId
                   in: query
+                  description: |-
+                    The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+
+                     One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
                   schema:
                     type: string
                 - name: scimGroupId
                   in: query
+                  description: If specified, only users that are members of this SCIM group are returned.
                   schema:
                     type: string
                 - name: pageToken
                   in: query
+                  description: Pagination token. Leave empty to get the first page of results.
                   schema:
                     type: string
             responses:
@@ -523,10 +554,12 @@ paths:
         get:
             tags:
                 - SSOReadyService
+            description: Gets a SCIM user.
             operationId: SSOReadyService_GetSCIMUser
             parameters:
                 - name: id
                   in: path
+                  description: ID of the SCIM user to get.
                   required: true
                   schema:
                     type: string
@@ -679,12 +712,16 @@ components:
             type: object
             properties:
                 scimGroup:
-                    $ref: '#/components/schemas/SCIMGroup'
+                    allOf:
+                        - $ref: '#/components/schemas/SCIMGroup'
+                    description: The requested SCIM group.
         GetSCIMUserResponse:
             type: object
             properties:
                 scimUser:
-                    $ref: '#/components/schemas/SCIMUser'
+                    allOf:
+                        - $ref: '#/components/schemas/SCIMUser'
+                    description: The requested SCIM user.
         GoogleProtobufAny:
             type: object
             properties:
@@ -733,8 +770,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/SCIMGroup'
+                    description: List of SCIM groups.
                 nextPageToken:
                     type: string
+                    description: Value to use as `pageToken` for the next page of data. Empty if there is no more data.
         ListSCIMUsersResponse:
             type: object
             properties:
@@ -742,8 +781,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/SCIMUser'
+                    description: List of SCIM users.
                 nextPageToken:
                     type: string
+                    description: Value to use as `pageToken` for the next page of data. Empty if there is no more data.
         Organization:
             type: object
             properties:
@@ -896,27 +937,50 @@ components:
             properties:
                 id:
                     type: string
+                    description: Unique identifier for this SCIM group.
                 scimDirectoryId:
                     type: string
+                    description: SCIM directory this SCIM group belongs to.
                 displayName:
                     type: string
+                    description: A human-friendly name for the SCIM group.
                 deleted:
                     type: boolean
+                    description: |-
+                        Whether the SCIM group has been deleted or deprovisioned from its SCIM directory.
+
+                         Identity Providers are inconsistent about reliably deleting SCIM groups. Many Identity Providers will deprovision
+                         the users inside a group, but not the group itself. For this reason, it's typical to ignore this field until a
+                         specific need arises.
                 attributes:
                     type: object
+                    description: |-
+                        Arbitrary, potentially nested, attributes the Identity Provider included about the group.
+
+                         Identity Providers are inconsistent about supporting sending custom attributes on groups. For this reason, it's
+                         typical to not rely on them until a specific need arises.
         SCIMUser:
             type: object
             properties:
                 id:
                     type: string
+                    description: Unique identifier for this SCIM user.
                 scimDirectoryId:
                     type: string
+                    description: SCIM directory this SCIM user belongs to.
                 email:
                     type: string
+                    description: The SCIM user's email address.
                 deleted:
                     type: boolean
+                    description: Whether the SCIM user has been deleted or deprovisioned from its SCIM directory.
                 attributes:
                     type: object
+                    description: |-
+                        Arbitrary, potentially nested, attributes the Identity Provider included about the user.
+
+                         Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+                         considered an admin within their company.
         Status:
             type: object
             properties:

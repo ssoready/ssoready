@@ -108,9 +108,13 @@ type SSOReadyServiceClient interface {
 	GetSAMLRedirectURL(ctx context.Context, in *GetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
 	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(ctx context.Context, in *RedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
+	// Gets a list of SCIM users in a SCIM directory.
 	ListSCIMUsers(ctx context.Context, in *ListSCIMUsersRequest, opts ...grpc.CallOption) (*ListSCIMUsersResponse, error)
+	// Gets a SCIM user.
 	GetSCIMUser(ctx context.Context, in *GetSCIMUserRequest, opts ...grpc.CallOption) (*GetSCIMUserResponse, error)
+	// Gets a list of SCIM groups in a SCIM directory.
 	ListSCIMGroups(ctx context.Context, in *ListSCIMGroupsRequest, opts ...grpc.CallOption) (*ListSCIMGroupsResponse, error)
+	// Gets a SCIM group in a SCIM directory.
 	GetSCIMGroup(ctx context.Context, in *GetSCIMGroupRequest, opts ...grpc.CallOption) (*GetSCIMGroupResponse, error)
 	// Gets a list of organizations.
 	ListOrganizations(ctx context.Context, in *ListOrganizationsRequest, opts ...grpc.CallOption) (*ListOrganizationsResponse, error)
@@ -1008,9 +1012,13 @@ type SSOReadyServiceServer interface {
 	GetSAMLRedirectURL(context.Context, *GetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
 	// Exchanges a SAML access code for details about your user's SAML login details.
 	RedeemSAMLAccessCode(context.Context, *RedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
+	// Gets a list of SCIM users in a SCIM directory.
 	ListSCIMUsers(context.Context, *ListSCIMUsersRequest) (*ListSCIMUsersResponse, error)
+	// Gets a SCIM user.
 	GetSCIMUser(context.Context, *GetSCIMUserRequest) (*GetSCIMUserResponse, error)
+	// Gets a list of SCIM groups in a SCIM directory.
 	ListSCIMGroups(context.Context, *ListSCIMGroupsRequest) (*ListSCIMGroupsResponse, error)
+	// Gets a SCIM group in a SCIM directory.
 	GetSCIMGroup(context.Context, *GetSCIMGroupRequest) (*GetSCIMGroupResponse, error)
 	// Gets a list of organizations.
 	ListOrganizations(context.Context, *ListOrganizationsRequest) (*ListOrganizationsResponse, error)

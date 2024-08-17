@@ -35,6 +35,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a list of SCIM users in a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMUsers
      */
     listSCIMUsers: {
@@ -44,6 +46,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a SCIM user.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMUser
      */
     getSCIMUser: {
@@ -53,6 +57,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a list of SCIM groups in a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMGroups
      */
     listSCIMGroups: {
@@ -62,6 +68,8 @@ export const SSOReadyService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Gets a SCIM group in a SCIM directory.
+     *
      * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMGroup
      */
     getSCIMGroup: {

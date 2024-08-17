@@ -25,24 +25,28 @@ service SSOReadyService {
     };
   };
 
+  // Gets a list of SCIM users in a SCIM directory.
   rpc ListSCIMUsers(ListSCIMUsersRequest) returns (ListSCIMUsersResponse) {
     option (google.api.http) = {
       get: "/v1/scim/users"
     };
   };
 
+  // Gets a SCIM user.
   rpc GetSCIMUser(GetSCIMUserRequest) returns (GetSCIMUserResponse) {
     option (google.api.http) = {
       get: "/v1/scim/users/{id}"
     };
   };
 
+  // Gets a list of SCIM groups in a SCIM directory.
   rpc ListSCIMGroups(ListSCIMGroupsRequest) returns (ListSCIMGroupsResponse) {
     option (google.api.http) = {
       get: "/v1/scim/groups"
     };
   };
 
+  // Gets a SCIM group in a SCIM directory.
   rpc GetSCIMGroup(GetSCIMGroupRequest) returns (GetSCIMGroupResponse) {
     option (google.api.http) = {
       get: "/v1/scim/groups/{id}"
@@ -374,18 +378,38 @@ message SCIMDirectory {
 }
 
 message SCIMUser {
+  // Unique identifier for this SCIM user.
   string id = 1;
+  // SCIM directory this SCIM user belongs to.
   string scim_directory_id = 2;
+  // The SCIM user's email address.
   string email = 3;
+  // Whether the SCIM user has been deleted or deprovisioned from its SCIM directory.
   bool deleted = 4;
+  // Arbitrary, potentially nested, attributes the Identity Provider included about the user.
+  //
+  // Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+  // considered an admin within their company.
   google.protobuf.Struct attributes = 5;
 }
 
 message SCIMGroup {
+  // Unique identifier for this SCIM group.
   string id = 1;
+  // SCIM directory this SCIM group belongs to.
   string scim_directory_id = 2;
+  // A human-friendly name for the SCIM group.
   string display_name = 3;
+  // Whether the SCIM group has been deleted or deprovisioned from its SCIM directory.
+  //
+  // Identity Providers are inconsistent about reliably deleting SCIM groups. Many Identity Providers will deprovision
+  // the users inside a group, but not the group itself. For this reason, it's typical to ignore this field until a
+  // specific need arises.
   bool deleted = 6;
+  // Arbitrary, potentially nested, attributes the Identity Provider included about the group.
+  //
+  // Identity Providers are inconsistent about supporting sending custom attributes on groups. For this reason, it's
+  // typical to not rely on them until a specific need arises.
   google.protobuf.Struct attributes = 4;
 }
 
@@ -450,43 +474,72 @@ message RedeemSAMLAccessCodeResponse {
 }
 
 message ListSCIMUsersRequest {
+  // The SCIM directory to list from.
+  //
+  // One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
   string scim_directory_id = 1;
+  // The ID of the organization to list from. The primary SCIM directory of this organization is used.
+  //
+  // One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
   string organization_id = 2;
+  // The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+  //
+  // One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
   string organization_external_id = 3;
+  // If specified, only users that are members of this SCIM group are returned.
   string scim_group_id = 4;
+  // Pagination token. Leave empty to get the first page of results.
   string page_token = 5;
 }
 
 message ListSCIMUsersResponse {
+  // List of SCIM users.
   repeated SCIMUser scim_users = 1;
+  // Value to use as `pageToken` for the next page of data. Empty if there is no more data.
   string next_page_token = 2;
 }
 
 message GetSCIMUserRequest {
+  // ID of the SCIM user to get.
   string id = 1;
 }
 
 message GetSCIMUserResponse {
+  // The requested SCIM user.
   SCIMUser scim_user = 1;
 }
 
 message ListSCIMGroupsRequest {
+  // The SCIM directory to list from.
+  //
+  // One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
   string scim_directory_id = 1;
+  // The ID of the organization to list from. The primary SCIM directory of this organization is used.
+  //
+  // One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
   string organization_id = 2;
+  // The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+  //
+  // One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
   string organization_external_id = 3;
+  // Pagination token. Leave empty to get the first page of results.
   string page_token = 4;
 }
 
 message ListSCIMGroupsResponse {
+  // List of SCIM groups.
   repeated SCIMGroup scim_groups = 1;
+  // Value to use as `pageToken` for the next page of data. Empty if there is no more data.
   string next_page_token = 2;
 }
 
 message GetSCIMGroupRequest {
+  // ID of the SCIM group to get.
   string id = 1;
 }
 
 message GetSCIMGroupResponse {
+  // The requested SCIM group.
   SCIMGroup scim_group = 1;
 }
 

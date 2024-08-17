@@ -39,6 +39,8 @@ export const redeemSAMLAccessCode = {
 } as const;
 
 /**
+ * Gets a list of SCIM users in a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMUsers
  */
 export const listSCIMUsers = {
@@ -53,6 +55,8 @@ export const listSCIMUsers = {
 } as const;
 
 /**
+ * Gets a SCIM user.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMUser
  */
 export const getSCIMUser = {
@@ -67,6 +71,8 @@ export const getSCIMUser = {
 } as const;
 
 /**
+ * Gets a list of SCIM groups in a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.ListSCIMGroups
  */
 export const listSCIMGroups = {
@@ -81,6 +87,8 @@ export const listSCIMGroups = {
 } as const;
 
 /**
+ * Gets a SCIM group in a SCIM directory.
+ *
  * @generated from rpc ssoready.v1.SSOReadyService.GetSCIMGroup
  */
 export const getSCIMGroup = {

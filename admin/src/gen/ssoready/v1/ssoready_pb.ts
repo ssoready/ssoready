@@ -682,26 +682,39 @@ export class SCIMDirectory extends Message<SCIMDirectory> {
  */
 export class SCIMUser extends Message<SCIMUser> {
   /**
+   * Unique identifier for this SCIM user.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * SCIM directory this SCIM user belongs to.
+   *
    * @generated from field: string scim_directory_id = 2;
    */
   scimDirectoryId = "";
 
   /**
+   * The SCIM user's email address.
+   *
    * @generated from field: string email = 3;
    */
   email = "";
 
   /**
+   * Whether the SCIM user has been deleted or deprovisioned from its SCIM directory.
+   *
    * @generated from field: bool deleted = 4;
    */
   deleted = false;
 
   /**
+   * Arbitrary, potentially nested, attributes the Identity Provider included about the user.
+   *
+   * Typically, these `attributes` are used to pass along the user's first/last name, or whether they should be
+   * considered an admin within their company.
+   *
    * @generated from field: google.protobuf.Struct attributes = 5;
    */
   attributes?: Struct;
@@ -743,26 +756,43 @@ export class SCIMUser extends Message<SCIMUser> {
  */
 export class SCIMGroup extends Message<SCIMGroup> {
   /**
+   * Unique identifier for this SCIM group.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
+   * SCIM directory this SCIM group belongs to.
+   *
    * @generated from field: string scim_directory_id = 2;
    */
   scimDirectoryId = "";
 
   /**
+   * A human-friendly name for the SCIM group.
+   *
    * @generated from field: string display_name = 3;
    */
   displayName = "";
 
   /**
+   * Whether the SCIM group has been deleted or deprovisioned from its SCIM directory.
+   *
+   * Identity Providers are inconsistent about reliably deleting SCIM groups. Many Identity Providers will deprovision
+   * the users inside a group, but not the group itself. For this reason, it's typical to ignore this field until a
+   * specific need arises.
+   *
    * @generated from field: bool deleted = 6;
    */
   deleted = false;
 
   /**
+   * Arbitrary, potentially nested, attributes the Identity Provider included about the group.
+   *
+   * Identity Providers are inconsistent about supporting sending custom attributes on groups. For this reason, it's
+   * typical to not rely on them until a specific need arises.
+   *
    * @generated from field: google.protobuf.Struct attributes = 4;
    */
   attributes?: Struct;
@@ -1048,26 +1078,42 @@ export class RedeemSAMLAccessCodeResponse extends Message<RedeemSAMLAccessCodeRe
  */
 export class ListSCIMUsersRequest extends Message<ListSCIMUsersRequest> {
   /**
+   * The SCIM directory to list from.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string scim_directory_id = 1;
    */
   scimDirectoryId = "";
 
   /**
+   * The ID of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_external_id = 3;
    */
   organizationExternalId = "";
 
   /**
+   * If specified, only users that are members of this SCIM group are returned.
+   *
    * @generated from field: string scim_group_id = 4;
    */
   scimGroupId = "";
 
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 5;
    */
   pageToken = "";
@@ -1109,11 +1155,15 @@ export class ListSCIMUsersRequest extends Message<ListSCIMUsersRequest> {
  */
 export class ListSCIMUsersResponse extends Message<ListSCIMUsersResponse> {
   /**
+   * List of SCIM users.
+   *
    * @generated from field: repeated ssoready.v1.SCIMUser scim_users = 1;
    */
   scimUsers: SCIMUser[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -1152,6 +1202,8 @@ export class ListSCIMUsersResponse extends Message<ListSCIMUsersResponse> {
  */
 export class GetSCIMUserRequest extends Message<GetSCIMUserRequest> {
   /**
+   * ID of the SCIM user to get.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -1189,6 +1241,8 @@ export class GetSCIMUserRequest extends Message<GetSCIMUserRequest> {
  */
 export class GetSCIMUserResponse extends Message<GetSCIMUserResponse> {
   /**
+   * The requested SCIM user.
+   *
    * @generated from field: ssoready.v1.SCIMUser scim_user = 1;
    */
   scimUser?: SCIMUser;
@@ -1226,21 +1280,35 @@ export class GetSCIMUserResponse extends Message<GetSCIMUserResponse> {
  */
 export class ListSCIMGroupsRequest extends Message<ListSCIMGroupsRequest> {
   /**
+   * The SCIM directory to list from.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string scim_directory_id = 1;
    */
   scimDirectoryId = "";
 
   /**
+   * The ID of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_id = 2;
    */
   organizationId = "";
 
   /**
+   * The `externalId` of the organization to list from. The primary SCIM directory of this organization is used.
+   *
+   * One of `scimDirectoryId`, `organizationId`, or `organizationExternalId` must be specified.
+   *
    * @generated from field: string organization_external_id = 3;
    */
   organizationExternalId = "";
 
   /**
+   * Pagination token. Leave empty to get the first page of results.
+   *
    * @generated from field: string page_token = 4;
    */
   pageToken = "";
@@ -1281,11 +1349,15 @@ export class ListSCIMGroupsRequest extends Message<ListSCIMGroupsRequest> {
  */
 export class ListSCIMGroupsResponse extends Message<ListSCIMGroupsResponse> {
   /**
+   * List of SCIM groups.
+   *
    * @generated from field: repeated ssoready.v1.SCIMGroup scim_groups = 1;
    */
   scimGroups: SCIMGroup[] = [];
 
   /**
+   * Value to use as `pageToken` for the next page of data. Empty if there is no more data.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken = "";
@@ -1324,6 +1396,8 @@ export class ListSCIMGroupsResponse extends Message<ListSCIMGroupsResponse> {
  */
 export class GetSCIMGroupRequest extends Message<GetSCIMGroupRequest> {
   /**
+   * ID of the SCIM group to get.
+   *
    * @generated from field: string id = 1;
    */
   id = "";
@@ -1361,6 +1435,8 @@ export class GetSCIMGroupRequest extends Message<GetSCIMGroupRequest> {
  */
 export class GetSCIMGroupResponse extends Message<GetSCIMGroupResponse> {
   /**
+   * The requested SCIM group.
+   *
    * @generated from field: ssoready.v1.SCIMGroup scim_group = 1;
    */
   scimGroup?: SCIMGroup;
