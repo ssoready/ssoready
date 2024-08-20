@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Outlet, useNavigate, useParams } from "react-router";
 import { EnvironmentSwitcher } from "@/components/EnvironmentSwitcher";
 import {
@@ -10,6 +10,7 @@ import {
   UserIcon,
   EllipsisVerticalIcon,
   SettingsIcon,
+  Menu
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
@@ -30,6 +31,7 @@ import { toast } from "sonner";
 export function Page() {
   const { environmentId } = useParams();
   const { data: whoamiData } = useQuery(whoami, {});
+  const [openNav, setOpenNav] = useState(false);
 
   const signOutMutation = useMutation(signOut);
   const navigate = useNavigate();
@@ -41,7 +43,12 @@ export function Page() {
 
   return (
     <div>
-      <div className="h-full border-r w-72 fixed bg-white flex flex-col justify-between">
+      <div className="md:hidden bg-white">
+      <Button variant="outline" className="mt-4 ml-4" onClick={() => setOpenNav(!openNav)}>
+            <Menu />
+          </Button>
+      </div>
+      <div className={`${openNav ? 'flex' : 'hidden'} h-full border-r w-72 fixed bg-white md:flex flex-col justify-between z-[1]`} onClick={() => openNav ? setOpenNav(!openNav) : "" }>
         <div className="p-2">
           <EnvironmentSwitcher />
 
@@ -151,7 +158,7 @@ export function Page() {
           </div>
         </div>
       </div>
-      <div className="ml-72 p-8">
+      <div className="md:ml-72 p-8">
         <div className="mx-auto max-w-6xl">
           <Outlet />
         </div>
