@@ -132,9 +132,9 @@ export function ViewOrganizationPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="lg:flex flex-col space-y-1.5">
-              <div className="lg:flex gap-4">
+          <div className="sm:flex flex-col lg:flex-row justify-between">
+            <div className="sm:flex flex-col space-y-1.5">
+              <div className="sm:flex gap-4">
                 <CardTitle>Organization</CardTitle>
                 <div className="shrink mt-1 lg:mt-0">
                   <span className="mt-4 text-[0.6rem] sm:text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
@@ -149,7 +149,7 @@ export function ViewOrganizationPage() {
             </div>
 
             {organization && (
-              <div className="mt-1 lg:mt-0 mr-[85%] md:mr-0">
+              <div className="mt-2 mr-[85%] lg:mr-0">
                 <EditOrganizationAlertDialog organization={organization} />
               </div>
             )}
@@ -424,7 +424,7 @@ function EditOrganizationAlertDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="h-[3vh] w-[4.5vh] md:h-auto md:w-auto" variant="outline">Edit</Button>
+        <Button className="h-auto w-auto" variant="outline">Edit</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <Form {...form}>
