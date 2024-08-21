@@ -59,6 +59,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputTags } from "@/components/InputTags";
 import { Switch } from "@/components/ui/switch";
+import { SecretCopier } from "@/components/SecretCopier";
 
 export function ListAPIKeysPage() {
   return (
@@ -304,10 +305,10 @@ function CreateAPIKeyButton() {
 
           <div className="text-sm font-medium leading-none">API Key Secret</div>
 
-          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border flex items-center">
-            {apiKeySecret}
-            <CopyButton copyText={apiKeySecret}></CopyButton>
-          </div>
+          <SecretCopier
+            placeholder="ssoready_sk_•••••••••••••••••••••••••"
+            secret={apiKeySecret}
+          />
 
           <AlertDialogFooter>
             <AlertDialogAction asChild>
@@ -392,16 +393,17 @@ function ListOAuthClientsCard() {
             SAML OAuth Client Secret
           </div>
 
-          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border">
-            {samlOAuthClientSecret}
-          </div>
+          <SecretCopier
+            placeholder="ssoready_oauth_client_secret_•••••••••••••••••••••••••"
+            secret={samlOAuthClientSecret}
+          />
 
           <AlertDialogFooter>
             <AlertDialogAction asChild>
               <Link
                 to={`/environments/${environmentId}/saml-oauth-clients/${samlOAuthClientId}`}
               >
-                View SAML OAuth Client
+                Done
               </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -461,50 +463,5 @@ function ListOAuthClientsCard() {
         </CardContent>
       </Card>
     </>
-  );
-}
-
-function CopyButton({ copyText }: { copyText: string }) {
-  const [open, setOpen] = useState(false);
-  const { refs, floatingStyles, context } = useFloating({
-    open,
-    onOpenChange: setOpen,
-    placement: "top",
-    middleware: [offset(5)],
-  });
-  const { isMounted, styles } = useTransitionStyles(context);
-
-  useEffect(() => {
-    if (open) {
-      const timeoutId = setTimeout(() => {
-        setOpen(false);
-      }, 1000);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [open]);
-
-  return (
-    <div className="ml-auto">
-      <CopyIcon
-        ref={refs.setReference}
-        className="h-4 w-4 cursor-pointer text-muted-foreground"
-        onClick={async () => {
-          await navigator.clipboard.writeText(copyText);
-          setOpen(true);
-        }}
-      />
-      {open && (
-        <div ref={refs.setFloating} style={floatingStyles}>
-          {isMounted && (
-            <div
-              style={styles}
-              className="bg-black text-white p-1 text-xs rounded"
-            >
-              Copied!
-            </div>
-          )}
-        </div>
-      )}
-    </div>
   );
 }

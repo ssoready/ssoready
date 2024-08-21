@@ -75,6 +75,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
+import { SecretCopier } from "@/components/SecretCopier";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -161,9 +162,10 @@ export function ViewSCIMDirectoryPage() {
             SCIM Bearer Token
           </div>
 
-          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border">
-            {bearerToken}
-          </div>
+          <SecretCopier
+            placeholder="ssoready_scim_bearer_token_•••••••••••••••••••••••••"
+            secret={bearerToken}
+          />
 
           <AlertDialogFooter>
             <AlertDialogCancel>Close</AlertDialogCancel>
