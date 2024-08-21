@@ -191,6 +191,9 @@ service SSOReadyService {
   rpc CreateEnvironment(CreateEnvironmentRequest) returns (Environment);
   rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (Environment);
 
+  rpc GetEnvironmentCustomDomainSettings(GetEnvironmentCustomDomainSettingsRequest) returns (GetEnvironmentCustomDomainSettingsResponse);
+  rpc UpdateEnvironmentCustomDomainSettings(UpdateEnvironmentCustomDomainSettingsRequest) returns (UpdateEnvironmentCustomDomainSettingsResponse);
+
   rpc ListAPIKeys(ListAPIKeysRequest) returns (ListAPIKeysResponse);
   rpc GetAPIKey(GetAPIKeyRequest) returns (APIKey);
   rpc CreateAPIKey(CreateAPIKeyRequest) returns (APIKey);
@@ -821,6 +824,21 @@ message CreateEnvironmentRequest {
 message UpdateEnvironmentRequest {
   Environment environment = 1;
 }
+
+message GetEnvironmentCustomDomainSettingsRequest {
+  string environment_id = 1;
+}
+
+message GetEnvironmentCustomDomainSettingsResponse {
+  string custom_auth_domain = 1;
+}
+
+message UpdateEnvironmentCustomDomainSettingsRequest {
+  string environment_id = 1;
+  string custom_auth_domain = 2;
+}
+
+message UpdateEnvironmentCustomDomainSettingsResponse {}
 
 message ListAPIKeysRequest {
   string environment_id = 1;

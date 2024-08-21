@@ -3681,6 +3681,154 @@ export class UpdateEnvironmentRequest extends Message<UpdateEnvironmentRequest> 
 }
 
 /**
+ * @generated from message ssoready.v1.GetEnvironmentCustomDomainSettingsRequest
+ */
+export class GetEnvironmentCustomDomainSettingsRequest extends Message<GetEnvironmentCustomDomainSettingsRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  constructor(data?: PartialMessage<GetEnvironmentCustomDomainSettingsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetEnvironmentCustomDomainSettingsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEnvironmentCustomDomainSettingsRequest {
+    return new GetEnvironmentCustomDomainSettingsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEnvironmentCustomDomainSettingsRequest {
+    return new GetEnvironmentCustomDomainSettingsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEnvironmentCustomDomainSettingsRequest {
+    return new GetEnvironmentCustomDomainSettingsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetEnvironmentCustomDomainSettingsRequest | PlainMessage<GetEnvironmentCustomDomainSettingsRequest> | undefined, b: GetEnvironmentCustomDomainSettingsRequest | PlainMessage<GetEnvironmentCustomDomainSettingsRequest> | undefined): boolean {
+    return proto3.util.equals(GetEnvironmentCustomDomainSettingsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.GetEnvironmentCustomDomainSettingsResponse
+ */
+export class GetEnvironmentCustomDomainSettingsResponse extends Message<GetEnvironmentCustomDomainSettingsResponse> {
+  /**
+   * @generated from field: string custom_auth_domain = 1;
+   */
+  customAuthDomain = "";
+
+  constructor(data?: PartialMessage<GetEnvironmentCustomDomainSettingsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.GetEnvironmentCustomDomainSettingsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "custom_auth_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEnvironmentCustomDomainSettingsResponse {
+    return new GetEnvironmentCustomDomainSettingsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEnvironmentCustomDomainSettingsResponse {
+    return new GetEnvironmentCustomDomainSettingsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEnvironmentCustomDomainSettingsResponse {
+    return new GetEnvironmentCustomDomainSettingsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetEnvironmentCustomDomainSettingsResponse | PlainMessage<GetEnvironmentCustomDomainSettingsResponse> | undefined, b: GetEnvironmentCustomDomainSettingsResponse | PlainMessage<GetEnvironmentCustomDomainSettingsResponse> | undefined): boolean {
+    return proto3.util.equals(GetEnvironmentCustomDomainSettingsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateEnvironmentCustomDomainSettingsRequest
+ */
+export class UpdateEnvironmentCustomDomainSettingsRequest extends Message<UpdateEnvironmentCustomDomainSettingsRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string custom_auth_domain = 2;
+   */
+  customAuthDomain = "";
+
+  constructor(data?: PartialMessage<UpdateEnvironmentCustomDomainSettingsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateEnvironmentCustomDomainSettingsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "custom_auth_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEnvironmentCustomDomainSettingsRequest {
+    return new UpdateEnvironmentCustomDomainSettingsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateEnvironmentCustomDomainSettingsRequest {
+    return new UpdateEnvironmentCustomDomainSettingsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEnvironmentCustomDomainSettingsRequest {
+    return new UpdateEnvironmentCustomDomainSettingsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateEnvironmentCustomDomainSettingsRequest | PlainMessage<UpdateEnvironmentCustomDomainSettingsRequest> | undefined, b: UpdateEnvironmentCustomDomainSettingsRequest | PlainMessage<UpdateEnvironmentCustomDomainSettingsRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateEnvironmentCustomDomainSettingsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.UpdateEnvironmentCustomDomainSettingsResponse
+ */
+export class UpdateEnvironmentCustomDomainSettingsResponse extends Message<UpdateEnvironmentCustomDomainSettingsResponse> {
+  constructor(data?: PartialMessage<UpdateEnvironmentCustomDomainSettingsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.UpdateEnvironmentCustomDomainSettingsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEnvironmentCustomDomainSettingsResponse {
+    return new UpdateEnvironmentCustomDomainSettingsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateEnvironmentCustomDomainSettingsResponse {
+    return new UpdateEnvironmentCustomDomainSettingsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEnvironmentCustomDomainSettingsResponse {
+    return new UpdateEnvironmentCustomDomainSettingsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateEnvironmentCustomDomainSettingsResponse | PlainMessage<UpdateEnvironmentCustomDomainSettingsResponse> | undefined, b: UpdateEnvironmentCustomDomainSettingsResponse | PlainMessage<UpdateEnvironmentCustomDomainSettingsResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateEnvironmentCustomDomainSettingsResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.ListAPIKeysRequest
  */
 export class ListAPIKeysRequest extends Message<ListAPIKeysRequest> {

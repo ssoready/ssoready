@@ -115,6 +115,7 @@ type Environment struct {
 	DisplayName       *string
 	AuthUrl           *string
 	OauthRedirectUri  *string
+	CustomAuthDomain  *string
 }
 
 type OnboardingState struct {

@@ -142,6 +142,12 @@ const (
 	// SSOReadyServiceUpdateEnvironmentProcedure is the fully-qualified name of the SSOReadyService's
 	// UpdateEnvironment RPC.
 	SSOReadyServiceUpdateEnvironmentProcedure = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
+	// SSOReadyServiceGetEnvironmentCustomDomainSettingsProcedure is the fully-qualified name of the
+	// SSOReadyService's GetEnvironmentCustomDomainSettings RPC.
+	SSOReadyServiceGetEnvironmentCustomDomainSettingsProcedure = "/ssoready.v1.SSOReadyService/GetEnvironmentCustomDomainSettings"
+	// SSOReadyServiceUpdateEnvironmentCustomDomainSettingsProcedure is the fully-qualified name of the
+	// SSOReadyService's UpdateEnvironmentCustomDomainSettings RPC.
+	SSOReadyServiceUpdateEnvironmentCustomDomainSettingsProcedure = "/ssoready.v1.SSOReadyService/UpdateEnvironmentCustomDomainSettings"
 	// SSOReadyServiceListAPIKeysProcedure is the fully-qualified name of the SSOReadyService's
 	// ListAPIKeys RPC.
 	SSOReadyServiceListAPIKeysProcedure = "/ssoready.v1.SSOReadyService/ListAPIKeys"
@@ -338,6 +344,8 @@ type SSOReadyServiceClient interface {
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
+	GetEnvironmentCustomDomainSettings(context.Context, *connect.Request[v1.GetEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.GetEnvironmentCustomDomainSettingsResponse], error)
+	UpdateEnvironmentCustomDomainSettings(context.Context, *connect.Request[v1.UpdateEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.UpdateEnvironmentCustomDomainSettingsResponse], error)
 	ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error)
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
 	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
@@ -576,6 +584,16 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceUpdateEnvironmentProcedure,
 			opts...,
 		),
+		getEnvironmentCustomDomainSettings: connect.NewClient[v1.GetEnvironmentCustomDomainSettingsRequest, v1.GetEnvironmentCustomDomainSettingsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceGetEnvironmentCustomDomainSettingsProcedure,
+			opts...,
+		),
+		updateEnvironmentCustomDomainSettings: connect.NewClient[v1.UpdateEnvironmentCustomDomainSettingsRequest, v1.UpdateEnvironmentCustomDomainSettingsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceUpdateEnvironmentCustomDomainSettingsProcedure,
+			opts...,
+		),
 		listAPIKeys: connect.NewClient[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse](
 			httpClient,
 			baseURL+SSOReadyServiceListAPIKeysProcedure,
@@ -786,84 +804,86 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // sSOReadyServiceClient implements SSOReadyServiceClient.
 type sSOReadyServiceClient struct {
-	getSAMLRedirectURL                  *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	redeemSAMLAccessCode                *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	listSCIMUsers                       *connect.Client[v1.ListSCIMUsersRequest, v1.ListSCIMUsersResponse]
-	getSCIMUser                         *connect.Client[v1.GetSCIMUserRequest, v1.GetSCIMUserResponse]
-	listSCIMGroups                      *connect.Client[v1.ListSCIMGroupsRequest, v1.ListSCIMGroupsResponse]
-	getSCIMGroup                        *connect.Client[v1.GetSCIMGroupRequest, v1.GetSCIMGroupResponse]
-	listOrganizations                   *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
-	getOrganization                     *connect.Client[v1.GetOrganizationRequest, v1.GetOrganizationResponse]
-	createOrganization                  *connect.Client[v1.CreateOrganizationRequest, v1.CreateOrganizationResponse]
-	updateOrganization                  *connect.Client[v1.UpdateOrganizationRequest, v1.UpdateOrganizationResponse]
-	createSetupURL                      *connect.Client[v1.CreateSetupURLRequest, v1.CreateSetupURLResponse]
-	listSAMLConnections                 *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
-	getSAMLConnection                   *connect.Client[v1.GetSAMLConnectionRequest, v1.GetSAMLConnectionResponse]
-	createSAMLConnection                *connect.Client[v1.CreateSAMLConnectionRequest, v1.CreateSAMLConnectionResponse]
-	updateSAMLConnection                *connect.Client[v1.UpdateSAMLConnectionRequest, v1.UpdateSAMLConnectionResponse]
-	listSCIMDirectories                 *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
-	getSCIMDirectory                    *connect.Client[v1.GetSCIMDirectoryRequest, v1.GetSCIMDirectoryResponse]
-	createSCIMDirectory                 *connect.Client[v1.CreateSCIMDirectoryRequest, v1.CreateSCIMDirectoryResponse]
-	updateSCIMDirectory                 *connect.Client[v1.UpdateSCIMDirectoryRequest, v1.UpdateSCIMDirectoryResponse]
-	rotateSCIMDirectoryBearerToken      *connect.Client[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse]
-	verifyEmail                         *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
-	signIn                              *connect.Client[v1.SignInRequest, v1.SignInResponse]
-	signOut                             *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
-	whoami                              *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
-	getOnboardingState                  *connect.Client[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse]
-	updateOnboardingState               *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
-	onboardingGetSAMLRedirectURL        *connect.Client[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
-	onboardingRedeemSAMLAccessCode      *connect.Client[v1.OnboardingRedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	getStripeCheckoutURL                *connect.Client[v1.GetStripeCheckoutURLRequest, v1.GetStripeCheckoutURLResponse]
-	redeemStripeCheckout                *connect.Client[v1.RedeemStripeCheckoutRequest, v1.RedeemStripeCheckoutResponse]
-	getStripeBillingPortalURL           *connect.Client[v1.GetStripeBillingPortalURLRequest, v1.GetStripeBillingPortalURLResponse]
-	getAppOrganization                  *connect.Client[v1.GetAppOrganizationRequest, v1.GetAppOrganizationResponse]
-	listAppUsers                        *connect.Client[v1.ListAppUsersRequest, v1.ListAppUsersResponse]
-	listEnvironments                    *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
-	getEnvironment                      *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
-	createEnvironment                   *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
-	updateEnvironment                   *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
-	listAPIKeys                         *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
-	getAPIKey                           *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
-	createAPIKey                        *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
-	deleteAPIKey                        *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
-	listSAMLOAuthClients                *connect.Client[v1.ListSAMLOAuthClientsRequest, v1.ListSAMLOAuthClientsResponse]
-	getSAMLOAuthClient                  *connect.Client[v1.GetSAMLOAuthClientRequest, v1.SAMLOAuthClient]
-	createSAMLOAuthClient               *connect.Client[v1.CreateSAMLOAuthClientRequest, v1.SAMLOAuthClient]
-	deleteSAMLOAuthClient               *connect.Client[v1.DeleteSAMLOAuthClientRequest, emptypb.Empty]
-	appListOrganizations                *connect.Client[v1.AppListOrganizationsRequest, v1.AppListOrganizationsResponse]
-	appGetOrganization                  *connect.Client[v1.AppGetOrganizationRequest, v1.Organization]
-	appCreateOrganization               *connect.Client[v1.AppCreateOrganizationRequest, v1.Organization]
-	appUpdateOrganization               *connect.Client[v1.AppUpdateOrganizationRequest, v1.Organization]
-	appCreateAdminSetupURL              *connect.Client[v1.AppCreateAdminSetupURLRequest, v1.AppCreateAdminSetupURLResponse]
-	appListSAMLConnections              *connect.Client[v1.AppListSAMLConnectionsRequest, v1.AppListSAMLConnectionsResponse]
-	appGetSAMLConnection                *connect.Client[v1.AppGetSAMLConnectionRequest, v1.SAMLConnection]
-	appCreateSAMLConnection             *connect.Client[v1.AppCreateSAMLConnectionRequest, v1.SAMLConnection]
-	appUpdateSAMLConnection             *connect.Client[v1.AppUpdateSAMLConnectionRequest, v1.SAMLConnection]
-	appListSAMLFlows                    *connect.Client[v1.AppListSAMLFlowsRequest, v1.AppListSAMLFlowsResponse]
-	appGetSAMLFlow                      *connect.Client[v1.AppGetSAMLFlowRequest, v1.SAMLFlow]
-	parseSAMLMetadata                   *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
-	appListSCIMDirectories              *connect.Client[v1.AppListSCIMDirectoriesRequest, v1.AppListSCIMDirectoriesResponse]
-	appGetSCIMDirectory                 *connect.Client[v1.AppGetSCIMDirectoryRequest, v1.SCIMDirectory]
-	appCreateSCIMDirectory              *connect.Client[v1.AppCreateSCIMDirectoryRequest, v1.SCIMDirectory]
-	appUpdateSCIMDirectory              *connect.Client[v1.AppUpdateSCIMDirectoryRequest, v1.SCIMDirectory]
-	appRotateSCIMDirectoryBearerToken   *connect.Client[v1.AppRotateSCIMDirectoryBearerTokenRequest, v1.AppRotateSCIMDirectoryBearerTokenResponse]
-	appListSCIMUsers                    *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
-	appGetSCIMUser                      *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
-	appListSCIMGroups                   *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
-	appGetSCIMGroup                     *connect.Client[v1.AppGetSCIMGroupRequest, v1.SCIMGroup]
-	adminRedeemOneTimeToken             *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
-	adminWhoami                         *connect.Client[v1.AdminWhoamiRequest, v1.AdminWhoamiResponse]
-	adminListSAMLConnections            *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
-	adminGetSAMLConnection              *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
-	adminCreateSAMLConnection           *connect.Client[v1.AdminCreateSAMLConnectionRequest, v1.AdminCreateSAMLConnectionResponse]
-	adminUpdateSAMLConnection           *connect.Client[v1.AdminUpdateSAMLConnectionRequest, v1.AdminUpdateSAMLConnectionResponse]
-	adminParseSAMLMetadata              *connect.Client[v1.AdminParseSAMLMetadataRequest, v1.AdminParseSAMLMetadataResponse]
-	adminListSCIMDirectories            *connect.Client[v1.AdminListSCIMDirectoriesRequest, v1.AdminListSCIMDirectoriesResponse]
-	adminGetSCIMDirectory               *connect.Client[v1.AdminGetSCIMDirectoryRequest, v1.AdminGetSCIMDirectoryResponse]
-	adminCreateSCIMDirectory            *connect.Client[v1.AdminCreateSCIMDirectoryRequest, v1.AdminCreateSCIMDirectoryResponse]
-	adminUpdateSCIMDirectory            *connect.Client[v1.AdminUpdateSCIMDirectoryRequest, v1.AdminUpdateSCIMDirectoryResponse]
-	adminRotateSCIMDirectoryBearerToken *connect.Client[v1.AdminRotateSCIMDirectoryBearerTokenRequest, v1.AdminRotateSCIMDirectoryBearerTokenResponse]
+	getSAMLRedirectURL                    *connect.Client[v1.GetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	redeemSAMLAccessCode                  *connect.Client[v1.RedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	listSCIMUsers                         *connect.Client[v1.ListSCIMUsersRequest, v1.ListSCIMUsersResponse]
+	getSCIMUser                           *connect.Client[v1.GetSCIMUserRequest, v1.GetSCIMUserResponse]
+	listSCIMGroups                        *connect.Client[v1.ListSCIMGroupsRequest, v1.ListSCIMGroupsResponse]
+	getSCIMGroup                          *connect.Client[v1.GetSCIMGroupRequest, v1.GetSCIMGroupResponse]
+	listOrganizations                     *connect.Client[v1.ListOrganizationsRequest, v1.ListOrganizationsResponse]
+	getOrganization                       *connect.Client[v1.GetOrganizationRequest, v1.GetOrganizationResponse]
+	createOrganization                    *connect.Client[v1.CreateOrganizationRequest, v1.CreateOrganizationResponse]
+	updateOrganization                    *connect.Client[v1.UpdateOrganizationRequest, v1.UpdateOrganizationResponse]
+	createSetupURL                        *connect.Client[v1.CreateSetupURLRequest, v1.CreateSetupURLResponse]
+	listSAMLConnections                   *connect.Client[v1.ListSAMLConnectionsRequest, v1.ListSAMLConnectionsResponse]
+	getSAMLConnection                     *connect.Client[v1.GetSAMLConnectionRequest, v1.GetSAMLConnectionResponse]
+	createSAMLConnection                  *connect.Client[v1.CreateSAMLConnectionRequest, v1.CreateSAMLConnectionResponse]
+	updateSAMLConnection                  *connect.Client[v1.UpdateSAMLConnectionRequest, v1.UpdateSAMLConnectionResponse]
+	listSCIMDirectories                   *connect.Client[v1.ListSCIMDirectoriesRequest, v1.ListSCIMDirectoriesResponse]
+	getSCIMDirectory                      *connect.Client[v1.GetSCIMDirectoryRequest, v1.GetSCIMDirectoryResponse]
+	createSCIMDirectory                   *connect.Client[v1.CreateSCIMDirectoryRequest, v1.CreateSCIMDirectoryResponse]
+	updateSCIMDirectory                   *connect.Client[v1.UpdateSCIMDirectoryRequest, v1.UpdateSCIMDirectoryResponse]
+	rotateSCIMDirectoryBearerToken        *connect.Client[v1.RotateSCIMDirectoryBearerTokenRequest, v1.RotateSCIMDirectoryBearerTokenResponse]
+	verifyEmail                           *connect.Client[v1.VerifyEmailRequest, emptypb.Empty]
+	signIn                                *connect.Client[v1.SignInRequest, v1.SignInResponse]
+	signOut                               *connect.Client[v1.SignOutRequest, v1.SignOutResponse]
+	whoami                                *connect.Client[v1.WhoamiRequest, v1.WhoamiResponse]
+	getOnboardingState                    *connect.Client[v1.GetOnboardingStateRequest, v1.GetOnboardingStateResponse]
+	updateOnboardingState                 *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
+	onboardingGetSAMLRedirectURL          *connect.Client[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
+	onboardingRedeemSAMLAccessCode        *connect.Client[v1.OnboardingRedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
+	getStripeCheckoutURL                  *connect.Client[v1.GetStripeCheckoutURLRequest, v1.GetStripeCheckoutURLResponse]
+	redeemStripeCheckout                  *connect.Client[v1.RedeemStripeCheckoutRequest, v1.RedeemStripeCheckoutResponse]
+	getStripeBillingPortalURL             *connect.Client[v1.GetStripeBillingPortalURLRequest, v1.GetStripeBillingPortalURLResponse]
+	getAppOrganization                    *connect.Client[v1.GetAppOrganizationRequest, v1.GetAppOrganizationResponse]
+	listAppUsers                          *connect.Client[v1.ListAppUsersRequest, v1.ListAppUsersResponse]
+	listEnvironments                      *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
+	getEnvironment                        *connect.Client[v1.GetEnvironmentRequest, v1.Environment]
+	createEnvironment                     *connect.Client[v1.CreateEnvironmentRequest, v1.Environment]
+	updateEnvironment                     *connect.Client[v1.UpdateEnvironmentRequest, v1.Environment]
+	getEnvironmentCustomDomainSettings    *connect.Client[v1.GetEnvironmentCustomDomainSettingsRequest, v1.GetEnvironmentCustomDomainSettingsResponse]
+	updateEnvironmentCustomDomainSettings *connect.Client[v1.UpdateEnvironmentCustomDomainSettingsRequest, v1.UpdateEnvironmentCustomDomainSettingsResponse]
+	listAPIKeys                           *connect.Client[v1.ListAPIKeysRequest, v1.ListAPIKeysResponse]
+	getAPIKey                             *connect.Client[v1.GetAPIKeyRequest, v1.APIKey]
+	createAPIKey                          *connect.Client[v1.CreateAPIKeyRequest, v1.APIKey]
+	deleteAPIKey                          *connect.Client[v1.DeleteAPIKeyRequest, emptypb.Empty]
+	listSAMLOAuthClients                  *connect.Client[v1.ListSAMLOAuthClientsRequest, v1.ListSAMLOAuthClientsResponse]
+	getSAMLOAuthClient                    *connect.Client[v1.GetSAMLOAuthClientRequest, v1.SAMLOAuthClient]
+	createSAMLOAuthClient                 *connect.Client[v1.CreateSAMLOAuthClientRequest, v1.SAMLOAuthClient]
+	deleteSAMLOAuthClient                 *connect.Client[v1.DeleteSAMLOAuthClientRequest, emptypb.Empty]
+	appListOrganizations                  *connect.Client[v1.AppListOrganizationsRequest, v1.AppListOrganizationsResponse]
+	appGetOrganization                    *connect.Client[v1.AppGetOrganizationRequest, v1.Organization]
+	appCreateOrganization                 *connect.Client[v1.AppCreateOrganizationRequest, v1.Organization]
+	appUpdateOrganization                 *connect.Client[v1.AppUpdateOrganizationRequest, v1.Organization]
+	appCreateAdminSetupURL                *connect.Client[v1.AppCreateAdminSetupURLRequest, v1.AppCreateAdminSetupURLResponse]
+	appListSAMLConnections                *connect.Client[v1.AppListSAMLConnectionsRequest, v1.AppListSAMLConnectionsResponse]
+	appGetSAMLConnection                  *connect.Client[v1.AppGetSAMLConnectionRequest, v1.SAMLConnection]
+	appCreateSAMLConnection               *connect.Client[v1.AppCreateSAMLConnectionRequest, v1.SAMLConnection]
+	appUpdateSAMLConnection               *connect.Client[v1.AppUpdateSAMLConnectionRequest, v1.SAMLConnection]
+	appListSAMLFlows                      *connect.Client[v1.AppListSAMLFlowsRequest, v1.AppListSAMLFlowsResponse]
+	appGetSAMLFlow                        *connect.Client[v1.AppGetSAMLFlowRequest, v1.SAMLFlow]
+	parseSAMLMetadata                     *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
+	appListSCIMDirectories                *connect.Client[v1.AppListSCIMDirectoriesRequest, v1.AppListSCIMDirectoriesResponse]
+	appGetSCIMDirectory                   *connect.Client[v1.AppGetSCIMDirectoryRequest, v1.SCIMDirectory]
+	appCreateSCIMDirectory                *connect.Client[v1.AppCreateSCIMDirectoryRequest, v1.SCIMDirectory]
+	appUpdateSCIMDirectory                *connect.Client[v1.AppUpdateSCIMDirectoryRequest, v1.SCIMDirectory]
+	appRotateSCIMDirectoryBearerToken     *connect.Client[v1.AppRotateSCIMDirectoryBearerTokenRequest, v1.AppRotateSCIMDirectoryBearerTokenResponse]
+	appListSCIMUsers                      *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
+	appGetSCIMUser                        *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
+	appListSCIMGroups                     *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
+	appGetSCIMGroup                       *connect.Client[v1.AppGetSCIMGroupRequest, v1.SCIMGroup]
+	adminRedeemOneTimeToken               *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
+	adminWhoami                           *connect.Client[v1.AdminWhoamiRequest, v1.AdminWhoamiResponse]
+	adminListSAMLConnections              *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
+	adminGetSAMLConnection                *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
+	adminCreateSAMLConnection             *connect.Client[v1.AdminCreateSAMLConnectionRequest, v1.AdminCreateSAMLConnectionResponse]
+	adminUpdateSAMLConnection             *connect.Client[v1.AdminUpdateSAMLConnectionRequest, v1.AdminUpdateSAMLConnectionResponse]
+	adminParseSAMLMetadata                *connect.Client[v1.AdminParseSAMLMetadataRequest, v1.AdminParseSAMLMetadataResponse]
+	adminListSCIMDirectories              *connect.Client[v1.AdminListSCIMDirectoriesRequest, v1.AdminListSCIMDirectoriesResponse]
+	adminGetSCIMDirectory                 *connect.Client[v1.AdminGetSCIMDirectoryRequest, v1.AdminGetSCIMDirectoryResponse]
+	adminCreateSCIMDirectory              *connect.Client[v1.AdminCreateSCIMDirectoryRequest, v1.AdminCreateSCIMDirectoryResponse]
+	adminUpdateSCIMDirectory              *connect.Client[v1.AdminUpdateSCIMDirectoryRequest, v1.AdminUpdateSCIMDirectoryResponse]
+	adminRotateSCIMDirectoryBearerToken   *connect.Client[v1.AdminRotateSCIMDirectoryBearerTokenRequest, v1.AdminRotateSCIMDirectoryBearerTokenResponse]
 }
 
 // GetSAMLRedirectURL calls ssoready.v1.SSOReadyService.GetSAMLRedirectURL.
@@ -1049,6 +1069,18 @@ func (c *sSOReadyServiceClient) CreateEnvironment(ctx context.Context, req *conn
 // UpdateEnvironment calls ssoready.v1.SSOReadyService.UpdateEnvironment.
 func (c *sSOReadyServiceClient) UpdateEnvironment(ctx context.Context, req *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
 	return c.updateEnvironment.CallUnary(ctx, req)
+}
+
+// GetEnvironmentCustomDomainSettings calls
+// ssoready.v1.SSOReadyService.GetEnvironmentCustomDomainSettings.
+func (c *sSOReadyServiceClient) GetEnvironmentCustomDomainSettings(ctx context.Context, req *connect.Request[v1.GetEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.GetEnvironmentCustomDomainSettingsResponse], error) {
+	return c.getEnvironmentCustomDomainSettings.CallUnary(ctx, req)
+}
+
+// UpdateEnvironmentCustomDomainSettings calls
+// ssoready.v1.SSOReadyService.UpdateEnvironmentCustomDomainSettings.
+func (c *sSOReadyServiceClient) UpdateEnvironmentCustomDomainSettings(ctx context.Context, req *connect.Request[v1.UpdateEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.UpdateEnvironmentCustomDomainSettingsResponse], error) {
+	return c.updateEnvironmentCustomDomainSettings.CallUnary(ctx, req)
 }
 
 // ListAPIKeys calls ssoready.v1.SSOReadyService.ListAPIKeys.
@@ -1329,6 +1361,8 @@ type SSOReadyServiceHandler interface {
 	GetEnvironment(context.Context, *connect.Request[v1.GetEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	CreateEnvironment(context.Context, *connect.Request[v1.CreateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
 	UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error)
+	GetEnvironmentCustomDomainSettings(context.Context, *connect.Request[v1.GetEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.GetEnvironmentCustomDomainSettingsResponse], error)
+	UpdateEnvironmentCustomDomainSettings(context.Context, *connect.Request[v1.UpdateEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.UpdateEnvironmentCustomDomainSettingsResponse], error)
 	ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error)
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
 	CreateAPIKey(context.Context, *connect.Request[v1.CreateAPIKeyRequest]) (*connect.Response[v1.APIKey], error)
@@ -1561,6 +1595,16 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceUpdateEnvironmentHandler := connect.NewUnaryHandler(
 		SSOReadyServiceUpdateEnvironmentProcedure,
 		svc.UpdateEnvironment,
+		opts...,
+	)
+	sSOReadyServiceGetEnvironmentCustomDomainSettingsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceGetEnvironmentCustomDomainSettingsProcedure,
+		svc.GetEnvironmentCustomDomainSettings,
+		opts...,
+	)
+	sSOReadyServiceUpdateEnvironmentCustomDomainSettingsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceUpdateEnvironmentCustomDomainSettingsProcedure,
+		svc.UpdateEnvironmentCustomDomainSettings,
 		opts...,
 	)
 	sSOReadyServiceListAPIKeysHandler := connect.NewUnaryHandler(
@@ -1844,6 +1888,10 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceCreateEnvironmentHandler.ServeHTTP(w, r)
 		case SSOReadyServiceUpdateEnvironmentProcedure:
 			sSOReadyServiceUpdateEnvironmentHandler.ServeHTTP(w, r)
+		case SSOReadyServiceGetEnvironmentCustomDomainSettingsProcedure:
+			sSOReadyServiceGetEnvironmentCustomDomainSettingsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceUpdateEnvironmentCustomDomainSettingsProcedure:
+			sSOReadyServiceUpdateEnvironmentCustomDomainSettingsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListAPIKeysProcedure:
 			sSOReadyServiceListAPIKeysHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetAPIKeyProcedure:
@@ -2081,6 +2129,14 @@ func (UnimplementedSSOReadyServiceHandler) CreateEnvironment(context.Context, *c
 
 func (UnimplementedSSOReadyServiceHandler) UpdateEnvironment(context.Context, *connect.Request[v1.UpdateEnvironmentRequest]) (*connect.Response[v1.Environment], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.UpdateEnvironment is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) GetEnvironmentCustomDomainSettings(context.Context, *connect.Request[v1.GetEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.GetEnvironmentCustomDomainSettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetEnvironmentCustomDomainSettings is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) UpdateEnvironmentCustomDomainSettings(context.Context, *connect.Request[v1.UpdateEnvironmentCustomDomainSettingsRequest]) (*connect.Response[v1.UpdateEnvironmentCustomDomainSettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.UpdateEnvironmentCustomDomainSettings is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) ListAPIKeys(context.Context, *connect.Request[v1.ListAPIKeysRequest]) (*connect.Response[v1.ListAPIKeysResponse], error) {

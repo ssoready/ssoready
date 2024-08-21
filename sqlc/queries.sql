@@ -273,6 +273,12 @@ set display_name       = $1,
 where id = $5
 returning *;
 
+-- name: UpdateEnvironmentCustomAuthDomain :one
+update environments
+set custom_auth_domain = $1
+where id = $2
+returning *;
+
 -- name: ListAPIKeys :many
 select *
 from api_keys
