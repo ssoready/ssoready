@@ -831,6 +831,7 @@ message GetEnvironmentCustomDomainSettingsRequest {
 
 message GetEnvironmentCustomDomainSettingsResponse {
   string custom_auth_domain = 1;
+  bool custom_auth_domain_configured = 2;
 }
 
 message UpdateEnvironmentCustomDomainSettingsRequest {

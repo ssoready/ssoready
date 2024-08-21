@@ -20,6 +20,7 @@ import (
 	"github.com/ssoready/ssoready/internal/apistripewebhook"
 	"github.com/ssoready/ssoready/internal/appanalytics"
 	"github.com/ssoready/ssoready/internal/authn/authninterceptor"
+	"github.com/ssoready/ssoready/internal/flyio"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/hexkey"
@@ -60,6 +61,8 @@ func main() {
 		StripePriceIDProTier         string `conf:"stripe-price-id-pro-tier,noredact"`
 		StripeWebhookEndpointSecret  string `conf:"stripe-webhook-endpoint-secret"`
 		StripeBillingPortalReturnURL string `conf:"stripe-billing-portal-return-url,noredact"`
+		FlyioAPIKey                  string `conf:"flyio-api-key"`
+		FlyioAuthProxyAppID          string `conf:"flyio-authproxy-app-id,noredact"`
 	}{
 		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
 	}
@@ -119,14 +122,19 @@ func main() {
 				MicrosoftOAuthClientSecret: config.MicrosoftOAuthClientSecret,
 				MicrosoftOAuthRedirectURI:  config.MicrosoftOAuthRedirectURI,
 			},
-			ResendClient:                        resend.NewClient(config.ResendAPIKey),
-			EmailChallengeFrom:                  config.EmailChallengeFrom,
-			EmailVerificationEndpoint:           config.EmailVerificationEndpoint,
-			SAMLMetadataHTTPClient:              http.DefaultClient,
-			StripeClient:                        stripeClient,
-			StripeCheckoutSuccessURL:            config.StripeCheckoutSuccessURL,
-			StripePriceIDProTier:                config.StripePriceIDProTier,
-			StripeBillingPortalReturnURL:        config.StripeBillingPortalReturnURL,
+			ResendClient:                 resend.NewClient(config.ResendAPIKey),
+			EmailChallengeFrom:           config.EmailChallengeFrom,
+			EmailVerificationEndpoint:    config.EmailVerificationEndpoint,
+			SAMLMetadataHTTPClient:       http.DefaultClient,
+			StripeClient:                 stripeClient,
+			StripeCheckoutSuccessURL:     config.StripeCheckoutSuccessURL,
+			StripePriceIDProTier:         config.StripePriceIDProTier,
+			StripeBillingPortalReturnURL: config.StripeBillingPortalReturnURL,
+			FlyioClient: &flyio.Client{
+				HTTPClient: http.DefaultClient,
+				APIKey:     config.FlyioAPIKey,
+			},
+			FlyioAuthProxyAppID:                 config.FlyioAuthProxyAppID,
 			UnimplementedSSOReadyServiceHandler: ssoreadyv1connect.UnimplementedSSOReadyServiceHandler{},
 		},
 		connect.WithInterceptors(
