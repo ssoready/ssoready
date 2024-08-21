@@ -2910,6 +2910,33 @@ func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentPa
 	return i, err
 }
 
+const updateEnvironmentAuthURL = `-- name: UpdateEnvironmentAuthURL :one
+update environments
+set auth_url = $1
+where id = $2
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+`
+
+type UpdateEnvironmentAuthURLParams struct {
+	AuthUrl *string
+	ID      uuid.UUID
+}
+
+func (q *Queries) UpdateEnvironmentAuthURL(ctx context.Context, arg UpdateEnvironmentAuthURLParams) (Environment, error) {
+	row := q.db.QueryRow(ctx, updateEnvironmentAuthURL, arg.AuthUrl, arg.ID)
+	var i Environment
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.AuthUrl,
+		&i.OauthRedirectUri,
+		&i.CustomAuthDomain,
+	)
+	return i, err
+}
+
 const updateEnvironmentCustomAuthDomain = `-- name: UpdateEnvironmentCustomAuthDomain :one
 update environments
 set custom_auth_domain = $1

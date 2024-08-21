@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
@@ -60,4 +61,39 @@ func (s *Store) UpdateEnvironmentCustomDomainSettings(ctx context.Context, req *
 	}
 
 	return &ssoreadyv1.UpdateEnvironmentCustomDomainSettingsResponse{}, nil
+}
+
+func (s *Store) PromoteEnvironmentCustomAuthDomain(ctx context.Context, environmentID string) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer rollback()
+
+	id, err := idformat.Environment.Parse(environmentID)
+	if err != nil {
+		return err
+	}
+
+	qEnv, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                id,
+	})
+	if err != nil {
+		return err
+	}
+
+	authURL := fmt.Sprintf("https://%s", *qEnv.CustomAuthDomain)
+	if _, err := q.UpdateEnvironmentAuthURL(ctx, queries.UpdateEnvironmentAuthURLParams{
+		ID:      id,
+		AuthUrl: &authURL,
+	}); err != nil {
+		return err
+	}
+
+	if err := commit(); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -3731,6 +3731,11 @@ export class GetEnvironmentCustomDomainSettingsResponse extends Message<GetEnvir
    */
   customAuthDomainConfigured = false;
 
+  /**
+   * @generated from field: string custom_auth_domain_cname_value = 3;
+   */
+  customAuthDomainCnameValue = "";
+
   constructor(data?: PartialMessage<GetEnvironmentCustomDomainSettingsResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3741,6 +3746,7 @@ export class GetEnvironmentCustomDomainSettingsResponse extends Message<GetEnvir
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "custom_auth_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "custom_auth_domain_configured", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "custom_auth_domain_cname_value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEnvironmentCustomDomainSettingsResponse {
@@ -3831,6 +3837,80 @@ export class UpdateEnvironmentCustomDomainSettingsResponse extends Message<Updat
 
   static equals(a: UpdateEnvironmentCustomDomainSettingsResponse | PlainMessage<UpdateEnvironmentCustomDomainSettingsResponse> | undefined, b: UpdateEnvironmentCustomDomainSettingsResponse | PlainMessage<UpdateEnvironmentCustomDomainSettingsResponse> | undefined): boolean {
     return proto3.util.equals(UpdateEnvironmentCustomDomainSettingsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesRequest
+ */
+export class CheckEnvironmentCustomDomainSettingsCertificatesRequest extends Message<CheckEnvironmentCustomDomainSettingsCertificatesRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  constructor(data?: PartialMessage<CheckEnvironmentCustomDomainSettingsCertificatesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesRequest {
+    return new CheckEnvironmentCustomDomainSettingsCertificatesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesRequest {
+    return new CheckEnvironmentCustomDomainSettingsCertificatesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesRequest {
+    return new CheckEnvironmentCustomDomainSettingsCertificatesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CheckEnvironmentCustomDomainSettingsCertificatesRequest | PlainMessage<CheckEnvironmentCustomDomainSettingsCertificatesRequest> | undefined, b: CheckEnvironmentCustomDomainSettingsCertificatesRequest | PlainMessage<CheckEnvironmentCustomDomainSettingsCertificatesRequest> | undefined): boolean {
+    return proto3.util.equals(CheckEnvironmentCustomDomainSettingsCertificatesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesResponse
+ */
+export class CheckEnvironmentCustomDomainSettingsCertificatesResponse extends Message<CheckEnvironmentCustomDomainSettingsCertificatesResponse> {
+  /**
+   * @generated from field: bool custom_auth_domain_configured = 1;
+   */
+  customAuthDomainConfigured = false;
+
+  constructor(data?: PartialMessage<CheckEnvironmentCustomDomainSettingsCertificatesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "custom_auth_domain_configured", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesResponse {
+    return new CheckEnvironmentCustomDomainSettingsCertificatesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesResponse {
+    return new CheckEnvironmentCustomDomainSettingsCertificatesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesResponse {
+    return new CheckEnvironmentCustomDomainSettingsCertificatesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CheckEnvironmentCustomDomainSettingsCertificatesResponse | PlainMessage<CheckEnvironmentCustomDomainSettingsCertificatesResponse> | undefined, b: CheckEnvironmentCustomDomainSettingsCertificatesResponse | PlainMessage<CheckEnvironmentCustomDomainSettingsCertificatesResponse> | undefined): boolean {
+    return proto3.util.equals(CheckEnvironmentCustomDomainSettingsCertificatesResponse, a, b);
   }
 }
 

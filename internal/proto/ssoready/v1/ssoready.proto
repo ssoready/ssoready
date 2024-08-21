@@ -193,6 +193,7 @@ service SSOReadyService {
 
   rpc GetEnvironmentCustomDomainSettings(GetEnvironmentCustomDomainSettingsRequest) returns (GetEnvironmentCustomDomainSettingsResponse);
   rpc UpdateEnvironmentCustomDomainSettings(UpdateEnvironmentCustomDomainSettingsRequest) returns (UpdateEnvironmentCustomDomainSettingsResponse);
+  rpc CheckEnvironmentCustomDomainSettingsCertificates(CheckEnvironmentCustomDomainSettingsCertificatesRequest) returns (CheckEnvironmentCustomDomainSettingsCertificatesResponse);
 
   rpc ListAPIKeys(ListAPIKeysRequest) returns (ListAPIKeysResponse);
   rpc GetAPIKey(GetAPIKeyRequest) returns (APIKey);
@@ -832,6 +833,7 @@ message GetEnvironmentCustomDomainSettingsRequest {
 message GetEnvironmentCustomDomainSettingsResponse {
   string custom_auth_domain = 1;
   bool custom_auth_domain_configured = 2;
+  string custom_auth_domain_cname_value = 3;
 }
 
 message UpdateEnvironmentCustomDomainSettingsRequest {
@@ -840,6 +842,14 @@ message UpdateEnvironmentCustomDomainSettingsRequest {
 }
 
 message UpdateEnvironmentCustomDomainSettingsResponse {}
+
+message CheckEnvironmentCustomDomainSettingsCertificatesRequest {
+  string environment_id = 1;
+}
+
+message CheckEnvironmentCustomDomainSettingsCertificatesResponse {
+  bool custom_auth_domain_configured = 1;
+}
 
 message ListAPIKeysRequest {
   string environment_id = 1;

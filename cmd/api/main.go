@@ -63,6 +63,7 @@ func main() {
 		StripeBillingPortalReturnURL string `conf:"stripe-billing-portal-return-url,noredact"`
 		FlyioAPIKey                  string `conf:"flyio-api-key"`
 		FlyioAuthProxyAppID          string `conf:"flyio-authproxy-app-id,noredact"`
+		FlyioAuthProxyAppCNAMEValue  string `conf:"flyio-authproxy-app-cname-value,noredact"`
 	}{
 		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
 	}
@@ -135,6 +136,7 @@ func main() {
 				APIKey:     config.FlyioAPIKey,
 			},
 			FlyioAuthProxyAppID:                 config.FlyioAuthProxyAppID,
+			FlyioAuthProxyAppCNAMEValue:         config.FlyioAuthProxyAppCNAMEValue,
 			UnimplementedSSOReadyServiceHandler: ssoreadyv1connect.UnimplementedSSOReadyServiceHandler{},
 		},
 		connect.WithInterceptors(

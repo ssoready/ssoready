@@ -132,6 +132,10 @@ export function ViewEnvironmentPage() {
                 <span className="text-muted-foreground">Not configured</span>
               )}
             </div>
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Custom SSOReady Auth URL
+            </div>
+            <div className="text-sm col-span-3">{environment?.authUrl}</div>
           </div>
         </CardContent>
       </Card>

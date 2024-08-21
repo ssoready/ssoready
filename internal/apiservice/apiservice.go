@@ -26,5 +26,6 @@ type Service struct {
 	StripeBillingPortalReturnURL string
 	FlyioClient                  *flyio.Client
 	FlyioAuthProxyAppID          string
+	FlyioAuthProxyAppCNAMEValue  string
 	ssoreadyv1connect.UnimplementedSSOReadyServiceHandler
 }

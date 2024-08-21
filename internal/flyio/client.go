@@ -33,8 +33,7 @@ func (c *Client) GetCertificate(ctx context.Context, req *GetCertificateRequest)
 		} `graphql:"app(id: $appId)"`
 	}
 
-	client := graphql.NewClient("https://api.fly.io/graphql", c.gqlClient())
-	if err := client.Query(ctx, &q, map[string]any{
+	if err := c.gqlClient().Query(ctx, &q, map[string]any{
 		"appId":    req.AppID,
 		"hostname": req.Hostname,
 	}); err != nil {
@@ -44,8 +43,67 @@ func (c *Client) GetCertificate(ctx context.Context, req *GetCertificateRequest)
 	return &GetCertificateResponse{Certificate: q.App.Certificate}, nil
 }
 
-func (c *Client) gqlClient() *http.Client {
-	return &http.Client{
+type CheckCertificateRequest struct {
+	AppID    string
+	Hostname string
+}
+
+type CheckCertificateResponse struct {
+	Certificate Certificate
+}
+
+func (c *Client) CheckCertificate(ctx context.Context, req *CheckCertificateRequest) (*CheckCertificateResponse, error) {
+	var q struct {
+		App struct {
+			Certificate struct {
+				Check      bool
+				Configured bool
+			} `graphql:"certificate(hostname: $hostname)"`
+		} `graphql:"app(id: $appId)"`
+	}
+
+	if err := c.gqlClient().Query(ctx, &q, map[string]any{
+		"appId":    req.AppID,
+		"hostname": req.Hostname,
+	}); err != nil {
+		return nil, fmt.Errorf("graphql: %w", err)
+	}
+
+	return &CheckCertificateResponse{
+		Certificate: Certificate{
+			Configured: q.App.Certificate.Configured,
+		},
+	}, nil
+}
+
+type AddCertificateRequest struct {
+	AppID    string
+	Hostname string
+}
+
+type AddCertificateResponse struct {
+	Certificate Certificate
+}
+
+func (c *Client) AddCertificate(ctx context.Context, req *AddCertificateRequest) (*AddCertificateResponse, error) {
+	var m struct {
+		AddCertificate struct {
+			Certificate Certificate
+		} `graphql:"addCertificate(appId: $appId, hostname: $hostname)"`
+	}
+
+	if err := c.gqlClient().Mutate(ctx, &m, map[string]any{
+		"appId":    graphql.ID(req.AppID),
+		"hostname": req.Hostname,
+	}); err != nil {
+		return nil, fmt.Errorf("graphql: %w", err)
+	}
+
+	return &AddCertificateResponse{Certificate: m.AddCertificate.Certificate}, nil
+}
+
+func (c *Client) gqlClient() *graphql.Client {
+	httpClient := &http.Client{
 		Transport: &authRoundTripper{
 			BearerToken:  c.APIKey,
 			RoundTripper: c.HTTPClient.Transport,
@@ -54,6 +112,8 @@ func (c *Client) gqlClient() *http.Client {
 		Jar:           c.HTTPClient.Jar,
 		Timeout:       c.HTTPClient.Timeout,
 	}
+
+	return graphql.NewClient("https://api.fly.io/graphql", httpClient)
 }
 
 type authRoundTripper struct {

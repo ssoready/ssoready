@@ -20,86 +20,87 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SSOReadyService_GetSAMLRedirectURL_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
-	SSOReadyService_RedeemSAMLAccessCode_FullMethodName                  = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
-	SSOReadyService_ListSCIMUsers_FullMethodName                         = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
-	SSOReadyService_GetSCIMUser_FullMethodName                           = "/ssoready.v1.SSOReadyService/GetSCIMUser"
-	SSOReadyService_ListSCIMGroups_FullMethodName                        = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
-	SSOReadyService_GetSCIMGroup_FullMethodName                          = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
-	SSOReadyService_ListOrganizations_FullMethodName                     = "/ssoready.v1.SSOReadyService/ListOrganizations"
-	SSOReadyService_GetOrganization_FullMethodName                       = "/ssoready.v1.SSOReadyService/GetOrganization"
-	SSOReadyService_CreateOrganization_FullMethodName                    = "/ssoready.v1.SSOReadyService/CreateOrganization"
-	SSOReadyService_UpdateOrganization_FullMethodName                    = "/ssoready.v1.SSOReadyService/UpdateOrganization"
-	SSOReadyService_CreateSetupURL_FullMethodName                        = "/ssoready.v1.SSOReadyService/CreateSetupURL"
-	SSOReadyService_ListSAMLConnections_FullMethodName                   = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
-	SSOReadyService_GetSAMLConnection_FullMethodName                     = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
-	SSOReadyService_CreateSAMLConnection_FullMethodName                  = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
-	SSOReadyService_UpdateSAMLConnection_FullMethodName                  = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
-	SSOReadyService_ListSCIMDirectories_FullMethodName                   = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
-	SSOReadyService_GetSCIMDirectory_FullMethodName                      = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
-	SSOReadyService_CreateSCIMDirectory_FullMethodName                   = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
-	SSOReadyService_UpdateSCIMDirectory_FullMethodName                   = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
-	SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName        = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
-	SSOReadyService_VerifyEmail_FullMethodName                           = "/ssoready.v1.SSOReadyService/VerifyEmail"
-	SSOReadyService_SignIn_FullMethodName                                = "/ssoready.v1.SSOReadyService/SignIn"
-	SSOReadyService_SignOut_FullMethodName                               = "/ssoready.v1.SSOReadyService/SignOut"
-	SSOReadyService_Whoami_FullMethodName                                = "/ssoready.v1.SSOReadyService/Whoami"
-	SSOReadyService_GetOnboardingState_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetOnboardingState"
-	SSOReadyService_UpdateOnboardingState_FullMethodName                 = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
-	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName          = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
-	SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName        = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
-	SSOReadyService_GetStripeCheckoutURL_FullMethodName                  = "/ssoready.v1.SSOReadyService/GetStripeCheckoutURL"
-	SSOReadyService_RedeemStripeCheckout_FullMethodName                  = "/ssoready.v1.SSOReadyService/RedeemStripeCheckout"
-	SSOReadyService_GetStripeBillingPortalURL_FullMethodName             = "/ssoready.v1.SSOReadyService/GetStripeBillingPortalURL"
-	SSOReadyService_GetAppOrganization_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetAppOrganization"
-	SSOReadyService_ListAppUsers_FullMethodName                          = "/ssoready.v1.SSOReadyService/ListAppUsers"
-	SSOReadyService_ListEnvironments_FullMethodName                      = "/ssoready.v1.SSOReadyService/ListEnvironments"
-	SSOReadyService_GetEnvironment_FullMethodName                        = "/ssoready.v1.SSOReadyService/GetEnvironment"
-	SSOReadyService_CreateEnvironment_FullMethodName                     = "/ssoready.v1.SSOReadyService/CreateEnvironment"
-	SSOReadyService_UpdateEnvironment_FullMethodName                     = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
-	SSOReadyService_GetEnvironmentCustomDomainSettings_FullMethodName    = "/ssoready.v1.SSOReadyService/GetEnvironmentCustomDomainSettings"
-	SSOReadyService_UpdateEnvironmentCustomDomainSettings_FullMethodName = "/ssoready.v1.SSOReadyService/UpdateEnvironmentCustomDomainSettings"
-	SSOReadyService_ListAPIKeys_FullMethodName                           = "/ssoready.v1.SSOReadyService/ListAPIKeys"
-	SSOReadyService_GetAPIKey_FullMethodName                             = "/ssoready.v1.SSOReadyService/GetAPIKey"
-	SSOReadyService_CreateAPIKey_FullMethodName                          = "/ssoready.v1.SSOReadyService/CreateAPIKey"
-	SSOReadyService_DeleteAPIKey_FullMethodName                          = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
-	SSOReadyService_ListSAMLOAuthClients_FullMethodName                  = "/ssoready.v1.SSOReadyService/ListSAMLOAuthClients"
-	SSOReadyService_GetSAMLOAuthClient_FullMethodName                    = "/ssoready.v1.SSOReadyService/GetSAMLOAuthClient"
-	SSOReadyService_CreateSAMLOAuthClient_FullMethodName                 = "/ssoready.v1.SSOReadyService/CreateSAMLOAuthClient"
-	SSOReadyService_DeleteSAMLOAuthClient_FullMethodName                 = "/ssoready.v1.SSOReadyService/DeleteSAMLOAuthClient"
-	SSOReadyService_AppListOrganizations_FullMethodName                  = "/ssoready.v1.SSOReadyService/AppListOrganizations"
-	SSOReadyService_AppGetOrganization_FullMethodName                    = "/ssoready.v1.SSOReadyService/AppGetOrganization"
-	SSOReadyService_AppCreateOrganization_FullMethodName                 = "/ssoready.v1.SSOReadyService/AppCreateOrganization"
-	SSOReadyService_AppUpdateOrganization_FullMethodName                 = "/ssoready.v1.SSOReadyService/AppUpdateOrganization"
-	SSOReadyService_AppCreateAdminSetupURL_FullMethodName                = "/ssoready.v1.SSOReadyService/AppCreateAdminSetupURL"
-	SSOReadyService_AppListSAMLConnections_FullMethodName                = "/ssoready.v1.SSOReadyService/AppListSAMLConnections"
-	SSOReadyService_AppGetSAMLConnection_FullMethodName                  = "/ssoready.v1.SSOReadyService/AppGetSAMLConnection"
-	SSOReadyService_AppCreateSAMLConnection_FullMethodName               = "/ssoready.v1.SSOReadyService/AppCreateSAMLConnection"
-	SSOReadyService_AppUpdateSAMLConnection_FullMethodName               = "/ssoready.v1.SSOReadyService/AppUpdateSAMLConnection"
-	SSOReadyService_AppListSAMLFlows_FullMethodName                      = "/ssoready.v1.SSOReadyService/AppListSAMLFlows"
-	SSOReadyService_AppGetSAMLFlow_FullMethodName                        = "/ssoready.v1.SSOReadyService/AppGetSAMLFlow"
-	SSOReadyService_ParseSAMLMetadata_FullMethodName                     = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
-	SSOReadyService_AppListSCIMDirectories_FullMethodName                = "/ssoready.v1.SSOReadyService/AppListSCIMDirectories"
-	SSOReadyService_AppGetSCIMDirectory_FullMethodName                   = "/ssoready.v1.SSOReadyService/AppGetSCIMDirectory"
-	SSOReadyService_AppCreateSCIMDirectory_FullMethodName                = "/ssoready.v1.SSOReadyService/AppCreateSCIMDirectory"
-	SSOReadyService_AppUpdateSCIMDirectory_FullMethodName                = "/ssoready.v1.SSOReadyService/AppUpdateSCIMDirectory"
-	SSOReadyService_AppRotateSCIMDirectoryBearerToken_FullMethodName     = "/ssoready.v1.SSOReadyService/AppRotateSCIMDirectoryBearerToken"
-	SSOReadyService_AppListSCIMUsers_FullMethodName                      = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
-	SSOReadyService_AppGetSCIMUser_FullMethodName                        = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
-	SSOReadyService_AppListSCIMGroups_FullMethodName                     = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
-	SSOReadyService_AppGetSCIMGroup_FullMethodName                       = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
-	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName               = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
-	SSOReadyService_AdminWhoami_FullMethodName                           = "/ssoready.v1.SSOReadyService/AdminWhoami"
-	SSOReadyService_AdminListSAMLConnections_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
-	SSOReadyService_AdminGetSAMLConnection_FullMethodName                = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
-	SSOReadyService_AdminCreateSAMLConnection_FullMethodName             = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
-	SSOReadyService_AdminUpdateSAMLConnection_FullMethodName             = "/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection"
-	SSOReadyService_AdminParseSAMLMetadata_FullMethodName                = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
-	SSOReadyService_AdminListSCIMDirectories_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminListSCIMDirectories"
-	SSOReadyService_AdminGetSCIMDirectory_FullMethodName                 = "/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory"
-	SSOReadyService_AdminCreateSCIMDirectory_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory"
-	SSOReadyService_AdminUpdateSCIMDirectory_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminUpdateSCIMDirectory"
-	SSOReadyService_AdminRotateSCIMDirectoryBearerToken_FullMethodName   = "/ssoready.v1.SSOReadyService/AdminRotateSCIMDirectoryBearerToken"
+	SSOReadyService_GetSAMLRedirectURL_FullMethodName                               = "/ssoready.v1.SSOReadyService/GetSAMLRedirectURL"
+	SSOReadyService_RedeemSAMLAccessCode_FullMethodName                             = "/ssoready.v1.SSOReadyService/RedeemSAMLAccessCode"
+	SSOReadyService_ListSCIMUsers_FullMethodName                                    = "/ssoready.v1.SSOReadyService/ListSCIMUsers"
+	SSOReadyService_GetSCIMUser_FullMethodName                                      = "/ssoready.v1.SSOReadyService/GetSCIMUser"
+	SSOReadyService_ListSCIMGroups_FullMethodName                                   = "/ssoready.v1.SSOReadyService/ListSCIMGroups"
+	SSOReadyService_GetSCIMGroup_FullMethodName                                     = "/ssoready.v1.SSOReadyService/GetSCIMGroup"
+	SSOReadyService_ListOrganizations_FullMethodName                                = "/ssoready.v1.SSOReadyService/ListOrganizations"
+	SSOReadyService_GetOrganization_FullMethodName                                  = "/ssoready.v1.SSOReadyService/GetOrganization"
+	SSOReadyService_CreateOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/CreateOrganization"
+	SSOReadyService_UpdateOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/UpdateOrganization"
+	SSOReadyService_CreateSetupURL_FullMethodName                                   = "/ssoready.v1.SSOReadyService/CreateSetupURL"
+	SSOReadyService_ListSAMLConnections_FullMethodName                              = "/ssoready.v1.SSOReadyService/ListSAMLConnections"
+	SSOReadyService_GetSAMLConnection_FullMethodName                                = "/ssoready.v1.SSOReadyService/GetSAMLConnection"
+	SSOReadyService_CreateSAMLConnection_FullMethodName                             = "/ssoready.v1.SSOReadyService/CreateSAMLConnection"
+	SSOReadyService_UpdateSAMLConnection_FullMethodName                             = "/ssoready.v1.SSOReadyService/UpdateSAMLConnection"
+	SSOReadyService_ListSCIMDirectories_FullMethodName                              = "/ssoready.v1.SSOReadyService/ListSCIMDirectories"
+	SSOReadyService_GetSCIMDirectory_FullMethodName                                 = "/ssoready.v1.SSOReadyService/GetSCIMDirectory"
+	SSOReadyService_CreateSCIMDirectory_FullMethodName                              = "/ssoready.v1.SSOReadyService/CreateSCIMDirectory"
+	SSOReadyService_UpdateSCIMDirectory_FullMethodName                              = "/ssoready.v1.SSOReadyService/UpdateSCIMDirectory"
+	SSOReadyService_RotateSCIMDirectoryBearerToken_FullMethodName                   = "/ssoready.v1.SSOReadyService/RotateSCIMDirectoryBearerToken"
+	SSOReadyService_VerifyEmail_FullMethodName                                      = "/ssoready.v1.SSOReadyService/VerifyEmail"
+	SSOReadyService_SignIn_FullMethodName                                           = "/ssoready.v1.SSOReadyService/SignIn"
+	SSOReadyService_SignOut_FullMethodName                                          = "/ssoready.v1.SSOReadyService/SignOut"
+	SSOReadyService_Whoami_FullMethodName                                           = "/ssoready.v1.SSOReadyService/Whoami"
+	SSOReadyService_GetOnboardingState_FullMethodName                               = "/ssoready.v1.SSOReadyService/GetOnboardingState"
+	SSOReadyService_UpdateOnboardingState_FullMethodName                            = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
+	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName                     = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
+	SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName                   = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
+	SSOReadyService_GetStripeCheckoutURL_FullMethodName                             = "/ssoready.v1.SSOReadyService/GetStripeCheckoutURL"
+	SSOReadyService_RedeemStripeCheckout_FullMethodName                             = "/ssoready.v1.SSOReadyService/RedeemStripeCheckout"
+	SSOReadyService_GetStripeBillingPortalURL_FullMethodName                        = "/ssoready.v1.SSOReadyService/GetStripeBillingPortalURL"
+	SSOReadyService_GetAppOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/GetAppOrganization"
+	SSOReadyService_ListAppUsers_FullMethodName                                     = "/ssoready.v1.SSOReadyService/ListAppUsers"
+	SSOReadyService_ListEnvironments_FullMethodName                                 = "/ssoready.v1.SSOReadyService/ListEnvironments"
+	SSOReadyService_GetEnvironment_FullMethodName                                   = "/ssoready.v1.SSOReadyService/GetEnvironment"
+	SSOReadyService_CreateEnvironment_FullMethodName                                = "/ssoready.v1.SSOReadyService/CreateEnvironment"
+	SSOReadyService_UpdateEnvironment_FullMethodName                                = "/ssoready.v1.SSOReadyService/UpdateEnvironment"
+	SSOReadyService_GetEnvironmentCustomDomainSettings_FullMethodName               = "/ssoready.v1.SSOReadyService/GetEnvironmentCustomDomainSettings"
+	SSOReadyService_UpdateEnvironmentCustomDomainSettings_FullMethodName            = "/ssoready.v1.SSOReadyService/UpdateEnvironmentCustomDomainSettings"
+	SSOReadyService_CheckEnvironmentCustomDomainSettingsCertificates_FullMethodName = "/ssoready.v1.SSOReadyService/CheckEnvironmentCustomDomainSettingsCertificates"
+	SSOReadyService_ListAPIKeys_FullMethodName                                      = "/ssoready.v1.SSOReadyService/ListAPIKeys"
+	SSOReadyService_GetAPIKey_FullMethodName                                        = "/ssoready.v1.SSOReadyService/GetAPIKey"
+	SSOReadyService_CreateAPIKey_FullMethodName                                     = "/ssoready.v1.SSOReadyService/CreateAPIKey"
+	SSOReadyService_DeleteAPIKey_FullMethodName                                     = "/ssoready.v1.SSOReadyService/DeleteAPIKey"
+	SSOReadyService_ListSAMLOAuthClients_FullMethodName                             = "/ssoready.v1.SSOReadyService/ListSAMLOAuthClients"
+	SSOReadyService_GetSAMLOAuthClient_FullMethodName                               = "/ssoready.v1.SSOReadyService/GetSAMLOAuthClient"
+	SSOReadyService_CreateSAMLOAuthClient_FullMethodName                            = "/ssoready.v1.SSOReadyService/CreateSAMLOAuthClient"
+	SSOReadyService_DeleteSAMLOAuthClient_FullMethodName                            = "/ssoready.v1.SSOReadyService/DeleteSAMLOAuthClient"
+	SSOReadyService_AppListOrganizations_FullMethodName                             = "/ssoready.v1.SSOReadyService/AppListOrganizations"
+	SSOReadyService_AppGetOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/AppGetOrganization"
+	SSOReadyService_AppCreateOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppCreateOrganization"
+	SSOReadyService_AppUpdateOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppUpdateOrganization"
+	SSOReadyService_AppCreateAdminSetupURL_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppCreateAdminSetupURL"
+	SSOReadyService_AppListSAMLConnections_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppListSAMLConnections"
+	SSOReadyService_AppGetSAMLConnection_FullMethodName                             = "/ssoready.v1.SSOReadyService/AppGetSAMLConnection"
+	SSOReadyService_AppCreateSAMLConnection_FullMethodName                          = "/ssoready.v1.SSOReadyService/AppCreateSAMLConnection"
+	SSOReadyService_AppUpdateSAMLConnection_FullMethodName                          = "/ssoready.v1.SSOReadyService/AppUpdateSAMLConnection"
+	SSOReadyService_AppListSAMLFlows_FullMethodName                                 = "/ssoready.v1.SSOReadyService/AppListSAMLFlows"
+	SSOReadyService_AppGetSAMLFlow_FullMethodName                                   = "/ssoready.v1.SSOReadyService/AppGetSAMLFlow"
+	SSOReadyService_ParseSAMLMetadata_FullMethodName                                = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
+	SSOReadyService_AppListSCIMDirectories_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppListSCIMDirectories"
+	SSOReadyService_AppGetSCIMDirectory_FullMethodName                              = "/ssoready.v1.SSOReadyService/AppGetSCIMDirectory"
+	SSOReadyService_AppCreateSCIMDirectory_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppCreateSCIMDirectory"
+	SSOReadyService_AppUpdateSCIMDirectory_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppUpdateSCIMDirectory"
+	SSOReadyService_AppRotateSCIMDirectoryBearerToken_FullMethodName                = "/ssoready.v1.SSOReadyService/AppRotateSCIMDirectoryBearerToken"
+	SSOReadyService_AppListSCIMUsers_FullMethodName                                 = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
+	SSOReadyService_AppGetSCIMUser_FullMethodName                                   = "/ssoready.v1.SSOReadyService/AppGetSCIMUser"
+	SSOReadyService_AppListSCIMGroups_FullMethodName                                = "/ssoready.v1.SSOReadyService/AppListSCIMGroups"
+	SSOReadyService_AppGetSCIMGroup_FullMethodName                                  = "/ssoready.v1.SSOReadyService/AppGetSCIMGroup"
+	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName                          = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
+	SSOReadyService_AdminWhoami_FullMethodName                                      = "/ssoready.v1.SSOReadyService/AdminWhoami"
+	SSOReadyService_AdminListSAMLConnections_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
+	SSOReadyService_AdminGetSAMLConnection_FullMethodName                           = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
+	SSOReadyService_AdminCreateSAMLConnection_FullMethodName                        = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
+	SSOReadyService_AdminUpdateSAMLConnection_FullMethodName                        = "/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection"
+	SSOReadyService_AdminParseSAMLMetadata_FullMethodName                           = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
+	SSOReadyService_AdminListSCIMDirectories_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminListSCIMDirectories"
+	SSOReadyService_AdminGetSCIMDirectory_FullMethodName                            = "/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory"
+	SSOReadyService_AdminCreateSCIMDirectory_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory"
+	SSOReadyService_AdminUpdateSCIMDirectory_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminUpdateSCIMDirectory"
+	SSOReadyService_AdminRotateSCIMDirectoryBearerToken_FullMethodName              = "/ssoready.v1.SSOReadyService/AdminRotateSCIMDirectoryBearerToken"
 )
 
 // SSOReadyServiceClient is the client API for SSOReadyService service.
@@ -177,6 +178,7 @@ type SSOReadyServiceClient interface {
 	UpdateEnvironment(ctx context.Context, in *UpdateEnvironmentRequest, opts ...grpc.CallOption) (*Environment, error)
 	GetEnvironmentCustomDomainSettings(ctx context.Context, in *GetEnvironmentCustomDomainSettingsRequest, opts ...grpc.CallOption) (*GetEnvironmentCustomDomainSettingsResponse, error)
 	UpdateEnvironmentCustomDomainSettings(ctx context.Context, in *UpdateEnvironmentCustomDomainSettingsRequest, opts ...grpc.CallOption) (*UpdateEnvironmentCustomDomainSettingsResponse, error)
+	CheckEnvironmentCustomDomainSettingsCertificates(ctx context.Context, in *CheckEnvironmentCustomDomainSettingsCertificatesRequest, opts ...grpc.CallOption) (*CheckEnvironmentCustomDomainSettingsCertificatesResponse, error)
 	ListAPIKeys(ctx context.Context, in *ListAPIKeysRequest, opts ...grpc.CallOption) (*ListAPIKeysResponse, error)
 	GetAPIKey(ctx context.Context, in *GetAPIKeyRequest, opts ...grpc.CallOption) (*APIKey, error)
 	CreateAPIKey(ctx context.Context, in *CreateAPIKeyRequest, opts ...grpc.CallOption) (*APIKey, error)
@@ -612,6 +614,16 @@ func (c *sSOReadyServiceClient) UpdateEnvironmentCustomDomainSettings(ctx contex
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateEnvironmentCustomDomainSettingsResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_UpdateEnvironmentCustomDomainSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) CheckEnvironmentCustomDomainSettingsCertificates(ctx context.Context, in *CheckEnvironmentCustomDomainSettingsCertificatesRequest, opts ...grpc.CallOption) (*CheckEnvironmentCustomDomainSettingsCertificatesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckEnvironmentCustomDomainSettingsCertificatesResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_CheckEnvironmentCustomDomainSettingsCertificates_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1103,6 +1115,7 @@ type SSOReadyServiceServer interface {
 	UpdateEnvironment(context.Context, *UpdateEnvironmentRequest) (*Environment, error)
 	GetEnvironmentCustomDomainSettings(context.Context, *GetEnvironmentCustomDomainSettingsRequest) (*GetEnvironmentCustomDomainSettingsResponse, error)
 	UpdateEnvironmentCustomDomainSettings(context.Context, *UpdateEnvironmentCustomDomainSettingsRequest) (*UpdateEnvironmentCustomDomainSettingsResponse, error)
+	CheckEnvironmentCustomDomainSettingsCertificates(context.Context, *CheckEnvironmentCustomDomainSettingsCertificatesRequest) (*CheckEnvironmentCustomDomainSettingsCertificatesResponse, error)
 	ListAPIKeys(context.Context, *ListAPIKeysRequest) (*ListAPIKeysResponse, error)
 	GetAPIKey(context.Context, *GetAPIKeyRequest) (*APIKey, error)
 	CreateAPIKey(context.Context, *CreateAPIKeyRequest) (*APIKey, error)
@@ -1270,6 +1283,9 @@ func (UnimplementedSSOReadyServiceServer) GetEnvironmentCustomDomainSettings(con
 }
 func (UnimplementedSSOReadyServiceServer) UpdateEnvironmentCustomDomainSettings(context.Context, *UpdateEnvironmentCustomDomainSettingsRequest) (*UpdateEnvironmentCustomDomainSettingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEnvironmentCustomDomainSettings not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) CheckEnvironmentCustomDomainSettingsCertificates(context.Context, *CheckEnvironmentCustomDomainSettingsCertificatesRequest) (*CheckEnvironmentCustomDomainSettingsCertificatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckEnvironmentCustomDomainSettingsCertificates not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) ListAPIKeys(context.Context, *ListAPIKeysRequest) (*ListAPIKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAPIKeys not implemented")
@@ -2113,6 +2129,24 @@ func _SSOReadyService_UpdateEnvironmentCustomDomainSettings_Handler(srv interfac
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).UpdateEnvironmentCustomDomainSettings(ctx, req.(*UpdateEnvironmentCustomDomainSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_CheckEnvironmentCustomDomainSettingsCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckEnvironmentCustomDomainSettingsCertificatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).CheckEnvironmentCustomDomainSettingsCertificates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_CheckEnvironmentCustomDomainSettingsCertificates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).CheckEnvironmentCustomDomainSettingsCertificates(ctx, req.(*CheckEnvironmentCustomDomainSettingsCertificatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3017,6 +3051,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateEnvironmentCustomDomainSettings",
 			Handler:    _SSOReadyService_UpdateEnvironmentCustomDomainSettings_Handler,
+		},
+		{
+			MethodName: "CheckEnvironmentCustomDomainSettingsCertificates",
+			Handler:    _SSOReadyService_CheckEnvironmentCustomDomainSettingsCertificates_Handler,
 		},
 		{
 			MethodName: "ListAPIKeys",
