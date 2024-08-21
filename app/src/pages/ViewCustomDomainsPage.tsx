@@ -10,8 +10,9 @@ import { useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
 import { getEnvironmentCustomDomainSettings } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRightIcon, CopyIcon } from "lucide-react";
+import { ArrowRightIcon, CopyIcon, GlobeIcon, PlusIcon } from "lucide-react";
 import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import { Button } from "@/components/ui/button";
 
 export function ViewCustomDomainsPage() {
   const { environmentId } = useParams();
@@ -39,37 +40,75 @@ export function ViewCustomDomainsPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-[1fr_auto_1fr] gap-x-4">
-          <div className="text-sm font-semibold mb-2">DNS record name</div>
-          <div></div>
-          <div className="text-sm font-semibold mb-2">DNS record value</div>
-          <div className="flex items-center text-sm border rounded">
-            <div className="py-2 px-4 bg-muted">CNAME</div>
-            <div className="flex-1 py-2 px-4">
-              {customDomainsSettings?.customAuthDomain}
-            </div>
-            <div className="px-2">
-              {customDomainsSettings && (
-                <CopyButton value={customDomainsSettings.customAuthDomain} />
+        {customDomainsSettings?.customAuthDomain ? (
+          <>
+            <div>
+              <div className="text-sm font-semibold mb-2">
+                DNS record status
+              </div>
+              {customDomainsSettings?.customAuthDomainConfigured ? (
+                <Badge
+                  variant="outline"
+                  className="inline-flex items-center gap-x-2"
+                >
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  </span>
+                  <span>Live</span>
+                </Badge>
+              ) : (
+                <></>
               )}
             </div>
-          </div>
-          <div className="flex items-center">
-            <ArrowRightIcon className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="flex items-center text-sm border rounded">
-            <div className="flex-1 py-2 px-4">
-              {customDomainsSettings?.customAuthDomainCnameValue}
+
+            <div className="mt-4 grid grid-cols-[1fr_auto_1fr] gap-x-4">
+              <div className="text-sm font-semibold mb-2">DNS record name</div>
+              <div></div>
+              <div className="text-sm font-semibold mb-2">DNS record value</div>
+              <div className="flex items-center text-sm border rounded">
+                <div className="py-2 px-4 bg-muted">CNAME</div>
+                <div className="flex-1 py-2 px-4">
+                  {customDomainsSettings?.customAuthDomain}
+                </div>
+                <div className="px-2">
+                  {customDomainsSettings && (
+                    <CopyButton
+                      value={customDomainsSettings.customAuthDomain}
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center">
+                <ArrowRightIcon className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="flex items-center text-sm border rounded">
+                <div className="flex-1 py-2 px-4">
+                  {customDomainsSettings?.customAuthDomainCnameValue}
+                </div>
+                <div className="px-2">
+                  {customDomainsSettings && (
+                    <CopyButton
+                      value={customDomainsSettings.customAuthDomainCnameValue}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="px-2">
-              {customDomainsSettings && (
-                <CopyButton
-                  value={customDomainsSettings.customAuthDomainCnameValue}
-                />
-              )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center">
+            <GlobeIcon className="h-10 w-10 text-muted-foreground" />
+            <div className="text-sm font-semibold">No custom domain</div>
+            <div className="text-sm text-muted-foreground">
+              You do not have a custom domain configured.
             </div>
+            <Button className="mt-4 inline-flex items-center gap-x-2">
+              <PlusIcon className="h-4 w-4" />
+              New custom domain
+            </Button>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
