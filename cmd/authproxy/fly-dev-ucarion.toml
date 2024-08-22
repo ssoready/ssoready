@@ -3,6 +3,9 @@ primary_region = 'iad'
 
 [build]
 
+[env]
+  AUTHPROXY_AUTH_URL = 'https://auth.dev-ucarion.ssoready-nonprod.com'
+
 [http_service]
   internal_port = 80
   force_https = true
@@ -15,6 +18,3 @@ primary_region = 'iad'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-
-[env]
-  AUTHPROXY_AUTH_URL = 'https://auth.dev-ucarion.ssoready-nonprod.com'
