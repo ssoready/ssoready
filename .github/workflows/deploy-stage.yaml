@@ -105,4 +105,4 @@ jobs:
       - run: flyctl deploy -c fly-dev-ucarion.toml --remote-only
         working-directory: cmd/authproxy
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_DEV_UCARION }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGE }}
