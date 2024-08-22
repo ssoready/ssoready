@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"connectrpc.com/connect"
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
@@ -36,6 +37,16 @@ func (s *Store) UpdateEnvironmentCustomDomainSettings(ctx context.Context, req *
 		return nil, err
 	}
 	defer rollback()
+
+	// entitlement check
+	qAppOrg, err := q.GetAppOrganizationByID(ctx, authn.AppOrgID(ctx))
+	if err != nil {
+		return nil, fmt.Errorf("get app org by id: %w", err)
+	}
+
+	if !derefOrEmpty(qAppOrg.EntitledCustomDomains) {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("app organization is not entitled to custom domains"))
+	}
 
 	id, err := idformat.Environment.Parse(req.EnvironmentId)
 	if err != nil {
