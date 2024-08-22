@@ -191,6 +191,10 @@ service SSOReadyService {
   rpc CreateEnvironment(CreateEnvironmentRequest) returns (Environment);
   rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (Environment);
 
+  rpc GetEnvironmentCustomDomainSettings(GetEnvironmentCustomDomainSettingsRequest) returns (GetEnvironmentCustomDomainSettingsResponse);
+  rpc UpdateEnvironmentCustomDomainSettings(UpdateEnvironmentCustomDomainSettingsRequest) returns (UpdateEnvironmentCustomDomainSettingsResponse);
+  rpc CheckEnvironmentCustomDomainSettingsCertificates(CheckEnvironmentCustomDomainSettingsCertificatesRequest) returns (CheckEnvironmentCustomDomainSettingsCertificatesResponse);
+
   rpc ListAPIKeys(ListAPIKeysRequest) returns (ListAPIKeysResponse);
   rpc GetAPIKey(GetAPIKeyRequest) returns (APIKey);
   rpc CreateAPIKey(CreateAPIKeyRequest) returns (APIKey);
@@ -791,6 +795,7 @@ message GetAppOrganizationRequest {
 message GetAppOrganizationResponse {
   string google_hosted_domain = 1;
   bool entitled_management_api = 2;
+  bool entitled_custom_domains = 4;
   bool has_stripe_customer_id = 3;
 }
 
@@ -820,6 +825,31 @@ message CreateEnvironmentRequest {
 
 message UpdateEnvironmentRequest {
   Environment environment = 1;
+}
+
+message GetEnvironmentCustomDomainSettingsRequest {
+  string environment_id = 1;
+}
+
+message GetEnvironmentCustomDomainSettingsResponse {
+  string custom_auth_domain = 1;
+  bool custom_auth_domain_configured = 2;
+  string custom_auth_domain_cname_value = 3;
+}
+
+message UpdateEnvironmentCustomDomainSettingsRequest {
+  string environment_id = 1;
+  string custom_auth_domain = 2;
+}
+
+message UpdateEnvironmentCustomDomainSettingsResponse {}
+
+message CheckEnvironmentCustomDomainSettingsCertificatesRequest {
+  string environment_id = 1;
+}
+
+message CheckEnvironmentCustomDomainSettingsCertificatesResponse {
+  bool custom_auth_domain_configured = 1;
 }
 
 message ListAPIKeysRequest {

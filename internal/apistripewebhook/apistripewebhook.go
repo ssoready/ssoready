@@ -49,17 +49,21 @@ func (s *Service) Handler() http.HandlerFunc {
 			Customer: &entitlementSummary.Customer,
 		})
 
-		var hasManagementAPI bool
+		var hasManagementAPI, hasCustomDomains bool
 		for listEntitlementsIter.Next() {
 			entitlement := listEntitlementsIter.EntitlementsActiveEntitlement()
 			if entitlement.LookupKey == "ssoready-management-api" {
 				hasManagementAPI = true
+			}
+			if entitlement.LookupKey == "ssoready-custom-domains" {
+				hasCustomDomains = true
 			}
 		}
 
 		if err := s.Store.UpdateAppOrganizationEntitlements(ctx, &store.UpdateAppOrganizationEntitlementsRequest{
 			StripeCustomerID:      entitlementSummary.Customer,
 			EntitledManagementAPI: hasManagementAPI,
+			EntitledCustomDomains: hasCustomDomains,
 		}); err != nil {
 			panic(err)
 		}

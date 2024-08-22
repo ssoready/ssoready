@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/resend/resend-go/v2"
+	"github.com/ssoready/ssoready/internal/flyio"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/microsoft"
@@ -23,5 +24,8 @@ type Service struct {
 	StripeCheckoutSuccessURL     string
 	StripePriceIDProTier         string
 	StripeBillingPortalReturnURL string
+	FlyioClient                  *flyio.Client
+	FlyioAuthProxyAppID          string
+	FlyioAuthProxyAppCNAMEValue  string
 	ssoreadyv1connect.UnimplementedSSOReadyServiceHandler
 }

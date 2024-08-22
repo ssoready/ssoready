@@ -10,6 +10,7 @@ import {
   UserIcon,
   EllipsisVerticalIcon,
   SettingsIcon,
+  GlobeIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
@@ -63,6 +64,16 @@ export function Page() {
               >
                 <KeyRoundIcon className="h-4 w-4" />
                 <span>API Keys</span>
+              </Link>
+            )}
+
+            {environmentId && (
+              <Link
+                to={`/environments/${environmentId}/custom-domains`}
+                className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
+              >
+                <GlobeIcon className="h-4 w-4" />
+                <span>Custom Domains</span>
               </Link>
             )}
           </div>

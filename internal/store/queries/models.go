@@ -81,6 +81,7 @@ type AppOrganization struct {
 	EmailLoginsDisabled   *bool
 	StripeCustomerID      *string
 	EntitledManagementApi *bool
+	EntitledCustomDomains *bool
 }
 
 type AppSession struct {
@@ -115,6 +116,7 @@ type Environment struct {
 	DisplayName       *string
 	AuthUrl           *string
 	OauthRedirectUri  *string
+	CustomAuthDomain  *string
 }
 
 type OnboardingState struct {

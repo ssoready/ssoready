@@ -59,6 +59,14 @@
         {
           "name": "API_EMAIL_VERIFICATION_ENDPOINT",
           "value": "https://dev-ucarion--ssoready.netlify.app/verify-email"
+        },
+        {
+          "name": "API_FLYIO_AUTHPROXY_APP_ID",
+          "value": "authproxy-twilight-violet-4061"
+        },
+        {
+          "name": "API_FLYIO_AUTHPROXY_APP_CNAME_VALUE",
+          "value": "authproxy-twilight-violet-4061.fly.dev."
         }
       ],
       "environmentFiles": [],

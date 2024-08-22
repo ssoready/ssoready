@@ -76,7 +76,8 @@ CREATE TABLE public.app_organizations (
     microsoft_tenant_id character varying,
     email_logins_disabled boolean,
     stripe_customer_id character varying,
-    entitled_management_api boolean
+    entitled_management_api boolean,
+    entitled_custom_domains boolean
 );
 
 
@@ -138,7 +139,8 @@ CREATE TABLE public.environments (
     app_organization_id uuid NOT NULL,
     display_name character varying,
     auth_url character varying,
-    oauth_redirect_uri character varying
+    oauth_redirect_uri character varying,
+    custom_auth_domain character varying
 );
 
 

@@ -94,3 +94,15 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
+
+  deploy-authproxy:
+    name: Deploy authproxy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy -c fly-stage.toml --remote-only
+        working-directory: cmd/authproxy
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGE }}

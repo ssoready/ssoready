@@ -32,6 +32,7 @@ import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
 import { ViewSCIMUserPage } from "@/pages/ViewSCIMUserPage";
 import { ViewSCIMGroupPage } from "@/pages/ViewSCIMGroupPage";
 import { StripeCheckoutSuccessPage } from "@/pages/internal/StripeCheckoutSuccessPage";
+import { ViewCustomDomainsPage } from "@/pages/ViewCustomDomainsPage";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +92,10 @@ export function AppRoutes() {
           <Route
             path="/environments/:environmentId/saml-oauth-clients/:samlOAuthClientId"
             element={<ViewSAMLOAuthClientPage />}
+          />
+          <Route
+            path="/environments/:environmentId/custom-domains"
+            element={<ViewCustomDomainsPage />}
           />
           <Route
             path="/environments/:environmentId/organizations/:organizationId"

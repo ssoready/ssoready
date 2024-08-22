@@ -273,6 +273,18 @@ set display_name       = $1,
 where id = $5
 returning *;
 
+-- name: UpdateEnvironmentCustomAuthDomain :one
+update environments
+set custom_auth_domain = $1
+where id = $2
+returning *;
+
+-- name: UpdateEnvironmentAuthURL :one
+update environments
+set auth_url = $1
+where id = $2
+returning *;
+
 -- name: ListAPIKeys :many
 select *
 from api_keys
@@ -766,6 +778,7 @@ where id = $2;
 
 -- name: UpdateAppOrganizationEntitlementsByStripeCustomerID :one
 update app_organizations
-set entitled_management_api = $1
-where stripe_customer_id = $2
+set entitled_management_api = $1,
+    entitled_custom_domains = $2
+where stripe_customer_id = $3
 returning *;
