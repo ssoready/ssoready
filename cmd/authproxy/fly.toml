@@ -15,3 +15,6 @@ primary_region = 'iad'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+
+[env]
+  AUTHPROXY_AUTH_URL = 'https://auth.dev-ucarion.ssoready-nonprod.com'
