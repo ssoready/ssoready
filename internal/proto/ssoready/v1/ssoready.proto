@@ -795,6 +795,7 @@ message GetAppOrganizationRequest {
 message GetAppOrganizationResponse {
   string google_hosted_domain = 1;
   bool entitled_management_api = 2;
+  bool entitled_custom_domains = 4;
   bool has_stripe_customer_id = 3;
 }
 

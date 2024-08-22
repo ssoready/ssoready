@@ -81,6 +81,7 @@ type AppOrganization struct {
 	EmailLoginsDisabled   *bool
 	StripeCustomerID      *string
 	EntitledManagementApi *bool
+	EntitledCustomDomains *bool
 }
 
 type AppSession struct {

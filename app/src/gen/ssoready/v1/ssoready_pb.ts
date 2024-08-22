@@ -3387,6 +3387,11 @@ export class GetAppOrganizationResponse extends Message<GetAppOrganizationRespon
   entitledManagementApi = false;
 
   /**
+   * @generated from field: bool entitled_custom_domains = 4;
+   */
+  entitledCustomDomains = false;
+
+  /**
    * @generated from field: bool has_stripe_customer_id = 3;
    */
   hasStripeCustomerId = false;
@@ -3401,6 +3406,7 @@ export class GetAppOrganizationResponse extends Message<GetAppOrganizationRespon
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "google_hosted_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "entitled_management_api", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 4, name: "entitled_custom_domains", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "has_stripe_customer_id", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 

@@ -778,6 +778,7 @@ where id = $2;
 
 -- name: UpdateAppOrganizationEntitlementsByStripeCustomerID :one
 update app_organizations
-set entitled_management_api = $1
-where stripe_customer_id = $2
+set entitled_management_api = $1,
+    entitled_custom_domains = $2
+where stripe_customer_id = $3
 returning *;
