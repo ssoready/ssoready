@@ -347,7 +347,9 @@ function EditCustomDomainAlertModal({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
             <AlertDialogHeader>
-              <AlertDialogTitle>Edit environment</AlertDialogTitle>
+              <AlertDialogTitle>
+                Edit custom auth.ssoready.com domain
+              </AlertDialogTitle>
             </AlertDialogHeader>
 
             <div className="my-4 space-y-4">
