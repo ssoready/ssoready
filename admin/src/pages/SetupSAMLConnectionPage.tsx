@@ -10,11 +10,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useParams } from "react-router";
 
 interface IDP {
   id: string;
   displayName: string;
   subtitle: string;
+  firstSubStep: string;
   steps: Step[];
 }
 
@@ -23,6 +25,7 @@ const IDPS: IDP[] = [
     id: "okta",
     displayName: "Okta",
     subtitle: "Set up a SAML connection with your corporate Okta.",
+    firstSubStep: "okta-create-app",
     steps: [
       {
         displayName: "Create application",
@@ -45,6 +48,7 @@ const IDPS: IDP[] = [
     id: "google",
     displayName: "Google",
     subtitle: "Set up a SAML connection with your Google Workspace.",
+    firstSubStep: "todo",
     steps: [],
   },
   {
@@ -52,26 +56,54 @@ const IDPS: IDP[] = [
     displayName: "Microsoft Entra",
     subtitle:
       "Set up a SAML connection with your Microsoft Entra (formerly known as Azure Active Directory).",
+    firstSubStep: "todo",
     steps: [],
   },
   {
     id: "other",
     displayName: "Other Identity Provider",
     subtitle: "Set up a SAML connection with any other identity provider.",
+    firstSubStep: "todo",
     steps: [],
   },
 ];
 
-export function CreateSAMLConnectionPage() {
-  const [idpId, setIdpId] = useState<string | undefined>(undefined);
-  const idp = IDPS.find(({ id }) => id === idpId);
-  const [currentStep, setCurrentStep] = useState(0);
+interface SubStep {
+  idpId: string;
+  step: number;
+}
+
+const SUB_STEPS: Record<string, SubStep> = {
+  "okta-create-app": {
+    idpId: "okta",
+    step: 0,
+  },
+  "okta-configure-app-name": {
+    idpId: "okta",
+    step: 1,
+  },
+  "okta-configure-sso-url": {
+    idpId: "okta",
+    step: 1,
+  },
+  "okta-configure-audience-uri": {
+    idpId: "okta",
+    step: 1,
+  },
+};
+
+export function SetupSAMLConnectionPage() {
+  const { samlConnectionId, subStepId } = useParams();
+  const subStep = subStepId ? SUB_STEPS[subStepId] : undefined;
 
   return (
     <>
       <nav className="border-b border-gray-200 bg-white">
-        {idp ? (
-          <Steps steps={idp.steps} currentStep={currentStep} />
+        {subStep ? (
+          <Steps
+            steps={IDPS.find((idp) => idp.id === subStep.idpId)!.steps}
+            currentStep={subStep.step}
+          />
         ) : (
           <div className="mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
@@ -88,27 +120,18 @@ export function CreateSAMLConnectionPage() {
       </nav>
 
       <NarrowContainer>
-        {idp ? (
-          <div className="mt-8">
-            {idpId === "okta" && currentStep === 0 && (
-              <OktaCreateAppStep onNextStep={() => setCurrentStep(1)} />
-            )}
-            {idpId === "okta" && currentStep === 1 && (
-              <OktaConfigureAppStep onNextStep={() => setCurrentStep(1)} />
-            )}
-          </div>
-        ) : (
+        {subStepId === undefined && (
           <>
             <h1 className="mt-8 text-xl font-semibold">
               What Identity Provider do you use?
             </h1>
 
             <div className="mt-4 overflow-hidden bg-white shadow sm:rounded-md">
-              <ul role="list" className="divide-y divide-gray-200">
+              <div className="divide-y divide-gray-200">
                 {IDPS.map((idp) => (
-                  <li
+                  <Link
+                    to={`/saml/saml-connections/${samlConnectionId}/setup/${idp.firstSubStep}`}
                     key={idp.id}
-                    onClick={() => setIdpId(idp.id)}
                     className="px-4 py-4 sm:px-6 text-sm flex items-center justify-between cursor-pointer"
                   >
                     <div>
@@ -121,11 +144,16 @@ export function CreateSAMLConnectionPage() {
                     <div>
                       <ChevronRightIcon className="text-gray-700" />
                     </div>
-                  </li>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
           </>
+        )}
+
+        {subStepId === "okta-create-app" && <OktaCreateAppStep />}
+        {subStepId === "okta-configure-app-name" && (
+          <OktaConfigureAppNameStep />
         )}
       </NarrowContainer>
     </>
@@ -135,7 +163,7 @@ export function CreateSAMLConnectionPage() {
 function NarrowContainer({ children }: { children?: ReactNode }) {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">{children}</div>
+      <div className="mx-auto max-w-3xl mt-8">{children}</div>
     </div>
   );
 }
@@ -198,7 +226,13 @@ function Steps({ steps, currentStep }: { steps: Step[]; currentStep: number }) {
   );
 }
 
-function OktaCreateAppStep({ onNextStep }: { onNextStep: () => void }) {
+function useSubStepUrl(subStepId: string) {
+  const { samlConnectionId } = useParams();
+  return `/saml/saml-connections/${samlConnectionId}/setup/${subStepId}`;
+}
+
+function OktaCreateAppStep() {
+  const next = useSubStepUrl("okta-configure-app-name");
   return (
     <Card>
       <CardHeader>
@@ -224,42 +258,40 @@ function OktaCreateAppStep({ onNextStep }: { onNextStep: () => void }) {
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={onNextStep}>Next: Configure application</Button>
+          <Button asChild>
+            <Link to={next}>Next: Configure application</Link>
+          </Button>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function OktaConfigureAppStep({ onNextStep }: { onNextStep: () => void }) {
-  const [subStep, setSubStep] = useState(0);
+function OktaConfigureAppNameStep() {
+  const next = useSubStepUrl("okta-configure-sso-url");
 
   return (
     <Card>
-      {subStep === 0 && (
-        <>
-          <CardHeader>
-            <CardTitle>Configure app name</CardTitle>
-            <CardDescription>
-              Configure the name of your Okta app. This is shown to employees.
-            </CardDescription>
-          </CardHeader>
+      <CardHeader>
+        <CardTitle>Configure app name</CardTitle>
+        <CardDescription>
+          Configure the name of your Okta app. This is shown to employees.
+        </CardDescription>
+      </CardHeader>
 
-          <CardContent>
-            <img src="/okta_configure_app_name.gif" />
+      <CardContent>
+        <img src="/okta_configure_app_name.gif" />
 
-            <div className="text-sm mt-4">
-              <p>Give the new Okta application a name.</p>
-            </div>
+        <div className="text-sm mt-4">
+          <p>Give the new Okta application a name.</p>
+        </div>
 
-            <div className="flex justify-end">
-              <Button onClick={() => setSubStep(1)}>
-                Next: Configure SAML Single Sign-on URL
-              </Button>
-            </div>
-          </CardContent>
-        </>
-      )}
+        <div className="flex justify-end">
+          <Button>
+            <Link to={next}>Next: Configure SAML Single Sign-on URL</Link>
+          </Button>
+        </div>
+      </CardContent>
     </Card>
   );
 }
