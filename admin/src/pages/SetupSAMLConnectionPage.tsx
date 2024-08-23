@@ -12,8 +12,31 @@ import {
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router";
 import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
-import { useQuery } from "@connectrpc/connect-query";
-import { adminGetSAMLConnection } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import {
+  createConnectQueryKey,
+  useMutation,
+  useQuery,
+} from "@connectrpc/connect-query";
+import {
+  adminGetSAMLConnection,
+  adminParseSAMLMetadata,
+  adminUpdateSAMLConnection,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface IDP {
   id: string;
@@ -97,6 +120,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "okta",
     step: 2,
   },
+  "okta-copy-metadata-url": {
+    idpId: "okta",
+    step: 3,
+  },
 };
 
 export function SetupSAMLConnectionPage() {
@@ -169,6 +196,7 @@ export function SetupSAMLConnectionPage() {
         {subStepId === "okta-finish-creating-app" && (
           <OktaFinishCreatingAppStep />
         )}
+        {subStepId === "okta-copy-metadata-url" && <OktaCopyMetadataURLStep />}
       </NarrowContainer>
     </>
   );
@@ -477,6 +505,133 @@ function OktaFinishCreatingAppStep() {
             <Link to={next}>Next: Copy Metadata URL</Link>
           </Button>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const oktaMetadataURLFormSchema = z.object({
+  metadataUrl: z
+    .string()
+    .min(1, { message: "SAML Metadata URL is required." })
+    .url({ message: "SAML Metadata URL must be a valid URL." }),
+});
+
+function OktaCopyMetadataURLStep() {
+  const { samlConnectionId } = useParams();
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+  const next = useSubStepUrl("okta-assign-users");
+
+  const [success, setSuccess] = useState(false);
+
+  const form = useForm<z.infer<typeof oktaMetadataURLFormSchema>>({
+    resolver: zodResolver(oktaMetadataURLFormSchema),
+    defaultValues: {
+      metadataUrl: "",
+    },
+  });
+
+  const parseSAMLMetadataMutation = useMutation(adminParseSAMLMetadata);
+  const updateSAMLConnectionMutation = useMutation(adminUpdateSAMLConnection);
+  const queryClient = useQueryClient();
+  const handleSubmit = async (
+    data: z.infer<typeof oktaMetadataURLFormSchema>,
+    e: any,
+  ) => {
+    e.preventDefault();
+
+    const { idpRedirectUrl, idpCertificate, idpEntityId } =
+      await parseSAMLMetadataMutation.mutateAsync({ url: data.metadataUrl });
+
+    await updateSAMLConnectionMutation.mutateAsync({
+      samlConnection: {
+        id: samlConnection!.samlConnection!.id,
+        primary: samlConnection!.samlConnection!.primary,
+        idpRedirectUrl,
+        idpCertificate,
+        idpEntityId,
+      },
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: createConnectQueryKey(adminGetSAMLConnection, {
+        id: samlConnection!.samlConnection!.id,
+      }),
+    });
+
+    setSuccess(true);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Copy SAML metadata URL</CardTitle>
+        <CardDescription>Copy your app's SAML metadata URL.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/okta_copy_metadata_url.gif" />
+
+        {!success && (
+          <>
+            <div className="text-sm mt-4">
+              <p>Copy your app's SAML metadata URL.</p>
+
+              <ol className="mt-2 list-decimal list-inside space-y-1">
+                <li>Click on the "Sign On" tab</li>
+                <li>Scroll down to where you see "Metadata URL"</li>
+                <li>Click "Copy"</li>
+              </ol>
+
+              <p className="mt-2">Paste the SAML metadata URL here:</p>
+            </div>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="mt-4 w-full space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="metadataUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>SAML Metadata URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        You should copy-paste this value from Okta.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end">
+                  <Button disabled={success}>Submit</Button>
+                </div>
+              </form>
+            </Form>
+          </>
+        )}
+
+        {success && (
+          <div>
+            <p className="text-sm mt-4">
+              Successfully imported your app's SAML settings from Okta. The last
+              remaining step is to assign users to your Okta app.
+            </p>
+
+            <div className="flex justify-end">
+              <Button asChild>
+                <Link to={next}>Next: Assign users</Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
