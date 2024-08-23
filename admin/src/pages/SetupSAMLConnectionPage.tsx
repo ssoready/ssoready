@@ -75,7 +75,20 @@ const IDPS: IDP[] = [
     displayName: "Google",
     subtitle: "Set up a SAML connection with your Google Workspace.",
     firstSubStep: "todo",
-    steps: [],
+    steps: [
+      {
+        displayName: "Create application",
+      },
+      {
+        displayName: "Download metadata",
+      },
+      {
+        displayName: "Configure application",
+      },
+      {
+        displayName: "Assign users",
+      },
+    ],
   },
   {
     id: "entra",
@@ -83,14 +96,40 @@ const IDPS: IDP[] = [
     subtitle:
       "Set up a SAML connection with your Microsoft Entra (formerly known as Azure Active Directory).",
     firstSubStep: "todo",
-    steps: [],
+    steps: [
+      {
+        displayName: "Create application",
+      },
+      {
+        displayName: "Configure application",
+      },
+      {
+        displayName: "Download metadata",
+      },
+      {
+        displayName: "Assign users",
+      },
+    ],
   },
   {
     id: "other",
     displayName: "Other Identity Provider",
     subtitle: "Set up a SAML connection with any other identity provider.",
     firstSubStep: "todo",
-    steps: [],
+    steps: [
+      {
+        displayName: "Create application",
+      },
+      {
+        displayName: "Configure application",
+      },
+      {
+        displayName: "Copy or download settings",
+      },
+      {
+        displayName: "Assign users",
+      },
+    ],
   },
 ];
 
@@ -127,6 +166,66 @@ const SUB_STEPS: Record<string, SubStep> = {
   "okta-assign-users": {
     idpId: "okta",
     step: 4,
+  },
+  "google-create-app": {
+    idpId: "google",
+    step: 0,
+  },
+  "google-download-metadata": {
+    idpId: "google",
+    step: 1,
+  },
+  "google-configure-app-name": {
+    idpId: "google",
+    step: 2,
+  },
+  "google-configure-acs-url": {
+    idpId: "google",
+    step: 2,
+  },
+  "google-configure-entity-id": {
+    idpId: "google",
+    step: 2,
+  },
+  "google-assign-users": {
+    idpId: "google",
+    step: 3,
+  },
+  "entra-create-app": {
+    idpId: "entra",
+    step: 0,
+  },
+  "entra-configure-entity-id": {
+    idpId: "entra",
+    step: 1,
+  },
+  "entra-configure-acs-url": {
+    idpId: "entra",
+    step: 1,
+  },
+  "entra-download-metadata": {
+    idpId: "entra",
+    step: 2,
+  },
+  "entra-assign-users": {
+    idpId: "entra",
+    step: 3,
+  },
+  "other-create-app": {
+    idpId: "other",
+    step: 0,
+  },
+  "other-configure-app": {
+    idpId: "other",
+    step: 1,
+  },
+  "other-download-metadata": {
+    idpId: "other",
+    step: 2,
+  },
+  "other-assign-users": {
+    idpId: "other",
+    step: 3,
   },
 };
 
