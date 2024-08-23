@@ -93,6 +93,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "okta",
     step: 1,
   },
+  "okta-finish-creating-app": {
+    idpId: "okta",
+    step: 2,
+  },
 };
 
 export function SetupSAMLConnectionPage() {
@@ -159,6 +163,12 @@ export function SetupSAMLConnectionPage() {
           <OktaConfigureAppNameStep />
         )}
         {subStepId === "okta-configure-sso-url" && <OktaConfigureSSOURLStep />}
+        {subStepId === "okta-configure-audience-uri" && (
+          <OktaConfigureAudienceURIStep />
+        )}
+        {subStepId === "okta-finish-creating-app" && (
+          <OktaFinishCreatingAppStep />
+        )}
       </NarrowContainer>
     </>
   );
@@ -390,6 +400,81 @@ function OktaConfigureSSOURLStep() {
         <div className="mt-4 flex justify-end">
           <Button>
             <Link to={next}>Next: Configure SAML Audience URI</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OktaConfigureAudienceURIStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("okta-finish-creating-app");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure Audience URI (SP Entity ID)</CardTitle>
+        <CardDescription>
+          Configure your app's Audience URI (SP Entity ID).
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/okta_configure_audience_uri.gif" />
+
+        <div className="text-sm mt-4 mb-4">
+          <p>Update the "Audience URI (SP Entity ID)" to:</p>
+        </div>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spEntityId} />
+        )}
+
+        <p className="text-sm mt-4">
+          No need to touch any other of the SAML settings. Keep them to the
+          default values Okta chooses.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to={next}>Next: Finish Creating App</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OktaFinishCreatingAppStep() {
+  const next = useSubStepUrl("okta-copy-metadata-url");
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Finish creating app</CardTitle>
+        <CardDescription>Finish creating your Okta app.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/okta_finish_creating_app.gif" />
+
+        <div className="text-sm mt-4">
+          <p>Finish creating your Okta app.</p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Click "Next".</li>
+            <li>Click "This is an internal app that we have created"</li>
+            <li>Click "Finish"</li>
+          </ol>
+        </div>
+
+        <div className="flex justify-end">
+          <Button>
+            <Link to={next}>Next: Copy Metadata URL</Link>
           </Button>
         </div>
       </CardContent>
