@@ -41,6 +41,7 @@ import { useQueryClient } from "@tanstack/react-query";
 interface IDP {
   id: string;
   displayName: string;
+  logoUrl: string;
   subtitle: string;
   firstSubStep: string;
   steps: Step[];
@@ -50,6 +51,7 @@ const IDPS: IDP[] = [
   {
     id: "okta",
     displayName: "Okta",
+    logoUrl: "/logo-okta.svg",
     subtitle: "Set up a SAML connection with your corporate Okta.",
     firstSubStep: "okta-create-app",
     steps: [
@@ -73,6 +75,7 @@ const IDPS: IDP[] = [
   {
     id: "google",
     displayName: "Google",
+    logoUrl: "/logo-google.svg",
     subtitle: "Set up a SAML connection with your Google Workspace.",
     firstSubStep: "todo",
     steps: [
@@ -93,6 +96,7 @@ const IDPS: IDP[] = [
   {
     id: "entra",
     displayName: "Microsoft Entra",
+    logoUrl: "/logo-entra.svg",
     subtitle:
       "Set up a SAML connection with your Microsoft Entra (formerly known as Azure Active Directory).",
     firstSubStep: "todo",
@@ -114,6 +118,7 @@ const IDPS: IDP[] = [
   {
     id: "other",
     displayName: "Other Identity Provider",
+    logoUrl: "/logo-other.svg",
     subtitle: "Set up a SAML connection with any other identity provider.",
     firstSubStep: "todo",
     steps: [
@@ -269,13 +274,16 @@ export function SetupSAMLConnectionPage() {
                   <Link
                     to={`/saml/saml-connections/${samlConnectionId}/setup/${idp.firstSubStep}`}
                     key={idp.id}
-                    className="px-4 py-4 sm:px-6 text-sm flex items-center justify-between cursor-pointer"
+                    className="py-4 pl-4 pr-6 text-sm flex items-center justify-between cursor-pointer"
                   >
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {idp.displayName}
+                    <div className="flex items-center gap-x-4">
+                      <img className="h-8 w-8" src={idp.logoUrl} alt="" />
+                      <div>
+                        <div className="font-medium text-gray-900">
+                          {idp.displayName}
+                        </div>
+                        <div className="text-gray-500">{idp.subtitle}</div>
                       </div>
-                      <div className="text-gray-500">{idp.subtitle}</div>
                     </div>
 
                     <div>
