@@ -46,8 +46,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -76,6 +78,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { DocsLink } from "@/components/DocsLink";
 import { Switch } from "@/components/ui/switch";
+import { SecretCopier } from "@/components/SecretCopier";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -254,6 +257,10 @@ const AdminSetupURLFormSchema = z.object({
 function AdminSetupURLCard() {
   const { organizationId } = useParams();
   const createAdminSetupURLMutation = useMutation(appCreateAdminSetupURL);
+
+  const [setupURL, setSetupURL] = useState("");
+  const [showURLOpen, setShowURLOpen] = useState(false);
+
   const handleSubmit = async (
     values: z.infer<typeof AdminSetupURLFormSchema>,
     e: any,
@@ -266,9 +273,9 @@ function AdminSetupURLCard() {
       canManageScim: values.canManageSCIM,
     });
 
-    await navigator.clipboard.writeText(url);
-    toast("Setup link copied to clipboard");
+    setSetupURL(url);
     setOpen(false);
+    setShowURLOpen(true);
   };
 
   const [open, setOpen] = useState(false);
@@ -369,6 +376,39 @@ function AdminSetupURLCard() {
           </AlertDialog>
         </CardContent>
       </Card>
+
+      <AlertDialog open={showURLOpen} onOpenChange={setShowURLOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Customer self-serve setup url created
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your customer self-serve setup URL has been created.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <SecretCopier
+            placeholder="https://admin.ssoready.com/setup?one-time-token=..."
+            secret={setupURL}
+          />
+
+          <p className="text-sm">
+            Copy this setup URL and give it to your customer. It'll take them to
+            a page where they can configure their SAML/SCIM settings.
+          </p>
+
+          <p className="text-sm">
+            Setup URLs are one-time-use only. If you visit this URL yourself,
+            you'll need to generate a new one to give to your customer.
+          </p>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Done</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
