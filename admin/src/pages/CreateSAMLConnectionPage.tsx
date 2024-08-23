@@ -90,36 +90,12 @@ export function CreateSAMLConnectionPage() {
       <NarrowContainer>
         {idp ? (
           <div className="mt-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create an Okta application</CardTitle>
-                <CardDescription>
-                  Create a new Okta application that will let you log into our
-                  application.
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <img src="/okta_create_app.gif" />
-
-                <div className="text-sm mt-4">
-                  <p>Create a new Okta application:</p>
-
-                  <ol className="mt-2 list-decimal list-inside space-y-1">
-                    <li>
-                      Go to Applications &gt; Applications in the sidebar.
-                    </li>
-                    <li>Click "Create App Integration"</li>
-                    <li>Choose "SAML 2.0"</li>
-                    <li>Click "Next"</li>
-                  </ol>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button>Next step</Button>
-                </div>
-              </CardContent>
-            </Card>
+            {idpId === "okta" && currentStep === 0 && (
+              <OktaCreateAppStep onNextStep={() => setCurrentStep(1)} />
+            )}
+            {idpId === "okta" && currentStep === 1 && (
+              <OktaConfigureAppStep onNextStep={() => setCurrentStep(1)} />
+            )}
           </div>
         ) : (
           <>
@@ -219,5 +195,71 @@ function Steps({ steps, currentStep }: { steps: Step[]; currentStep: number }) {
         ))}
       </div>
     </div>
+  );
+}
+
+function OktaCreateAppStep({ onNextStep }: { onNextStep: () => void }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Create an Okta application</CardTitle>
+        <CardDescription>
+          Create a new Okta application that will let you log into our
+          application.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/okta_create_app.gif" />
+
+        <div className="text-sm mt-4">
+          <p>Create a new Okta application:</p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Go to Applications &gt; Applications in the sidebar.</li>
+            <li>Click "Create App Integration"</li>
+            <li>Choose "SAML 2.0"</li>
+            <li>Click "Next"</li>
+          </ol>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={onNextStep}>Next: Configure application</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OktaConfigureAppStep({ onNextStep }: { onNextStep: () => void }) {
+  const [subStep, setSubStep] = useState(0);
+
+  return (
+    <Card>
+      {subStep === 0 && (
+        <>
+          <CardHeader>
+            <CardTitle>Configure app name</CardTitle>
+            <CardDescription>
+              Configure the name of your Okta app. This is shown to employees.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <img src="/okta_configure_app_name.gif" />
+
+            <div className="text-sm mt-4">
+              <p>Give the new Okta application a name.</p>
+            </div>
+
+            <div className="flex justify-end">
+              <Button onClick={() => setSubStep(1)}>
+                Next: Configure SAML Single Sign-on URL
+              </Button>
+            </div>
+          </CardContent>
+        </>
+      )}
+    </Card>
   );
 }
