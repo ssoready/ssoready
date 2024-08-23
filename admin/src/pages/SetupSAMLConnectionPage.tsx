@@ -124,6 +124,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "okta",
     step: 3,
   },
+  "okta-assign-users": {
+    idpId: "okta",
+    step: 4,
+  },
 };
 
 export function SetupSAMLConnectionPage() {
@@ -197,6 +201,7 @@ export function SetupSAMLConnectionPage() {
           <OktaFinishCreatingAppStep />
         )}
         {subStepId === "okta-copy-metadata-url" && <OktaCopyMetadataURLStep />}
+        {subStepId === "okta-assign-users" && <OktaAssignUsersStep />}
       </NarrowContainer>
     </>
   );
@@ -632,6 +637,48 @@ function OktaCopyMetadataURLStep() {
             </div>
           </div>
         )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function OktaAssignUsersStep() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Assign users to app</CardTitle>
+        <CardDescription>Assign users to your new app.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/okta_assign_users.gif" />
+
+        <div className="text-sm mt-4">
+          <p>
+            Assign users to the new app. If you intend to test the connection
+            yourself, remember to assign yourself too.
+          </p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Click on the "Assignments" tab</li>
+            <li>Click "Assign"</li>
+            <li>
+              Click "Assign to People" or "Assign to Groups", whichever you
+              usually use
+            </li>
+          </ol>
+
+          <p className="mt-2">
+            Once you've assigned the appropriate users to the app, you're done
+            setting up SAML.
+          </p>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to="/">Setup complete!</Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
