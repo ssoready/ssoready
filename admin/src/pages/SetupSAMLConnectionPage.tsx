@@ -1,7 +1,7 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 // import { Steps } from "@/components/Steps";
 import { Link } from "react-router-dom";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, CopyIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router";
+import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import { useQuery } from "@connectrpc/connect-query";
+import { adminGetSAMLConnection } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 
 interface IDP {
   id: string;
@@ -155,6 +158,7 @@ export function SetupSAMLConnectionPage() {
         {subStepId === "okta-configure-app-name" && (
           <OktaConfigureAppNameStep />
         )}
+        {subStepId === "okta-configure-sso-url" && <OktaConfigureSSOURLStep />}
       </NarrowContainer>
     </>
   );
@@ -163,7 +167,7 @@ export function SetupSAMLConnectionPage() {
 function NarrowContainer({ children }: { children?: ReactNode }) {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl mt-8">{children}</div>
+      <div className="mx-auto max-w-3xl mt-8 pb-8">{children}</div>
     </div>
   );
 }
@@ -222,6 +226,61 @@ function Steps({ steps, currentStep }: { steps: Step[]; currentStep: number }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function ValueCopier({ value }: { value: string }) {
+  const [open, setOpen] = useState(false);
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: "top",
+    middleware: [offset(5)],
+  });
+  const { isMounted, styles } = useTransitionStyles(context, {
+    duration: 150,
+    initial: { opacity: 0, transform: "translateY(0)" },
+    open: { opacity: 1, transform: "translateY(-5px)" },
+  });
+
+  useEffect(() => {
+    if (open) {
+      const timeoutId = setTimeout(() => {
+        setOpen(false);
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [open]);
+
+  const handleCopy = useCallback(async () => {
+    await navigator.clipboard.writeText(value);
+    setOpen(true);
+  }, [value, setOpen]);
+
+  return (
+    <div
+      ref={refs.setReference}
+      onClick={handleCopy}
+      className="flex select-none cursor-pointer bg-muted font-mono text-xs border border-input rounded-md px-3 py-2"
+    >
+      <span>{value}</span>
+      <span className="ml-auto flex gap-x-2">
+        <CopyIcon className="cursor-pointer text-muted-foreground hover:text-foreground h-4 w-4" />
+      </span>
+
+      {open && (
+        <div ref={refs.setFloating} style={floatingStyles}>
+          {isMounted && (
+            <div
+              style={styles}
+              className="font-sans bg-black text-white px-2 py-1 text-xs rounded"
+            >
+              Copied!
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -289,6 +348,48 @@ function OktaConfigureAppNameStep() {
         <div className="flex justify-end">
           <Button>
             <Link to={next}>Next: Configure SAML Single Sign-on URL</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OktaConfigureSSOURLStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("okta-configure-audience-uri");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure Single Sign-On URL</CardTitle>
+        <CardDescription>
+          Configure your app's Single Sign-On URL.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/okta_configure_sso_url.gif" />
+
+        <div className="text-sm mt-4 mb-4">
+          <p>Update the "Single sign-on URL" to:</p>
+        </div>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spAcsUrl} />
+        )}
+
+        <p className="text-sm mt-4">
+          Make sure "Use this for Recipient URL and Destination URL" stays
+          checked.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to={next}>Next: Configure SAML Audience URI</Link>
           </Button>
         </div>
       </CardContent>
