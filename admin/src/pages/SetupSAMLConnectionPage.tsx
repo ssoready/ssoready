@@ -209,7 +209,7 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "entra",
     step: 1,
   },
-  "entra-configure-acs-url": {
+  "entra-configure-reply-url": {
     idpId: "entra",
     step: 1,
   },
@@ -329,6 +329,18 @@ export function SetupSAMLConnectionPage() {
           <GoogleConfigureEntityIDStep />
         )}
         {subStepId === "google-assign-users" && <GoogleAssignUsersStep />}
+
+        {subStepId === "entra-create-app" && <EntraCreateAppStep />}
+        {subStepId === "entra-configure-entity-id" && (
+          <EntraConfigureEntityIDStep />
+        )}
+        {subStepId === "entra-configure-reply-url" && (
+          <EntraConfigureReplyURLStep />
+        )}
+        {subStepId === "entra-download-metadata" && (
+          <EntraDownloadMetadataStep />
+        )}
+        {subStepId === "entra-assign-users" && <EntraAssignUsersStep />}
       </NarrowContainer>
     </>
   );
@@ -962,7 +974,7 @@ function GoogleDownloadMetadataStep() {
                   name="metadata"
                   render={({ field: { onChange } }) => (
                     <FormItem>
-                      <FormLabel>IDP Certificate</FormLabel>
+                      <FormLabel>GoogleIDPMetadata.xml</FormLabel>
                       <FormControl>
                         <Input
                           type="file"
@@ -1125,6 +1137,346 @@ function GoogleAssignUsersStep() {
             Allow a minute before users, including yourself, can log in. Google
             Workspace doesn't immediately reflect permissions updates.
           </p>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to="/">Setup complete!</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EntraCreateAppStep() {
+  const next = useSubStepUrl("entra-configure-entity-id");
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Create an Entra application</CardTitle>
+        <CardDescription>
+          Create a new Entra application that will let you log into our
+          application.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/entra_create_app.gif" />
+
+        <div className="text-sm mt-4">
+          <p>Create a new Entra application:</p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Go to entra.microsoft.com.</li>
+            <li>
+              In the sidebar, click "Applications &gt; Enterprise Applications"
+            </li>
+            <li>Click on the "New application"</li>
+            <li>Click "Create your own application"</li>
+            <li>Enter a name into "What's the name of your app?"</li>
+            <li>
+              Keep "Integrate any other application you don't find in the
+              gallery (Non-gallery)" checked.
+            </li>
+            <li>Click "Create"</li>
+          </ol>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <Button asChild>
+            <Link to={next}>Next: Configure application</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EntraConfigureEntityIDStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("entra-configure-reply-url");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure SAML Identifier (Entity ID)</CardTitle>
+        <CardDescription>
+          Configure your app's SAML Identifier (Entity ID).
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/entra_configure_entity_id.gif" />
+
+        <div className="text-sm my-4">
+          <p>Update your Entra application's SAML Identifier (Entity ID):</p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Navigate to your application if you haven't already.</li>
+            <li>In the sidebar for the application, click "Single sign-on"</li>
+            <li>Click on "SAML"</li>
+            <li>
+              Click on "Edit" icon to the right of "Basic SAML Configuration"
+            </li>
+            <li>
+              Click "Add identifier". An input now appears under the "Identifier
+              (Entity ID)" section.
+            </li>
+            <li>Enter the following value:</li>
+          </ol>
+        </div>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spEntityId} />
+        )}
+
+        <p className="text-sm mt-4">
+          No need to click "Add identifier" again. Once you've pasted the value
+          into the input, move to the next step.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to={next}>Next: Configure Reply URL</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EntraConfigureReplyURLStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("entra-download-metadata");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          Configure Reply URL (Assertion Consumer Service URL)
+        </CardTitle>
+        <CardDescription>
+          Configure your app's Reply URL (Assertion Consumer Service URL).
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/entra_configure_reply_url.gif" />
+
+        <div className="text-sm mt-4 mb-4">
+          <p>
+            Under the "Reply URL (Assertion Consumer Service URL)" section,
+            click "Add reply URL". An input now appears. Paste in this value:
+          </p>
+        </div>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spAcsUrl} />
+        )}
+
+        <p className="my-4 text-sm">
+          Keep all other settings to their default values. Click "Save" above.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to={next}>Next: Download metadata</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const entraMetadataFormSchema = z.object({
+  metadata: z
+    .string()
+    .min(1, { message: "Federation Metadata XML file is required." }),
+});
+
+function EntraDownloadMetadataStep() {
+  const { samlConnectionId } = useParams();
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+  const next = useSubStepUrl("entra-assign-users");
+
+  const [success, setSuccess] = useState(false);
+
+  const form = useForm<z.infer<typeof entraMetadataFormSchema>>({
+    resolver: zodResolver(entraMetadataFormSchema),
+    defaultValues: {
+      metadata: "",
+    },
+  });
+
+  const parseSAMLMetadataMutation = useMutation(adminParseSAMLMetadata);
+  const updateSAMLConnectionMutation = useMutation(adminUpdateSAMLConnection);
+  const queryClient = useQueryClient();
+  const handleSubmit = async (
+    data: z.infer<typeof entraMetadataFormSchema>,
+    e: any,
+  ) => {
+    e.preventDefault();
+
+    const { idpRedirectUrl, idpCertificate, idpEntityId } =
+      await parseSAMLMetadataMutation.mutateAsync({ xml: data.metadata });
+
+    await updateSAMLConnectionMutation.mutateAsync({
+      samlConnection: {
+        id: samlConnection!.samlConnection!.id,
+        primary: samlConnection!.samlConnection!.primary,
+        idpRedirectUrl,
+        idpCertificate,
+        idpEntityId,
+      },
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: createConnectQueryKey(adminGetSAMLConnection, {
+        id: samlConnection!.samlConnection!.id,
+      }),
+    });
+
+    setSuccess(true);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Download Federation Metadata XML</CardTitle>
+        <CardDescription>
+          Download your new application's Federation Metadata XML, and upload it
+          here.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/entra_download_metadata.gif" />
+
+        {!success && (
+          <>
+            <div className="text-sm my-4">
+              <p>Download your application's Federation Metadata XML:</p>
+
+              <ol className="mt-2 list-decimal list-inside space-y-1">
+                <li>Navigate to your application if you haven't already.</li>
+                <li>
+                  In the sidebar for your application, click "Single sign-On"
+                </li>
+                <li>Scroll down to the "SAML Certificates" section</li>
+                <li>
+                  Click on the "Download" link next to "Federation Metadata XML"
+                </li>
+                <li>
+                  Your browser now downloads a file. Upload that file here:
+                </li>
+              </ol>
+            </div>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="mt-4 w-full space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="metadata"
+                  render={({ field: { onChange } }) => (
+                    <FormItem>
+                      <FormLabel>Federation Metadata XML</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={async (e) => {
+                            // File inputs are special; they are necessarily "uncontrolled", and their value is a FileList.
+                            // We just copy over the file's contents to the react-form-hook state manually on input change.
+                            if (e.target.files) {
+                              onChange(await e.target.files[0].text());
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        You should upload the file you downloaded from Entra. It
+                        should be a .xml file named after your Entra
+                        application.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end">
+                  <Button>Submit</Button>
+                </div>
+              </form>
+            </Form>
+          </>
+        )}
+
+        {success && (
+          <div>
+            <p className="text-sm mt-4">
+              Successfully imported your app's Federation Metadata XML settings
+              from Okta. The last remaining step is to assign users to your new
+              application.
+            </p>
+
+            <div className="flex justify-end">
+              <Button asChild>
+                <Link to={next}>Next: Assign users</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function EntraAssignUsersStep() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Assign users to app</CardTitle>
+        <CardDescription>Assign users to your new app.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/entra_assign_users.gif" />
+
+        <div className="text-sm mt-4">
+          <p>
+            Assign users to the new app. If you're familiar with Entra
+            application user assignments, use whatever process you normally use.
+          </p>
+
+          <p className="mt-4">
+            Otherwise, the most straightforward process is to:
+          </p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Click on "Users and groups" in the application sidebar</li>
+            <li>Click on "Add user/group"</li>
+            <li>Under "Users", click on "None Selected"</li>
+            <li>
+              Check the checkbox next to each of the users you want to assign to
+              the application. If you intend to test the application yourself,
+              remember to include yourself
+            </li>
+            <li>Click "Select" at the bottom</li>
+            <li>Click "Assign"</li>
+          </ol>
+
+          <p className="mt-2">Your application is now configured.</p>
         </div>
 
         <div className="mt-4 flex justify-end">
