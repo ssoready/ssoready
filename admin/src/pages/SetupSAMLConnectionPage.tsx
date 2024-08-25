@@ -134,7 +134,7 @@ const IDPS: IDP[] = [
         displayName: "Configure application",
       },
       {
-        displayName: "Copy or download settings",
+        displayName: "Download metadata",
       },
       {
         displayName: "Assign users",
@@ -341,6 +341,13 @@ export function SetupSAMLConnectionPage() {
           <EntraDownloadMetadataStep />
         )}
         {subStepId === "entra-assign-users" && <EntraAssignUsersStep />}
+
+        {subStepId === "other-create-app" && <OtherCreateAppStep />}
+        {subStepId === "other-configure-app" && <OtherConfigureAppStep />}
+        {subStepId === "other-download-metadata" && (
+          <OtherDownloadMetadataStep />
+        )}
+        {subStepId === "other-assign-users" && <OtherAssignUsersStep />}
       </NarrowContainer>
     </>
   );
@@ -1477,6 +1484,271 @@ function EntraAssignUsersStep() {
           </ol>
 
           <p className="mt-2">Your application is now configured.</p>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to="/">Setup complete!</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OtherCreateAppStep() {
+  const next = useSubStepUrl("other-configure-app");
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Create a SAML application</CardTitle>
+        <CardDescription>
+          Create a new SAML application inside your Identity Provider.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <p className="text-sm">
+          Inside your Identity Provider, create a new SAML application.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button asChild>
+            <Link to={next}>Next: Configure application</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OtherConfigureAppStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("other-download-metadata");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure SAML application</CardTitle>
+        <CardDescription>
+          Configure your SAML application's Service Provider settings
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <p className="text-sm">
+          Inside your Identity Provider, configure your application's service
+          provider settings.
+        </p>
+
+        <p className="text-sm my-4">
+          Your service provider will ask for a Service Provider ACS URL, or some
+          variation of one of these names:
+        </p>
+
+        <ul className="text-sm mt-2 list-disc list-inside space-y-1">
+          <li>Assertion Consumer Service URL</li>
+          <li>SAML Start URL</li>
+          <li>SAML Sign-On URL</li>
+        </ul>
+
+        <p className="text-sm my-4">
+          These terms all refer to the same concept. Input the following:
+        </p>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spAcsUrl} />
+        )}
+
+        <p className="text-sm my-4">
+          Your service provider will also ask for a Service Provider Entity ID,
+          or some variation of:
+        </p>
+
+        <ul className="text-sm mt-2 list-disc list-inside space-y-1">
+          <li>SP Entity Identifier</li>
+          <li>Audience URI</li>
+          <li>Relying Party Identifier / ID</li>
+        </ul>
+
+        <p className="text-sm my-4">
+          These terms all refer to the same concept. Input the following:
+        </p>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spEntityId} />
+        )}
+
+        <p className="text-sm my-4">
+          After you've configured these values in your Identity Provider, the
+          next step is to download your application's SAML metadata.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button asChild>
+            <Link to={next}>Next: Download metadata</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const otherMetadataFormSchema = z.object({
+  metadata: z
+    .string()
+    .min(1, { message: "SAML Metadata XML file is required." }),
+});
+
+function OtherDownloadMetadataStep() {
+  const { samlConnectionId } = useParams();
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+  const next = useSubStepUrl("other-assign-users");
+
+  const [success, setSuccess] = useState(false);
+
+  const form = useForm<z.infer<typeof otherMetadataFormSchema>>({
+    resolver: zodResolver(otherMetadataFormSchema),
+    defaultValues: {
+      metadata: "",
+    },
+  });
+
+  const parseSAMLMetadataMutation = useMutation(adminParseSAMLMetadata);
+  const updateSAMLConnectionMutation = useMutation(adminUpdateSAMLConnection);
+  const queryClient = useQueryClient();
+  const handleSubmit = async (
+    data: z.infer<typeof otherMetadataFormSchema>,
+    e: any,
+  ) => {
+    e.preventDefault();
+
+    const { idpRedirectUrl, idpCertificate, idpEntityId } =
+      await parseSAMLMetadataMutation.mutateAsync({ xml: data.metadata });
+
+    await updateSAMLConnectionMutation.mutateAsync({
+      samlConnection: {
+        id: samlConnection!.samlConnection!.id,
+        primary: samlConnection!.samlConnection!.primary,
+        idpRedirectUrl,
+        idpCertificate,
+        idpEntityId,
+      },
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: createConnectQueryKey(adminGetSAMLConnection, {
+        id: samlConnection!.samlConnection!.id,
+      }),
+    });
+
+    setSuccess(true);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Download SAML metadata XML</CardTitle>
+        <CardDescription>
+          Download your new application's SAML metadata XML file.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        {!success && (
+          <>
+            <p className="text-sm">
+              Find your new SAML application's metadata XML file. This is a file
+              your Identity Provider allows you to download on each of your SAML
+              applications. Upload that file here.
+            </p>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="mt-4 w-full space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="metadata"
+                  render={({ field: { onChange } }) => (
+                    <FormItem>
+                      <FormLabel>Identity Provider SAML Metadata XML</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={async (e) => {
+                            // File inputs are special; they are necessarily "uncontrolled", and their value is a FileList.
+                            // We just copy over the file's contents to the react-form-hook state manually on input change.
+                            if (e.target.files) {
+                              onChange(await e.target.files[0].text());
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        You should upload the file you downloaded from your
+                        identity provider. It should be a .xml file.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end">
+                  <Button>Submit</Button>
+                </div>
+              </form>
+            </Form>
+          </>
+        )}
+
+        {success && (
+          <div>
+            <p className="text-sm">
+              Successfully imported your app's SAML metadata. The last remaining
+              step is to assign users to your SAML application.
+            </p>
+
+            <div className="mt-4 flex justify-end">
+              <Button asChild>
+                <Link to={next}>Next: Assign users</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function OtherAssignUsersStep() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Assign users to app</CardTitle>
+        <CardDescription>Assign users to your new app.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="text-sm">
+          <p>
+            Assign users to the new app. In your Identity Provider, go to your
+            new SAML application's settings related to user or group
+            assignments. Assign the appropriate users to the application. If you
+            intend to test the application yourself, remember to include
+            yourself.
+          </p>
+
+          <p className="mt-2">
+            Once you've completed this step, your application is now configured.
+          </p>
         </div>
 
         <div className="mt-4 flex justify-end">
