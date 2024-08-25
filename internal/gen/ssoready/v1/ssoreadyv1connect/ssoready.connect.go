@@ -187,6 +187,9 @@ const (
 	// SSOReadyServiceAppUpdateOrganizationProcedure is the fully-qualified name of the
 	// SSOReadyService's AppUpdateOrganization RPC.
 	SSOReadyServiceAppUpdateOrganizationProcedure = "/ssoready.v1.SSOReadyService/AppUpdateOrganization"
+	// SSOReadyServiceAppUpdateAdminSettingsProcedure is the fully-qualified name of the
+	// SSOReadyService's AppUpdateAdminSettings RPC.
+	SSOReadyServiceAppUpdateAdminSettingsProcedure = "/ssoready.v1.SSOReadyService/AppUpdateAdminSettings"
 	// SSOReadyServiceAppCreateAdminSetupURLProcedure is the fully-qualified name of the
 	// SSOReadyService's AppCreateAdminSetupURL RPC.
 	SSOReadyServiceAppCreateAdminSetupURLProcedure = "/ssoready.v1.SSOReadyService/AppCreateAdminSetupURL"
@@ -362,6 +365,7 @@ type SSOReadyServiceClient interface {
 	AppGetOrganization(context.Context, *connect.Request[v1.AppGetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppCreateOrganization(context.Context, *connect.Request[v1.AppCreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppUpdateOrganization(context.Context, *connect.Request[v1.AppUpdateOrganizationRequest]) (*connect.Response[v1.Organization], error)
+	AppUpdateAdminSettings(context.Context, *connect.Request[v1.AppUpdateAdminSettingsRequest]) (*connect.Response[v1.AppUpdateAdminSettingsResponse], error)
 	AppCreateAdminSetupURL(context.Context, *connect.Request[v1.AppCreateAdminSetupURLRequest]) (*connect.Response[v1.AppCreateAdminSetupURLResponse], error)
 	AppListSAMLConnections(context.Context, *connect.Request[v1.AppListSAMLConnectionsRequest]) (*connect.Response[v1.AppListSAMLConnectionsResponse], error)
 	AppGetSAMLConnection(context.Context, *connect.Request[v1.AppGetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
@@ -663,6 +667,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAppUpdateOrganizationProcedure,
 			opts...,
 		),
+		appUpdateAdminSettings: connect.NewClient[v1.AppUpdateAdminSettingsRequest, v1.AppUpdateAdminSettingsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAppUpdateAdminSettingsProcedure,
+			opts...,
+		),
 		appCreateAdminSetupURL: connect.NewClient[v1.AppCreateAdminSetupURLRequest, v1.AppCreateAdminSetupURLResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppCreateAdminSetupURLProcedure,
@@ -865,6 +874,7 @@ type sSOReadyServiceClient struct {
 	appGetOrganization                               *connect.Client[v1.AppGetOrganizationRequest, v1.Organization]
 	appCreateOrganization                            *connect.Client[v1.AppCreateOrganizationRequest, v1.Organization]
 	appUpdateOrganization                            *connect.Client[v1.AppUpdateOrganizationRequest, v1.Organization]
+	appUpdateAdminSettings                           *connect.Client[v1.AppUpdateAdminSettingsRequest, v1.AppUpdateAdminSettingsResponse]
 	appCreateAdminSetupURL                           *connect.Client[v1.AppCreateAdminSetupURLRequest, v1.AppCreateAdminSetupURLResponse]
 	appListSAMLConnections                           *connect.Client[v1.AppListSAMLConnectionsRequest, v1.AppListSAMLConnectionsResponse]
 	appGetSAMLConnection                             *connect.Client[v1.AppGetSAMLConnectionRequest, v1.SAMLConnection]
@@ -1159,6 +1169,11 @@ func (c *sSOReadyServiceClient) AppUpdateOrganization(ctx context.Context, req *
 	return c.appUpdateOrganization.CallUnary(ctx, req)
 }
 
+// AppUpdateAdminSettings calls ssoready.v1.SSOReadyService.AppUpdateAdminSettings.
+func (c *sSOReadyServiceClient) AppUpdateAdminSettings(ctx context.Context, req *connect.Request[v1.AppUpdateAdminSettingsRequest]) (*connect.Response[v1.AppUpdateAdminSettingsResponse], error) {
+	return c.appUpdateAdminSettings.CallUnary(ctx, req)
+}
+
 // AppCreateAdminSetupURL calls ssoready.v1.SSOReadyService.AppCreateAdminSetupURL.
 func (c *sSOReadyServiceClient) AppCreateAdminSetupURL(ctx context.Context, req *connect.Request[v1.AppCreateAdminSetupURLRequest]) (*connect.Response[v1.AppCreateAdminSetupURLResponse], error) {
 	return c.appCreateAdminSetupURL.CallUnary(ctx, req)
@@ -1392,6 +1407,7 @@ type SSOReadyServiceHandler interface {
 	AppGetOrganization(context.Context, *connect.Request[v1.AppGetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppCreateOrganization(context.Context, *connect.Request[v1.AppCreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppUpdateOrganization(context.Context, *connect.Request[v1.AppUpdateOrganizationRequest]) (*connect.Response[v1.Organization], error)
+	AppUpdateAdminSettings(context.Context, *connect.Request[v1.AppUpdateAdminSettingsRequest]) (*connect.Response[v1.AppUpdateAdminSettingsResponse], error)
 	AppCreateAdminSetupURL(context.Context, *connect.Request[v1.AppCreateAdminSetupURLRequest]) (*connect.Response[v1.AppCreateAdminSetupURLResponse], error)
 	AppListSAMLConnections(context.Context, *connect.Request[v1.AppListSAMLConnectionsRequest]) (*connect.Response[v1.AppListSAMLConnectionsResponse], error)
 	AppGetSAMLConnection(context.Context, *connect.Request[v1.AppGetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
@@ -1689,6 +1705,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AppUpdateOrganization,
 		opts...,
 	)
+	sSOReadyServiceAppUpdateAdminSettingsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppUpdateAdminSettingsProcedure,
+		svc.AppUpdateAdminSettings,
+		opts...,
+	)
 	sSOReadyServiceAppCreateAdminSetupURLHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppCreateAdminSetupURLProcedure,
 		svc.AppCreateAdminSetupURL,
@@ -1940,6 +1961,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppCreateOrganizationHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppUpdateOrganizationProcedure:
 			sSOReadyServiceAppUpdateOrganizationHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppUpdateAdminSettingsProcedure:
+			sSOReadyServiceAppUpdateAdminSettingsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppCreateAdminSetupURLProcedure:
 			sSOReadyServiceAppCreateAdminSetupURLHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSAMLConnectionsProcedure:
@@ -2213,6 +2236,10 @@ func (UnimplementedSSOReadyServiceHandler) AppCreateOrganization(context.Context
 
 func (UnimplementedSSOReadyServiceHandler) AppUpdateOrganization(context.Context, *connect.Request[v1.AppUpdateOrganizationRequest]) (*connect.Response[v1.Organization], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppUpdateOrganization is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppUpdateAdminSettings(context.Context, *connect.Request[v1.AppUpdateAdminSettingsRequest]) (*connect.Response[v1.AppUpdateAdminSettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppUpdateAdminSettings is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AppCreateAdminSetupURL(context.Context, *connect.Request[v1.AppCreateAdminSetupURLRequest]) (*connect.Response[v1.AppCreateAdminSetupURLResponse], error) {

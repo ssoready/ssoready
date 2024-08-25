@@ -116,6 +116,16 @@ export class Environment extends Message<Environment> {
    */
   oauthRedirectUri = "";
 
+  /**
+   * @generated from field: string admin_application_name = 6;
+   */
+  adminApplicationName = "";
+
+  /**
+   * @generated from field: string admin_return_url = 7;
+   */
+  adminReturnUrl = "";
+
   constructor(data?: PartialMessage<Environment>) {
     super();
     proto3.util.initPartial(data, this);
@@ -129,6 +139,8 @@ export class Environment extends Message<Environment> {
     { no: 3, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "auth_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "oauth_redirect_uri", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "admin_application_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "admin_return_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Environment {
@@ -4508,6 +4520,86 @@ export class AppUpdateOrganizationRequest extends Message<AppUpdateOrganizationR
 
   static equals(a: AppUpdateOrganizationRequest | PlainMessage<AppUpdateOrganizationRequest> | undefined, b: AppUpdateOrganizationRequest | PlainMessage<AppUpdateOrganizationRequest> | undefined): boolean {
     return proto3.util.equals(AppUpdateOrganizationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppUpdateAdminSettingsRequest
+ */
+export class AppUpdateAdminSettingsRequest extends Message<AppUpdateAdminSettingsRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string admin_application_name = 2;
+   */
+  adminApplicationName = "";
+
+  /**
+   * @generated from field: string admin_return_url = 3;
+   */
+  adminReturnUrl = "";
+
+  constructor(data?: PartialMessage<AppUpdateAdminSettingsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppUpdateAdminSettingsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "admin_application_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "admin_return_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateAdminSettingsRequest {
+    return new AppUpdateAdminSettingsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsRequest {
+    return new AppUpdateAdminSettingsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsRequest {
+    return new AppUpdateAdminSettingsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppUpdateAdminSettingsRequest | PlainMessage<AppUpdateAdminSettingsRequest> | undefined, b: AppUpdateAdminSettingsRequest | PlainMessage<AppUpdateAdminSettingsRequest> | undefined): boolean {
+    return proto3.util.equals(AppUpdateAdminSettingsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppUpdateAdminSettingsResponse
+ */
+export class AppUpdateAdminSettingsResponse extends Message<AppUpdateAdminSettingsResponse> {
+  constructor(data?: PartialMessage<AppUpdateAdminSettingsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppUpdateAdminSettingsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateAdminSettingsResponse {
+    return new AppUpdateAdminSettingsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsResponse {
+    return new AppUpdateAdminSettingsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsResponse {
+    return new AppUpdateAdminSettingsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppUpdateAdminSettingsResponse | PlainMessage<AppUpdateAdminSettingsResponse> | undefined, b: AppUpdateAdminSettingsResponse | PlainMessage<AppUpdateAdminSettingsResponse> | undefined): boolean {
+    return proto3.util.equals(AppUpdateAdminSettingsResponse, a, b);
   }
 }
 

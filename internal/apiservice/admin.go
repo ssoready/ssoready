@@ -12,6 +12,15 @@ import (
 	"github.com/ssoready/ssoready/internal/saml"
 )
 
+func (s *Service) AppUpdateAdminSettings(ctx context.Context, req *connect.Request[ssoreadyv1.AppUpdateAdminSettingsRequest]) (*connect.Response[ssoreadyv1.AppUpdateAdminSettingsResponse], error) {
+	res, err := s.Store.AppUpdateAdminSettings(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}
+
 func (s *Service) AppCreateAdminSetupURL(ctx context.Context, req *connect.Request[ssoreadyv1.AppCreateAdminSetupURLRequest]) (*connect.Response[ssoreadyv1.AppCreateAdminSetupURLResponse], error) {
 	res, err := s.Store.AppCreateAdminSetupURL(ctx, req.Msg)
 	if err != nil {

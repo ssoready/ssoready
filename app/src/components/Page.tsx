@@ -11,6 +11,8 @@ import {
   EllipsisVerticalIcon,
   SettingsIcon,
   GlobeIcon,
+  PaletteIcon,
+  SwatchBookIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
@@ -74,6 +76,16 @@ export function Page() {
               >
                 <GlobeIcon className="h-4 w-4" />
                 <span>Custom Domains</span>
+              </Link>
+            )}
+
+            {environmentId && (
+              <Link
+                to={`/environments/${environmentId}/branding`}
+                className="flex gap-2 items-center p-2 hover:bg-gray-100 rounded-sm text-sm"
+              >
+                <SwatchBookIcon className="h-4 w-4" />
+                <span>Branding</span>
               </Link>
             )}
           </div>

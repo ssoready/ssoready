@@ -72,6 +72,7 @@ const (
 	SSOReadyService_AppGetOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/AppGetOrganization"
 	SSOReadyService_AppCreateOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppCreateOrganization"
 	SSOReadyService_AppUpdateOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppUpdateOrganization"
+	SSOReadyService_AppUpdateAdminSettings_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppUpdateAdminSettings"
 	SSOReadyService_AppCreateAdminSetupURL_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppCreateAdminSetupURL"
 	SSOReadyService_AppListSAMLConnections_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppListSAMLConnections"
 	SSOReadyService_AppGetSAMLConnection_FullMethodName                             = "/ssoready.v1.SSOReadyService/AppGetSAMLConnection"
@@ -191,6 +192,7 @@ type SSOReadyServiceClient interface {
 	AppGetOrganization(ctx context.Context, in *AppGetOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
 	AppCreateOrganization(ctx context.Context, in *AppCreateOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
 	AppUpdateOrganization(ctx context.Context, in *AppUpdateOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
+	AppUpdateAdminSettings(ctx context.Context, in *AppUpdateAdminSettingsRequest, opts ...grpc.CallOption) (*AppUpdateAdminSettingsResponse, error)
 	AppCreateAdminSetupURL(ctx context.Context, in *AppCreateAdminSetupURLRequest, opts ...grpc.CallOption) (*AppCreateAdminSetupURLResponse, error)
 	AppListSAMLConnections(ctx context.Context, in *AppListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AppListSAMLConnectionsResponse, error)
 	AppGetSAMLConnection(ctx context.Context, in *AppGetSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
@@ -750,6 +752,16 @@ func (c *sSOReadyServiceClient) AppUpdateOrganization(ctx context.Context, in *A
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AppUpdateAdminSettings(ctx context.Context, in *AppUpdateAdminSettingsRequest, opts ...grpc.CallOption) (*AppUpdateAdminSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppUpdateAdminSettingsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppUpdateAdminSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AppCreateAdminSetupURL(ctx context.Context, in *AppCreateAdminSetupURLRequest, opts ...grpc.CallOption) (*AppCreateAdminSetupURLResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppCreateAdminSetupURLResponse)
@@ -1128,6 +1140,7 @@ type SSOReadyServiceServer interface {
 	AppGetOrganization(context.Context, *AppGetOrganizationRequest) (*Organization, error)
 	AppCreateOrganization(context.Context, *AppCreateOrganizationRequest) (*Organization, error)
 	AppUpdateOrganization(context.Context, *AppUpdateOrganizationRequest) (*Organization, error)
+	AppUpdateAdminSettings(context.Context, *AppUpdateAdminSettingsRequest) (*AppUpdateAdminSettingsResponse, error)
 	AppCreateAdminSetupURL(context.Context, *AppCreateAdminSetupURLRequest) (*AppCreateAdminSetupURLResponse, error)
 	AppListSAMLConnections(context.Context, *AppListSAMLConnectionsRequest) (*AppListSAMLConnectionsResponse, error)
 	AppGetSAMLConnection(context.Context, *AppGetSAMLConnectionRequest) (*SAMLConnection, error)
@@ -1322,6 +1335,9 @@ func (UnimplementedSSOReadyServiceServer) AppCreateOrganization(context.Context,
 }
 func (UnimplementedSSOReadyServiceServer) AppUpdateOrganization(context.Context, *AppUpdateOrganizationRequest) (*Organization, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppUpdateOrganization not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppUpdateAdminSettings(context.Context, *AppUpdateAdminSettingsRequest) (*AppUpdateAdminSettingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppUpdateAdminSettings not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AppCreateAdminSetupURL(context.Context, *AppCreateAdminSetupURLRequest) (*AppCreateAdminSetupURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppCreateAdminSetupURL not implemented")
@@ -2367,6 +2383,24 @@ func _SSOReadyService_AppUpdateOrganization_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AppUpdateAdminSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppUpdateAdminSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppUpdateAdminSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppUpdateAdminSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppUpdateAdminSettings(ctx, req.(*AppUpdateAdminSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AppCreateAdminSetupURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AppCreateAdminSetupURLRequest)
 	if err := dec(in); err != nil {
@@ -3103,6 +3137,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppUpdateOrganization",
 			Handler:    _SSOReadyService_AppUpdateOrganization_Handler,
+		},
+		{
+			MethodName: "AppUpdateAdminSettings",
+			Handler:    _SSOReadyService_AppUpdateAdminSettings_Handler,
 		},
 		{
 			MethodName: "AppCreateAdminSetupURL",

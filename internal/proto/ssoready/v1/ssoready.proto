@@ -210,6 +210,7 @@ service SSOReadyService {
   rpc AppCreateOrganization(AppCreateOrganizationRequest) returns (Organization);
   rpc AppUpdateOrganization(AppUpdateOrganizationRequest) returns (Organization);
 
+  rpc AppUpdateAdminSettings(AppUpdateAdminSettingsRequest) returns (AppUpdateAdminSettingsResponse);
   rpc AppCreateAdminSetupURL(AppCreateAdminSetupURLRequest) returns (AppCreateAdminSetupURLResponse);
 
   rpc AppListSAMLConnections(AppListSAMLConnectionsRequest) returns (AppListSAMLConnectionsResponse);
@@ -259,6 +260,8 @@ message Environment {
   string display_name = 3;
   string auth_url = 4;
   string oauth_redirect_uri = 5;
+  string admin_application_name = 6;
+  string admin_return_url = 7;
 }
 
 message APIKey {
@@ -917,6 +920,14 @@ message AppCreateOrganizationRequest {
 message AppUpdateOrganizationRequest {
   Organization organization = 1;
 }
+
+message AppUpdateAdminSettingsRequest {
+  string environment_id = 1;
+  string admin_application_name = 2;
+  string admin_return_url = 3;
+}
+
+message AppUpdateAdminSettingsResponse {}
 
 message AppCreateAdminSetupURLRequest {
   string organization_id = 1;

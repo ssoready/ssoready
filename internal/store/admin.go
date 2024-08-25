@@ -19,6 +19,41 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
+func (s *Store) AppUpdateAdminSettings(ctx context.Context, req *ssoreadyv1.AppUpdateAdminSettingsRequest) (*ssoreadyv1.AppUpdateAdminSettingsResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	envID, err := idformat.Environment.Parse(req.EnvironmentId)
+	if err != nil {
+		return nil, fmt.Errorf("parse environment id: %w", err)
+	}
+
+	// authz check
+	if _, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                envID,
+	}); err != nil {
+		return nil, fmt.Errorf("get environment: %w", err)
+	}
+
+	if _, err := q.UpdateEnvironmentAdminSettings(ctx, queries.UpdateEnvironmentAdminSettingsParams{
+		AdminApplicationName: &req.AdminApplicationName,
+		AdminReturnUrl:       &req.AdminReturnUrl,
+		ID:                   envID,
+	}); err != nil {
+		return nil, fmt.Errorf("update environment admin settings: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &ssoreadyv1.AppUpdateAdminSettingsResponse{}, nil
+}
+
 func (s *Store) AppCreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.AppCreateAdminSetupURLRequest) (*ssoreadyv1.AppCreateAdminSetupURLResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
