@@ -1,7 +1,12 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 // import { Steps } from "@/components/Steps";
 import { Link } from "react-router-dom";
-import { CheckIcon, ChevronRightIcon, CopyIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CopyIcon,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -317,6 +322,13 @@ export function SetupSAMLConnectionPage() {
         {subStepId === "google-download-metadata" && (
           <GoogleDownloadMetadataStep />
         )}
+        {subStepId === "google-configure-acs-url" && (
+          <GoogleConfigureACSURLStep />
+        )}
+        {subStepId === "google-configure-entity-id" && (
+          <GoogleConfigureEntityIDStep />
+        )}
+        {subStepId === "google-assign-users" && <GoogleAssignUsersStep />}
       </NarrowContainer>
     </>
   );
@@ -995,6 +1007,131 @@ function GoogleDownloadMetadataStep() {
             </div>
           </div>
         )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function GoogleConfigureACSURLStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("google-configure-entity-id");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure ACS URL</CardTitle>
+        <CardDescription>Configure your app's ACS URL.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/google_configure_acs_url.gif" />
+
+        <div className="text-sm mt-4 mb-4">
+          <p>Update the "ACS URL" to:</p>
+        </div>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spAcsUrl} />
+        )}
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to={next}>Next: Assign Users</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function GoogleConfigureEntityIDStep() {
+  const { samlConnectionId } = useParams();
+  const next = useSubStepUrl("google-assign-users");
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure Entity ID</CardTitle>
+        <CardDescription>Configure your app's Entity ID.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/google_configure_entity_id.gif" />
+
+        <div className="text-sm mt-4 mb-4">
+          <p>Update the "Entity ID" to:</p>
+        </div>
+
+        {samlConnection && (
+          <ValueCopier value={samlConnection.samlConnection!.spEntityId} />
+        )}
+
+        <p className="text-sm mt-4">
+          Then click "Continue", and then "Finish". You have now configured the
+          SAML application. The last step is to assign users to the application.
+        </p>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to={next}>Next: Assign Users</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function GoogleAssignUsersStep() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Assign users to app</CardTitle>
+        <CardDescription>Assign users to your new app.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/google_assign_users.gif" />
+
+        <div className="text-sm mt-4">
+          <p>
+            Assign users to the new app. If you're familiar with Google
+            Workspace organizational units, use whatever process you normally
+            use.
+          </p>
+
+          <p className="mt-4">
+            If you're not familiar with Google Workspace organizational units,
+            or you don't normally use them, here's the simplest way to assign
+            users to your new Google Workspace SAML application:
+          </p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>
+              To the right of "User access" is a chevron pointing down (
+              <ChevronDownIcon className="inline h-4 w-4" />
+              ). Click on it.
+            </li>
+            <li>Click on "ON for everyone"</li>
+            <li>Click "Save".</li>
+          </ol>
+
+          <p className="mt-2">
+            Allow a minute before users, including yourself, can log in. Google
+            Workspace doesn't immediately reflect permissions updates.
+          </p>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <Button>
+            <Link to="/">Setup complete!</Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
