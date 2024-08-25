@@ -77,7 +77,7 @@ const IDPS: IDP[] = [
     displayName: "Google",
     logoUrl: "/logo-google.svg",
     subtitle: "Set up a SAML connection with your Google Workspace.",
-    firstSubStep: "todo",
+    firstSubStep: "google-create-app",
     steps: [
       {
         displayName: "Create application",
@@ -99,7 +99,7 @@ const IDPS: IDP[] = [
     logoUrl: "/logo-entra.svg",
     subtitle:
       "Set up a SAML connection with your Microsoft Entra (formerly known as Azure Active Directory).",
-    firstSubStep: "todo",
+    firstSubStep: "entra-create-app",
     steps: [
       {
         displayName: "Create application",
@@ -120,7 +120,7 @@ const IDPS: IDP[] = [
     displayName: "Other Identity Provider",
     logoUrl: "/logo-other.svg",
     subtitle: "Set up a SAML connection with any other identity provider.",
-    firstSubStep: "todo",
+    firstSubStep: "other-create-app",
     steps: [
       {
         displayName: "Create application",
@@ -176,13 +176,13 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "google",
     step: 0,
   },
+  "google-configure-app-name": {
+    idpId: "google",
+    step: 0,
+  },
   "google-download-metadata": {
     idpId: "google",
     step: 1,
-  },
-  "google-configure-app-name": {
-    idpId: "google",
-    step: 2,
   },
   "google-configure-acs-url": {
     idpId: "google",
@@ -309,6 +309,14 @@ export function SetupSAMLConnectionPage() {
         )}
         {subStepId === "okta-copy-metadata-url" && <OktaCopyMetadataURLStep />}
         {subStepId === "okta-assign-users" && <OktaAssignUsersStep />}
+
+        {subStepId === "google-create-app" && <GoogleCreateAppStep />}
+        {subStepId === "google-configure-app-name" && (
+          <GoogleConfigureAppNameStep />
+        )}
+        {subStepId === "google-download-metadata" && (
+          <GoogleDownloadMetadataStep />
+        )}
       </NarrowContainer>
     </>
   );
@@ -786,6 +794,207 @@ function OktaAssignUsersStep() {
             <Link to="/">Setup complete!</Link>
           </Button>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function GoogleCreateAppStep() {
+  const next = useSubStepUrl("google-configure-app-name");
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Create a Google SAML application</CardTitle>
+        <CardDescription>
+          Create a new Google SAML application that will let you log into our
+          application.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/google_create_app.gif" />
+
+        <div className="text-sm mt-4">
+          <p>Create a new Google SAML application:</p>
+
+          <ol className="mt-2 list-decimal list-inside space-y-1">
+            <li>Go to admin.google.com.</li>
+            <li>In the sidebar, click "Apps &gt; Web and mobile apps"</li>
+            <li>Click on the "Add app" dropdown</li>
+            <li>Click "Add custom SAML app"</li>
+          </ol>
+        </div>
+
+        <div className="flex justify-end">
+          <Button asChild>
+            <Link to={next}>Next: Configure application name</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function GoogleConfigureAppNameStep() {
+  const next = useSubStepUrl("google-download-metadata");
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Configure app name</CardTitle>
+        <CardDescription>
+          Configure the name of your Google app. This is shown to employees.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/google_configure_app_name.gif" />
+
+        <div className="text-sm mt-4 mb-4">
+          <p>
+            Give the new Google application a name. Optionally, provide a
+            description and upload a logo. Then click "Continue".
+          </p>
+        </div>
+
+        <div className="flex justify-end">
+          <Button>
+            <Link to={next}>Next: Download Metadata</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const googleMetadataFormSchema = z.object({
+  metadata: z
+    .string()
+    .min(1, { message: "GoogleIDPMetadata.xml is required." }),
+});
+
+function GoogleDownloadMetadataStep() {
+  const { samlConnectionId } = useParams();
+  const { data: samlConnection } = useQuery(adminGetSAMLConnection, {
+    id: samlConnectionId,
+  });
+  const next = useSubStepUrl("google-configure-acs-url");
+
+  const [success, setSuccess] = useState(false);
+
+  const form = useForm<z.infer<typeof googleMetadataFormSchema>>({
+    resolver: zodResolver(googleMetadataFormSchema),
+    defaultValues: {
+      metadata: "",
+    },
+  });
+
+  const parseSAMLMetadataMutation = useMutation(adminParseSAMLMetadata);
+  const updateSAMLConnectionMutation = useMutation(adminUpdateSAMLConnection);
+  const queryClient = useQueryClient();
+  const handleSubmit = async (
+    data: z.infer<typeof googleMetadataFormSchema>,
+    e: any,
+  ) => {
+    e.preventDefault();
+
+    const { idpRedirectUrl, idpCertificate, idpEntityId } =
+      await parseSAMLMetadataMutation.mutateAsync({ xml: data.metadata });
+
+    await updateSAMLConnectionMutation.mutateAsync({
+      samlConnection: {
+        id: samlConnection!.samlConnection!.id,
+        primary: samlConnection!.samlConnection!.primary,
+        idpRedirectUrl,
+        idpCertificate,
+        idpEntityId,
+      },
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: createConnectQueryKey(adminGetSAMLConnection, {
+        id: samlConnection!.samlConnection!.id,
+      }),
+    });
+
+    setSuccess(true);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Download IdP metadata</CardTitle>
+        <CardDescription>
+          Download your new application's IdP metadata, and upload it here.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <img src="/google_download_metadata.gif" />
+
+        {!success && (
+          <>
+            <div className="text-sm mt-4 mb-4">
+              <p>
+                Click on "Download Metadata". You'll download a
+                GoogleIDPMetadata.xml file. Upload that file here.
+              </p>
+            </div>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="mt-4 w-full space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="metadata"
+                  render={({ field: { onChange } }) => (
+                    <FormItem>
+                      <FormLabel>IDP Certificate</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={async (e) => {
+                            // File inputs are special; they are necessarily "uncontrolled", and their value is a FileList.
+                            // We just copy over the file's contents to the react-form-hook state manually on input change.
+                            if (e.target.files) {
+                              onChange(await e.target.files[0].text());
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        You should upload the GoogleIDPMetadata.xml file you
+                        downloaded from Google.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end">
+                  <Button>Submit</Button>
+                </div>
+              </form>
+            </Form>
+          </>
+        )}
+
+        {success && (
+          <div>
+            <p className="text-sm mt-4">
+              Successfully imported your app's SAML settings from Google. Now
+              click "Continue" in Google, if you haven't already. You should see
+              a screen titled "Service provider details".
+            </p>
+
+            <div className="flex justify-end">
+              <Button asChild>
+                <Link to={next}>Next: Configure app</Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -5991,6 +5991,11 @@ export class AdminParseSAMLMetadataRequest extends Message<AdminParseSAMLMetadat
    */
   url = "";
 
+  /**
+   * @generated from field: string xml = 2;
+   */
+  xml = "";
+
   constructor(data?: PartialMessage<AdminParseSAMLMetadataRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -6000,6 +6005,7 @@ export class AdminParseSAMLMetadataRequest extends Message<AdminParseSAMLMetadat
   static readonly typeName = "ssoready.v1.AdminParseSAMLMetadataRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "xml", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminParseSAMLMetadataRequest {

@@ -72,23 +72,30 @@ func (s *Service) AdminUpdateSAMLConnection(ctx context.Context, req *connect.Re
 }
 
 func (s *Service) AdminParseSAMLMetadata(ctx context.Context, req *connect.Request[ssoreadyv1.AdminParseSAMLMetadataRequest]) (*connect.Response[ssoreadyv1.AdminParseSAMLMetadataResponse], error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, req.Msg.Url, nil)
-	if err != nil {
-		return nil, err
+	var metadata []byte
+	if req.Msg.Url != "" {
+		httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, req.Msg.Url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err := s.SAMLMetadataHTTPClient.Do(httpReq)
+		if err != nil {
+			return nil, err
+		}
+		defer httpRes.Body.Close()
+
+		body, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		metadata = body
+	} else if req.Msg.Xml != "" {
+		metadata = []byte(req.Msg.Xml)
 	}
 
-	httpRes, err := s.SAMLMetadataHTTPClient.Do(httpReq)
-	if err != nil {
-		return nil, err
-	}
-	defer httpRes.Body.Close()
-
-	body, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	metadataRes, err := saml.ParseMetadata(body)
+	metadataRes, err := saml.ParseMetadata(metadata)
 	if err != nil {
 		return nil, err
 	}
