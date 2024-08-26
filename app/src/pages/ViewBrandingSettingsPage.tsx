@@ -16,6 +16,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -47,6 +48,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
 
 export function ViewBrandingSettingsPage() {
   const { environmentId } = useParams();
@@ -98,16 +101,68 @@ export function ViewBrandingSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Preview</CardTitle>
+          <CardDescription>
+            Here's a preview of what your customers will see when they're
+            setting up SAML or SCIM settings.
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
-          {environmentAdminSettings?.adminLogoUrl && (
-            <img
-              className="h-8 w-8"
-              src={environmentAdminSettings.adminLogoUrl}
-              alt=""
-            />
-          )}
+          <div className="border bg-muted p-8">
+            <Card>
+              <nav className="border-b border-gray-200 bg-white rounded-t-lg">
+                <div className="mx-4 flex h-16 justify-between">
+                  <div className="flex">
+                    <span className="flex flex-shrink-0 items-center text-sm">
+                      {environmentAdminSettings?.adminLogoUrl && (
+                        <img
+                          className="h-8 w-8 mr-4"
+                          src={environmentAdminSettings.adminLogoUrl}
+                          alt=""
+                        />
+                      )}
+
+                      {environmentAdminSettings?.adminApplicationName
+                        ? environmentAdminSettings.adminApplicationName
+                        : "Settings Panel"}
+                    </span>
+
+                    <div className="ml-6 flex space-x-8">
+                      <span className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                        SAML Settings
+                      </span>
+                      <span className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                        SCIM Settings
+                      </span>
+                    </div>
+                  </div>
+
+                  {environmentAdminSettings?.adminReturnUrl && (
+                    <Link
+                      to={environmentAdminSettings.adminReturnUrl}
+                      className="flex items-center text-sm ml-auto"
+                    >
+                      {environmentAdminSettings?.adminApplicationName
+                        ? `Back to ${environmentAdminSettings.adminApplicationName}`
+                        : "Exit"}
+                    </Link>
+                  )}
+                </div>
+              </nav>
+
+              <CardHeader>
+                <Skeleton className="animate-none h-6 w-32 rounded" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="animate-none h-4 w-full mb-2" />
+                <Skeleton className="animate-none h-4 w-full mb-2" />
+                <Skeleton className="animate-none h-4 w-full mb-2" />
+              </CardContent>
+              <CardFooter>
+                <Skeleton className="animate-none h-8 w-24 rounded" />
+              </CardFooter>
+            </Card>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -154,14 +209,16 @@ function EditSettingsAlertDialog({
       adminReturnUrl: values.returnUrl,
     });
 
-    const { uploadUrl } = await updateAdminSettingsLogoMutation.mutateAsync({
-      environmentId,
-    });
+    if (logo.current!.files![0]) {
+      const { uploadUrl } = await updateAdminSettingsLogoMutation.mutateAsync({
+        environmentId,
+      });
 
-    await fetch(uploadUrl, {
-      method: "PUT",
-      body: logo.current!.files![0],
-    });
+      await fetch(uploadUrl, {
+        method: "PUT",
+        body: logo.current!.files![0],
+      });
+    }
 
     await queryClient.invalidateQueries({
       queryKey: createConnectQueryKey(appGetAdminSettings, {
@@ -196,6 +253,9 @@ function EditSettingsAlertDialog({
                     <FormControl>
                       <Input placeholder="Your Company Name" {...field} />
                     </FormControl>
+                    <FormDescription>
+                      A display name for your application / company.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -214,9 +274,9 @@ function EditSettingsAlertDialog({
                       />
                     </FormControl>
                     <FormDescription>
-                      After a SAML login, your users get redirected to this
-                      address. You usually want to point this at an
-                      SSOReady-specific page on your web application.
+                      When your customers are done setting things up, this is
+                      where an "Exit this setup UI" link should take them. Make
+                      this point at your web application.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -232,7 +292,7 @@ function EditSettingsAlertDialog({
                     <FormControl>
                       <Input type="file" accept="image/*" ref={logo} />
                     </FormControl>
-                    <FormDescription>asdf</FormDescription>
+                    <FormDescription>Your company's logo.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
