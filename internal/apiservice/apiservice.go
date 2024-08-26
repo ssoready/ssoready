@@ -3,6 +3,7 @@ package apiservice
 import (
 	"net/http"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/resend/resend-go/v2"
 	"github.com/ssoready/ssoready/internal/flyio"
 	"github.com/ssoready/ssoready/internal/gen/ssoready/v1/ssoreadyv1connect"
@@ -27,5 +28,8 @@ type Service struct {
 	FlyioClient                  *flyio.Client
 	FlyioAuthProxyAppID          string
 	FlyioAuthProxyAppCNAMEValue  string
+	S3Client                     *s3.Client
+	S3PresignClient              *s3.PresignClient
+	AdminLogosS3BucketName       string
 	ssoreadyv1connect.UnimplementedSSOReadyServiceHandler
 }

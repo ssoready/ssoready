@@ -19,6 +19,27 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
+func (s *Store) AppGetAdminSettings(ctx context.Context, req *ssoreadyv1.AppGetAdminSettingsRequest) (*ssoreadyv1.AppGetAdminSettingsResponse, error) {
+	envID, err := idformat.Environment.Parse(req.EnvironmentId)
+	if err != nil {
+		return nil, fmt.Errorf("parse environment id: %w", err)
+	}
+
+	qEnv, err := s.q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                envID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get environment: %w", err)
+	}
+
+	return &ssoreadyv1.AppGetAdminSettingsResponse{
+		AdminApplicationName: derefOrEmpty(qEnv.AdminApplicationName),
+		AdminReturnUrl:       derefOrEmpty(qEnv.AdminReturnUrl),
+		AdminLogoUrl:         "", // set by apiservice, requires s3 api call
+	}, nil
+}
+
 func (s *Store) AppUpdateAdminSettings(ctx context.Context, req *ssoreadyv1.AppUpdateAdminSettingsRequest) (*ssoreadyv1.AppUpdateAdminSettingsResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
@@ -179,11 +200,39 @@ func (s *Store) AdminGetAdminSession(ctx context.Context, sessionToken string) (
 	}, nil
 }
 
-func (s *Store) AdminWhoami(ctx context.Context, req *ssoreadyv1.AdminWhoamiRequest) (*ssoreadyv1.AdminWhoamiResponse, error) {
+type AdminWhoamiResponse struct {
+	CanManageSAML        bool
+	CanManageSCIM        bool
+	AdminApplicationName string
+	AdminReturnURL       string
+	EnvironmentID        string
+}
+
+func (s *Store) AdminWhoami(ctx context.Context, req *ssoreadyv1.AdminWhoamiRequest) (*AdminWhoamiResponse, error) {
 	tokenAuthnData := authn.FullContextData(ctx).AdminAccessToken
-	return &ssoreadyv1.AdminWhoamiResponse{
-		CanManageSaml: tokenAuthnData.CanManageSAML,
-		CanManageScim: tokenAuthnData.CanManageSCIM,
+
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	qOrg, err := q.GetOrganizationByID(ctx, tokenAuthnData.OrganizationID)
+	if err != nil {
+		return nil, fmt.Errorf("get organization by id: %w", err)
+	}
+
+	qEnv, err := q.GetEnvironmentByID(ctx, qOrg.EnvironmentID)
+	if err != nil {
+		return nil, fmt.Errorf("get environment by id: %w", err)
+	}
+
+	return &AdminWhoamiResponse{
+		CanManageSAML:        tokenAuthnData.CanManageSAML,
+		CanManageSCIM:        tokenAuthnData.CanManageSCIM,
+		AdminApplicationName: derefOrEmpty(qEnv.AdminApplicationName),
+		AdminReturnURL:       derefOrEmpty(qEnv.AdminReturnUrl),
+		EnvironmentID:        idformat.Environment.Format(qEnv.ID),
 	}, nil
 }
 

@@ -152,12 +152,10 @@ func (s *Store) UpdateEnvironment(ctx context.Context, req *ssoreadyv1.UpdateEnv
 
 func parseEnvironment(qEnv queries.Environment) *ssoreadyv1.Environment {
 	return &ssoreadyv1.Environment{
-		Id:                   idformat.Environment.Format(qEnv.ID),
-		RedirectUrl:          derefOrEmpty(qEnv.RedirectUrl),
-		DisplayName:          derefOrEmpty(qEnv.DisplayName),
-		AuthUrl:              derefOrEmpty(qEnv.AuthUrl),
-		OauthRedirectUri:     derefOrEmpty(qEnv.OauthRedirectUri),
-		AdminApplicationName: derefOrEmpty(qEnv.AdminApplicationName),
-		AdminReturnUrl:       derefOrEmpty(qEnv.AdminReturnUrl),
+		Id:               idformat.Environment.Format(qEnv.ID),
+		RedirectUrl:      derefOrEmpty(qEnv.RedirectUrl),
+		DisplayName:      derefOrEmpty(qEnv.DisplayName),
+		AuthUrl:          derefOrEmpty(qEnv.AuthUrl),
+		OauthRedirectUri: derefOrEmpty(qEnv.OauthRedirectUri),
 	}
 }

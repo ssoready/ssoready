@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router";
 import {
   createConnectQueryKey,
@@ -6,7 +6,9 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appGetAdminSettings,
   appUpdateAdminSettings,
+  appUpdateAdminSettingsLogo,
   getEnvironment,
   updateEnvironment,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -18,7 +20,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { z } from "zod";
-import { Environment } from "@/gen/ssoready/v1/ssoready_pb";
+import {
+  AppGetAdminSettingsResponse,
+  Environment,
+} from "@/gen/ssoready/v1/ssoready_pb";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -45,47 +50,67 @@ import { Input } from "@/components/ui/input";
 
 export function ViewBrandingSettingsPage() {
   const { environmentId } = useParams();
-  const { data: environment } = useQuery(getEnvironment, {
-    id: environmentId,
+  const { data: environmentAdminSettings } = useQuery(appGetAdminSettings, {
+    environmentId,
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>Self-Serve Setup UI Branding</CardTitle>
+    <div className="flex flex-col gap-y-8">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Self-Serve Setup UI Branding</CardTitle>
 
-          <div>
-            {environment && (
-              <EditSettingsAlertDialog environment={environment} />
-            )}
+            <div>
+              {environmentAdminSettings && (
+                <EditSettingsAlertDialog
+                  environmentAdminSettings={environmentAdminSettings}
+                />
+              )}
+            </div>
           </div>
-        </div>
-        <CardDescription>
-          SSOReady can host a UI on your behalf that lets your customers
-          configure their SAML and SCIM settings on their own. Here, you can
-          make that UI look on-brand for your company.
-        </CardDescription>
-      </CardHeader>
+          <CardDescription>
+            SSOReady can host a UI on your behalf that lets your customers
+            configure their SAML and SCIM settings on their own. Here, you can
+            make that UI look on-brand for your company.
+          </CardDescription>
+        </CardHeader>
 
-      <CardContent>
-        <div className="grid grid-cols-4 gap-y-2 items-center">
-          <div className="text-sm col-span-1 text-muted-foreground">
-            Application Name
-          </div>
-          <div className="text-sm col-span-3">
-            {environment?.adminApplicationName}
-          </div>
+        <CardContent>
+          <div className="grid grid-cols-4 gap-y-2 items-center">
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Application Name
+            </div>
+            <div className="text-sm col-span-3">
+              {environmentAdminSettings?.adminApplicationName}
+            </div>
 
-          <div className="text-sm col-span-1 text-muted-foreground">
-            Return URL
+            <div className="text-sm col-span-1 text-muted-foreground">
+              Return URL
+            </div>
+            <div className="text-sm col-span-3">
+              {environmentAdminSettings?.adminReturnUrl}
+            </div>
           </div>
-          <div className="text-sm col-span-3">
-            {environment?.adminReturnUrl}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Preview</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          {environmentAdminSettings?.adminLogoUrl && (
+            <img
+              className="h-8 w-8"
+              src={environmentAdminSettings.adminLogoUrl}
+              alt=""
+            />
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
@@ -97,34 +122,51 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Return URL is required." })
     .url({ message: "Return URL must be a valid URL." }),
+  logo: z.string().optional(),
 });
 
 function EditSettingsAlertDialog({
-  environment,
+  environmentAdminSettings,
 }: {
-  environment: Environment;
+  environmentAdminSettings: AppGetAdminSettingsResponse;
 }) {
+  const { environmentId } = useParams();
+  const logo = useRef<HTMLInputElement>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      applicationName: environment.adminApplicationName,
-      returnUrl: environment.adminReturnUrl,
+      applicationName: environmentAdminSettings.adminApplicationName,
+      returnUrl: environmentAdminSettings.adminReturnUrl,
     },
   });
 
   const [open, setOpen] = useState(false);
   const updateAdminSettingsMutation = useMutation(appUpdateAdminSettings);
+  const updateAdminSettingsLogoMutation = useMutation(
+    appUpdateAdminSettingsLogo,
+  );
   const queryClient = useQueryClient();
   const handleSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
     await updateAdminSettingsMutation.mutateAsync({
-      environmentId: environment.id,
+      environmentId,
       adminApplicationName: values.applicationName,
       adminReturnUrl: values.returnUrl,
     });
 
+    const { uploadUrl } = await updateAdminSettingsLogoMutation.mutateAsync({
+      environmentId,
+    });
+
+    await fetch(uploadUrl, {
+      method: "PUT",
+      body: logo.current!.files![0],
+    });
+
     await queryClient.invalidateQueries({
-      queryKey: createConnectQueryKey(getEnvironment, { id: environment.id }),
+      queryKey: createConnectQueryKey(appGetAdminSettings, {
+        environmentId,
+      }),
     });
 
     setOpen(false);
@@ -176,6 +218,21 @@ function EditSettingsAlertDialog({
                       address. You usually want to point this at an
                       SSOReady-specific page on your web application.
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="logo"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Logo</FormLabel>
+                    <FormControl>
+                      <Input type="file" accept="image/*" ref={logo} />
+                    </FormControl>
+                    <FormDescription>asdf</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
