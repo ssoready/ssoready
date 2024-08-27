@@ -24,8 +24,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CableIcon, CogIcon, PlusIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useTitle } from "@/useTitle";
+import { Helmet } from "react-helmet";
 
 export function ListSAMLConnectionsPage() {
+  const title = useTitle("SAML Connections");
+
   const {
     data: listSAMLConnectionResponses,
     fetchNextPage,
@@ -66,6 +70,9 @@ export function ListSAMLConnectionsPage() {
 
   return (
     <>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
       <LayoutMain>
         <Card>
           <CardHeader>

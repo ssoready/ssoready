@@ -47,9 +47,12 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
+import { useTitle } from "@/useTitle";
+import { Helmet } from "react-helmet";
 
 export function ViewSCIMDirectoryPage() {
   const { scimDirectoryId } = useParams();
+  const title = useTitle(`SCIM Directory ${scimDirectoryId}`);
 
   const { data: scimDirectory } = useQuery(adminGetSCIMDirectory, {
     id: scimDirectoryId,
@@ -81,6 +84,9 @@ export function ViewSCIMDirectoryPage() {
 
   return (
     <LayoutMain>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
       <AlertDialog
         open={warnBearerTokenAlertOpen}
         onOpenChange={setWarnBearerTokenAlertOpen}
