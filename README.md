@@ -5,6 +5,8 @@
 
 # SSOReady
 
+[![](https://img.shields.io/badge/Community_Discord-Join_us!-blue?logo=discord&logoColor=white)](https://discord.gg/NJNE7P5NK7)
+
 We're building dev tools for implementing Enterprise SSO. You can use SSOReady to add SAML support to your product this
 afternoon, for free, forever. You can think of us as an open source alternative to products like Auth0 or WorkOS.
 
