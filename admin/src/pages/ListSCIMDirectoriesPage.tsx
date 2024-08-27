@@ -25,8 +25,11 @@ import {
   adminListSCIMDirectories,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { toast } from "sonner";
+import { Helmet } from "react-helmet";
+import { useTitle } from "@/useTitle";
 
 export function ListSCIMDirectoriesPage() {
+  const title = useTitle("SCIM Directories");
   const {
     data: listSCIMDirectoriesPages,
     fetchNextPage,
@@ -58,6 +61,10 @@ export function ListSCIMDirectoriesPage() {
 
   return (
     <LayoutMain>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

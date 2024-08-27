@@ -42,6 +42,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTitle } from "@/useTitle";
+import { Helmet } from "react-helmet";
 
 interface IDP {
   id: string;
@@ -240,11 +242,15 @@ const SUB_STEPS: Record<string, SubStep> = {
 };
 
 export function SetupSAMLConnectionPage() {
+  const title = useTitle("SAML Connection Setup");
   const { samlConnectionId, subStepId } = useParams();
   const subStep = subStepId ? SUB_STEPS[subStepId] : undefined;
 
   return (
     <>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
       <nav className="border-b border-gray-200 bg-white">
         {subStep ? (
           <Steps

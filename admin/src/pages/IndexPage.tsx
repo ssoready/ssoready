@@ -4,12 +4,19 @@ import { Link } from "react-router-dom";
 import { KeyIcon, UsersIcon } from "lucide-react";
 import { useQuery } from "@connectrpc/connect-query";
 import { adminWhoami } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import { useTitle } from "@/useTitle";
+import { Helmet } from "react-helmet";
 
 export function IndexPage() {
   const { data: whoami } = useQuery(adminWhoami, {});
+  const title = useTitle("Home");
 
   return (
     <LayoutMain>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+
       <div className="container grid grid-cols-2 gap-6">
         {whoami?.canManageSaml && (
           <Link
