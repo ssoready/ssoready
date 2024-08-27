@@ -4512,6 +4512,246 @@ export class AppUpdateOrganizationRequest extends Message<AppUpdateOrganizationR
 }
 
 /**
+ * @generated from message ssoready.v1.AppGetAdminSettingsRequest
+ */
+export class AppGetAdminSettingsRequest extends Message<AppGetAdminSettingsRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  constructor(data?: PartialMessage<AppGetAdminSettingsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppGetAdminSettingsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetAdminSettingsRequest {
+    return new AppGetAdminSettingsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetAdminSettingsRequest {
+    return new AppGetAdminSettingsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetAdminSettingsRequest {
+    return new AppGetAdminSettingsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppGetAdminSettingsRequest | PlainMessage<AppGetAdminSettingsRequest> | undefined, b: AppGetAdminSettingsRequest | PlainMessage<AppGetAdminSettingsRequest> | undefined): boolean {
+    return proto3.util.equals(AppGetAdminSettingsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppGetAdminSettingsResponse
+ */
+export class AppGetAdminSettingsResponse extends Message<AppGetAdminSettingsResponse> {
+  /**
+   * @generated from field: string admin_application_name = 1;
+   */
+  adminApplicationName = "";
+
+  /**
+   * @generated from field: string admin_return_url = 2;
+   */
+  adminReturnUrl = "";
+
+  /**
+   * @generated from field: string admin_logo_url = 3;
+   */
+  adminLogoUrl = "";
+
+  constructor(data?: PartialMessage<AppGetAdminSettingsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppGetAdminSettingsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "admin_application_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "admin_return_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "admin_logo_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppGetAdminSettingsResponse {
+    return new AppGetAdminSettingsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppGetAdminSettingsResponse {
+    return new AppGetAdminSettingsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppGetAdminSettingsResponse {
+    return new AppGetAdminSettingsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppGetAdminSettingsResponse | PlainMessage<AppGetAdminSettingsResponse> | undefined, b: AppGetAdminSettingsResponse | PlainMessage<AppGetAdminSettingsResponse> | undefined): boolean {
+    return proto3.util.equals(AppGetAdminSettingsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppUpdateAdminSettingsRequest
+ */
+export class AppUpdateAdminSettingsRequest extends Message<AppUpdateAdminSettingsRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  /**
+   * @generated from field: string admin_application_name = 2;
+   */
+  adminApplicationName = "";
+
+  /**
+   * @generated from field: string admin_return_url = 3;
+   */
+  adminReturnUrl = "";
+
+  constructor(data?: PartialMessage<AppUpdateAdminSettingsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppUpdateAdminSettingsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "admin_application_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "admin_return_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateAdminSettingsRequest {
+    return new AppUpdateAdminSettingsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsRequest {
+    return new AppUpdateAdminSettingsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsRequest {
+    return new AppUpdateAdminSettingsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppUpdateAdminSettingsRequest | PlainMessage<AppUpdateAdminSettingsRequest> | undefined, b: AppUpdateAdminSettingsRequest | PlainMessage<AppUpdateAdminSettingsRequest> | undefined): boolean {
+    return proto3.util.equals(AppUpdateAdminSettingsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppUpdateAdminSettingsResponse
+ */
+export class AppUpdateAdminSettingsResponse extends Message<AppUpdateAdminSettingsResponse> {
+  constructor(data?: PartialMessage<AppUpdateAdminSettingsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppUpdateAdminSettingsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateAdminSettingsResponse {
+    return new AppUpdateAdminSettingsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsResponse {
+    return new AppUpdateAdminSettingsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsResponse {
+    return new AppUpdateAdminSettingsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppUpdateAdminSettingsResponse | PlainMessage<AppUpdateAdminSettingsResponse> | undefined, b: AppUpdateAdminSettingsResponse | PlainMessage<AppUpdateAdminSettingsResponse> | undefined): boolean {
+    return proto3.util.equals(AppUpdateAdminSettingsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppUpdateAdminSettingsLogoRequest
+ */
+export class AppUpdateAdminSettingsLogoRequest extends Message<AppUpdateAdminSettingsLogoRequest> {
+  /**
+   * @generated from field: string environment_id = 1;
+   */
+  environmentId = "";
+
+  constructor(data?: PartialMessage<AppUpdateAdminSettingsLogoRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppUpdateAdminSettingsLogoRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateAdminSettingsLogoRequest {
+    return new AppUpdateAdminSettingsLogoRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsLogoRequest {
+    return new AppUpdateAdminSettingsLogoRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsLogoRequest {
+    return new AppUpdateAdminSettingsLogoRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppUpdateAdminSettingsLogoRequest | PlainMessage<AppUpdateAdminSettingsLogoRequest> | undefined, b: AppUpdateAdminSettingsLogoRequest | PlainMessage<AppUpdateAdminSettingsLogoRequest> | undefined): boolean {
+    return proto3.util.equals(AppUpdateAdminSettingsLogoRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AppUpdateAdminSettingsLogoResponse
+ */
+export class AppUpdateAdminSettingsLogoResponse extends Message<AppUpdateAdminSettingsLogoResponse> {
+  /**
+   * @generated from field: string upload_url = 1;
+   */
+  uploadUrl = "";
+
+  constructor(data?: PartialMessage<AppUpdateAdminSettingsLogoResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppUpdateAdminSettingsLogoResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "upload_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppUpdateAdminSettingsLogoResponse {
+    return new AppUpdateAdminSettingsLogoResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsLogoResponse {
+    return new AppUpdateAdminSettingsLogoResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppUpdateAdminSettingsLogoResponse {
+    return new AppUpdateAdminSettingsLogoResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppUpdateAdminSettingsLogoResponse | PlainMessage<AppUpdateAdminSettingsLogoResponse> | undefined, b: AppUpdateAdminSettingsLogoResponse | PlainMessage<AppUpdateAdminSettingsLogoResponse> | undefined): boolean {
+    return proto3.util.equals(AppUpdateAdminSettingsLogoResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AppCreateAdminSetupURLRequest
  */
 export class AppCreateAdminSetupURLRequest extends Message<AppCreateAdminSetupURLRequest> {
@@ -5651,6 +5891,21 @@ export class AdminWhoamiResponse extends Message<AdminWhoamiResponse> {
    */
   canManageScim = false;
 
+  /**
+   * @generated from field: string admin_application_name = 3;
+   */
+  adminApplicationName = "";
+
+  /**
+   * @generated from field: string admin_return_url = 4;
+   */
+  adminReturnUrl = "";
+
+  /**
+   * @generated from field: string admin_logo_url = 5;
+   */
+  adminLogoUrl = "";
+
   constructor(data?: PartialMessage<AdminWhoamiResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -5661,6 +5916,9 @@ export class AdminWhoamiResponse extends Message<AdminWhoamiResponse> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "can_manage_saml", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 2, name: "can_manage_scim", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "admin_application_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "admin_return_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "admin_logo_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminWhoamiResponse {
@@ -5991,6 +6249,11 @@ export class AdminParseSAMLMetadataRequest extends Message<AdminParseSAMLMetadat
    */
   url = "";
 
+  /**
+   * @generated from field: string xml = 2;
+   */
+  xml = "";
+
   constructor(data?: PartialMessage<AdminParseSAMLMetadataRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -6000,6 +6263,7 @@ export class AdminParseSAMLMetadataRequest extends Message<AdminParseSAMLMetadat
   static readonly typeName = "ssoready.v1.AdminParseSAMLMetadataRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "xml", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminParseSAMLMetadataRequest {

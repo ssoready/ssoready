@@ -1123,7 +1123,7 @@ func (q *Queries) CreateEmailVerificationChallenge(ctx context.Context, arg Crea
 const createEnvironment = `-- name: CreateEnvironment :one
 insert into environments (id, redirect_url, app_organization_id, display_name, auth_url)
 values ($1, $2, $3, $4, $5)
-returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 `
 
 type CreateEnvironmentParams struct {
@@ -1151,6 +1151,8 @@ func (q *Queries) CreateEnvironment(ctx context.Context, arg CreateEnvironmentPa
 		&i.AuthUrl,
 		&i.OauthRedirectUri,
 		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
 	)
 	return i, err
 }
@@ -1611,7 +1613,7 @@ func (q *Queries) GetEmailVerificationChallengeBySecretToken(ctx context.Context
 }
 
 const getEnvironment = `-- name: GetEnvironment :one
-select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 from environments
 where app_organization_id = $1
   and id = $2
@@ -1633,12 +1635,14 @@ func (q *Queries) GetEnvironment(ctx context.Context, arg GetEnvironmentParams) 
 		&i.AuthUrl,
 		&i.OauthRedirectUri,
 		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
 	)
 	return i, err
 }
 
 const getEnvironmentByID = `-- name: GetEnvironmentByID :one
-select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 from environments
 where id = $1
 `
@@ -1654,6 +1658,8 @@ func (q *Queries) GetEnvironmentByID(ctx context.Context, id uuid.UUID) (Environ
 		&i.AuthUrl,
 		&i.OauthRedirectUri,
 		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
 	)
 	return i, err
 }
@@ -2180,7 +2186,7 @@ func (q *Queries) ListAppUsers(ctx context.Context, appOrganizationID uuid.UUID)
 }
 
 const listEnvironments = `-- name: ListEnvironments :many
-select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 from environments
 where app_organization_id = $1
   and id > $2
@@ -2211,6 +2217,8 @@ func (q *Queries) ListEnvironments(ctx context.Context, arg ListEnvironmentsPara
 			&i.AuthUrl,
 			&i.OauthRedirectUri,
 			&i.CustomAuthDomain,
+			&i.AdminApplicationName,
+			&i.AdminReturnUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -2885,7 +2893,7 @@ set display_name       = $1,
     auth_url           = $3,
     oauth_redirect_uri = $4
 where id = $5
-returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 `
 
 type UpdateEnvironmentParams struct {
@@ -2913,6 +2921,39 @@ func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentPa
 		&i.AuthUrl,
 		&i.OauthRedirectUri,
 		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
+	)
+	return i, err
+}
+
+const updateEnvironmentAdminSettings = `-- name: UpdateEnvironmentAdminSettings :one
+update environments
+set admin_application_name = $1,
+    admin_return_url       = $2
+where id = $3
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
+`
+
+type UpdateEnvironmentAdminSettingsParams struct {
+	AdminApplicationName *string
+	AdminReturnUrl       *string
+	ID                   uuid.UUID
+}
+
+func (q *Queries) UpdateEnvironmentAdminSettings(ctx context.Context, arg UpdateEnvironmentAdminSettingsParams) (Environment, error) {
+	row := q.db.QueryRow(ctx, updateEnvironmentAdminSettings, arg.AdminApplicationName, arg.AdminReturnUrl, arg.ID)
+	var i Environment
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.AuthUrl,
+		&i.OauthRedirectUri,
+		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
 	)
 	return i, err
 }
@@ -2921,7 +2962,7 @@ const updateEnvironmentAuthURL = `-- name: UpdateEnvironmentAuthURL :one
 update environments
 set auth_url = $1
 where id = $2
-returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 `
 
 type UpdateEnvironmentAuthURLParams struct {
@@ -2940,6 +2981,8 @@ func (q *Queries) UpdateEnvironmentAuthURL(ctx context.Context, arg UpdateEnviro
 		&i.AuthUrl,
 		&i.OauthRedirectUri,
 		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
 	)
 	return i, err
 }
@@ -2948,7 +2991,7 @@ const updateEnvironmentCustomAuthDomain = `-- name: UpdateEnvironmentCustomAuthD
 update environments
 set custom_auth_domain = $1
 where id = $2
-returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url
 `
 
 type UpdateEnvironmentCustomAuthDomainParams struct {
@@ -2967,6 +3010,8 @@ func (q *Queries) UpdateEnvironmentCustomAuthDomain(ctx context.Context, arg Upd
 		&i.AuthUrl,
 		&i.OauthRedirectUri,
 		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
 	)
 	return i, err
 }

@@ -210,6 +210,9 @@ service SSOReadyService {
   rpc AppCreateOrganization(AppCreateOrganizationRequest) returns (Organization);
   rpc AppUpdateOrganization(AppUpdateOrganizationRequest) returns (Organization);
 
+  rpc AppGetAdminSettings(AppGetAdminSettingsRequest) returns (AppGetAdminSettingsResponse);
+  rpc AppUpdateAdminSettings(AppUpdateAdminSettingsRequest) returns (AppUpdateAdminSettingsResponse);
+  rpc AppUpdateAdminSettingsLogo(AppUpdateAdminSettingsLogoRequest) returns (AppUpdateAdminSettingsLogoResponse);
   rpc AppCreateAdminSetupURL(AppCreateAdminSetupURLRequest) returns (AppCreateAdminSetupURLResponse);
 
   rpc AppListSAMLConnections(AppListSAMLConnectionsRequest) returns (AppListSAMLConnectionsResponse);
@@ -918,6 +921,32 @@ message AppUpdateOrganizationRequest {
   Organization organization = 1;
 }
 
+message AppGetAdminSettingsRequest {
+  string environment_id = 1;
+}
+
+message AppGetAdminSettingsResponse {
+  string admin_application_name = 1;
+  string admin_return_url = 2;
+  string admin_logo_url = 3;
+}
+
+message AppUpdateAdminSettingsRequest {
+  string environment_id = 1;
+  string admin_application_name = 2;
+  string admin_return_url = 3;
+}
+
+message AppUpdateAdminSettingsResponse {}
+
+message AppUpdateAdminSettingsLogoRequest {
+  string environment_id = 1;
+}
+
+message AppUpdateAdminSettingsLogoResponse {
+  string upload_url = 1;
+}
+
 message AppCreateAdminSetupURLRequest {
   string organization_id = 1;
   bool can_manage_saml = 2;
@@ -1047,6 +1076,9 @@ message AdminWhoamiRequest {}
 message AdminWhoamiResponse {
   bool can_manage_saml = 1;
   bool can_manage_scim = 2;
+  string admin_application_name = 3;
+  string admin_return_url = 4;
+  string admin_logo_url = 5;
 }
 
 message AdminListSAMLConnectionsRequest {
@@ -1084,6 +1116,7 @@ message AdminUpdateSAMLConnectionResponse {
 
 message AdminParseSAMLMetadataRequest {
   string url = 1;
+  string xml = 2;
 }
 
 message AdminParseSAMLMetadataResponse {

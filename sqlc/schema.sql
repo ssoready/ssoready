@@ -140,7 +140,9 @@ CREATE TABLE public.environments (
     display_name character varying,
     auth_url character varying,
     oauth_redirect_uri character varying,
-    custom_auth_domain character varying
+    custom_auth_domain character varying,
+    admin_application_name character varying,
+    admin_return_url character varying
 );
 
 

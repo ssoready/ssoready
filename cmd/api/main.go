@@ -9,6 +9,8 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/vanguard"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -64,6 +66,7 @@ func main() {
 		FlyioAPIKey                  string `conf:"flyio-api-key"`
 		FlyioAuthProxyAppID          string `conf:"flyio-authproxy-app-id,noredact"`
 		FlyioAuthProxyAppCNAMEValue  string `conf:"flyio-authproxy-app-cname-value,noredact"`
+		AdminLogosS3BucketName       string `conf:"admin-logos-s3-bucket-name,noredact"`
 	}{
 		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
 	}
@@ -80,6 +83,11 @@ func main() {
 	}
 
 	db, err := pgxpool.New(context.Background(), config.DB)
+	if err != nil {
+		panic(err)
+	}
+
+	awsSDKConfig, err := awsconfig.LoadDefaultConfig(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -137,6 +145,9 @@ func main() {
 			},
 			FlyioAuthProxyAppID:                 config.FlyioAuthProxyAppID,
 			FlyioAuthProxyAppCNAMEValue:         config.FlyioAuthProxyAppCNAMEValue,
+			S3Client:                            s3.NewFromConfig(awsSDKConfig),
+			S3PresignClient:                     s3.NewPresignClient(s3.NewFromConfig(awsSDKConfig)),
+			AdminLogosS3BucketName:              config.AdminLogosS3BucketName,
 			UnimplementedSSOReadyServiceHandler: ssoreadyv1connect.UnimplementedSSOReadyServiceHandler{},
 		},
 		connect.WithInterceptors(

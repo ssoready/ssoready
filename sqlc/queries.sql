@@ -463,6 +463,13 @@ from saml_oauth_clients
 where saml_oauth_clients.id = $1
   and saml_oauth_clients.client_secret_sha256 = $2;
 
+-- name: UpdateEnvironmentAdminSettings :one
+update environments
+set admin_application_name = $1,
+    admin_return_url       = $2
+where id = $3
+returning *;
+
 -- name: CreateAdminAccessToken :one
 insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time, can_manage_saml,
                                  can_manage_scim)

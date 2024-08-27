@@ -3,14 +3,89 @@ package apiservice
 import (
 	"context"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"connectrpc.com/connect"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/smithy-go"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/saml"
 )
+
+func (s *Service) AppGetAdminSettings(ctx context.Context, req *connect.Request[ssoreadyv1.AppGetAdminSettingsRequest]) (*connect.Response[ssoreadyv1.AppGetAdminSettingsResponse], error) {
+	res, err := s.Store.AppGetAdminSettings(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	adminLogoURL, err := s.adminLogoURL(ctx, req.Msg.EnvironmentId)
+	if err != nil {
+		return nil, fmt.Errorf("admin logo url: %w", err)
+	}
+
+	res.AdminLogoUrl = adminLogoURL
+	return connect.NewResponse(res), nil
+}
+
+// note well: adminLogoURL does no authz checks
+func (s *Service) adminLogoURL(ctx context.Context, environmentID string) (string, error) {
+	_, err := s.S3Client.HeadObject(ctx, &s3.HeadObjectInput{
+		Bucket: &s.AdminLogosS3BucketName,
+		Key:    aws.String(fmt.Sprintf("v1/%s", environmentID)),
+	})
+	if err != nil {
+		var apiError smithy.APIError
+		if errors.As(err, &apiError) && apiError.ErrorCode() == "NotFound" {
+			return "", nil
+		}
+
+		return "", fmt.Errorf("s3: %w", err)
+	}
+
+	presignRequest, err := s.S3PresignClient.PresignGetObject(ctx, &s3.GetObjectInput{
+		Bucket: &s.AdminLogosS3BucketName,
+		Key:    aws.String(fmt.Sprintf("v1/%s", environmentID)),
+	}, s3.WithPresignExpires(time.Hour))
+	if err != nil {
+		return "", fmt.Errorf("s3: %w", err)
+	}
+
+	return presignRequest.URL, nil
+}
+
+func (s *Service) AppUpdateAdminSettings(ctx context.Context, req *connect.Request[ssoreadyv1.AppUpdateAdminSettingsRequest]) (*connect.Response[ssoreadyv1.AppUpdateAdminSettingsResponse], error) {
+	res, err := s.Store.AppUpdateAdminSettings(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	return connect.NewResponse(res), nil
+}
+
+func (s *Service) AppUpdateAdminSettingsLogo(ctx context.Context, req *connect.Request[ssoreadyv1.AppUpdateAdminSettingsLogoRequest]) (*connect.Response[ssoreadyv1.AppUpdateAdminSettingsLogoResponse], error) {
+	if _, err := s.Store.GetEnvironment(ctx, &ssoreadyv1.GetEnvironmentRequest{
+		Id: req.Msg.EnvironmentId,
+	}); err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	presignRequest, err := s.S3PresignClient.PresignPutObject(ctx, &s3.PutObjectInput{
+		Bucket: &s.AdminLogosS3BucketName,
+		Key:    aws.String(fmt.Sprintf("v1/%s", req.Msg.EnvironmentId)),
+	}, s3.WithPresignExpires(24*time.Hour))
+	if err != nil {
+		return nil, fmt.Errorf("s3: %w", err)
+	}
+
+	return connect.NewResponse(&ssoreadyv1.AppUpdateAdminSettingsLogoResponse{
+		UploadUrl: presignRequest.URL,
+	}), nil
+}
 
 func (s *Service) AppCreateAdminSetupURL(ctx context.Context, req *connect.Request[ssoreadyv1.AppCreateAdminSetupURLRequest]) (*connect.Response[ssoreadyv1.AppCreateAdminSetupURLResponse], error) {
 	res, err := s.Store.AppCreateAdminSetupURL(ctx, req.Msg)
@@ -31,12 +106,23 @@ func (s *Service) AdminRedeemOneTimeToken(ctx context.Context, req *connect.Requ
 }
 
 func (s *Service) AdminWhoami(ctx context.Context, req *connect.Request[ssoreadyv1.AdminWhoamiRequest]) (*connect.Response[ssoreadyv1.AdminWhoamiResponse], error) {
-	res, err := s.Store.AdminWhoami(ctx, req.Msg)
+	whoamiRes, err := s.Store.AdminWhoami(ctx, req.Msg)
 	if err != nil {
 		return nil, fmt.Errorf("store: %w", err)
 	}
 
-	return connect.NewResponse(res), nil
+	adminLogoURL, err := s.adminLogoURL(ctx, whoamiRes.EnvironmentID)
+	if err != nil {
+		return nil, fmt.Errorf("admin logo url: %w", err)
+	}
+
+	return connect.NewResponse(&ssoreadyv1.AdminWhoamiResponse{
+		CanManageSaml:        whoamiRes.CanManageSAML,
+		CanManageScim:        whoamiRes.CanManageSCIM,
+		AdminApplicationName: whoamiRes.AdminApplicationName,
+		AdminReturnUrl:       whoamiRes.AdminReturnURL,
+		AdminLogoUrl:         adminLogoURL,
+	}), nil
 }
 
 func (s *Service) AdminListSAMLConnections(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSAMLConnectionsRequest]) (*connect.Response[ssoreadyv1.AdminListSAMLConnectionsResponse], error) {
@@ -72,23 +158,30 @@ func (s *Service) AdminUpdateSAMLConnection(ctx context.Context, req *connect.Re
 }
 
 func (s *Service) AdminParseSAMLMetadata(ctx context.Context, req *connect.Request[ssoreadyv1.AdminParseSAMLMetadataRequest]) (*connect.Response[ssoreadyv1.AdminParseSAMLMetadataResponse], error) {
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, req.Msg.Url, nil)
-	if err != nil {
-		return nil, err
+	var metadata []byte
+	if req.Msg.Url != "" {
+		httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, req.Msg.Url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err := s.SAMLMetadataHTTPClient.Do(httpReq)
+		if err != nil {
+			return nil, err
+		}
+		defer httpRes.Body.Close()
+
+		body, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		metadata = body
+	} else if req.Msg.Xml != "" {
+		metadata = []byte(req.Msg.Xml)
 	}
 
-	httpRes, err := s.SAMLMetadataHTTPClient.Do(httpReq)
-	if err != nil {
-		return nil, err
-	}
-	defer httpRes.Body.Close()
-
-	body, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	metadataRes, err := saml.ParseMetadata(body)
+	metadataRes, err := saml.ParseMetadata(metadata)
 	if err != nil {
 		return nil, err
 	}

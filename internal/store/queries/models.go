@@ -110,13 +110,15 @@ type EmailVerificationChallenge struct {
 }
 
 type Environment struct {
-	ID                uuid.UUID
-	RedirectUrl       *string
-	AppOrganizationID uuid.UUID
-	DisplayName       *string
-	AuthUrl           *string
-	OauthRedirectUri  *string
-	CustomAuthDomain  *string
+	ID                   uuid.UUID
+	RedirectUrl          *string
+	AppOrganizationID    uuid.UUID
+	DisplayName          *string
+	AuthUrl              *string
+	OauthRedirectUri     *string
+	CustomAuthDomain     *string
+	AdminApplicationName *string
+	AdminReturnUrl       *string
 }
 
 type OnboardingState struct {
