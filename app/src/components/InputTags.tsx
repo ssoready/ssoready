@@ -45,35 +45,37 @@ export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
                 onBlur(e);
               }
             }}
-            className="rounded-r-none"
+            className="pr-[4.1rem]"
             {...props}
             ref={ref}
           />
           <Button
             type="button"
             variant="secondary"
-            className="rounded-l-none border border-l-0"
+            className="absolute h-[3.5vh] mt-[3px] rounded-lg right-7 p-[0.9rem]"
             onClick={addPendingDataPoint}
           >
             Add
           </Button>
         </div>
-        <div className="border rounded-md min-h-[2.5rem] overflow-y-auto p-2 flex gap-2 flex-wrap items-center">
-          {value.map((item, idx) => (
-            <Badge key={idx} variant="secondary">
-              {item}
-              <button
-                type="button"
-                className="w-3 ml-2"
-                onClick={() => {
-                  onChange(value.filter((i) => i !== item));
-                }}
-              >
-                <XIcon className="w-3" />
-              </button>
-            </Badge>
-          ))}
-        </div>
+        {value.length > 0 && 
+          <div className="rounded-md min-h-[2.5rem] overflow-y-auto p-2 flex gap-2 flex-wrap items-center">
+            {value.map((item, idx) => (
+              <Badge key={idx} variant="secondary">
+                {item}
+                <button
+                  type="button"
+                  className="w-3 ml-2"
+                  onClick={() => {
+                    onChange(value.filter((i) => i !== item));
+                  }}
+                >
+                  <XIcon className="w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        }
       </>
     );
   },
