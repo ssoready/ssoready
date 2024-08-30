@@ -1439,7 +1439,7 @@ function EntraDownloadMetadataStep() {
           <div>
             <p className="text-sm mt-4">
               Successfully imported your app's Federation Metadata XML settings
-              from Okta. The last remaining step is to assign users to your new
+              from Entra. The last remaining step is to assign users to your new
               application.
             </p>
 
