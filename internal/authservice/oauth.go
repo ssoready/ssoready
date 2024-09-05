@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"connectrpc.com/connect"
-	"github.com/go-jose/go-jose/v3"
-	"github.com/go-jose/go-jose/v3/jwt"
+	"github.com/go-jose/go-jose/v4"
+	"github.com/go-jose/go-jose/v4/jwt"
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
@@ -211,18 +212,45 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		OrganizationExternalID: res.OrganizationExternalId,
 	}
 
-	idToken, err := jwt.Signed(signer).Claims(claims).CompactSerialize()
+	idToken, err := jwt.Signed(signer).Claims(claims).Serialize()
 	if err != nil {
 		panic(err)
 	}
 
 	tokenRes := tokenResponse{
 		IDToken:     idToken,
-		AccessToken: "not_implemented_instead_see_id_token",
+		AccessToken: idToken, // see oauthUserinfo
 		TokenType:   "Bearer",
 	}
 
 	if err := json.NewEncoder(w).Encode(tokenRes); err != nil {
+		panic(err)
+	}
+}
+
+func (s *Service) oauthUserinfo(w http.ResponseWriter, r *http.Request) {
+	// we use the id_token to also be the "access token"; this endpoint parses
+	// that and writes it back
+
+	accessToken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+
+	idToken, err := jwt.ParseSigned(accessToken, []jose.SignatureAlgorithm{jose.RS256})
+	if err != nil {
+		panic(err)
+	}
+
+	var claims idTokenClaims
+	if err := idToken.Claims(&s.OAuthIDTokenPrivateKey.PublicKey, &claims); err != nil {
+		panic(err)
+	}
+
+	userinfo := struct {
+		Sub string `json:"sub"`
+	}{
+		Sub: claims.Subject,
+	}
+
+	if err := json.NewEncoder(w).Encode(userinfo); err != nil {
 		panic(err)
 	}
 }
