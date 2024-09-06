@@ -150,7 +150,6 @@ type idTokenClaims struct {
 }
 
 func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("OAUTHTOKEN getting called")
 	ctx := r.Context()
 
 	if err := r.ParseForm(); err != nil {
@@ -223,8 +222,6 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		TokenType:   "Bearer",
 	}
 
-	fmt.Println("writing id_token", idToken)
-	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(tokenRes); err != nil {
 		panic(err)
 	}
@@ -239,7 +236,6 @@ func (s *Service) oauthJWKS(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(jwks); err != nil {
 		panic(err)
 	}
