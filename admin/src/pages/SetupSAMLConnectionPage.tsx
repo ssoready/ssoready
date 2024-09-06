@@ -16,7 +16,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router";
-import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import {
+  offset,
+  useFloating,
+  useHover,
+  useInteractions,
+  useTransitionStyles,
+} from "@floating-ui/react";
 import {
   createConnectQueryKey,
   useMutation,
@@ -1827,18 +1833,13 @@ function CompleteStep() {
         </div>
       </Card>
 
-      <Fireworks
-        className="z-10 pointer-events-none"
-        options={{ opacity: 0.5, intensity: 10 }}
-        style={{
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          position: "fixed",
-          // background: "#000",
-        }}
-      />
+      <a
+        href="https://ssoready.com"
+        className="fixed bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-x-2 grayscale hover:grayscale-0"
+      >
+        <img src="/apple-touch-icon.png" alt="" className="h-4" />
+        <span className="text-xs text-gray-500">Powered by SSOReady</span>
+      </a>
     </>
   );
 }
