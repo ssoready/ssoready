@@ -16,7 +16,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router";
-import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
+import {
+  offset,
+  useFloating,
+  useHover,
+  useInteractions,
+  useTransitionStyles,
+} from "@floating-ui/react";
 import {
   createConnectQueryKey,
   useMutation,
@@ -26,6 +32,7 @@ import {
   adminGetSAMLConnection,
   adminParseSAMLMetadata,
   adminUpdateSAMLConnection,
+  adminWhoami,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -44,6 +51,7 @@ import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTitle } from "@/useTitle";
 import { Helmet } from "react-helmet";
+import { Fireworks } from "fireworks-js/dist/react";
 
 interface IDP {
   id: string;
@@ -179,6 +187,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "okta",
     step: 4,
   },
+  "okta-complete": {
+    idpId: "okta",
+    step: 4,
+  },
   "google-create-app": {
     idpId: "google",
     step: 0,
@@ -203,6 +215,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "google",
     step: 3,
   },
+  "google-complete": {
+    idpId: "google",
+    step: 3,
+  },
   "entra-create-app": {
     idpId: "entra",
     step: 0,
@@ -223,6 +239,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "entra",
     step: 3,
   },
+  "entra-complete": {
+    idpId: "entra",
+    step: 3,
+  },
   "other-create-app": {
     idpId: "other",
     step: 0,
@@ -236,6 +256,10 @@ const SUB_STEPS: Record<string, SubStep> = {
     step: 2,
   },
   "other-assign-users": {
+    idpId: "other",
+    step: 3,
+  },
+  "other-complete": {
     idpId: "other",
     step: 3,
   },
@@ -320,6 +344,7 @@ export function SetupSAMLConnectionPage() {
         )}
         {subStepId === "okta-copy-metadata-url" && <OktaCopyMetadataURLStep />}
         {subStepId === "okta-assign-users" && <OktaAssignUsersStep />}
+        {subStepId === "okta-complete" && <CompleteStep />}
 
         {subStepId === "google-create-app" && <GoogleCreateAppStep />}
         {subStepId === "google-configure-app-name" && (
@@ -335,6 +360,7 @@ export function SetupSAMLConnectionPage() {
           <GoogleConfigureEntityIDStep />
         )}
         {subStepId === "google-assign-users" && <GoogleAssignUsersStep />}
+        {subStepId === "google-complete" && <CompleteStep />}
 
         {subStepId === "entra-create-app" && <EntraCreateAppStep />}
         {subStepId === "entra-configure-entity-id" && (
@@ -347,6 +373,7 @@ export function SetupSAMLConnectionPage() {
           <EntraDownloadMetadataStep />
         )}
         {subStepId === "entra-assign-users" && <EntraAssignUsersStep />}
+        {subStepId === "entra-complete" && <CompleteStep />}
 
         {subStepId === "other-create-app" && <OtherCreateAppStep />}
         {subStepId === "other-configure-app" && <OtherConfigureAppStep />}
@@ -354,6 +381,7 @@ export function SetupSAMLConnectionPage() {
           <OtherDownloadMetadataStep />
         )}
         {subStepId === "other-assign-users" && <OtherAssignUsersStep />}
+        {subStepId === "other-complete" && <CompleteStep />}
       </NarrowContainer>
     </>
   );
@@ -795,6 +823,8 @@ function OktaCopyMetadataURLStep() {
 }
 
 function OktaAssignUsersStep() {
+  const next = useSubStepUrl("okta-complete");
+
   return (
     <Card>
       <CardHeader>
@@ -828,7 +858,7 @@ function OktaAssignUsersStep() {
 
         <div className="mt-4 flex justify-end">
           <Button>
-            <Link to="/">Setup complete!</Link>
+            <Link to={next}>Setup complete!</Link>
           </Button>
         </div>
       </CardContent>
@@ -1113,6 +1143,7 @@ function GoogleConfigureEntityIDStep() {
 }
 
 function GoogleAssignUsersStep() {
+  const next = useSubStepUrl("google-complete");
   return (
     <Card>
       <CardHeader>
@@ -1154,7 +1185,7 @@ function GoogleAssignUsersStep() {
 
         <div className="mt-4 flex justify-end">
           <Button>
-            <Link to="/">Setup complete!</Link>
+            <Link to={next}>Setup complete!</Link>
           </Button>
         </div>
       </CardContent>
@@ -1456,6 +1487,7 @@ function EntraDownloadMetadataStep() {
 }
 
 function EntraAssignUsersStep() {
+  const next = useSubStepUrl("entra-complete");
   return (
     <Card>
       <CardHeader>
@@ -1494,7 +1526,7 @@ function EntraAssignUsersStep() {
 
         <div className="mt-4 flex justify-end">
           <Button>
-            <Link to="/">Setup complete!</Link>
+            <Link to={next}>Setup complete!</Link>
           </Button>
         </div>
       </CardContent>
@@ -1735,6 +1767,7 @@ function OtherDownloadMetadataStep() {
 }
 
 function OtherAssignUsersStep() {
+  const next = useSubStepUrl("other-complete");
   return (
     <Card>
       <CardHeader>
@@ -1759,10 +1792,54 @@ function OtherAssignUsersStep() {
 
         <div className="mt-4 flex justify-end">
           <Button>
-            <Link to="/">Setup complete!</Link>
+            <Link to={next}>Setup complete!</Link>
           </Button>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function CompleteStep() {
+  const { data: whoami } = useQuery(adminWhoami, {});
+
+  return (
+    <>
+      <Card className="z-20 mt-16 w-full max-w-md mx-auto p-8">
+        <div className="flex flex-col items-center justify-center gap-6">
+          <div className="bg-green-200 rounded-full p-3">
+            <CheckIcon className="w-8 h-8 text-green-500" />
+          </div>
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-bold">SAML Setup Complete</h3>
+            <p className="text-muted-foreground">
+              Congratulations! You have successfully set up your SAML
+              connection.
+            </p>
+          </div>
+          {whoami && (
+            <Button className="w-full" asChild>
+              {whoami.adminReturnUrl ? (
+                <Link to={whoami.adminReturnUrl}>
+                  {whoami.adminApplicationName
+                    ? `Back to ${whoami.adminApplicationName}`
+                    : "Exit this setup page"}
+                </Link>
+              ) : (
+                <Link to="/">Exit this setup page</Link>
+              )}
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      <a
+        href="https://ssoready.com"
+        className="fixed bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-x-2 grayscale hover:grayscale-0"
+      >
+        <img src="/apple-touch-icon.png" alt="" className="h-4" />
+        <span className="text-xs text-gray-500">Powered by SSOReady</span>
+      </a>
+    </>
   );
 }
