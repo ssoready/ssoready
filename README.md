@@ -7,13 +7,15 @@
 
 [![](https://img.shields.io/badge/Community_Discord-Join_us!-blue?logo=discord&logoColor=white)](https://discord.gg/NJNE7P5NK7)
 
-We're building dev tools for implementing Enterprise SSO. You can use SSOReady to add SAML support to your product this
-afternoon, for free, forever. You can think of us as an open source alternative to products like Auth0 or WorkOS.
+We're building dev tools for implementing Enterprise SSO. You can use SSOReady to add SAML and SCIM support to your
+product this afternoon, for free, forever. You can think of us as an open source alternative to products like Auth0 or
+WorkOS.
 
 * MIT-Licensed
 * Self-hosted, or free at [app.ssoready.com](https://app.ssoready.com)
 * Keeps you in control of your users database
 * [Well-documented](https://ssoready.com/docs), straightforward implementation
+* Supports [SAML](https://ssoready.com/docs/saml/saml-quickstart) and [SCIM](https://ssoready.com/docs/scim/scim-quickstart)
 * [Python](https://github.com/ssoready/ssoready-python) and
   [TypeScript/Node.js](https://github.com/ssoready/ssoready-typescript) SDKs, more in development
 
