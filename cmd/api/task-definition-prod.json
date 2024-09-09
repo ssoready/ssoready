@@ -69,6 +69,14 @@
           "value": "ssoready-auth-custom-domain.fly.dev."
         },
         {
+          "name": "API_FLYIO_ADMINPROXY_APP_ID",
+          "value": "ssoready-admin-custom-domain"
+        },
+        {
+          "name": "API_FLYIO_ADMINPROXY_APP_CNAME_VALUE",
+          "value": "ssoready-admin-custom-domain.fly.dev."
+        },
+        {
           "name": "API_ADMIN_LOGOS_S3_BUCKET_NAME",
           "value": "ssoready-prod-admin-logos"
         }

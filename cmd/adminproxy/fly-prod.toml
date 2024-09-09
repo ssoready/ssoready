@@ -1,4 +1,9 @@
-app = 'ssoready-auth-custom-domain'
+# fly.toml app configuration file generated for ssoready-admin-custom-domain on 2024-09-09T13:47:28-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'ssoready-admin-custom-domain'
 primary_region = 'iad'
 
 [build]
