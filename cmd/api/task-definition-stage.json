@@ -69,6 +69,14 @@
           "value": "authproxy-sparkling-leaf-3672.fly.dev."
         },
         {
+          "name": "API_FLYIO_ADMINPROXY_APP_ID",
+          "value": "adminproxy-ember-cloud-9275"
+        },
+        {
+          "name": "API_FLYIO_ADMINPROXY_APP_CNAME_VALUE",
+          "value": "adminproxy-ember-cloud-9275.fly.dev."
+        },
+        {
           "name": "API_ADMIN_LOGOS_S3_BUCKET_NAME",
           "value": "ssoready-stage-admin-logos"
         }

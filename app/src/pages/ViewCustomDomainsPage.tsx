@@ -109,8 +109,8 @@ export function ViewCustomDomainsPage() {
           <CardDescription>
             SAML and SCIM both require that you set up a server that your
             customer's Identity Provider talks to. SSOReady runs that server for
-            you. With a custom domain, your customers don't see any URLs with
-            "ssoready.com" in the name.
+            you. By default, it's hosted at auth.ssoready.com. With a custom
+            domain, you can run it on any domain you control.
           </CardDescription>
         </CardHeader>
 
@@ -264,7 +264,12 @@ export function ViewCustomDomainsPage() {
                 />
               )}
           </div>
-          <CardDescription>foo bar baz</CardDescription>
+          <CardDescription>
+            SSOReady provides an app that can guide your customer through the
+            set-up process for SAML Connections and SCIM Directories. By
+            default, it's hosted at admin.ssoready.com. With a custom domain,
+            you can run it on any domain you control.
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -318,8 +323,8 @@ export function ViewCustomDomainsPage() {
 
                   {customDomainsSettings.customAdminDomainConfigured ? (
                     <p className="mt-4 text-sm text-muted-foreground">
-                      Your custom domain is active, and all new SAML connections
-                      and SCIM directories will use it.
+                      Your custom domain for admin.ssoready.com is active. All
+                      new self-serve setup links use your custom domain.
                     </p>
                   ) : (
                     <>
