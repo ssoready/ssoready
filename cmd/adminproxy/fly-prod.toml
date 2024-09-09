@@ -1,4 +1,4 @@
-app = 'ssoready-auth-custom-domain'
+app = 'ssoready-admin-custom-domain'
 primary_region = 'iad'
 
 [build]
