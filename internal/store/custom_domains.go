@@ -27,7 +27,8 @@ func (s *Store) GetEnvironmentCustomDomainSettings(ctx context.Context, req *sso
 	}
 
 	return &ssoreadyv1.GetEnvironmentCustomDomainSettingsResponse{
-		CustomAuthDomain: derefOrEmpty(qEnv.CustomAuthDomain),
+		CustomAuthDomain:  derefOrEmpty(qEnv.CustomAuthDomain),
+		CustomAdminDomain: derefOrEmpty(qEnv.CustomAdminDomain),
 	}, nil
 }
 
@@ -60,11 +61,22 @@ func (s *Store) UpdateEnvironmentCustomDomainSettings(ctx context.Context, req *
 		return nil, err
 	}
 
-	if _, err := q.UpdateEnvironmentCustomAuthDomain(ctx, queries.UpdateEnvironmentCustomAuthDomainParams{
-		ID:               id,
-		CustomAuthDomain: &req.CustomAuthDomain,
-	}); err != nil {
-		return nil, err
+	if req.CustomAuthDomain != "" {
+		if _, err := q.UpdateEnvironmentCustomAuthDomain(ctx, queries.UpdateEnvironmentCustomAuthDomainParams{
+			ID:               id,
+			CustomAuthDomain: &req.CustomAuthDomain,
+		}); err != nil {
+			return nil, err
+		}
+	}
+
+	if req.CustomAdminDomain != "" {
+		if _, err := q.UpdateEnvironmentCustomAdminDomain(ctx, queries.UpdateEnvironmentCustomAdminDomainParams{
+			ID:                id,
+			CustomAdminDomain: &req.CustomAdminDomain,
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := commit(); err != nil {
@@ -98,6 +110,41 @@ func (s *Store) PromoteEnvironmentCustomAuthDomain(ctx context.Context, environm
 	if _, err := q.UpdateEnvironmentAuthURL(ctx, queries.UpdateEnvironmentAuthURLParams{
 		ID:      id,
 		AuthUrl: &authURL,
+	}); err != nil {
+		return err
+	}
+
+	if err := commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) PromoteEnvironmentCustomAdminDomain(ctx context.Context, environmentID string) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer rollback()
+
+	id, err := idformat.Environment.Parse(environmentID)
+	if err != nil {
+		return err
+	}
+
+	qEnv, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                id,
+	})
+	if err != nil {
+		return err
+	}
+
+	adminURL := fmt.Sprintf("https://%s", *qEnv.CustomAdminDomain)
+	if _, err := q.UpdateEnvironmentAdminURL(ctx, queries.UpdateEnvironmentAdminURLParams{
+		ID:       id,
+		AdminUrl: &adminURL,
 	}); err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.3 (Debian 15.3-1.pgdg120+1)
--- Dumped by pg_dump version 16.3
+-- Dumped by pg_dump version 15.8 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -142,7 +142,9 @@ CREATE TABLE public.environments (
     oauth_redirect_uri character varying,
     custom_auth_domain character varying,
     admin_application_name character varying,
-    admin_return_url character varying
+    admin_return_url character varying,
+    custom_admin_domain character varying,
+    admin_url character varying
 );
 
 
@@ -275,9 +277,9 @@ ALTER TABLE public.schema_migrations OWNER TO postgres;
 CREATE TABLE public.scim_directories (
     id uuid NOT NULL,
     organization_id uuid NOT NULL,
+    scim_base_url character varying NOT NULL,
     bearer_token_sha256 bytea,
-    is_primary boolean NOT NULL,
-    scim_base_url character varying NOT NULL
+    is_primary boolean NOT NULL
 );
 
 

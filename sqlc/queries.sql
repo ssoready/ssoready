@@ -279,9 +279,21 @@ set custom_auth_domain = $1
 where id = $2
 returning *;
 
+-- name: UpdateEnvironmentCustomAdminDomain :one
+update environments
+set custom_admin_domain = $1
+where id = $2
+returning *;
+
 -- name: UpdateEnvironmentAuthURL :one
 update environments
 set auth_url = $1
+where id = $2
+returning *;
+
+-- name: UpdateEnvironmentAdminURL :one
+update environments
+set admin_url = $1
 where id = $2
 returning *;
 

@@ -66,6 +66,8 @@ func main() {
 		FlyioAPIKey                  string `conf:"flyio-api-key"`
 		FlyioAuthProxyAppID          string `conf:"flyio-authproxy-app-id,noredact"`
 		FlyioAuthProxyAppCNAMEValue  string `conf:"flyio-authproxy-app-cname-value,noredact"`
+		FlyioAdminProxyAppID         string `conf:"flyio-adminproxy-app-id,noredact"`
+		FlyioAdminProxyAppCNAMEValue string `conf:"flyio-adminproxy-app-cname-value,noredact"`
 		AdminLogosS3BucketName       string `conf:"admin-logos-s3-bucket-name,noredact"`
 	}{
 		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
@@ -145,6 +147,8 @@ func main() {
 			},
 			FlyioAuthProxyAppID:                 config.FlyioAuthProxyAppID,
 			FlyioAuthProxyAppCNAMEValue:         config.FlyioAuthProxyAppCNAMEValue,
+			FlyioAdminProxyAppID:                config.FlyioAdminProxyAppID,
+			FlyioAdminProxyAppCNAMEValue:        config.FlyioAdminProxyAppCNAMEValue,
 			S3Client:                            s3.NewFromConfig(awsSDKConfig),
 			S3PresignClient:                     s3.NewPresignClient(s3.NewFromConfig(awsSDKConfig)),
 			AdminLogosS3BucketName:              config.AdminLogosS3BucketName,

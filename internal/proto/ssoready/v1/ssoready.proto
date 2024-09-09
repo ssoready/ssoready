@@ -838,11 +838,15 @@ message GetEnvironmentCustomDomainSettingsResponse {
   string custom_auth_domain = 1;
   bool custom_auth_domain_configured = 2;
   string custom_auth_domain_cname_value = 3;
+  string custom_admin_domain = 4;
+  bool custom_admin_domain_configured = 5;
+  string custom_admin_domain_cname_value = 6;
 }
 
 message UpdateEnvironmentCustomDomainSettingsRequest {
   string environment_id = 1;
   string custom_auth_domain = 2;
+  string custom_admin_domain = 3;
 }
 
 message UpdateEnvironmentCustomDomainSettingsResponse {}
@@ -853,6 +857,7 @@ message CheckEnvironmentCustomDomainSettingsCertificatesRequest {
 
 message CheckEnvironmentCustomDomainSettingsCertificatesResponse {
   bool custom_auth_domain_configured = 1;
+  bool custom_admin_domain_configured = 2;
 }
 
 message ListAPIKeysRequest {
