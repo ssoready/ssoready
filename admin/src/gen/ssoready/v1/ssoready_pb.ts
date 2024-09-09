@@ -3742,6 +3742,21 @@ export class GetEnvironmentCustomDomainSettingsResponse extends Message<GetEnvir
    */
   customAuthDomainCnameValue = "";
 
+  /**
+   * @generated from field: string custom_admin_domain = 4;
+   */
+  customAdminDomain = "";
+
+  /**
+   * @generated from field: bool custom_admin_domain_configured = 5;
+   */
+  customAdminDomainConfigured = false;
+
+  /**
+   * @generated from field: string custom_admin_domain_cname_value = 6;
+   */
+  customAdminDomainCnameValue = "";
+
   constructor(data?: PartialMessage<GetEnvironmentCustomDomainSettingsResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3753,6 +3768,9 @@ export class GetEnvironmentCustomDomainSettingsResponse extends Message<GetEnvir
     { no: 1, name: "custom_auth_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "custom_auth_domain_configured", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "custom_auth_domain_cname_value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "custom_admin_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "custom_admin_domain_configured", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "custom_admin_domain_cname_value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEnvironmentCustomDomainSettingsResponse {
@@ -3786,6 +3804,11 @@ export class UpdateEnvironmentCustomDomainSettingsRequest extends Message<Update
    */
   customAuthDomain = "";
 
+  /**
+   * @generated from field: string custom_admin_domain = 3;
+   */
+  customAdminDomain = "";
+
   constructor(data?: PartialMessage<UpdateEnvironmentCustomDomainSettingsRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3796,6 +3819,7 @@ export class UpdateEnvironmentCustomDomainSettingsRequest extends Message<Update
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "custom_auth_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "custom_admin_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEnvironmentCustomDomainSettingsRequest {
@@ -3892,6 +3916,11 @@ export class CheckEnvironmentCustomDomainSettingsCertificatesResponse extends Me
    */
   customAuthDomainConfigured = false;
 
+  /**
+   * @generated from field: bool custom_admin_domain_configured = 2;
+   */
+  customAdminDomainConfigured = false;
+
   constructor(data?: PartialMessage<CheckEnvironmentCustomDomainSettingsCertificatesResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3901,6 +3930,7 @@ export class CheckEnvironmentCustomDomainSettingsCertificatesResponse extends Me
   static readonly typeName = "ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "custom_auth_domain_configured", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 2, name: "custom_admin_domain_configured", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CheckEnvironmentCustomDomainSettingsCertificatesResponse {

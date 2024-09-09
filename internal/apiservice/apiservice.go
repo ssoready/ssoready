@@ -28,6 +28,8 @@ type Service struct {
 	FlyioClient                  *flyio.Client
 	FlyioAuthProxyAppID          string
 	FlyioAuthProxyAppCNAMEValue  string
+	FlyioAdminProxyAppID         string
+	FlyioAdminProxyAppCNAMEValue string
 	S3Client                     *s3.Client
 	S3PresignClient              *s3.PresignClient
 	AdminLogosS3BucketName       string

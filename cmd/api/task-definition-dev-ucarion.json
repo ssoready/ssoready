@@ -69,6 +69,14 @@
           "value": "authproxy-twilight-violet-4061.fly.dev."
         },
         {
+          "name": "API_FLYIO_ADMINPROXY_APP_ID",
+          "value": "adminproxy-orchid-sparrow-3481"
+        },
+        {
+          "name": "API_FLYIO_ADMINPROXY_APP_CNAME_VALUE",
+          "value": "adminproxy-orchid-sparrow-3481.fly.dev."
+        },
+        {
           "name": "API_ADMIN_LOGOS_S3_BUCKET_NAME",
           "value": "ssoready-dev-ucarion-admin-logos"
         }

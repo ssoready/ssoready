@@ -27,17 +27,48 @@ func (s *Service) GetEnvironmentCustomDomainSettings(ctx context.Context, req *c
 		res.CustomAuthDomainConfigured = certRes.Certificate.Configured
 	}
 
+	if res.CustomAdminDomain != "" {
+		certRes, err := s.FlyioClient.GetCertificate(ctx, &flyio.GetCertificateRequest{
+			AppID:    s.FlyioAdminProxyAppID,
+			Hostname: res.CustomAdminDomain,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("flyio: %w", err)
+		}
+
+		res.CustomAdminDomainConfigured = certRes.Certificate.Configured
+	}
+
 	res.CustomAuthDomainCnameValue = s.FlyioAuthProxyAppCNAMEValue
+	res.CustomAdminDomainCnameValue = s.FlyioAdminProxyAppCNAMEValue
 	return connect.NewResponse(res), nil
 }
 
 func (s *Service) UpdateEnvironmentCustomDomainSettings(ctx context.Context, req *connect.Request[ssoreadyv1.UpdateEnvironmentCustomDomainSettingsRequest]) (*connect.Response[ssoreadyv1.UpdateEnvironmentCustomDomainSettingsResponse], error) {
+	appOrg, err := s.Store.GetAppOrganization(ctx, &ssoreadyv1.GetAppOrganizationRequest{})
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+
+	if !appOrg.EntitledCustomDomains {
+		return nil, fmt.Errorf("not entitled to custom domains")
+	}
+
 	if req.Msg.CustomAuthDomain != "" {
 		if _, err := s.FlyioClient.AddCertificate(ctx, &flyio.AddCertificateRequest{
 			AppID:    s.FlyioAuthProxyAppID,
 			Hostname: req.Msg.CustomAuthDomain,
 		}); err != nil {
-			return nil, fmt.Errorf("flyio: %w", err)
+			return nil, fmt.Errorf("flyio: add auth cert: %w", err)
+		}
+	}
+
+	if req.Msg.CustomAdminDomain != "" {
+		if _, err := s.FlyioClient.AddCertificate(ctx, &flyio.AddCertificateRequest{
+			AppID:    s.FlyioAdminProxyAppID,
+			Hostname: req.Msg.CustomAdminDomain,
+		}); err != nil {
+			return nil, fmt.Errorf("flyio: add admin cert: %w", err)
 		}
 	}
 
@@ -56,21 +87,46 @@ func (s *Service) CheckEnvironmentCustomDomainSettingsCertificates(ctx context.C
 		return nil, fmt.Errorf("store: %w", err)
 	}
 
-	checkRes, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
-		AppID:    s.FlyioAuthProxyAppID,
-		Hostname: env.CustomAuthDomain,
-	})
-	if err != nil {
-		return nil, err
+	var customAuthDomainConfigured bool
+	if env.CustomAuthDomain != "" {
+		checkResAuth, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
+			AppID:    s.FlyioAuthProxyAppID,
+			Hostname: env.CustomAuthDomain,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		customAuthDomainConfigured = checkResAuth.Certificate.Configured
 	}
 
-	if checkRes.Certificate.Configured {
+	var customAdminDomainConfigured bool
+	if env.CustomAdminDomain != "" {
+		checkResAdmin, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
+			AppID:    s.FlyioAdminProxyAppID,
+			Hostname: env.CustomAdminDomain,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		customAdminDomainConfigured = checkResAdmin.Certificate.Configured
+	}
+
+	if customAuthDomainConfigured {
 		if err := s.Store.PromoteEnvironmentCustomAuthDomain(ctx, req.Msg.EnvironmentId); err != nil {
 			return nil, err
 		}
 	}
 
+	if customAdminDomainConfigured {
+		if err := s.Store.PromoteEnvironmentCustomAdminDomain(ctx, req.Msg.EnvironmentId); err != nil {
+			return nil, err
+		}
+	}
+
 	return connect.NewResponse(&ssoreadyv1.CheckEnvironmentCustomDomainSettingsCertificatesResponse{
-		CustomAuthDomainConfigured: checkRes.Certificate.Configured,
+		CustomAuthDomainConfigured:  customAuthDomainConfigured,
+		CustomAdminDomainConfigured: customAdminDomainConfigured,
 	}), nil
 }

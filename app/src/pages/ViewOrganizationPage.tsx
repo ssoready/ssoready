@@ -389,7 +389,10 @@ function AdminSetupURLCard() {
           </AlertDialogHeader>
 
           <SecretCopier
-            placeholder="https://admin.ssoready.com/setup?one-time-token=..."
+            placeholder={
+              setupURL &&
+              `https://${new URL(setupURL).hostname}/setup?one-time-token=...`
+            }
             secret={setupURL}
           />
 

@@ -96,6 +96,14 @@ func (s *Store) AppCreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.AppC
 		return nil, fmt.Errorf("get organization: %w", err)
 	}
 
+	env, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                org.EnvironmentID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get environment: %w", err)
+	}
+
 	oneTimeToken := uuid.New()
 	oneTimeTokenSHA := sha256.Sum256(oneTimeToken[:])
 
@@ -115,9 +123,16 @@ func (s *Store) AppCreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.AppC
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
-	loginURL, err := url.Parse(s.defaultAdminSetupURL)
+	var loginBaseURL string
+	if env.AdminUrl != nil {
+		loginBaseURL = fmt.Sprintf("%s/setup", *env.AdminUrl)
+	} else {
+		loginBaseURL = s.defaultAdminSetupURL
+	}
+
+	loginURL, err := url.Parse(loginBaseURL)
 	if err != nil {
-		panic(fmt.Errorf("parse default admin login url: %w", err))
+		panic(fmt.Errorf("parse admin login base url: %w", err))
 	}
 
 	query := url.Values{}
