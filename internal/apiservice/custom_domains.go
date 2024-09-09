@@ -87,36 +87,46 @@ func (s *Service) CheckEnvironmentCustomDomainSettingsCertificates(ctx context.C
 		return nil, fmt.Errorf("store: %w", err)
 	}
 
-	checkResAuth, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
-		AppID:    s.FlyioAuthProxyAppID,
-		Hostname: env.CustomAuthDomain,
-	})
-	if err != nil {
-		return nil, err
+	var customAuthDomainConfigured bool
+	if env.CustomAuthDomain != "" {
+		checkResAuth, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
+			AppID:    s.FlyioAuthProxyAppID,
+			Hostname: env.CustomAuthDomain,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		customAuthDomainConfigured = checkResAuth.Certificate.Configured
 	}
 
-	if checkResAuth.Certificate.Configured {
+	var customAdminDomainConfigured bool
+	if env.CustomAdminDomain != "" {
+		checkResAdmin, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
+			AppID:    s.FlyioAdminProxyAppID,
+			Hostname: env.CustomAdminDomain,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		customAdminDomainConfigured = checkResAdmin.Certificate.Configured
+	}
+
+	if customAuthDomainConfigured {
 		if err := s.Store.PromoteEnvironmentCustomAuthDomain(ctx, req.Msg.EnvironmentId); err != nil {
 			return nil, err
 		}
 	}
 
-	checkResAdmin, err := s.FlyioClient.CheckCertificate(ctx, &flyio.CheckCertificateRequest{
-		AppID:    s.FlyioAdminProxyAppID,
-		Hostname: env.CustomAdminDomain,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	if checkResAdmin.Certificate.Configured {
+	if customAdminDomainConfigured {
 		if err := s.Store.PromoteEnvironmentCustomAdminDomain(ctx, req.Msg.EnvironmentId); err != nil {
 			return nil, err
 		}
 	}
 
 	return connect.NewResponse(&ssoreadyv1.CheckEnvironmentCustomDomainSettingsCertificatesResponse{
-		CustomAuthDomainConfigured:  checkResAuth.Certificate.Configured,
-		CustomAdminDomainConfigured: checkResAdmin.Certificate.Configured,
+		CustomAuthDomainConfigured:  customAuthDomainConfigured,
+		CustomAdminDomainConfigured: customAdminDomainConfigured,
 	}), nil
 }
