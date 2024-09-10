@@ -54,6 +54,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { GetEnvironmentCustomDomainSettingsResponse } from "@/gen/ssoready/v1/ssoready_pb";
 import { Title } from "@/components/Title";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ViewCustomDomainsPage() {
   const { environmentId } = useParams();
@@ -114,6 +115,7 @@ export function ViewCustomDomainsPage() {
             customer's Identity Provider talks to. SSOReady runs that server for
             you. By default, it's hosted at auth.ssoready.com. With a custom
             domain, you can run it on any domain you control.
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#running-authssoreadycom-on-a-custom-domain" />
           </CardDescription>
         </CardHeader>
 
@@ -272,6 +274,7 @@ export function ViewCustomDomainsPage() {
             set-up process for SAML Connections and SCIM Directories. By
             default, it's hosted at admin.ssoready.com. With a custom domain,
             you can run it on any domain you control.
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#running-adminssoreadycom-on-a-custom-domain" />
           </CardDescription>
         </CardHeader>
 
