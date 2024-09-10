@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ArrowDownUpIcon, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -76,6 +76,7 @@ import { InputTags } from "@/components/InputTags";
 import { Switch } from "@/components/ui/switch";
 import { DocsLink } from "@/components/DocsLink";
 import { Title } from "@/components/Title";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -123,6 +124,7 @@ export function ViewSAMLConnectionPage() {
               <CardDescription>
                 A SAML connection is a link between your product and your
                 customer's Identity Provider.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections" />
               </CardDescription>
             </div>
 
@@ -137,9 +139,14 @@ export function ViewSAMLConnectionPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Primary
+              <InfoTooltip>
+                A "primary" SAML connection gets used by default within its
+                organization.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#primary" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {samlConnection?.primary ? "Yes" : "No"}
@@ -168,7 +175,10 @@ export function ViewSAMLConnectionPage() {
         <TabsContent value="config">
           <Card>
             <CardHeader>
-              <CardTitle>Service Provider Configuration</CardTitle>
+              <CardTitle>
+                Service Provider Configuration
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#service-provider-configuration" />
+              </CardTitle>
               <CardDescription>
                 The configuration here is assigned automatically by SSOReady,
                 and needs to be inputted into your customer's Identity Provider
@@ -176,16 +186,25 @@ export function ViewSAMLConnectionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-4 gap-y-2 items-center">
-                <div className="text-sm col-span-1 text-muted-foreground">
+              <div className="grid grid-cols-5 gap-y-2 items-center">
+                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
                   Assertion Consumer Service (ACS) URL
+                  <InfoTooltip>
+                    An HTTP endpoint that receives SAML assertions.
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#assertion-consumer-service-acs-url" />
+                  </InfoTooltip>
                 </div>
                 <div className="text-sm col-span-3">
                   {samlConnection?.spAcsUrl}
                 </div>
 
-                <div className="text-sm col-span-1 text-muted-foreground">
+                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
                   SP Entity ID
+                  <InfoTooltip>
+                    An identifier indicating which application a SAML assertion
+                    is intended for.
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#sp-entity-id" />
+                  </InfoTooltip>
                 </div>
                 <div className="text-sm col-span-3">
                   {samlConnection?.spEntityId}
@@ -198,10 +217,13 @@ export function ViewSAMLConnectionPage() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div className="flex flex-col space-y-1.5">
-                  <CardTitle>Identity Provider Configuration</CardTitle>
+                  <CardTitle>
+                    Identity Provider Configuration
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#identity-provider-configuration" />
+                  </CardTitle>
                   <CardDescription>
                     The configuration here needs to be copied over from the
-                    customer's Identity Provider.
+                    customer's Identity Provider ("IDP").
                   </CardDescription>
                 </div>
 
@@ -213,33 +235,58 @@ export function ViewSAMLConnectionPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-4 gap-y-2 items-center">
-                <div className="text-sm col-span-1 text-muted-foreground">
+              <div className="grid grid-cols-5 gap-y-2 items-center">
+                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
                   IDP Entity ID
+                  <InfoTooltip>
+                    An identifier the IDP assigns for the SAML connection.
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#idp-entity-id" />
+                  </InfoTooltip>
                 </div>
                 <div className="text-sm col-span-3">
-                  {samlConnection?.idpEntityId}
+                  {samlConnection?.idpEntityId || (
+                    <div className="text-sm text-muted-foreground">
+                      Not configured
+                    </div>
+                  )}
                 </div>
-                <div className="text-sm col-span-1 text-muted-foreground">
+                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
                   Redirect URL
+                  <InfoTooltip>
+                    An HTTP endpoint on the IDP that accepts SAML initiation
+                    requests.
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#redirect-url" />
+                  </InfoTooltip>
                 </div>
                 <div className="text-sm col-span-3">
-                  {samlConnection?.idpRedirectUrl}
+                  {samlConnection?.idpRedirectUrl || (
+                    <div className="text-sm text-muted-foreground">
+                      Not configured
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2 self-start">
+                  Certificate
+                  <InfoTooltip>
+                    An X.509 certificate the IDP uses to sign assertions.
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#certificate" />
+                  </InfoTooltip>
+                </div>
+                <div className="text-sm col-span-3">
+                  {samlConnection?.idpCertificate ? (
+                    <div className="bg-black rounded-lg px-6 py-4 mt-4 inline-block">
+                      <code className="text-sm text-white">
+                        <pre>{samlConnection?.idpCertificate}</pre>
+                      </code>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      Not configured
+                    </div>
+                  )}
                 </div>
               </div>
-
-              <Collapsible className="mt-1.5">
-                <CollapsibleTrigger className="text-sm text-muted-foreground">
-                  Certificate (click to show)
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="bg-black rounded-lg px-6 py-4 mt-4 inline-block">
-                    <code className="text-sm text-white">
-                      <pre>{samlConnection?.idpCertificate}</pre>
-                    </code>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
             </CardContent>
           </Card>
         </TabsContent>
