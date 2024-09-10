@@ -29,6 +29,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { OctagonX } from "lucide-react";
 import { Title } from "@/components/Title";
+import { DocsLink } from "@/components/DocsLink";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewSAMLFlowPage() {
   const { environmentId, organizationId, samlConnectionId, samlFlowId } =
@@ -78,7 +80,7 @@ export function ViewSAMLFlowPage() {
           <div className="flex justify-between items-center">
             <div className="flex flex-col space-y-1.5">
               <div className="flex gap-4">
-                <CardTitle>SAML Flow</CardTitle>
+                <CardTitle>SAML Login Flow</CardTitle>
 
                 <span className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
                   {samlFlowId}
@@ -86,33 +88,47 @@ export function ViewSAMLFlowPage() {
               </div>
 
               <CardDescription>
-                A SAML flow is a single time one of your users attempted to log
-                in via SAML.
+                A SAML login flow is a single time one of your users attempted
+                to log in via SAML.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows" />
               </CardDescription>
             </div>
           </div>
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Started
+              <InfoTooltip>
+                When the login process began.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#start-time" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {samlFlow?.createTime &&
                 moment(samlFlow.createTime.toDate()).format()}
             </div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Last Activity
+              <InfoTooltip>
+                The last time any progress has happened on the SAML login flow.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#last-activity-time" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {samlFlow?.updateTime &&
                 moment(samlFlow.updateTime.toDate()).format()}
             </div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Status
+              <InfoTooltip>
+                Whether the SAML login flow is in progress, succeeded, or
+                failed.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#status" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {samlFlow?.status ===
@@ -128,24 +144,41 @@ export function ViewSAMLFlowPage() {
               )}
             </div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               State
+              <InfoTooltip>
+                The <code>state</code> you provided when getting a SAML redirect
+                URL.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#state" />
+              </InfoTooltip>
             </div>
-            <div className="text-sm col-span-3">
-              <span className="font-mono bg-gray-100 py-1 px-2 rounded-sm">
-                {samlFlow?.state}
-              </span>
+            <div className="col-span-3">
+              {samlFlow?.state ? (
+                <span className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
+                  {samlFlow.state}
+                </span>
+              ) : (
+                <span className="text-sm text-muted-foreground">None</span>
+              )}
             </div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               User Email
+              <InfoTooltip>
+                Your end user's email address.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#user-email" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">{samlFlow?.email}</div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               User Attributes
+              <InfoTooltip>
+                Additional user attributes the IDP passed along.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#user-attributes" />
+              </InfoTooltip>
             </div>
-            <div className="text-sm col-span-3">
+            <div className="text-xs col-span-3">
               <span className="font-mono bg-gray-100 py-1 px-2 rounded-sm">
                 {JSON.stringify(samlFlow?.attributes)}
               </span>
@@ -243,6 +276,7 @@ export function ViewSAMLFlowPage() {
                   </span>
                   <span className="text-sm font-semibold">
                     Requested SAML Redirect URL
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#requested-saml-redirect-url" />
                   </span>
                 </div>
 
@@ -261,6 +295,7 @@ export function ViewSAMLFlowPage() {
                   </span>
                   <span className="text-sm font-semibold">
                     Initiated SAML Flow
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#initiated-saml-flow" />
                   </span>
                 </div>
 
@@ -290,6 +325,7 @@ export function ViewSAMLFlowPage() {
                   </span>
                   <span className="text-sm font-semibold">
                     Received SAML Assertion
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#received-saml-assertion" />
                   </span>
                 </div>
 
@@ -316,6 +352,7 @@ export function ViewSAMLFlowPage() {
                   </span>
                   <span className="text-sm font-semibold">
                     Redeemed SAML Access Code
+                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#redeemed-saml-access-code" />
                   </span>
                 </div>
 
