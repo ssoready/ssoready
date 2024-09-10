@@ -77,6 +77,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
 import { Title } from "@/components/Title";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -210,6 +211,7 @@ export function ViewSCIMDirectoryPage() {
                 <CardDescription>
                   A SCIM directory is a connection between your product and your
                   customer's employee directory.
+                  <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-directories" />
                 </CardDescription>
               </div>
 
@@ -222,15 +224,25 @@ export function ViewSCIMDirectoryPage() {
           </CardHeader>
 
           <CardContent>
-            <div className="grid grid-cols-4 gap-y-2">
-              <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="grid grid-cols-5 gap-y-2">
+              <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
                 Primary
+                <InfoTooltip>
+                  A "primary" SCIM directory gets used by default within its
+                  organization.
+                  <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-directories#primary" />
+                </InfoTooltip>
               </div>
               <div className="text-sm col-span-3">
                 {scimDirectory?.primary ? "Yes" : "No"}
               </div>
-              <div className="text-sm col-span-1 text-muted-foreground">
+              <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
                 SCIM Base URL
+                <InfoTooltip>
+                  The base URL your customer's IDP uses to send SCIM HTTP
+                  requests.
+                  <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-directories#scim-base-url" />
+                </InfoTooltip>
               </div>
               <div className="text-sm col-span-3">
                 {scimDirectory?.scimBaseUrl}
@@ -241,7 +253,10 @@ export function ViewSCIMDirectoryPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>SCIM Authentication</CardTitle>
+            <CardTitle>
+              SCIM Authentication
+              <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-directories#scim-authentication" />
+            </CardTitle>
             <CardDescription>
               To set up SCIM, your customer's IT admin will need to configure a
               Bearer authentication token in their Identity Provider. You can
@@ -404,7 +419,10 @@ function UsersTabContent() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>SCIM Users</CardTitle>
+        <CardTitle>
+          SCIM Users
+          <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users" />
+        </CardTitle>
         <CardDescription>
           Users belonging to this SCIM directory.
         </CardDescription>
@@ -467,7 +485,10 @@ function GroupsTabContent() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>SCIM Groups</CardTitle>
+        <CardTitle>
+          SCIM Groups
+          <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups" />
+        </CardTitle>
         <CardDescription>
           Groups belonging to this SCIM directory.
         </CardDescription>

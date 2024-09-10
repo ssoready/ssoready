@@ -15,6 +15,8 @@ import { useNavigate, useParams } from "react-router";
 import { Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Title } from "@/components/Title";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ViewAPIKeyPage() {
   const { environmentId, apiKeyId } = useParams();
@@ -48,14 +50,19 @@ export function ViewAPIKeyPage() {
               <CardDescription>
                 An API key is how your application authenticates with SSOReady's
                 SDKs or REST APIs.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#api-keys" />
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Management API Access
+              <InfoTooltip>
+                Whether this API key can use the Management API.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#management-api" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {apiKey?.hasManagementApiAccess ? "Yes" : "No"}

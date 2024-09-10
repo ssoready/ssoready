@@ -72,6 +72,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { DocsLink } from "@/components/DocsLink";
 import { Title } from "@/components/Title";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
@@ -109,6 +110,7 @@ export function ViewEnvironmentPage() {
               <CardDescription>
                 An environment corresponds to a deployment environment in your
                 product, e.g. "Staging" or "Production".
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments" />
               </CardDescription>
             </div>
 
@@ -119,13 +121,23 @@ export function ViewEnvironmentPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Redirect URL
+              <InfoTooltip>
+                Where SSOReady will redirect your users after they log in via
+                SAML.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#redirect-url" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">{environment?.redirectUrl}</div>
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               OAuth Redirect URI
+              <InfoTooltip>
+                Where SSOReady will redirect your users if you use
+                SAML-over-OAuth.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#oauth-redirect-uri" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {environment?.oauthRedirectUri ? (
@@ -134,10 +146,21 @@ export function ViewEnvironmentPage() {
                 <span className="text-muted-foreground">Not configured</span>
               )}
             </div>
-            <div className="text-sm col-span-1 text-muted-foreground">
-              Custom SSOReady Auth URL
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
+              Custom auth.ssoready.com domain
+              <InfoTooltip>
+                The URL your customers see instead of{" "}
+                <span className="font-mono">auth.ssoready.com</span>.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#custom-ssoready-auth-url" />
+              </InfoTooltip>
             </div>
-            <div className="text-sm col-span-3">{environment?.authUrl}</div>
+            <div className="text-sm col-span-3">
+              {environment?.authUrl ? (
+                <span>{environment.authUrl}</span>
+              ) : (
+                <span className="text-muted-foreground">Not configured</span>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

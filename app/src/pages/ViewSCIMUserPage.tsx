@@ -33,6 +33,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Title } from "@/components/Title";
+import { Dock } from "lucide-react";
+import { DocsLink } from "@/components/DocsLink";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewSCIMUserPage() {
   const { environmentId, organizationId, scimDirectoryId, scimUserId } =
@@ -100,19 +103,28 @@ export function ViewSCIMUserPage() {
               <CardDescription>
                 A SCIM user is one of your customer's employees, synced in from
                 their configured SCIM directory.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users" />
               </CardDescription>
             </div>
           </div>
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Email
+              <InfoTooltip>
+                Your end user's email address.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users#email" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">{scimUser?.email}</div>
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Deleted
+              <InfoTooltip>
+                Whether the user has been deleted or deprovisioned.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users#deleted" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {scimUser?.deleted ? "Yes" : "No"}
@@ -123,7 +135,10 @@ export function ViewSCIMUserPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>User Details</CardTitle>
+          <CardTitle>
+            User Details
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users#attributes" />
+          </CardTitle>
           <CardDescription>
             Your customers, depending on their Identity Provider vendor and
             configuration, will likely have a different set of{" "}
@@ -158,7 +173,10 @@ export function ViewSCIMUserPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>SCIM Groups</CardTitle>
+          <CardTitle>
+            SCIM Groups
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users#groups" />
+          </CardTitle>
           <CardDescription>
             SCIM groups this SCIM user belongs to.
           </CardDescription>

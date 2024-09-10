@@ -15,6 +15,7 @@ import { useNavigate, useParams } from "react-router";
 import { Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Title } from "@/components/Title";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ViewSAMLOAuthClientPage() {
   const { environmentId, samlOAuthClientId } = useParams();
@@ -55,6 +56,7 @@ export function ViewSAMLOAuthClientPage() {
               <CardDescription>
                 A SAML OAuth client is a way to add SAML support to an app that
                 exclusively uses OAuth to do user logins.
+                <DocsLink to="https://ssoready.com/docs/saml-over-oauth-saml-nextauth-integration" />
               </CardDescription>
             </div>
           </div>

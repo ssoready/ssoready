@@ -80,6 +80,7 @@ import { DocsLink } from "@/components/DocsLink";
 import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
 import { Title } from "@/components/Title";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -150,6 +151,7 @@ export function ViewOrganizationPage() {
 
               <CardDescription>
                 An organization corresponds to a tenant in your application.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/organizations" />
               </CardDescription>
             </div>
 
@@ -160,14 +162,23 @@ export function ViewOrganizationPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               External ID
+              <InfoTooltip>
+                Optional. An ID from your database for this organization.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/organizations#organization-external-id" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">{organization?.externalId}</div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Domains
+              <InfoTooltip>
+                A whitelist of domains that customers from this organization
+                use.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/organizations#domains" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {" "}
@@ -295,9 +306,9 @@ function AdminSetupURLCard() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="flex gap-x-4 items-center">
-            <span>Customer self-serve setup</span>
-            <Badge variant="secondary">Beta</Badge>
+          <CardTitle>
+            Customer self-serve setup
+            <DocsLink to="https://ssoready.com/docs/idp-configuration/enabling-self-service-configuration-for-your-customers" />
           </CardTitle>
           <CardDescription>
             You can invite your customer's IT admin to set up their SAML
@@ -578,9 +589,9 @@ function OrganizationSCIMDirectoriesPage() {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div className="flex flex-col space-y-1.5">
-            <CardTitle className="flex gap-x-4 items-center">
-              <span>SCIM Directories</span>
-              <Badge variant="secondary">Beta</Badge>
+            <CardTitle>
+              SCIM Directories
+              <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-directories" />
             </CardTitle>
             <CardDescription>
               SCIM Directories within this organization.

@@ -51,6 +51,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { Title } from "@/components/Title";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ViewBrandingSettingsPage() {
   const { environmentId } = useParams();
@@ -79,23 +80,32 @@ export function ViewBrandingSettingsPage() {
             SSOReady can host a UI on your behalf that lets your customers
             configure their SAML and SCIM settings on their own. Here, you can
             make that UI look on-brand for your company.
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#custom-branding" />
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2 items-center">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2 items-center">
+            <div className="text-sm col-span-2 text-muted-foreground">
               Application Name
             </div>
             <div className="text-sm col-span-3">
-              {environmentAdminSettings?.adminApplicationName}
+              {environmentAdminSettings?.adminApplicationName || (
+                <div className="text-sm text-muted-foreground">
+                  Not configured
+                </div>
+              )}
             </div>
 
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground">
               Return URL
             </div>
             <div className="text-sm col-span-3">
-              {environmentAdminSettings?.adminReturnUrl}
+              {environmentAdminSettings?.adminReturnUrl || (
+                <div className="text-sm text-muted-foreground">
+                  Not configured
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
