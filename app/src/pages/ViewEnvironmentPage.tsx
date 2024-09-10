@@ -136,7 +136,7 @@ export function ViewEnvironmentPage() {
               <InfoTooltip>
                 Where SSOReady will redirect your users if you use
                 SAML-over-OAuth.
-                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#redirect-url" />
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#oauth-redirect-uri" />
               </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
@@ -151,7 +151,7 @@ export function ViewEnvironmentPage() {
               <InfoTooltip>
                 The URL your customers see instead of{" "}
                 <span className="font-mono">auth.ssoready.com</span>.
-                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#redirect-url" />
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#custom-ssoready-auth-url" />
               </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
