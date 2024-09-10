@@ -33,6 +33,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Title } from "@/components/Title";
+import { DocsLink } from "@/components/DocsLink";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function ViewSCIMGroupPage() {
   const { environmentId, organizationId, scimDirectoryId, scimGroupId } =
@@ -100,19 +102,28 @@ export function ViewSCIMGroupPage() {
               <CardDescription>
                 A SCIM group is one of your customer's employees, synced in from
                 their configured SCIM directory.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups" />
               </CardDescription>
             </div>
           </div>
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-y-2">
-            <div className="text-sm col-span-1 text-muted-foreground">
+          <div className="grid grid-cols-5 gap-y-2">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Display Name
+              <InfoTooltip>
+                A human-friendly name.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups#display-name" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">{scimGroup?.displayName}</div>
-            <div className="text-sm col-span-1 text-muted-foreground">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Deleted
+              <InfoTooltip>
+                Whether the group has been deleted or deprovisioned.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups#deleted" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {scimGroup?.deleted ? "Yes" : "No"}
@@ -123,7 +134,10 @@ export function ViewSCIMGroupPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Group Details</CardTitle>
+          <CardTitle>
+            Group Details
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups#attributes" />
+          </CardTitle>
           <CardDescription>
             Your customers, depending on their Identity Provider vendor and
             configuration, will likely have a different set of{" "}
@@ -158,7 +172,10 @@ export function ViewSCIMGroupPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>SCIM Users</CardTitle>
+          <CardTitle>
+            SCIM Users
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups#users" />
+          </CardTitle>
           <CardDescription>Users belonging to this SCIM group.</CardDescription>
         </CardHeader>
         <CardContent>

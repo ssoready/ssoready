@@ -175,7 +175,7 @@ export function ViewSCIMUserPage() {
         <CardHeader>
           <CardTitle>
             SCIM Groups
-            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-groups" />
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-users#groups" />
           </CardTitle>
           <CardDescription>
             SCIM groups this SCIM user belongs to.
