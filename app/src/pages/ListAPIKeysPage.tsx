@@ -61,6 +61,7 @@ import { InputTags } from "@/components/InputTags";
 import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
 import { Title } from "@/components/Title";
+import { DocsLink } from "@/components/DocsLink";
 
 export function ListAPIKeysPage() {
   return (
@@ -99,6 +100,7 @@ function ListAPIKeysCard() {
                 An API key is how your application authenticates with SSOReady's
                 SDKs or REST APIs. Most SSOReady users should use these over
                 SAML OAuth Clients.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/environments#api-keys" />
               </CardDescription>
             </div>
 
@@ -423,6 +425,7 @@ function ListOAuthClientsCard() {
                 exclusively uses OAuth to do user logins. Use these if
                 interacting directly with SSOReady using an API Key isn't an
                 option for you.
+                <DocsLink to="https://ssoready.com/docs/saml-over-oauth-saml-nextauth-integration" />
               </CardDescription>
             </div>
 
