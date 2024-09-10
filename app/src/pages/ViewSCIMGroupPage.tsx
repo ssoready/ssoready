@@ -32,6 +32,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Title } from "@/components/Title";
 
 export function ViewSCIMGroupPage() {
   const { environmentId, organizationId, scimDirectoryId, scimGroupId } =
@@ -54,6 +55,8 @@ export function ViewSCIMGroupPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <Title title="SCIM Group" />
+
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

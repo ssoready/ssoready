@@ -71,6 +71,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { DocsLink } from "@/components/DocsLink";
+import { Title } from "@/components/Title";
 
 export function ViewEnvironmentPage() {
   const { environmentId } = useParams();
@@ -92,6 +93,7 @@ export function ViewEnvironmentPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title={environment?.displayName} />
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

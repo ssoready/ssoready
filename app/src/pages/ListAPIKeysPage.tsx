@@ -60,6 +60,7 @@ import { Input } from "@/components/ui/input";
 import { InputTags } from "@/components/InputTags";
 import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
+import { Title } from "@/components/Title";
 
 export function ListAPIKeysPage() {
   return (
@@ -87,6 +88,7 @@ function ListAPIKeysCard() {
 
   return (
     <>
+      <Title title="API Keys" />
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

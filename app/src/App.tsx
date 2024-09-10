@@ -12,7 +12,6 @@ import { Page } from "@/components/Page";
 import { ViewEnvironmentPage } from "@/pages/ViewEnvironmentPage";
 import { ViewOrganizationPage } from "@/pages/ViewOrganizationPage";
 import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
-import { EditSAMLConnectionPage } from "@/pages/EditSAMLConnectionPage";
 import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 import { CreateEnvironmentPage } from "@/pages/CreateEnvironmentPage";
 import { ViewAPIKeyPage } from "@/pages/ViewAPIKeyPage";
@@ -113,10 +112,6 @@ export function AppRoutes() {
           <Route
             path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows"
             element={<ViewSAMLConnectionPage />}
-          />
-          <Route
-            path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/edit"
-            element={<EditSAMLConnectionPage />}
           />
           <Route
             path="/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows/:samlFlowId"

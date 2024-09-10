@@ -14,6 +14,7 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Title } from "@/components/Title";
 
 export function ViewSAMLOAuthClientPage() {
   const { environmentId, samlOAuthClientId } = useParams();
@@ -37,6 +38,8 @@ export function ViewSAMLOAuthClientPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title="SAML OAuth Client" />
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

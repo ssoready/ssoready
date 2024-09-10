@@ -76,6 +76,7 @@ import {
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
+import { Title } from "@/components/Title";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -113,6 +114,8 @@ export function ViewSCIMDirectoryPage() {
 
   return (
     <>
+      <Title title="SCIM Directory" />
+
       <AlertDialog
         open={warnBearerTokenAlertOpen}
         onOpenChange={setWarnBearerTokenAlertOpen}

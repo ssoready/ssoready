@@ -28,6 +28,7 @@ import { SAMLFlowStatus } from "@/gen/ssoready/v1/ssoready_pb";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { OctagonX } from "lucide-react";
+import { Title } from "@/components/Title";
 
 export function ViewSAMLFlowPage() {
   const { environmentId, organizationId, samlConnectionId, samlFlowId } =
@@ -41,6 +42,8 @@ export function ViewSAMLFlowPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <Title title="SAML Login Flow" />
+
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

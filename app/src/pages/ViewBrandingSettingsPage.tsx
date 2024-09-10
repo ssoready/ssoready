@@ -50,6 +50,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
+import { Title } from "@/components/Title";
 
 export function ViewBrandingSettingsPage() {
   const { environmentId } = useParams();
@@ -59,6 +60,8 @@ export function ViewBrandingSettingsPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title="Branding" />
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
