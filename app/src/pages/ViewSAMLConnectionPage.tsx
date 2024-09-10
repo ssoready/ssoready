@@ -75,6 +75,7 @@ import { Label } from "@/components/ui/label";
 import { InputTags } from "@/components/InputTags";
 import { Switch } from "@/components/ui/switch";
 import { DocsLink } from "@/components/DocsLink";
+import { Title } from "@/components/Title";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -87,6 +88,8 @@ export function ViewSAMLConnectionPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title="SAML Connection" />
+
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

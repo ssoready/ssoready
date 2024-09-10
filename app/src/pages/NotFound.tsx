@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAnalytics } from "@/analytics";
+import { Title } from "@/components/Title";
 
 export function NotFound() {
   const analytics = useAnalytics();
@@ -10,6 +11,8 @@ export function NotFound() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
+      <Title title="Not Found" />
+
       <div className="space-y-4 text-center">
         <h1 className="text-6xl font-bold">404</h1>
         <p className="text-muted-foreground text-xl">Page not found</p>

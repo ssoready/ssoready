@@ -14,6 +14,7 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Title } from "@/components/Title";
 
 export function ViewAPIKeyPage() {
   const { environmentId, apiKeyId } = useParams();
@@ -30,6 +31,8 @@ export function ViewAPIKeyPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title="API Key" />
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

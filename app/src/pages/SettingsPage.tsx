@@ -16,6 +16,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Title } from "@/components/Title";
 
 export function SettingsPage() {
   const { data: appOrganization } = useQuery(getAppOrganization, {});
@@ -37,6 +38,8 @@ export function SettingsPage() {
 
   return (
     <div>
+      <Title title="Settings" />
+
       <Card>
         <CardHeader>
           <CardTitle>Billing</CardTitle>

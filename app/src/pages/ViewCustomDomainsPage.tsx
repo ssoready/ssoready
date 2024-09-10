@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { GetEnvironmentCustomDomainSettingsResponse } from "@/gen/ssoready/v1/ssoready_pb";
+import { Title } from "@/components/Title";
 
 export function ViewCustomDomainsPage() {
   const { environmentId } = useParams();
@@ -90,6 +91,8 @@ export function ViewCustomDomainsPage() {
 
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title="Custom Domains" />
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">

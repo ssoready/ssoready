@@ -79,6 +79,7 @@ import {
 import { DocsLink } from "@/components/DocsLink";
 import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
+import { Title } from "@/components/Title";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -125,6 +126,8 @@ export function ViewOrganizationPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <Title title="Organization" />
+
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

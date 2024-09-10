@@ -30,6 +30,7 @@ import {
   PlusIcon,
 } from "lucide-react";
 import { DocsLink } from "@/components/DocsLink";
+import { Title } from "@/components/Title";
 
 export function HomePage() {
   const { data: onboardingState } = useQuery(getOnboardingState, {});
@@ -47,6 +48,8 @@ export function HomePage() {
   );
   return (
     <div className="flex flex-col gap-y-8">
+      <Title title="Home" />
+
       {onboardingState && onboardingState.onboardingEnvironmentId === "" ? (
         <Card>
           <CardHeader>

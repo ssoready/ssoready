@@ -41,6 +41,7 @@ import { clsx } from "clsx";
 import hljs from "highlight.js/lib/core";
 import { offset, useFloating, useTransitionStyles } from "@floating-ui/react";
 import { useConfig } from "@/config";
+import { Title } from "@/components/Title";
 
 export function OnboardingPage() {
   const [searchParams] = useSearchParams();
@@ -67,6 +68,8 @@ export function OnboardingPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-8 flex flex-col gap-y-8">
+      <Title title="Onboarding Demo" />
+
       <DemoCard
         done={step > 0}
         open={step >= 0}

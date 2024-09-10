@@ -33,6 +33,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router";
+import { Title } from "@/components/Title";
 
 const FormSchema = z.object({
   displayName: z.string().min(1, {
@@ -84,6 +85,8 @@ export function CreateEnvironmentPage() {
 
   return (
     <Card>
+      <Title title="Create Environment" />
+
       <CardHeader>
         <CardTitle>Create environment</CardTitle>
       </CardHeader>
