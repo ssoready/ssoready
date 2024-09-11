@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -47,14 +48,19 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 			panic("unsupported filter param")
 		}
 
-		email := match[1]
+		// scimvalidator.microsoft.com sends url-encoded values; harmless to "normal" emails to url-parse them
+		email, err := url.QueryUnescape(match[1])
+		if err != nil {
+			panic(err)
+		}
+
 		scimUser, err := s.Store.AuthGetSCIMUserByEmail(ctx, &store.AuthGetSCIMUserByEmailRequest{
 			SCIMDirectoryID: scimDirectoryID,
 			Email:           email,
 		})
 		if err != nil {
 			if errors.Is(err, store.ErrSCIMUserNotFound) {
-				w.Header().Set("Content-Type", "application/json")
+				w.Header().Set("Content-Type", "application/scim+json")
 				w.WriteHeader(http.StatusOK)
 				if err := json.NewEncoder(w).Encode(scimListResponse{
 					TotalResults: 0,
@@ -75,7 +81,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		resource["id"] = scimUser.Id
 		resource["userName"] = scimUser.Email
 
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/scim+json")
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(scimListResponse{
 			TotalResults: 1,
@@ -117,7 +123,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		resources = append(resources, resource)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(scimListResponse{
 		TotalResults: scimUsers.TotalResults,
@@ -161,7 +167,7 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) {
 	resource["userName"] = scimUser.Email
 	resource["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:User"}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(resource); err != nil {
 		panic(err)
@@ -238,13 +244,14 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("store: %w", err))
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusCreated)
 
 	response := scimUser.SCIMUser.Attributes.AsMap()
 	response["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:User"}
 	response["id"] = scimUser.SCIMUser.Id
 
+	w.Header().Set("Content-Type", "application/scim+json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
@@ -327,13 +334,14 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("store: %w", err))
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 
 	response := scimUser.SCIMUser.Attributes.AsMap()
 	response["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:User"}
 	response["id"] = scimUser.SCIMUser.Id
 
+	w.Header().Set("Content-Type", "application/scim+json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
@@ -444,7 +452,7 @@ func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) {
 		resources = append(resources, resource)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(scimListResponse{
 		TotalResults: scimGroups.TotalResults,
@@ -487,7 +495,7 @@ func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 	resource["displayName"] = scimGroup.DisplayName
 	resource["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:Group"}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(resource); err != nil {
 		panic(err)
@@ -543,7 +551,7 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("store: %w", err))
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusCreated)
 
 	response := scimGroup.SCIMGroup.Attributes.AsMap()
@@ -557,6 +565,7 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	response["members"] = responseMembers
 
+	w.Header().Set("Content-Type", "application/scim+json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
@@ -604,12 +613,14 @@ func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	members := resource["members"].([]any)
 	var memberSCIMUserIDs []string
-	for _, member := range members {
-		member := member.(map[string]any)
-		userID := member["value"].(string)
-		memberSCIMUserIDs = append(memberSCIMUserIDs, userID)
+	if resource["members"] != nil {
+		members := resource["members"].([]any)
+		for _, member := range members {
+			member := member.(map[string]any)
+			userID := member["value"].(string)
+			memberSCIMUserIDs = append(memberSCIMUserIDs, userID)
+		}
 	}
 
 	displayName := resource["displayName"].(string)
@@ -634,7 +645,7 @@ func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("store: %w", err))
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 
 	response := scimGroup.SCIMGroup.Attributes.AsMap()
