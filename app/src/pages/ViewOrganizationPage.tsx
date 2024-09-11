@@ -170,7 +170,13 @@ export function ViewOrganizationPage() {
                 <DocsLink to="https://ssoready.com/docs/ssoready-concepts/organizations#organization-external-id" />
               </InfoTooltip>
             </div>
-            <div className="text-sm col-span-3">{organization?.externalId}</div>
+            <div className="text-sm col-span-3">
+              {organization?.externalId || (
+                <div className="text-sm text-muted-foreground">
+                  Not configured
+                </div>
+              )}
+            </div>
 
             <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Domains
