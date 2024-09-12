@@ -651,6 +651,14 @@ insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, sc
 values ($1, $2, $3, $4)
 on conflict (scim_user_id, scim_group_id) do nothing;
 
+-- name: AuthCreateSCIMRequest :one
+insert into scim_requests (id, scim_directory_id, timestamp, http_request_url, http_request_method,
+                           http_request_headers, http_request_body, http_response_status,
+                           http_response_body, error_bad_bearer_token, error_bad_username,
+                           error_email_outside_organization_domains)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+returning *;
+
 -- name: GetSCIMDirectoryByIDAndEnvironmentID :one
 select scim_directories.id
 from scim_directories

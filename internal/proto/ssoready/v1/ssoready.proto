@@ -420,6 +420,45 @@ message SCIMGroup {
   google.protobuf.Struct attributes = 4;
 }
 
+enum SCIMRequestHTTPMethod {
+  SCIM_REQUEST_HTTP_METHOD_UNSPECIFIED = 0;
+  SCIM_REQUEST_HTTP_METHOD_GET = 1;
+  SCIM_REQUEST_HTTP_METHOD_POST = 2;
+  SCIM_REQUEST_HTTP_METHOD_PUT = 3;
+  SCIM_REQUEST_HTTP_METHOD_PATCH = 4;
+  SCIM_REQUEST_HTTP_METHOD_DELETE = 5;
+}
+
+enum SCIMRequestHTTPStatus {
+  SCIM_REQUEST_HTTP_STATUS_UNSPECIFIED = 0;
+  SCIM_REQUEST_HTTP_STATUS_200 = 1;
+  SCIM_REQUEST_HTTP_STATUS_201 = 2;
+  SCIM_REQUEST_HTTP_STATUS_204 = 3;
+  SCIM_REQUEST_HTTP_STATUS_400 = 4;
+  SCIM_REQUEST_HTTP_STATUS_401 = 5;
+  SCIM_REQUEST_HTTP_STATUS_404 = 6;
+}
+
+message SCIMRequest {
+  string id = 1;
+  string scim_directory_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+
+  string http_request_url = 4;
+  SCIMRequestHTTPMethod http_request_method = 5;
+  map<string, string> http_request_headers = 6;
+  google.protobuf.Struct http_request_body = 7;
+
+  SCIMRequestHTTPStatus http_response_status = 8;
+  google.protobuf.Struct http_response_body = 9;
+
+  oneof error {
+    google.protobuf.Empty bad_bearer_token = 10;
+    string bad_username = 11;
+    string email_outside_organization_domains = 12;
+  }
+}
+
 message GetSAMLRedirectURLRequest {
   // The SAML connection to start a SAML login for.
   //

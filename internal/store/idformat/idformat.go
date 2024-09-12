@@ -22,6 +22,7 @@ var (
 	SCIMUser        = prettyuuid.MustNewFormat("scim_user_", alphabet)
 	SCIMGroup       = prettyuuid.MustNewFormat("scim_group_", alphabet)
 	SCIMBearerToken = prettyuuid.MustNewFormat("ssoready_scim_bearer_token_", alphabet)
+	SCIMRequest     = prettyuuid.MustNewFormat("scim_request_", alphabet)
 
 	AdminOneTimeToken = prettyuuid.MustNewFormat("ssoready_one_time_token_", alphabet)
 )
