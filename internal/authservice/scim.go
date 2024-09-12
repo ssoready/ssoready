@@ -33,14 +33,14 @@ type scimListResponse struct {
 	Resources    []any    `json:"resources"`
 }
 
-func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return err
 		}
 		panic(err)
 	}
@@ -77,7 +77,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 				}); err != nil {
 					panic(err)
 				}
-				return
+				return nil
 			}
 
 			panic(err)
@@ -98,7 +98,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		}); err != nil {
 			panic(err)
 		}
-		return
+		return nil
 	}
 
 	startIndex := 0
@@ -106,7 +106,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 		i, err := strconv.Atoi(r.URL.Query().Get("startIndex"))
 		if err != nil {
 			http.Error(w, fmt.Sprintf("parse startIndex: %s", err), http.StatusBadRequest)
-			return
+			return nil
 		}
 
 		startIndex = i - 1 // scim is 1-indexed, store is 0-indexed
@@ -140,6 +140,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) {
 	}); err != nil {
 		panic(err)
 	}
+	return nil
 }
 
 func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
@@ -181,14 +182,14 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -205,7 +206,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) {
 	emailDomain, err := emailaddr.Parse(userName)
 	if err != nil {
 		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
-		return
+		return nil
 	}
 
 	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
@@ -230,7 +231,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		http.Error(w, string(msg), http.StatusBadRequest)
-		return
+		return nil
 	}
 
 	// at this point, all remaining properties are user attributes
@@ -262,6 +263,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
+	return nil
 }
 
 func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
@@ -355,7 +357,7 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimUserID := mux.Vars(r)["scim_user_id"]
@@ -363,7 +365,7 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) {
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -391,13 +393,13 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusNoContent)
-		return
+		return nil
 	}
 
 	panic("unsupported group PATCH operation type")
 }
 
-func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimUserID := mux.Vars(r)["scim_user_id"]
@@ -405,7 +407,7 @@ func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) {
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -418,16 +420,17 @@ func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+	return nil
 }
 
-func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -437,7 +440,7 @@ func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) {
 		i, err := strconv.Atoi(r.URL.Query().Get("startIndex"))
 		if err != nil {
 			http.Error(w, fmt.Sprintf("parse startIndex: %s", err), http.StatusBadRequest)
-			return
+			return nil
 		}
 
 		startIndex = i - 1 // scim is 1-indexed, store is 0-indexed
@@ -471,9 +474,10 @@ func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) {
 	}); err != nil {
 		panic(err)
 	}
+	return nil
 }
 
-func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimGroupID := mux.Vars(r)["scim_group_id"]
@@ -481,7 +485,7 @@ func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -493,7 +497,7 @@ func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, store.ErrSCIMGroupNotFound) {
 			w.WriteHeader(http.StatusNotFound)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -508,16 +512,17 @@ func (s *Service) scimGetGroup(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(resource); err != nil {
 		panic(err)
 	}
+	return nil
 }
 
-func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -577,9 +582,10 @@ func (s *Service) scimCreateGroup(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
+	return nil
 }
 
-func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimGroupID := mux.Vars(r)["scim_group_id"]
@@ -587,7 +593,7 @@ func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) {
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -600,9 +606,10 @@ func (s *Service) scimDeleteGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+	return nil
 }
 
-func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimGroupID := mux.Vars(r)["scim_group_id"]
@@ -610,7 +617,7 @@ func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -670,9 +677,10 @@ func (s *Service) scimUpdateGroup(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
+	return nil
 }
 
-func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) {
+func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimGroupID := mux.Vars(r)["scim_group_id"]
@@ -680,7 +688,7 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) {
 	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
 		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
 			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return
+			return nil
 		}
 		panic(err)
 	}
@@ -712,7 +720,7 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusNoContent)
-		return
+		return nil
 	}
 
 	// jumpcloud adds members to groups via an `add` on members
@@ -731,7 +739,7 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusNoContent)
-		return
+		return nil
 	}
 
 	panic("unsupported group PATCH operation type")
