@@ -16,6 +16,23 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var ErrNoSuchSCIMDirectory = errors.New("no such scim directory")
+
+func (s *Store) AuthCheckSCIMDirectoryExists(ctx context.Context, scimDirectoryID string) error {
+	scimDirID, err := idformat.SCIMDirectory.Parse(scimDirectoryID)
+	if err != nil {
+		return fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	if _, err := s.q.AuthGetSCIMDirectory(ctx, scimDirID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrNoSuchSCIMDirectory
+		}
+		return fmt.Errorf("get scim directory: %w", err)
+	}
+	return nil
+}
+
 func (s *Store) AuthGetSCIMDirectoryOrganizationDomains(ctx context.Context, scimDirectoryID string) ([]string, error) {
 	scimDirID, err := idformat.SCIMDirectory.Parse(scimDirectoryID)
 	if err != nil {
@@ -747,11 +764,6 @@ func (s *Store) AuthCreateSCIMRequest(ctx context.Context, req *ssoreadyv1.SCIMR
 		requestMethod = queries.ScimRequestHttpMethodDelete
 	}
 
-	requestHeaders, err := json.Marshal(req.HttpRequestHeaders)
-	if err != nil {
-		return nil, fmt.Errorf("marshal request headers: %w", err)
-	}
-
 	requestBody, err := json.Marshal(req.HttpRequestBody)
 	if err != nil {
 		return nil, fmt.Errorf("marshal request body: %w", err)
@@ -767,6 +779,8 @@ func (s *Store) AuthCreateSCIMRequest(ctx context.Context, req *ssoreadyv1.SCIMR
 		status = queries.ScimRequestHttpStatus204
 	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_400:
 		status = queries.ScimRequestHttpStatus400
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_401:
+		status = queries.ScimRequestHttpStatus401
 	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_404:
 		status = queries.ScimRequestHttpStatus404
 	}
@@ -797,7 +811,6 @@ func (s *Store) AuthCreateSCIMRequest(ctx context.Context, req *ssoreadyv1.SCIMR
 		Timestamp:                            req.Timestamp.AsTime(),
 		HttpRequestUrl:                       req.HttpRequestUrl,
 		HttpRequestMethod:                    requestMethod,
-		HttpRequestHeaders:                   requestHeaders,
 		HttpRequestBody:                      requestBody,
 		HttpResponseStatus:                   status,
 		HttpResponseBody:                     responseBody,
@@ -841,11 +854,6 @@ func parseSCIMRequest(qSCIMRequest queries.ScimRequest) *ssoreadyv1.SCIMRequest 
 		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_404
 	}
 
-	var requestHeaders map[string]string
-	if err := json.Unmarshal(qSCIMRequest.HttpRequestHeaders, &requestHeaders); err != nil {
-		panic(fmt.Errorf("unmarshal request headers: %w", err))
-	}
-
 	var requestBody map[string]any
 	if err := json.Unmarshal(qSCIMRequest.HttpRequestBody, &requestBody); err != nil {
 		panic(fmt.Errorf("unmarshal request body: %w", err))
@@ -872,7 +880,6 @@ func parseSCIMRequest(qSCIMRequest queries.ScimRequest) *ssoreadyv1.SCIMRequest 
 		Timestamp:          timestamppb.New(qSCIMRequest.Timestamp),
 		HttpRequestUrl:     qSCIMRequest.HttpRequestUrl,
 		HttpRequestMethod:  requestMethod,
-		HttpRequestHeaders: requestHeaders,
 		HttpRequestBody:    requestBodyStruct,
 		HttpResponseStatus: status,
 		HttpResponseBody:   responseBodyStruct,

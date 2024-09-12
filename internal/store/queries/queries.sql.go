@@ -285,11 +285,11 @@ func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGro
 
 const authCreateSCIMRequest = `-- name: AuthCreateSCIMRequest :one
 insert into scim_requests (id, scim_directory_id, timestamp, http_request_url, http_request_method,
-                           http_request_headers, http_request_body, http_response_status,
+                           http_request_body, http_response_status,
                            http_response_body, error_bad_bearer_token, error_bad_username,
                            error_email_outside_organization_domains)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-returning id, scim_directory_id, timestamp, http_request_url, http_request_method, http_request_headers, http_request_body, http_response_status, http_response_body, error_bad_bearer_token, error_bad_username, error_email_outside_organization_domains
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+returning id, scim_directory_id, timestamp, http_request_url, http_request_method, http_request_body, http_response_status, http_response_body, error_bad_bearer_token, error_bad_username, error_email_outside_organization_domains
 `
 
 type AuthCreateSCIMRequestParams struct {
@@ -298,7 +298,6 @@ type AuthCreateSCIMRequestParams struct {
 	Timestamp                            time.Time
 	HttpRequestUrl                       string
 	HttpRequestMethod                    ScimRequestHttpMethod
-	HttpRequestHeaders                   []byte
 	HttpRequestBody                      []byte
 	HttpResponseStatus                   ScimRequestHttpStatus
 	HttpResponseBody                     []byte
@@ -314,7 +313,6 @@ func (q *Queries) AuthCreateSCIMRequest(ctx context.Context, arg AuthCreateSCIMR
 		arg.Timestamp,
 		arg.HttpRequestUrl,
 		arg.HttpRequestMethod,
-		arg.HttpRequestHeaders,
 		arg.HttpRequestBody,
 		arg.HttpResponseStatus,
 		arg.HttpResponseBody,
@@ -329,7 +327,6 @@ func (q *Queries) AuthCreateSCIMRequest(ctx context.Context, arg AuthCreateSCIMR
 		&i.Timestamp,
 		&i.HttpRequestUrl,
 		&i.HttpRequestMethod,
-		&i.HttpRequestHeaders,
 		&i.HttpRequestBody,
 		&i.HttpResponseStatus,
 		&i.HttpResponseBody,

@@ -446,7 +446,6 @@ message SCIMRequest {
 
   string http_request_url = 4;
   SCIMRequestHTTPMethod http_request_method = 5;
-  map<string, string> http_request_headers = 6;
   google.protobuf.Struct http_request_body = 7;
 
   SCIMRequestHTTPStatus http_response_status = 8;

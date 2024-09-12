@@ -307,7 +307,6 @@ type ScimRequest struct {
 	Timestamp                            time.Time
 	HttpRequestUrl                       string
 	HttpRequestMethod                    ScimRequestHttpMethod
-	HttpRequestHeaders                   []byte
 	HttpRequestBody                      []byte
 	HttpResponseStatus                   ScimRequestHttpStatus
 	HttpResponseBody                     []byte

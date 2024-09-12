@@ -953,11 +953,6 @@ export class SCIMRequest extends Message<SCIMRequest> {
   httpRequestMethod = SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_UNSPECIFIED;
 
   /**
-   * @generated from field: map<string, string> http_request_headers = 6;
-   */
-  httpRequestHeaders: { [key: string]: string } = {};
-
-  /**
    * @generated from field: google.protobuf.Struct http_request_body = 7;
    */
   httpRequestBody?: Struct;
@@ -1008,7 +1003,6 @@ export class SCIMRequest extends Message<SCIMRequest> {
     { no: 3, name: "timestamp", kind: "message", T: Timestamp },
     { no: 4, name: "http_request_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "http_request_method", kind: "enum", T: proto3.getEnumType(SCIMRequestHTTPMethod) },
-    { no: 6, name: "http_request_headers", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
     { no: 7, name: "http_request_body", kind: "message", T: Struct },
     { no: 8, name: "http_response_status", kind: "enum", T: proto3.getEnumType(SCIMRequestHTTPStatus) },
     { no: 9, name: "http_response_body", kind: "message", T: Struct },

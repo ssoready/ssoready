@@ -9,7 +9,6 @@ create table scim_requests
 
     http_request_url                         varchar                  not null,
     http_request_method                      scim_request_http_method not null,
-    http_request_headers                     jsonb                    not null,
     http_request_body                        jsonb,
 
     http_response_status                     scim_request_http_status not null,

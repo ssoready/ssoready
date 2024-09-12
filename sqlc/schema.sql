@@ -341,7 +341,6 @@ CREATE TABLE public.scim_requests (
     "timestamp" timestamp with time zone NOT NULL,
     http_request_url character varying NOT NULL,
     http_request_method public.scim_request_http_method NOT NULL,
-    http_request_headers jsonb NOT NULL,
     http_request_body jsonb,
     http_response_status public.scim_request_http_status NOT NULL,
     http_response_body jsonb,
