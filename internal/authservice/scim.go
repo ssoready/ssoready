@@ -828,11 +828,8 @@ func (s *Service) scimMiddleware(f func(w http.ResponseWriter, r *http.Request) 
 
 		// check bearer token before calling f
 		bearerToken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-		fmt.Println("check bearer token", bearerToken)
 		if err := s.Store.AuthSCIMVerifyBearerToken(ctx, scimDirectoryID, bearerToken); err != nil {
-			fmt.Println("error from verify", err)
 			if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
-				fmt.Println("bad bearer token")
 				// log a failed scim request
 				scimRequest.HttpResponseStatus = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_401
 				scimRequest.Error = &ssoreadyv1.SCIMRequest_BadBearerToken{BadBearerToken: &emptypb.Empty{}}
