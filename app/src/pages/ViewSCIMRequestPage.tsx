@@ -18,12 +18,15 @@ import {
   SCIMRequestHTTPStatus,
 } from "@/gen/ssoready/v1/ssoready_pb";
 import moment from "moment";
-import { ArrowUpFromLineIcon } from "lucide-react";
+import { ArrowUpFromLineIcon, OctagonX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import hljs from "highlight.js/lib/core";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Link } from "react-router-dom";
 
 export function ViewSCIMRequestPage() {
-  const { scimRequestId } = useParams();
+  const { environmentId, organizationId, scimDirectoryId, scimRequestId } =
+    useParams();
   const { data: scimRequest } = useQuery(appGetSCIMRequest, {
     id: scimRequestId,
   });
@@ -63,6 +66,43 @@ export function ViewSCIMRequestPage() {
           </div>
         </CardContent>
       </Card>
+
+      {scimRequest?.scimRequest?.error.case && (
+        <Alert variant="destructive" className="bg-white shadow-sm">
+          <OctagonX className="h-4 w-4" />
+          <AlertTitle>
+            This SCIM HTTP request was rejected by SSOReady
+          </AlertTitle>
+
+          {scimRequest.scimRequest.error.case === "badBearerToken" && (
+            <AlertDescription>
+              <p>
+                This request had an incorrect bearer token. SSOReady could not
+                authenticate that this request really came from your customer's
+                identity provider.
+              </p>
+
+              <p className="mt-4">
+                To fix this, give your customer a{" "}
+                <Link
+                  to={`/environments/${environmentId}/organizations/${organizationId}`}
+                  className="underline underline-offset-4"
+                >
+                  self-serve setup link
+                </Link>{" "}
+                to update their SCIM directory settings, or{" "}
+                <Link
+                  to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}`}
+                  className="underline underline-offset-4"
+                >
+                  rotate the bearer token yourself
+                </Link>{" "}
+                and give it to your customer over a secure channel.
+              </p>
+            </AlertDescription>
+          )}
+        </Alert>
+      )}
 
       <Card>
         <CardHeader>
