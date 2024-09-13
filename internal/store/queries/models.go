@@ -55,6 +55,97 @@ func (ns NullSamlFlowStatus) Value() (driver.Value, error) {
 	return string(ns.SamlFlowStatus), nil
 }
 
+type ScimRequestHttpMethod string
+
+const (
+	ScimRequestHttpMethodGet    ScimRequestHttpMethod = "get"
+	ScimRequestHttpMethodPost   ScimRequestHttpMethod = "post"
+	ScimRequestHttpMethodPut    ScimRequestHttpMethod = "put"
+	ScimRequestHttpMethodPatch  ScimRequestHttpMethod = "patch"
+	ScimRequestHttpMethodDelete ScimRequestHttpMethod = "delete"
+)
+
+func (e *ScimRequestHttpMethod) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ScimRequestHttpMethod(s)
+	case string:
+		*e = ScimRequestHttpMethod(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ScimRequestHttpMethod: %T", src)
+	}
+	return nil
+}
+
+type NullScimRequestHttpMethod struct {
+	ScimRequestHttpMethod ScimRequestHttpMethod
+	Valid                 bool // Valid is true if ScimRequestHttpMethod is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullScimRequestHttpMethod) Scan(value interface{}) error {
+	if value == nil {
+		ns.ScimRequestHttpMethod, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ScimRequestHttpMethod.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullScimRequestHttpMethod) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ScimRequestHttpMethod), nil
+}
+
+type ScimRequestHttpStatus string
+
+const (
+	ScimRequestHttpStatus200 ScimRequestHttpStatus = "200"
+	ScimRequestHttpStatus201 ScimRequestHttpStatus = "201"
+	ScimRequestHttpStatus204 ScimRequestHttpStatus = "204"
+	ScimRequestHttpStatus400 ScimRequestHttpStatus = "400"
+	ScimRequestHttpStatus401 ScimRequestHttpStatus = "401"
+	ScimRequestHttpStatus404 ScimRequestHttpStatus = "404"
+)
+
+func (e *ScimRequestHttpStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ScimRequestHttpStatus(s)
+	case string:
+		*e = ScimRequestHttpStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ScimRequestHttpStatus: %T", src)
+	}
+	return nil
+}
+
+type NullScimRequestHttpStatus struct {
+	ScimRequestHttpStatus ScimRequestHttpStatus
+	Valid                 bool // Valid is true if ScimRequestHttpStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullScimRequestHttpStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.ScimRequestHttpStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ScimRequestHttpStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullScimRequestHttpStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ScimRequestHttpStatus), nil
+}
+
 type AdminAccessToken struct {
 	ID                 uuid.UUID
 	OrganizationID     uuid.UUID
@@ -208,6 +299,20 @@ type ScimGroup struct {
 	DisplayName     string
 	Deleted         bool
 	Attributes      []byte
+}
+
+type ScimRequest struct {
+	ID                                   uuid.UUID
+	ScimDirectoryID                      uuid.UUID
+	Timestamp                            time.Time
+	HttpRequestUrl                       string
+	HttpRequestMethod                    ScimRequestHttpMethod
+	HttpRequestBody                      []byte
+	HttpResponseStatus                   ScimRequestHttpStatus
+	HttpResponseBody                     []byte
+	ErrorBadBearerToken                  bool
+	ErrorBadUsername                     *string
+	ErrorEmailOutsideOrganizationDomains *string
 }
 
 type ScimUser struct {

@@ -9,6 +9,7 @@ import {
 import {
   appGetSCIMDirectory,
   appListSCIMGroups,
+  appListSCIMRequests,
   appListSCIMUsers,
   appRotateSCIMDirectoryBearerToken,
   appUpdateSCIMDirectory,
@@ -17,7 +18,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -32,13 +32,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import moment from "moment/moment";
 import {
-  SAMLConnection,
-  SAMLFlowStatus,
   SCIMDirectory,
+  SCIMRequest,
+  SCIMRequestHTTPMethod,
+  SCIMRequestHTTPStatus,
 } from "@/gen/ssoready/v1/ssoready_pb";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -78,6 +77,8 @@ import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
 import { Title } from "@/components/Title";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import moment from "moment";
+import { Badge } from "@/components/ui/badge";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -306,6 +307,8 @@ export function ViewSCIMDirectoryPage() {
             <GroupsTabContent />
           </TabsContent>
         </Tabs>
+
+        <RequestsCard />
       </div>
     </>
   );
@@ -518,6 +521,116 @@ function GroupsTabContent() {
                   </TableCell>
                   <TableCell>{scimGroup.displayName}</TableCell>
                   <TableCell>{scimGroup.deleted ? "Yes" : "No"}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+        {hasNextPage && (
+          <Button variant="secondary" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function RequestsCard() {
+  const { environmentId, organizationId, scimDirectoryId } = useParams();
+  const {
+    data: listSCIMRequestsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    appListSCIMRequests,
+    { scimDirectoryId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SCIM Request Log</CardTitle>
+        <CardDescription>
+          SCIM requests your customer's IDP has issued to SSOReady, and how we
+          responded.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Timestamp</TableHead>
+              <TableHead>Error</TableHead>
+              <TableHead>Endpoint</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {listSCIMRequestsResponses?.pages
+              ?.flatMap((page) => page.scimRequests)
+              ?.map((scimRequest) => (
+                <TableRow key={scimRequest.id}>
+                  <TableCell className="max-w-[200px] truncate">
+                    <Link
+                      to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}/requests/${scimRequest.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
+                    >
+                      {scimRequest.id}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    {moment(scimRequest.timestamp!.toDate()).format()}
+                  </TableCell>
+                  <TableCell>
+                    {!scimRequest.error.case && (
+                      <Badge variant="outline">Success</Badge>
+                    )}
+                    {scimRequest?.error?.case === "badBearerToken" && (
+                      <Badge variant="destructive">Bad bearer token</Badge>
+                    )}
+                    {scimRequest?.error?.case === "badUsername" && (
+                      <Badge variant="destructive">Bad userName</Badge>
+                    )}
+                    {scimRequest?.error?.case ===
+                      "emailOutsideOrganizationDomains" && (
+                      <Badge variant="destructive">Bad email domain</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-x-2">
+                      <Badge variant="outline">
+                        {
+                          {
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_UNSPECIFIED]:
+                              "",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_GET]:
+                              "GET",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_POST]:
+                              "POST",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PUT]:
+                              "PUT",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PATCH]:
+                              "PATCH",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_DELETE]:
+                              "DELETE",
+                          }[scimRequest.httpRequestMethod]
+                        }
+                      </Badge>
+
+                      <span className="max-w-[300px] truncate">
+                        {scimRequest.httpRequestUrl.substring(
+                          `/v1/scim/${scimRequest.scimDirectoryId}`.length,
+                        )}
+                      </span>
+                    </span>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

@@ -33,6 +33,7 @@ import { ViewSCIMGroupPage } from "@/pages/ViewSCIMGroupPage";
 import { StripeCheckoutSuccessPage } from "@/pages/internal/StripeCheckoutSuccessPage";
 import { ViewCustomDomainsPage } from "@/pages/ViewCustomDomainsPage";
 import { ViewBrandingSettingsPage } from "@/pages/ViewBrandingSettingsPage";
+import { ViewSCIMRequestPage } from "@/pages/ViewSCIMRequestPage";
 
 const queryClient = new QueryClient();
 
@@ -132,6 +133,10 @@ export function AppRoutes() {
           <Route
             path="/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/groups/:scimGroupId"
             element={<ViewSCIMGroupPage />}
+          />
+          <Route
+            path="/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/requests/:scimRequestId"
+            element={<ViewSCIMRequestPage />}
           />
         </Route>
       </Route>

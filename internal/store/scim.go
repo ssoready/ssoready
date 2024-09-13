@@ -1,11 +1,10 @@
 package store
 
 import (
+	"connectrpc.com/connect"
 	"context"
 	"errors"
 	"fmt"
-
-	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/ssoready/ssoready/internal/authn"

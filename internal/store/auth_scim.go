@@ -6,14 +6,32 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+var ErrNoSuchSCIMDirectory = errors.New("no such scim directory")
+
+func (s *Store) AuthCheckSCIMDirectoryExists(ctx context.Context, scimDirectoryID string) error {
+	scimDirID, err := idformat.SCIMDirectory.Parse(scimDirectoryID)
+	if err != nil {
+		return fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	if _, err := s.q.AuthGetSCIMDirectory(ctx, scimDirID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrNoSuchSCIMDirectory
+		}
+		return fmt.Errorf("get scim directory: %w", err)
+	}
+	return nil
+}
 
 func (s *Store) AuthGetSCIMDirectoryOrganizationDomains(ctx context.Context, scimDirectoryID string) ([]string, error) {
 	scimDirID, err := idformat.SCIMDirectory.Parse(scimDirectoryID)
@@ -724,4 +742,163 @@ func parseSCIMGroup(qSCIMGroup queries.ScimGroup) *ssoreadyv1.SCIMGroup {
 		Attributes:      attrsStruct,
 		Deleted:         qSCIMGroup.Deleted,
 	}
+}
+
+func (s *Store) AuthCreateSCIMRequest(ctx context.Context, req *ssoreadyv1.SCIMRequest) (*ssoreadyv1.SCIMRequest, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	var requestMethod queries.ScimRequestHttpMethod
+	switch req.HttpRequestMethod {
+	case ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_GET:
+		requestMethod = queries.ScimRequestHttpMethodGet
+	case ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_POST:
+		requestMethod = queries.ScimRequestHttpMethodPost
+	case ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_PUT:
+		requestMethod = queries.ScimRequestHttpMethodPut
+	case ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_PATCH:
+		requestMethod = queries.ScimRequestHttpMethodPatch
+	case ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_DELETE:
+		requestMethod = queries.ScimRequestHttpMethodDelete
+	}
+
+	requestBody, err := json.Marshal(req.HttpRequestBody)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request body: %w", err)
+	}
+
+	var status queries.ScimRequestHttpStatus
+	switch req.HttpResponseStatus {
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_200:
+		status = queries.ScimRequestHttpStatus200
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_201:
+		status = queries.ScimRequestHttpStatus201
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_204:
+		status = queries.ScimRequestHttpStatus204
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_400:
+		status = queries.ScimRequestHttpStatus400
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_401:
+		status = queries.ScimRequestHttpStatus401
+	case ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_404:
+		status = queries.ScimRequestHttpStatus404
+	}
+
+	responseBody, err := json.Marshal(req.HttpResponseBody)
+	if err != nil {
+		return nil, fmt.Errorf("marshal response body: %w", err)
+	}
+
+	var badBearerToken bool
+	if _, ok := req.Error.(*ssoreadyv1.SCIMRequest_BadBearerToken); ok {
+		badBearerToken = true
+	}
+
+	var badUsername *string
+	if e, ok := req.Error.(*ssoreadyv1.SCIMRequest_BadUsername); ok {
+		badUsername = &e.BadUsername
+	}
+
+	var emailOutsideOrganizationDomains *string
+	if e, ok := req.Error.(*ssoreadyv1.SCIMRequest_EmailOutsideOrganizationDomains); ok {
+		emailOutsideOrganizationDomains = &e.EmailOutsideOrganizationDomains
+	}
+
+	qSCIMRequest, err := s.q.AuthCreateSCIMRequest(ctx, queries.AuthCreateSCIMRequestParams{
+		ID:                                   uuid.Must(uuid.NewV7()),
+		ScimDirectoryID:                      scimDirID,
+		Timestamp:                            req.Timestamp.AsTime(),
+		HttpRequestUrl:                       req.HttpRequestUrl,
+		HttpRequestMethod:                    requestMethod,
+		HttpRequestBody:                      requestBody,
+		HttpResponseStatus:                   status,
+		HttpResponseBody:                     responseBody,
+		ErrorBadBearerToken:                  badBearerToken,
+		ErrorBadUsername:                     badUsername,
+		ErrorEmailOutsideOrganizationDomains: emailOutsideOrganizationDomains,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("create scim request: %w", err)
+	}
+
+	return parseSCIMRequest(qSCIMRequest), nil
+}
+
+func parseSCIMRequest(qSCIMRequest queries.ScimRequest) *ssoreadyv1.SCIMRequest {
+	var requestMethod ssoreadyv1.SCIMRequestHTTPMethod
+	switch qSCIMRequest.HttpRequestMethod {
+	case queries.ScimRequestHttpMethodGet:
+		requestMethod = ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_GET
+	case queries.ScimRequestHttpMethodPost:
+		requestMethod = ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_POST
+	case queries.ScimRequestHttpMethodPut:
+		requestMethod = ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_PUT
+	case queries.ScimRequestHttpMethodPatch:
+		requestMethod = ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_PATCH
+	case queries.ScimRequestHttpMethodDelete:
+		requestMethod = ssoreadyv1.SCIMRequestHTTPMethod_SCIM_REQUEST_HTTP_METHOD_DELETE
+	}
+
+	var status ssoreadyv1.SCIMRequestHTTPStatus
+	switch qSCIMRequest.HttpResponseStatus {
+	case queries.ScimRequestHttpStatus200:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_200
+	case queries.ScimRequestHttpStatus201:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_201
+	case queries.ScimRequestHttpStatus204:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_204
+	case queries.ScimRequestHttpStatus400:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_400
+	case queries.ScimRequestHttpStatus401:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_401
+	case queries.ScimRequestHttpStatus404:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_404
+	}
+
+	var requestBody map[string]any
+	if err := json.Unmarshal(qSCIMRequest.HttpRequestBody, &requestBody); err != nil {
+		panic(fmt.Errorf("unmarshal request body: %w", err))
+	}
+
+	requestBodyStruct, err := structpb.NewStruct(requestBody)
+	if err != nil {
+		panic(fmt.Errorf("struct from request body: %w", err))
+	}
+
+	var responseBody map[string]any
+	if err := json.Unmarshal(qSCIMRequest.HttpResponseBody, &responseBody); err != nil {
+		panic(fmt.Errorf("unmarshal response body: %w", err))
+	}
+
+	responseBodyStruct, err := structpb.NewStruct(responseBody)
+	if err != nil {
+		panic(fmt.Errorf("struct from response body: %w", err))
+	}
+
+	res := &ssoreadyv1.SCIMRequest{
+		Id:                 idformat.SCIMRequest.Format(qSCIMRequest.ID),
+		ScimDirectoryId:    idformat.SCIMDirectory.Format(qSCIMRequest.ScimDirectoryID),
+		Timestamp:          timestamppb.New(qSCIMRequest.Timestamp),
+		HttpRequestUrl:     qSCIMRequest.HttpRequestUrl,
+		HttpRequestMethod:  requestMethod,
+		HttpRequestBody:    requestBodyStruct,
+		HttpResponseStatus: status,
+		HttpResponseBody:   responseBodyStruct,
+		Error:              nil,
+	}
+
+	if qSCIMRequest.ErrorBadBearerToken {
+		res.Error = &ssoreadyv1.SCIMRequest_BadBearerToken{BadBearerToken: &emptypb.Empty{}}
+	}
+
+	if qSCIMRequest.ErrorBadUsername != nil {
+		res.Error = &ssoreadyv1.SCIMRequest_BadUsername{BadUsername: *qSCIMRequest.ErrorBadUsername}
+	}
+
+	if qSCIMRequest.ErrorEmailOutsideOrganizationDomains != nil {
+		res.Error = &ssoreadyv1.SCIMRequest_EmailOutsideOrganizationDomains{EmailOutsideOrganizationDomains: *qSCIMRequest.ErrorEmailOutsideOrganizationDomains}
+	}
+
+	return res
 }

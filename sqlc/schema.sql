@@ -29,6 +29,37 @@ CREATE TYPE public.saml_flow_status AS ENUM (
 
 ALTER TYPE public.saml_flow_status OWNER TO postgres;
 
+--
+-- Name: scim_request_http_method; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.scim_request_http_method AS ENUM (
+    'get',
+    'post',
+    'put',
+    'patch',
+    'delete'
+);
+
+
+ALTER TYPE public.scim_request_http_method OWNER TO postgres;
+
+--
+-- Name: scim_request_http_status; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.scim_request_http_status AS ENUM (
+    '200',
+    '201',
+    '204',
+    '400',
+    '401',
+    '404'
+);
+
+
+ALTER TYPE public.scim_request_http_status OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -301,6 +332,27 @@ CREATE TABLE public.scim_groups (
 ALTER TABLE public.scim_groups OWNER TO postgres;
 
 --
+-- Name: scim_requests; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.scim_requests (
+    id uuid NOT NULL,
+    scim_directory_id uuid NOT NULL,
+    "timestamp" timestamp with time zone NOT NULL,
+    http_request_url character varying NOT NULL,
+    http_request_method public.scim_request_http_method NOT NULL,
+    http_request_body jsonb,
+    http_response_status public.scim_request_http_status NOT NULL,
+    http_response_body jsonb,
+    error_bad_bearer_token boolean DEFAULT false NOT NULL,
+    error_bad_username character varying,
+    error_email_outside_organization_domains character varying
+);
+
+
+ALTER TABLE public.scim_requests OWNER TO postgres;
+
+--
 -- Name: scim_user_group_memberships; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -554,6 +606,14 @@ ALTER TABLE ONLY public.scim_groups
 
 
 --
+-- Name: scim_requests scim_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_requests
+    ADD CONSTRAINT scim_requests_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: scim_user_group_memberships scim_user_group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -687,6 +747,14 @@ ALTER TABLE ONLY public.scim_directories
 
 ALTER TABLE ONLY public.scim_groups
     ADD CONSTRAINT scim_groups_scim_directory_id_fkey FOREIGN KEY (scim_directory_id) REFERENCES public.scim_directories(id);
+
+
+--
+-- Name: scim_requests scim_requests_scim_directory_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.scim_requests
+    ADD CONSTRAINT scim_requests_scim_directory_id_fkey FOREIGN KEY (scim_directory_id) REFERENCES public.scim_directories(id);
 
 
 --
