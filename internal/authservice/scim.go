@@ -206,7 +206,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	emailDomain, err := emailaddr.Parse(userName)
 	if err != nil {
 		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
-		return nil
+		return &badUsernameError{BadUsername: userName}
 	}
 
 	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
@@ -231,7 +231,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 		}
 
 		http.Error(w, string(msg), http.StatusBadRequest)
-		return nil
+		return &emailOutsideOrgDomainsError{BadEmail: userName}
 	}
 
 	// at this point, all remaining properties are user attributes
@@ -302,7 +302,7 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 	emailDomain, err := emailaddr.Parse(userName)
 	if err != nil {
 		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
-		return err
+		return &badUsernameError{BadUsername: userName}
 	}
 
 	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
@@ -327,7 +327,7 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 		}
 
 		http.Error(w, string(msg), http.StatusBadRequest)
-		return nil
+		return &emailOutsideOrgDomainsError{BadEmail: userName}
 	}
 
 	scimUser, err := s.Store.AuthUpdateSCIMUser(ctx, &store.AuthUpdateSCIMUserRequest{
@@ -849,7 +849,16 @@ func (s *Service) scimMiddleware(f func(w http.ResponseWriter, r *http.Request) 
 
 		// call the underlying f
 		if err := f(recorder, r); err != nil {
-			// todo
+			var badUsernameError *badUsernameError
+			var badEmailError *emailOutsideOrgDomainsError
+
+			if errors.As(err, &badUsernameError) {
+				scimRequest.Error = &ssoreadyv1.SCIMRequest_BadUsername{BadUsername: badUsernameError.BadUsername}
+			} else if errors.As(err, &badEmailError) {
+				scimRequest.Error = &ssoreadyv1.SCIMRequest_EmailOutsideOrganizationDomains{EmailOutsideOrganizationDomains: badEmailError.BadEmail}
+			} else {
+				panic(err)
+			}
 		}
 
 		switch recorder.Code {
@@ -865,9 +874,13 @@ func (s *Service) scimMiddleware(f func(w http.ResponseWriter, r *http.Request) 
 			scimRequest.HttpResponseStatus = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_404
 		}
 
-		fmt.Println("bodybytes", recorder.Body.String())
 		if err := json.Unmarshal(recorder.Body.Bytes(), &scimRequest.HttpResponseBody); err != nil {
-			panic(err)
+			// can't use errors.Is, because json's errors aren't comparable
+			if _, ok := err.(*json.SyntaxError); ok {
+				// ignore this error; we only care to record JSON responses, and so just record no response body at all
+			} else {
+				panic(err)
+			}
 		}
 
 		if _, err := s.Store.AuthCreateSCIMRequest(ctx, scimRequest); err != nil {

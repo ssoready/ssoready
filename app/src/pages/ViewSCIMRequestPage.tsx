@@ -101,6 +101,34 @@ export function ViewSCIMRequestPage() {
               </p>
             </AlertDescription>
           )}
+
+          {scimRequest.scimRequest.error.case === "badUsername" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider set the SCIM{" "}
+                <code>userName</code> to be{" "}
+                <span className="font-semibold">
+                  {scimRequest.scimRequest.error.value}
+                </span>
+                , which is invalid. SSOReady requires that SCIM usernames be
+                email addresses.
+              </p>
+            </AlertDescription>
+          )}
+
+          {scimRequest.scimRequest.error.case ===
+            "emailOutsideOrganizationDomains" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider set the SCIM{" "}
+                <code>userName</code> to be{" "}
+                <span className="font-semibold">
+                  {scimRequest.scimRequest.error.value}
+                </span>
+                , which is outside of the organization allowed domains.
+              </p>
+            </AlertDescription>
+          )}
         </Alert>
       )}
 
