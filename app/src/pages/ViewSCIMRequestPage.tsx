@@ -23,6 +23,14 @@ import { Badge } from "@/components/ui/badge";
 import hljs from "highlight.js/lib/core";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Link } from "react-router-dom";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export function ViewSCIMRequestPage() {
   const { environmentId, organizationId, scimDirectoryId, scimRequestId } =
@@ -34,6 +42,35 @@ export function ViewSCIMRequestPage() {
   return (
     <div className="flex flex-col gap-y-8">
       <Title title="SCIM Request Log" />
+
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}`}
+              >
+                {organizationId}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link
+                to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}`}
+              >
+                {scimDirectoryId}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{scimRequestId}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
