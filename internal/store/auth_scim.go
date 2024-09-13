@@ -850,6 +850,8 @@ func parseSCIMRequest(qSCIMRequest queries.ScimRequest) *ssoreadyv1.SCIMRequest 
 		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_204
 	case queries.ScimRequestHttpStatus400:
 		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_400
+	case queries.ScimRequestHttpStatus401:
+		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_401
 	case queries.ScimRequestHttpStatus404:
 		status = ssoreadyv1.SCIMRequestHTTPStatus_SCIM_REQUEST_HTTP_STATUS_404
 	}
