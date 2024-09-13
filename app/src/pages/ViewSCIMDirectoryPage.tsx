@@ -77,6 +77,7 @@ import { Switch } from "@/components/ui/switch";
 import { SecretCopier } from "@/components/SecretCopier";
 import { Title } from "@/components/Title";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import moment from "moment";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -564,6 +565,7 @@ function RequestsCard() {
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
+              <TableHead>Timestamp</TableHead>
               <TableHead>Method</TableHead>
               <TableHead>URL</TableHead>
               <TableHead>Status</TableHead>
@@ -582,6 +584,9 @@ function RequestsCard() {
                     >
                       {scimRequest.id}
                     </Link>
+                  </TableCell>
+                  <TableCell>
+                    {moment(scimRequest.timestamp!.toDate()).format()}
                   </TableCell>
                   <TableCell>
                     <SCIMRequestMethod scimRequest={scimRequest} />

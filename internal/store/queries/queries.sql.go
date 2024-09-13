@@ -238,8 +238,8 @@ const appListSCIMRequests = `-- name: AppListSCIMRequests :many
 select id, scim_directory_id, timestamp, http_request_url, http_request_method, http_request_body, http_response_status, http_response_body, error_bad_bearer_token, error_bad_username, error_email_outside_organization_domains
 from scim_requests
 where scim_directory_id = $1
-  and id >= $2
-order by id
+  and id <= $2
+order by id desc
 limit $3
 `
 

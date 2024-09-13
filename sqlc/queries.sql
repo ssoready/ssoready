@@ -663,8 +663,8 @@ returning *;
 select *
 from scim_requests
 where scim_directory_id = $1
-  and id >= $2
-order by id
+  and id <= $2
+order by id desc
 limit $3;
 
 -- name: AppGetSCIMRequest :one

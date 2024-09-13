@@ -35,6 +35,11 @@ func (s *Store) AppListSCIMRequests(ctx context.Context, req *ssoreadyv1.AppList
 		return nil, err
 	}
 
+	if startID == uuid.Nil {
+		// scim requests are sorted by their ID descending; initial page is max value
+		startID = uuid.Max
+	}
+
 	limit := 10
 	qSCIMRequests, err := q.AppListSCIMRequests(ctx, queries.AppListSCIMRequestsParams{
 		ScimDirectoryID: scimDirID,
