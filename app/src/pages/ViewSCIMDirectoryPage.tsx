@@ -78,6 +78,7 @@ import { SecretCopier } from "@/components/SecretCopier";
 import { Title } from "@/components/Title";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import moment from "moment";
+import { Badge } from "@/components/ui/badge";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -566,9 +567,8 @@ function RequestsCard() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Timestamp</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead>URL</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Error</TableHead>
+              <TableHead>Endpoint</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -589,13 +589,47 @@ function RequestsCard() {
                     {moment(scimRequest.timestamp!.toDate()).format()}
                   </TableCell>
                   <TableCell>
-                    <SCIMRequestMethod scimRequest={scimRequest} />
-                  </TableCell>
-                  <TableCell className="max-w-[400px] truncate">
-                    <SCIMRequestPath scimRequest={scimRequest} />
+                    {!scimRequest.error.case && (
+                      <Badge variant="outline">Success</Badge>
+                    )}
+                    {scimRequest?.error?.case === "badBearerToken" && (
+                      <Badge variant="destructive">Bad bearer token</Badge>
+                    )}
+                    {scimRequest?.error?.case === "badUsername" && (
+                      <Badge variant="destructive">Bad userName</Badge>
+                    )}
+                    {scimRequest?.error?.case ===
+                      "emailOutsideOrganizationDomains" && (
+                      <Badge variant="destructive">Bad email domain</Badge>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <SCIMResponseStatus scimRequest={scimRequest} />
+                    <span className="inline-flex items-center gap-x-2">
+                      <Badge variant="outline">
+                        {
+                          {
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_UNSPECIFIED]:
+                              "",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_GET]:
+                              "GET",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_POST]:
+                              "POST",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PUT]:
+                              "PUT",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PATCH]:
+                              "PATCH",
+                            [SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_DELETE]:
+                              "DELETE",
+                          }[scimRequest.httpRequestMethod]
+                        }
+                      </Badge>
+
+                      <span className="max-w-[300px] truncate">
+                        {scimRequest.httpRequestUrl.substring(
+                          `/v1/scim/${scimRequest.scimDirectoryId}`.length,
+                        )}
+                      </span>
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
@@ -610,41 +644,4 @@ function RequestsCard() {
       </CardContent>
     </Card>
   );
-}
-
-function SCIMRequestMethod({ scimRequest }: { scimRequest: SCIMRequest }) {
-  switch (scimRequest.httpRequestMethod) {
-    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_GET:
-      return "GET";
-    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_POST:
-      return "POST";
-    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PUT:
-      return "PUT";
-    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PATCH:
-      return "PATCH";
-    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_DELETE:
-      return "DELETE";
-  }
-}
-
-function SCIMRequestPath({ scimRequest }: { scimRequest: SCIMRequest }) {
-  const prefix = `/v1/scim/${scimRequest.scimDirectoryId}`;
-  return scimRequest.httpRequestUrl.substring(prefix.length);
-}
-
-function SCIMResponseStatus({ scimRequest }: { scimRequest: SCIMRequest }) {
-  switch (scimRequest.httpResponseStatus) {
-    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_200:
-      return "200";
-    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_201:
-      return "201";
-    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_204:
-      return "204";
-    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_400:
-      return "400";
-    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_401:
-      return "401";
-    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_404:
-      return "404";
-  }
 }
