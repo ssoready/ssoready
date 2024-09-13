@@ -659,6 +659,23 @@ insert into scim_requests (id, scim_directory_id, timestamp, http_request_url, h
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning *;
 
+-- name: AppListSCIMRequests :many
+select *
+from scim_requests
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3;
+
+-- name: AppGetSCIMRequest :one
+select scim_requests.*
+from scim_requests
+         join scim_directories on scim_requests.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_requests.id = $2;
+
 -- name: GetSCIMDirectoryByIDAndEnvironmentID :one
 select scim_directories.id
 from scim_directories

@@ -9,6 +9,7 @@ import {
 import {
   appGetSCIMDirectory,
   appListSCIMGroups,
+  appListSCIMRequests,
   appListSCIMUsers,
   appRotateSCIMDirectoryBearerToken,
   appUpdateSCIMDirectory,
@@ -17,7 +18,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -32,13 +32,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import moment from "moment/moment";
 import {
-  SAMLConnection,
-  SAMLFlowStatus,
   SCIMDirectory,
+  SCIMRequest,
+  SCIMRequestHTTPMethod,
+  SCIMRequestHTTPStatus,
 } from "@/gen/ssoready/v1/ssoready_pb";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -306,6 +305,8 @@ export function ViewSCIMDirectoryPage() {
             <GroupsTabContent />
           </TabsContent>
         </Tabs>
+
+        <RequestsCard />
       </div>
     </>
   );
@@ -531,4 +532,114 @@ function GroupsTabContent() {
       </CardContent>
     </Card>
   );
+}
+
+function RequestsCard() {
+  const { environmentId, organizationId, scimDirectoryId } = useParams();
+  const {
+    data: listSCIMRequestsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    appListSCIMRequests,
+    { scimDirectoryId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SCIM Request Log</CardTitle>
+        <CardDescription>
+          SCIM requests your customer's IDP has issued to SSOReady, and how we
+          responded.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead>URL</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {listSCIMRequestsResponses?.pages
+              ?.flatMap((page) => page.scimRequests)
+              ?.map((scimRequest) => (
+                <TableRow key={scimRequest.id}>
+                  <TableCell className="max-w-[200px] truncate">
+                    <Link
+                      to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}/requests/${scimRequest.id}`}
+                      className="underline underline-offset-4 decoration-muted-foreground"
+                    >
+                      {scimRequest.id}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <SCIMRequestMethod scimRequest={scimRequest} />
+                  </TableCell>
+                  <TableCell className="max-w-[400px] truncate">
+                    <SCIMRequestPath scimRequest={scimRequest} />
+                  </TableCell>
+                  <TableCell>
+                    <SCIMResponseStatus scimRequest={scimRequest} />
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+        {hasNextPage && (
+          <Button variant="secondary" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function SCIMRequestMethod({ scimRequest }: { scimRequest: SCIMRequest }) {
+  switch (scimRequest.httpRequestMethod) {
+    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_GET:
+      return "GET";
+    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_POST:
+      return "POST";
+    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PUT:
+      return "PUT";
+    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_PATCH:
+      return "PATCH";
+    case SCIMRequestHTTPMethod.SCIM_REQUEST_HTTP_METHOD_DELETE:
+      return "DELETE";
+  }
+}
+
+function SCIMRequestPath({ scimRequest }: { scimRequest: SCIMRequest }) {
+  const prefix = `/v1/scim/${scimRequest.scimDirectoryId}`;
+  return scimRequest.httpRequestUrl.substring(prefix.length);
+}
+
+function SCIMResponseStatus({ scimRequest }: { scimRequest: SCIMRequest }) {
+  switch (scimRequest.httpResponseStatus) {
+    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_200:
+      return "200";
+    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_201:
+      return "201";
+    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_204:
+      return "204";
+    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_400:
+      return "400";
+    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_401:
+      return "401";
+    case SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_404:
+      return "404";
+  }
 }

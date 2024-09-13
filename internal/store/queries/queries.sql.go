@@ -172,6 +172,40 @@ func (q *Queries) AppGetSCIMGroup(ctx context.Context, arg AppGetSCIMGroupParams
 	return i, err
 }
 
+const appGetSCIMRequest = `-- name: AppGetSCIMRequest :one
+select scim_requests.id, scim_requests.scim_directory_id, scim_requests.timestamp, scim_requests.http_request_url, scim_requests.http_request_method, scim_requests.http_request_body, scim_requests.http_response_status, scim_requests.http_response_body, scim_requests.error_bad_bearer_token, scim_requests.error_bad_username, scim_requests.error_email_outside_organization_domains
+from scim_requests
+         join scim_directories on scim_requests.scim_directory_id = scim_directories.id
+         join organizations on scim_directories.organization_id = organizations.id
+         join environments on organizations.environment_id = environments.id
+where environments.app_organization_id = $1
+  and scim_requests.id = $2
+`
+
+type AppGetSCIMRequestParams struct {
+	AppOrganizationID uuid.UUID
+	ID                uuid.UUID
+}
+
+func (q *Queries) AppGetSCIMRequest(ctx context.Context, arg AppGetSCIMRequestParams) (ScimRequest, error) {
+	row := q.db.QueryRow(ctx, appGetSCIMRequest, arg.AppOrganizationID, arg.ID)
+	var i ScimRequest
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Timestamp,
+		&i.HttpRequestUrl,
+		&i.HttpRequestMethod,
+		&i.HttpRequestBody,
+		&i.HttpResponseStatus,
+		&i.HttpResponseBody,
+		&i.ErrorBadBearerToken,
+		&i.ErrorBadUsername,
+		&i.ErrorEmailOutsideOrganizationDomains,
+	)
+	return i, err
+}
+
 const appGetSCIMUser = `-- name: AppGetSCIMUser :one
 select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
 from scim_users
@@ -198,6 +232,53 @@ func (q *Queries) AppGetSCIMUser(ctx context.Context, arg AppGetSCIMUserParams) 
 		&i.Attributes,
 	)
 	return i, err
+}
+
+const appListSCIMRequests = `-- name: AppListSCIMRequests :many
+select id, scim_directory_id, timestamp, http_request_url, http_request_method, http_request_body, http_response_status, http_response_body, error_bad_bearer_token, error_bad_username, error_email_outside_organization_domains
+from scim_requests
+where scim_directory_id = $1
+  and id >= $2
+order by id
+limit $3
+`
+
+type AppListSCIMRequestsParams struct {
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+	Limit           int32
+}
+
+func (q *Queries) AppListSCIMRequests(ctx context.Context, arg AppListSCIMRequestsParams) ([]ScimRequest, error) {
+	rows, err := q.db.Query(ctx, appListSCIMRequests, arg.ScimDirectoryID, arg.ID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimRequest
+	for rows.Next() {
+		var i ScimRequest
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.Timestamp,
+			&i.HttpRequestUrl,
+			&i.HttpRequestMethod,
+			&i.HttpRequestBody,
+			&i.HttpResponseStatus,
+			&i.HttpResponseBody,
+			&i.ErrorBadBearerToken,
+			&i.ErrorBadUsername,
+			&i.ErrorEmailOutsideOrganizationDomains,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
