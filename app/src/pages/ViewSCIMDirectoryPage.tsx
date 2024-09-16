@@ -554,7 +554,10 @@ function RequestsCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>SCIM Request Log</CardTitle>
+        <CardTitle>
+          SCIM Request Logs
+          <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs" />
+        </CardTitle>
         <CardDescription>
           SCIM requests your customer's IDP has issued to SSOReady, and how we
           responded.

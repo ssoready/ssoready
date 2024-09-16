@@ -57,7 +57,7 @@ func (s *Store) AuthSCIMVerifyBearerToken(ctx context.Context, scimDirectoryID, 
 
 	bearerTokenID, err := idformat.SCIMBearerToken.Parse(bearerToken)
 	if err != nil {
-		return fmt.Errorf("parse bearer token: %w", err)
+		return ErrAuthSCIMBadBearerToken
 	}
 
 	bearerTokenSHA := sha256.Sum256(bearerTokenID[:])
