@@ -87,6 +87,7 @@ export function ViewSCIMRequestPage() {
                 A SCIM request log is a record of a SCIM HTTP request sent by
                 your customer's identity provider to SSOReady, and how SSOReady
                 responded.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs" />
               </CardDescription>
             </div>
           </div>
@@ -95,6 +96,10 @@ export function ViewSCIMRequestPage() {
           <div className="grid grid-cols-5 gap-y-2">
             <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               Timestamp
+              <InfoTooltip>
+                When the SCIM request occurred.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs#timestamp" />
+              </InfoTooltip>
             </div>
             <div className="text-sm col-span-3">
               {scimRequest?.scimRequest &&
@@ -117,6 +122,7 @@ export function ViewSCIMRequestPage() {
                 This request had an incorrect bearer token. SSOReady could not
                 authenticate that this request really came from your customer's
                 identity provider.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs#bad-bearer-token" />
               </p>
 
               <p className="mt-4">
@@ -149,6 +155,7 @@ export function ViewSCIMRequestPage() {
                 </span>
                 , which is invalid. SSOReady requires that SCIM usernames be
                 email addresses.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs#bad-username" />
               </p>
             </AlertDescription>
           )}
@@ -163,6 +170,7 @@ export function ViewSCIMRequestPage() {
                   {scimRequest.scimRequest.error.value}
                 </span>
                 , which is outside of the organization allowed domains.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs#email-outside-organization-domains" />
               </p>
             </AlertDescription>
           )}
@@ -171,7 +179,10 @@ export function ViewSCIMRequestPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>HTTP Request</CardTitle>
+          <CardTitle>
+            HTTP Request
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs#http-request-details" />
+          </CardTitle>
           <CardDescription>
             Details about the SCIM HTTP request. This was sent from your
             customer's identity provider to SSOReady.
@@ -196,7 +207,10 @@ export function ViewSCIMRequestPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>HTTP Response</CardTitle>
+          <CardTitle>
+            HTTP Response
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/scim-request-logs#http-response-details" />
+          </CardTitle>
           <CardDescription>
             Details about the SCIM HTTP response. This was SSOReady's reply to
             your customer's identity provider.

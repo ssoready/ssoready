@@ -837,7 +837,7 @@ func (s *Service) scimMiddleware(f func(w http.ResponseWriter, r *http.Request) 
 					panic(err)
 				}
 
-				http.Error(w, "invalid bearer token from middleware", http.StatusUnauthorized)
+				http.Error(w, "invalid bearer token", http.StatusUnauthorized)
 				return
 			}
 
