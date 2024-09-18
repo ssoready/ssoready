@@ -103,7 +103,12 @@ export function ListSAMLConnectionsPage() {
                     {samlConnections?.map((samlConn) => (
                       <TableRow key={samlConn.id}>
                         <TableCell>
-                          {samlConn.id}
+                          <Link
+                            to={`/saml/saml-connections/${samlConn.id}`}
+                            className="underline underline-offset-4 decoration-muted-foreground"
+                          >
+                            {samlConn.id}
+                          </Link>
                           {samlConn.primary && (
                             <Badge className="ml-2">Primary</Badge>
                           )}

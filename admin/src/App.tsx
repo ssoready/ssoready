@@ -17,6 +17,7 @@ import { ListSCIMDirectoriesPage } from "@/pages/ListSCIMDirectoriesPage";
 import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
 import { ListSAMLConnectionsPage } from "@/pages/ListSAMLConnectionsPage";
 import { SetupSAMLConnectionPage } from "@/pages/SetupSAMLConnectionPage";
+import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,10 @@ function AppRoutes() {
         <Route
           path="/saml/saml-connections/:samlConnectionId"
           element={<ViewSAMLConnectionPage />}
+        />
+        <Route
+          path="/saml/saml-connections/:samlConnectionId/flows/:samlFlowId"
+          element={<ViewSAMLFlowPage />}
         />
         <Route path="/scim" element={<ListSCIMDirectoriesPage />} />
         <Route

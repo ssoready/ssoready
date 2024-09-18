@@ -2090,6 +2090,46 @@ func (q *Queries) GetSAMLFlow(ctx context.Context, arg GetSAMLFlowParams) (SamlF
 	return i, err
 }
 
+const getSAMLFlowByID = `-- name: GetSAMLFlowByID :one
+select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth
+from saml_flows
+where id = $1
+`
+
+func (q *Queries) GetSAMLFlowByID(ctx context.Context, id uuid.UUID) (SamlFlow, error) {
+	row := q.db.QueryRow(ctx, getSAMLFlowByID, id)
+	var i SamlFlow
+	err := row.Scan(
+		&i.ID,
+		&i.SamlConnectionID,
+		&i.AccessCode,
+		&i.State,
+		&i.CreateTime,
+		&i.ExpireTime,
+		&i.Email,
+		&i.SubjectIdpAttributes,
+		&i.UpdateTime,
+		&i.AuthRedirectUrl,
+		&i.GetRedirectTime,
+		&i.InitiateRequest,
+		&i.InitiateTime,
+		&i.Assertion,
+		&i.AppRedirectUrl,
+		&i.ReceiveAssertionTime,
+		&i.RedeemTime,
+		&i.RedeemResponse,
+		&i.ErrorBadIssuer,
+		&i.ErrorBadAudience,
+		&i.ErrorBadSubjectID,
+		&i.ErrorEmailOutsideOrganizationDomains,
+		&i.Status,
+		&i.ErrorUnsignedAssertion,
+		&i.AccessCodeSha256,
+		&i.IsOauth,
+	)
+	return i, err
+}
+
 const getSAMLOAuthClient = `-- name: GetSAMLOAuthClient :one
 select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256
 from saml_oauth_clients

@@ -3,6 +3,7 @@ import { useMatch, useParams } from "react-router";
 import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
   adminGetSAMLConnection,
+  adminListSAMLFlows,
   adminParseSAMLMetadata,
   adminUpdateSAMLConnection,
   getEnvironment,
@@ -24,7 +25,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, CogIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -87,6 +88,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Helmet } from "react-helmet";
+import { useTitle } from "@/useTitle";
 
 export function ViewSAMLConnectionPage() {
   const { samlConnectionId } = useParams();
@@ -94,8 +97,27 @@ export function ViewSAMLConnectionPage() {
     id: samlConnectionId,
   });
 
+  const {
+    data: listFlowsResponses,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
+    adminListSAMLFlows,
+    { samlConnectionId, pageToken: "" },
+    {
+      pageParamKey: "pageToken",
+      getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+    },
+  );
+
+  const title = useTitle("SAML Connection");
+
   return (
     <LayoutMain>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -172,11 +194,12 @@ export function ViewSAMLConnectionPage() {
               </CardDescription>
             </div>
 
-            {samlConnection?.samlConnection && (
-              <EditSAMLConnectionIDPSettingsAlertDialog
-                samlConnection={samlConnection.samlConnection}
-              />
-            )}
+            <Button asChild variant="outline">
+              <Link to={`/saml/saml-connections/${samlConnectionId}/setup`}>
+                <CogIcon className="inline h-4 w-4 mr-2" />
+                Setup
+              </Link>
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -207,6 +230,68 @@ export function ViewSAMLConnectionPage() {
               </div>
             </CollapsibleContent>
           </Collapsible>
+        </CardContent>
+      </Card>
+
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>SAML Login Flows</CardTitle>
+          <CardDescription>
+            SAML login flows from this connection are listed here.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Timestamp</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>User Email</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {listFlowsResponses?.pages
+                ?.flatMap((page) => page.samlFlows)
+                ?.map((flow) => (
+                  <TableRow key={flow.id}>
+                    <TableCell className="max-w-[200px] truncate">
+                      <Link
+                        to={`/saml/saml-connections/${samlConnectionId}/flows/${flow.id}`}
+                        className="underline underline-offset-4 decoration-muted-foreground"
+                      >
+                        {flow.id}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      {moment(flow.createTime!.toDate()).format()}
+                    </TableCell>
+                    <TableCell>
+                      {flow.status ===
+                        SAMLFlowStatus.SAML_FLOW_STATUS_IN_PROGRESS && (
+                        <Badge variant="secondary">In progress</Badge>
+                      )}
+                      {flow.status ===
+                        SAMLFlowStatus.SAML_FLOW_STATUS_FAILED && (
+                        <Badge variant="destructive">Failed</Badge>
+                      )}
+                      {flow.status ===
+                        SAMLFlowStatus.SAML_FLOW_STATUS_SUCCEEDED && (
+                        <Badge>Succeeded</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>{flow.email}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+
+          {hasNextPage && (
+            <Button variant="secondary" onClick={() => fetchNextPage()}>
+              Load more
+            </Button>
+          )}
         </CardContent>
       </Card>
     </LayoutMain>

@@ -101,6 +101,8 @@ const (
 	SSOReadyService_AdminCreateSAMLConnection_FullMethodName                        = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
 	SSOReadyService_AdminUpdateSAMLConnection_FullMethodName                        = "/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection"
 	SSOReadyService_AdminParseSAMLMetadata_FullMethodName                           = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
+	SSOReadyService_AdminListSAMLFlows_FullMethodName                               = "/ssoready.v1.SSOReadyService/AdminListSAMLFlows"
+	SSOReadyService_AdminGetSAMLFlow_FullMethodName                                 = "/ssoready.v1.SSOReadyService/AdminGetSAMLFlow"
 	SSOReadyService_AdminListSCIMDirectories_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminListSCIMDirectories"
 	SSOReadyService_AdminGetSCIMDirectory_FullMethodName                            = "/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory"
 	SSOReadyService_AdminCreateSCIMDirectory_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory"
@@ -225,6 +227,8 @@ type SSOReadyServiceClient interface {
 	AdminCreateSAMLConnection(ctx context.Context, in *AdminCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminCreateSAMLConnectionResponse, error)
 	AdminUpdateSAMLConnection(ctx context.Context, in *AdminUpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminUpdateSAMLConnectionResponse, error)
 	AdminParseSAMLMetadata(ctx context.Context, in *AdminParseSAMLMetadataRequest, opts ...grpc.CallOption) (*AdminParseSAMLMetadataResponse, error)
+	AdminListSAMLFlows(ctx context.Context, in *AdminListSAMLFlowsRequest, opts ...grpc.CallOption) (*AdminListSAMLFlowsResponse, error)
+	AdminGetSAMLFlow(ctx context.Context, in *AdminGetSAMLFlowRequest, opts ...grpc.CallOption) (*AdminGetSAMLFlowResponse, error)
 	AdminListSCIMDirectories(ctx context.Context, in *AdminListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*AdminListSCIMDirectoriesResponse, error)
 	AdminGetSCIMDirectory(ctx context.Context, in *AdminGetSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminGetSCIMDirectoryResponse, error)
 	AdminCreateSCIMDirectory(ctx context.Context, in *AdminCreateSCIMDirectoryRequest, opts ...grpc.CallOption) (*AdminCreateSCIMDirectoryResponse, error)
@@ -1050,6 +1054,26 @@ func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AdminListSAMLFlows(ctx context.Context, in *AdminListSAMLFlowsRequest, opts ...grpc.CallOption) (*AdminListSAMLFlowsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminListSAMLFlowsResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminListSAMLFlows_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sSOReadyServiceClient) AdminGetSAMLFlow(ctx context.Context, in *AdminGetSAMLFlowRequest, opts ...grpc.CallOption) (*AdminGetSAMLFlowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetSAMLFlowResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminGetSAMLFlow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AdminListSCIMDirectories(ctx context.Context, in *AdminListSCIMDirectoriesRequest, opts ...grpc.CallOption) (*AdminListSCIMDirectoriesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminListSCIMDirectoriesResponse)
@@ -1217,6 +1241,8 @@ type SSOReadyServiceServer interface {
 	AdminCreateSAMLConnection(context.Context, *AdminCreateSAMLConnectionRequest) (*AdminCreateSAMLConnectionResponse, error)
 	AdminUpdateSAMLConnection(context.Context, *AdminUpdateSAMLConnectionRequest) (*AdminUpdateSAMLConnectionResponse, error)
 	AdminParseSAMLMetadata(context.Context, *AdminParseSAMLMetadataRequest) (*AdminParseSAMLMetadataResponse, error)
+	AdminListSAMLFlows(context.Context, *AdminListSAMLFlowsRequest) (*AdminListSAMLFlowsResponse, error)
+	AdminGetSAMLFlow(context.Context, *AdminGetSAMLFlowRequest) (*AdminGetSAMLFlowResponse, error)
 	AdminListSCIMDirectories(context.Context, *AdminListSCIMDirectoriesRequest) (*AdminListSCIMDirectoriesResponse, error)
 	AdminGetSCIMDirectory(context.Context, *AdminGetSCIMDirectoryRequest) (*AdminGetSCIMDirectoryResponse, error)
 	AdminCreateSCIMDirectory(context.Context, *AdminCreateSCIMDirectoryRequest) (*AdminCreateSCIMDirectoryResponse, error)
@@ -1474,6 +1500,12 @@ func (UnimplementedSSOReadyServiceServer) AdminUpdateSAMLConnection(context.Cont
 }
 func (UnimplementedSSOReadyServiceServer) AdminParseSAMLMetadata(context.Context, *AdminParseSAMLMetadataRequest) (*AdminParseSAMLMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminParseSAMLMetadata not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminListSAMLFlows(context.Context, *AdminListSAMLFlowsRequest) (*AdminListSAMLFlowsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminListSAMLFlows not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminGetSAMLFlow(context.Context, *AdminGetSAMLFlowRequest) (*AdminGetSAMLFlowResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminGetSAMLFlow not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AdminListSCIMDirectories(context.Context, *AdminListSCIMDirectoriesRequest) (*AdminListSCIMDirectoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminListSCIMDirectories not implemented")
@@ -2969,6 +3001,42 @@ func _SSOReadyService_AdminParseSAMLMetadata_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AdminListSAMLFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminListSAMLFlowsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminListSAMLFlows(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminListSAMLFlows_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminListSAMLFlows(ctx, req.(*AdminListSAMLFlowsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SSOReadyService_AdminGetSAMLFlow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetSAMLFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminGetSAMLFlow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminGetSAMLFlow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminGetSAMLFlow(ctx, req.(*AdminGetSAMLFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AdminListSCIMDirectories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminListSCIMDirectoriesRequest)
 	if err := dec(in); err != nil {
@@ -3389,6 +3457,14 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminParseSAMLMetadata",
 			Handler:    _SSOReadyService_AdminParseSAMLMetadata_Handler,
+		},
+		{
+			MethodName: "AdminListSAMLFlows",
+			Handler:    _SSOReadyService_AdminListSAMLFlows_Handler,
+		},
+		{
+			MethodName: "AdminGetSAMLFlow",
+			Handler:    _SSOReadyService_AdminGetSAMLFlow_Handler,
 		},
 		{
 			MethodName: "AdminListSCIMDirectories",
