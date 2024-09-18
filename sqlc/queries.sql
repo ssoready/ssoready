@@ -437,6 +437,11 @@ from saml_flows
 where environments.app_organization_id = $1
   and saml_flows.id = $2;
 
+-- name: GetSAMLFlowByID :one
+select *
+from saml_flows
+where id = $1;
+
 -- name: ListSAMLOAuthClients :many
 select *
 from saml_oauth_clients

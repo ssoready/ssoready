@@ -6722,6 +6722,166 @@ export class AdminParseSAMLMetadataResponse extends Message<AdminParseSAMLMetada
 }
 
 /**
+ * @generated from message ssoready.v1.AdminListSAMLFlowsRequest
+ */
+export class AdminListSAMLFlowsRequest extends Message<AdminListSAMLFlowsRequest> {
+  /**
+   * @generated from field: string saml_connection_id = 1;
+   */
+  samlConnectionId = "";
+
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken = "";
+
+  constructor(data?: PartialMessage<AdminListSAMLFlowsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminListSAMLFlowsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminListSAMLFlowsRequest {
+    return new AdminListSAMLFlowsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminListSAMLFlowsRequest {
+    return new AdminListSAMLFlowsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminListSAMLFlowsRequest {
+    return new AdminListSAMLFlowsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminListSAMLFlowsRequest | PlainMessage<AdminListSAMLFlowsRequest> | undefined, b: AdminListSAMLFlowsRequest | PlainMessage<AdminListSAMLFlowsRequest> | undefined): boolean {
+    return proto3.util.equals(AdminListSAMLFlowsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminListSAMLFlowsResponse
+ */
+export class AdminListSAMLFlowsResponse extends Message<AdminListSAMLFlowsResponse> {
+  /**
+   * @generated from field: repeated ssoready.v1.SAMLFlow saml_flows = 1;
+   */
+  samlFlows: SAMLFlow[] = [];
+
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken = "";
+
+  constructor(data?: PartialMessage<AdminListSAMLFlowsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminListSAMLFlowsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_flows", kind: "message", T: SAMLFlow, repeated: true },
+    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminListSAMLFlowsResponse {
+    return new AdminListSAMLFlowsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminListSAMLFlowsResponse {
+    return new AdminListSAMLFlowsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminListSAMLFlowsResponse {
+    return new AdminListSAMLFlowsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminListSAMLFlowsResponse | PlainMessage<AdminListSAMLFlowsResponse> | undefined, b: AdminListSAMLFlowsResponse | PlainMessage<AdminListSAMLFlowsResponse> | undefined): boolean {
+    return proto3.util.equals(AdminListSAMLFlowsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminGetSAMLFlowRequest
+ */
+export class AdminGetSAMLFlowRequest extends Message<AdminGetSAMLFlowRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<AdminGetSAMLFlowRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminGetSAMLFlowRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminGetSAMLFlowRequest {
+    return new AdminGetSAMLFlowRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminGetSAMLFlowRequest {
+    return new AdminGetSAMLFlowRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminGetSAMLFlowRequest {
+    return new AdminGetSAMLFlowRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminGetSAMLFlowRequest | PlainMessage<AdminGetSAMLFlowRequest> | undefined, b: AdminGetSAMLFlowRequest | PlainMessage<AdminGetSAMLFlowRequest> | undefined): boolean {
+    return proto3.util.equals(AdminGetSAMLFlowRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminGetSAMLFlowResponse
+ */
+export class AdminGetSAMLFlowResponse extends Message<AdminGetSAMLFlowResponse> {
+  /**
+   * @generated from field: ssoready.v1.SAMLFlow saml_flow = 1;
+   */
+  samlFlow?: SAMLFlow;
+
+  constructor(data?: PartialMessage<AdminGetSAMLFlowResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminGetSAMLFlowResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_flow", kind: "message", T: SAMLFlow },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminGetSAMLFlowResponse {
+    return new AdminGetSAMLFlowResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminGetSAMLFlowResponse {
+    return new AdminGetSAMLFlowResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminGetSAMLFlowResponse {
+    return new AdminGetSAMLFlowResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminGetSAMLFlowResponse | PlainMessage<AdminGetSAMLFlowResponse> | undefined, b: AdminGetSAMLFlowResponse | PlainMessage<AdminGetSAMLFlowResponse> | undefined): boolean {
+    return proto3.util.equals(AdminGetSAMLFlowResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AdminListSCIMDirectoriesRequest
  */
 export class AdminListSCIMDirectoriesRequest extends Message<AdminListSCIMDirectoriesRequest> {

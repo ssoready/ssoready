@@ -246,6 +246,8 @@ service SSOReadyService {
   rpc AdminCreateSAMLConnection(AdminCreateSAMLConnectionRequest) returns (AdminCreateSAMLConnectionResponse);
   rpc AdminUpdateSAMLConnection(AdminUpdateSAMLConnectionRequest) returns (AdminUpdateSAMLConnectionResponse);
   rpc AdminParseSAMLMetadata(AdminParseSAMLMetadataRequest) returns (AdminParseSAMLMetadataResponse);
+  rpc AdminListSAMLFlows(AdminListSAMLFlowsRequest) returns (AdminListSAMLFlowsResponse);
+  rpc AdminGetSAMLFlow(AdminGetSAMLFlowRequest) returns (AdminGetSAMLFlowResponse);
   rpc AdminListSCIMDirectories(AdminListSCIMDirectoriesRequest) returns (AdminListSCIMDirectoriesResponse);
   rpc AdminGetSCIMDirectory(AdminGetSCIMDirectoryRequest) returns (AdminGetSCIMDirectoryResponse);
   rpc AdminCreateSCIMDirectory(AdminCreateSCIMDirectoryRequest) returns (AdminCreateSCIMDirectoryResponse);
@@ -1187,6 +1189,24 @@ message AdminParseSAMLMetadataResponse {
   string idp_redirect_url = 1;
   string idp_certificate = 2;
   string idp_entity_id = 3;
+}
+
+message AdminListSAMLFlowsRequest {
+  string saml_connection_id = 1;
+  string page_token = 2;
+}
+
+message AdminListSAMLFlowsResponse {
+  repeated SAMLFlow saml_flows = 1;
+  string next_page_token = 2;
+}
+
+message AdminGetSAMLFlowRequest {
+  string id = 1;
+}
+
+message AdminGetSAMLFlowResponse {
+  SAMLFlow saml_flow = 1;
 }
 
 message AdminListSCIMDirectoriesRequest {

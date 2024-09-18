@@ -465,6 +465,122 @@ func (s *Store) AdminUpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.A
 	return &ssoreadyv1.AdminUpdateSAMLConnectionResponse{SamlConnection: parseSAMLConnection(qSAMLConn)}, nil
 }
 
+func (s *Store) AdminListSAMLFlows(ctx context.Context, req *ssoreadyv1.AdminListSAMLFlowsRequest) (*ssoreadyv1.AdminListSAMLFlowsResponse, error) {
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
+
+	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
+
+	id, err := idformat.SAMLConnection.Parse(req.SamlConnectionId)
+	if err != nil {
+		return nil, fmt.Errorf("parse saml connection id: %w", err)
+	}
+
+	// authz check; check saml connection has the same org ID as the admin access token
+	samlConn, err := q.GetSAMLConnectionByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("get saml conn by id: %w", err)
+	}
+
+	if samlConn.OrganizationID != orgID {
+		return nil, fmt.Errorf("saml conn organization id != admin access token org id")
+	}
+
+	type pageData struct {
+		CreateTime time.Time
+		ID         uuid.UUID
+	}
+
+	var startPageData pageData
+	if err := s.pageEncoder.Unmarshal(req.PageToken, &startPageData); err != nil {
+		return nil, err
+	}
+
+	limit := 10
+	var qSAMLFlows []queries.SamlFlow
+	if req.PageToken == "" {
+		qSAMLFlows, err = q.ListSAMLFlowsFirstPage(ctx, queries.ListSAMLFlowsFirstPageParams{
+			SamlConnectionID: samlConn.ID,
+			Limit:            int32(limit + 1),
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		qSAMLFlows, err = q.ListSAMLFlowsNextPage(ctx, queries.ListSAMLFlowsNextPageParams{
+			SamlConnectionID: samlConn.ID,
+			Limit:            int32(limit + 1),
+			CreateTime:       startPageData.CreateTime,
+			ID:               startPageData.ID,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var flows []*ssoreadyv1.SAMLFlow
+	for _, qSAMLFlow := range qSAMLFlows {
+		flows = append(flows, parseSAMLFlow(qSAMLFlow))
+	}
+
+	var nextPageToken string
+	if len(flows) == limit+1 {
+		nextPageToken = s.pageEncoder.Marshal(pageData{
+			CreateTime: qSAMLFlows[limit].CreateTime,
+			ID:         qSAMLFlows[limit].ID,
+		})
+		flows = flows[:limit]
+	}
+
+	return &ssoreadyv1.AdminListSAMLFlowsResponse{
+		SamlFlows:     flows,
+		NextPageToken: nextPageToken,
+	}, nil
+}
+
+func (s *Store) AdminGetSAMLFlow(ctx context.Context, req *ssoreadyv1.AdminGetSAMLFlowRequest) (*ssoreadyv1.AdminGetSAMLFlowResponse, error) {
+	_, q, _, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
+
+	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
+
+	samlFlowID, err := idformat.SAMLFlow.Parse(req.Id)
+	if err != nil {
+		return nil, fmt.Errorf("parse saml flow id: %w", err)
+	}
+
+	qSAMLFlow, err := q.GetSAMLFlowByID(ctx, samlFlowID)
+	if err != nil {
+		return nil, err
+	}
+
+	// authz check; check saml connection has the same org ID as the admin access token
+	samlConn, err := q.GetSAMLConnectionByID(ctx, qSAMLFlow.SamlConnectionID)
+	if err != nil {
+		return nil, fmt.Errorf("get saml conn by id: %w", err)
+	}
+
+	if samlConn.OrganizationID != orgID {
+		return nil, fmt.Errorf("saml conn organization id != admin access token org id")
+	}
+
+	return &ssoreadyv1.AdminGetSAMLFlowResponse{SamlFlow: parseSAMLFlow(qSAMLFlow)}, nil
+}
+
 func (s *Store) AdminListSCIMDirectories(ctx context.Context, req *ssoreadyv1.AdminListSCIMDirectoriesRequest) (*ssoreadyv1.AdminListSCIMDirectoriesResponse, error) {
 	_, q, _, rollback, err := s.tx(ctx)
 	if err != nil {

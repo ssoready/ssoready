@@ -274,6 +274,12 @@ const (
 	// SSOReadyServiceAdminParseSAMLMetadataProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminParseSAMLMetadata RPC.
 	SSOReadyServiceAdminParseSAMLMetadataProcedure = "/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata"
+	// SSOReadyServiceAdminListSAMLFlowsProcedure is the fully-qualified name of the SSOReadyService's
+	// AdminListSAMLFlows RPC.
+	SSOReadyServiceAdminListSAMLFlowsProcedure = "/ssoready.v1.SSOReadyService/AdminListSAMLFlows"
+	// SSOReadyServiceAdminGetSAMLFlowProcedure is the fully-qualified name of the SSOReadyService's
+	// AdminGetSAMLFlow RPC.
+	SSOReadyServiceAdminGetSAMLFlowProcedure = "/ssoready.v1.SSOReadyService/AdminGetSAMLFlow"
 	// SSOReadyServiceAdminListSCIMDirectoriesProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminListSCIMDirectories RPC.
 	SSOReadyServiceAdminListSCIMDirectoriesProcedure = "/ssoready.v1.SSOReadyService/AdminListSCIMDirectories"
@@ -406,6 +412,8 @@ type SSOReadyServiceClient interface {
 	AdminCreateSAMLConnection(context.Context, *connect.Request[v1.AdminCreateSAMLConnectionRequest]) (*connect.Response[v1.AdminCreateSAMLConnectionResponse], error)
 	AdminUpdateSAMLConnection(context.Context, *connect.Request[v1.AdminUpdateSAMLConnectionRequest]) (*connect.Response[v1.AdminUpdateSAMLConnectionResponse], error)
 	AdminParseSAMLMetadata(context.Context, *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error)
+	AdminListSAMLFlows(context.Context, *connect.Request[v1.AdminListSAMLFlowsRequest]) (*connect.Response[v1.AdminListSAMLFlowsResponse], error)
+	AdminGetSAMLFlow(context.Context, *connect.Request[v1.AdminGetSAMLFlowRequest]) (*connect.Response[v1.AdminGetSAMLFlowResponse], error)
 	AdminListSCIMDirectories(context.Context, *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error)
 	AdminGetSCIMDirectory(context.Context, *connect.Request[v1.AdminGetSCIMDirectoryRequest]) (*connect.Response[v1.AdminGetSCIMDirectoryResponse], error)
 	AdminCreateSCIMDirectory(context.Context, *connect.Request[v1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[v1.AdminCreateSCIMDirectoryResponse], error)
@@ -828,6 +836,16 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAdminParseSAMLMetadataProcedure,
 			opts...,
 		),
+		adminListSAMLFlows: connect.NewClient[v1.AdminListSAMLFlowsRequest, v1.AdminListSAMLFlowsResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminListSAMLFlowsProcedure,
+			opts...,
+		),
+		adminGetSAMLFlow: connect.NewClient[v1.AdminGetSAMLFlowRequest, v1.AdminGetSAMLFlowResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminGetSAMLFlowProcedure,
+			opts...,
+		),
 		adminListSCIMDirectories: connect.NewClient[v1.AdminListSCIMDirectoriesRequest, v1.AdminListSCIMDirectoriesResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAdminListSCIMDirectoriesProcedure,
@@ -939,6 +957,8 @@ type sSOReadyServiceClient struct {
 	adminCreateSAMLConnection                        *connect.Client[v1.AdminCreateSAMLConnectionRequest, v1.AdminCreateSAMLConnectionResponse]
 	adminUpdateSAMLConnection                        *connect.Client[v1.AdminUpdateSAMLConnectionRequest, v1.AdminUpdateSAMLConnectionResponse]
 	adminParseSAMLMetadata                           *connect.Client[v1.AdminParseSAMLMetadataRequest, v1.AdminParseSAMLMetadataResponse]
+	adminListSAMLFlows                               *connect.Client[v1.AdminListSAMLFlowsRequest, v1.AdminListSAMLFlowsResponse]
+	adminGetSAMLFlow                                 *connect.Client[v1.AdminGetSAMLFlowRequest, v1.AdminGetSAMLFlowResponse]
 	adminListSCIMDirectories                         *connect.Client[v1.AdminListSCIMDirectoriesRequest, v1.AdminListSCIMDirectoriesResponse]
 	adminGetSCIMDirectory                            *connect.Client[v1.AdminGetSCIMDirectoryRequest, v1.AdminGetSCIMDirectoryResponse]
 	adminCreateSCIMDirectory                         *connect.Client[v1.AdminCreateSCIMDirectoryRequest, v1.AdminCreateSCIMDirectoryResponse]
@@ -1355,6 +1375,16 @@ func (c *sSOReadyServiceClient) AdminParseSAMLMetadata(ctx context.Context, req 
 	return c.adminParseSAMLMetadata.CallUnary(ctx, req)
 }
 
+// AdminListSAMLFlows calls ssoready.v1.SSOReadyService.AdminListSAMLFlows.
+func (c *sSOReadyServiceClient) AdminListSAMLFlows(ctx context.Context, req *connect.Request[v1.AdminListSAMLFlowsRequest]) (*connect.Response[v1.AdminListSAMLFlowsResponse], error) {
+	return c.adminListSAMLFlows.CallUnary(ctx, req)
+}
+
+// AdminGetSAMLFlow calls ssoready.v1.SSOReadyService.AdminGetSAMLFlow.
+func (c *sSOReadyServiceClient) AdminGetSAMLFlow(ctx context.Context, req *connect.Request[v1.AdminGetSAMLFlowRequest]) (*connect.Response[v1.AdminGetSAMLFlowResponse], error) {
+	return c.adminGetSAMLFlow.CallUnary(ctx, req)
+}
+
 // AdminListSCIMDirectories calls ssoready.v1.SSOReadyService.AdminListSCIMDirectories.
 func (c *sSOReadyServiceClient) AdminListSCIMDirectories(ctx context.Context, req *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error) {
 	return c.adminListSCIMDirectories.CallUnary(ctx, req)
@@ -1496,6 +1526,8 @@ type SSOReadyServiceHandler interface {
 	AdminCreateSAMLConnection(context.Context, *connect.Request[v1.AdminCreateSAMLConnectionRequest]) (*connect.Response[v1.AdminCreateSAMLConnectionResponse], error)
 	AdminUpdateSAMLConnection(context.Context, *connect.Request[v1.AdminUpdateSAMLConnectionRequest]) (*connect.Response[v1.AdminUpdateSAMLConnectionResponse], error)
 	AdminParseSAMLMetadata(context.Context, *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error)
+	AdminListSAMLFlows(context.Context, *connect.Request[v1.AdminListSAMLFlowsRequest]) (*connect.Response[v1.AdminListSAMLFlowsResponse], error)
+	AdminGetSAMLFlow(context.Context, *connect.Request[v1.AdminGetSAMLFlowRequest]) (*connect.Response[v1.AdminGetSAMLFlowResponse], error)
 	AdminListSCIMDirectories(context.Context, *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error)
 	AdminGetSCIMDirectory(context.Context, *connect.Request[v1.AdminGetSCIMDirectoryRequest]) (*connect.Response[v1.AdminGetSCIMDirectoryResponse], error)
 	AdminCreateSCIMDirectory(context.Context, *connect.Request[v1.AdminCreateSCIMDirectoryRequest]) (*connect.Response[v1.AdminCreateSCIMDirectoryResponse], error)
@@ -1914,6 +1946,16 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AdminParseSAMLMetadata,
 		opts...,
 	)
+	sSOReadyServiceAdminListSAMLFlowsHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminListSAMLFlowsProcedure,
+		svc.AdminListSAMLFlows,
+		opts...,
+	)
+	sSOReadyServiceAdminGetSAMLFlowHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminGetSAMLFlowProcedure,
+		svc.AdminGetSAMLFlow,
+		opts...,
+	)
 	sSOReadyServiceAdminListSCIMDirectoriesHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAdminListSCIMDirectoriesProcedure,
 		svc.AdminListSCIMDirectories,
@@ -2103,6 +2145,10 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAdminUpdateSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminParseSAMLMetadataProcedure:
 			sSOReadyServiceAdminParseSAMLMetadataHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminListSAMLFlowsProcedure:
+			sSOReadyServiceAdminListSAMLFlowsHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminGetSAMLFlowProcedure:
+			sSOReadyServiceAdminGetSAMLFlowHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminListSCIMDirectoriesProcedure:
 			sSOReadyServiceAdminListSCIMDirectoriesHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminGetSCIMDirectoryProcedure:
@@ -2444,6 +2490,14 @@ func (UnimplementedSSOReadyServiceHandler) AdminUpdateSAMLConnection(context.Con
 
 func (UnimplementedSSOReadyServiceHandler) AdminParseSAMLMetadata(context.Context, *connect.Request[v1.AdminParseSAMLMetadataRequest]) (*connect.Response[v1.AdminParseSAMLMetadataResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminParseSAMLMetadata is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminListSAMLFlows(context.Context, *connect.Request[v1.AdminListSAMLFlowsRequest]) (*connect.Response[v1.AdminListSAMLFlowsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminListSAMLFlows is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminGetSAMLFlow(context.Context, *connect.Request[v1.AdminGetSAMLFlowRequest]) (*connect.Response[v1.AdminGetSAMLFlowResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminGetSAMLFlow is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AdminListSCIMDirectories(context.Context, *connect.Request[v1.AdminListSCIMDirectoriesRequest]) (*connect.Response[v1.AdminListSCIMDirectoriesResponse], error) {

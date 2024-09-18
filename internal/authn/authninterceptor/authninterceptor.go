@@ -33,6 +33,8 @@ var adminRPCs = []string{
 	"/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminUpdateSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminParseSAMLMetadata",
+	"/ssoready.v1.SSOReadyService/AdminListSAMLFlows",
+	"/ssoready.v1.SSOReadyService/AdminGetSAMLFlow",
 	"/ssoready.v1.SSOReadyService/AdminListSCIMDirectories",
 	"/ssoready.v1.SSOReadyService/AdminGetSCIMDirectory",
 	"/ssoready.v1.SSOReadyService/AdminCreateSCIMDirectory",

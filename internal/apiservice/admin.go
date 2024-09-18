@@ -196,6 +196,22 @@ func (s *Service) AdminParseSAMLMetadata(ctx context.Context, req *connect.Reque
 	}), nil
 }
 
+func (s *Service) AdminListSAMLFlows(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSAMLFlowsRequest]) (*connect.Response[ssoreadyv1.AdminListSAMLFlowsResponse], error) {
+	res, err := s.Store.AdminListSAMLFlows(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+
+func (s *Service) AdminGetSAMLFlow(ctx context.Context, req *connect.Request[ssoreadyv1.AdminGetSAMLFlowRequest]) (*connect.Response[ssoreadyv1.AdminGetSAMLFlowResponse], error) {
+	res, err := s.Store.AdminGetSAMLFlow(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+
 func (s *Service) AdminListSCIMDirectories(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSCIMDirectoriesRequest]) (*connect.Response[ssoreadyv1.AdminListSCIMDirectoriesResponse], error) {
 	res, err := s.Store.AdminListSCIMDirectories(ctx, req.Msg)
 	if err != nil {
