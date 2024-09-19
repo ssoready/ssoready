@@ -25,6 +25,7 @@ type ValidateProblems struct {
 	BadIDPEntityID        *string
 	BadSPEntityID         *string
 	BadSignatureAlgorithm *string
+	BadDigestAlgorithm    *string
 }
 
 type ValidateResponse struct {
@@ -69,6 +70,11 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 		var badSigAlgError dsig.BadSignatureAlgorithmError
 		if errors.As(err, &badSigAlgError) {
 			return &res, &ValidateProblems{BadSignatureAlgorithm: &badSigAlgError.BadAlgorithm}, nil
+		}
+
+		var badDigestAlgError dsig.BadDigestAlgorithmError
+		if errors.As(err, &badDigestAlgError) {
+			return &res, &ValidateProblems{BadDigestAlgorithm: &badDigestAlgError.BadAlgorithm}, nil
 		}
 
 		return &res, nil, fmt.Errorf("verify signature: %w", err)

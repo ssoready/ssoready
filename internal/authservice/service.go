@@ -49,6 +49,7 @@ type errorTemplateData struct {
 	WantAudienceRestriction string
 	GotAudienceRestriction  string
 	GotSignatureAlgorithm   string
+	GotDigestAlgorithm      string
 	GotSubjectID            string
 	WantEmailDomains        string
 }
@@ -200,6 +201,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		badSignatureAlgorithm = validateProblems.BadSignatureAlgorithm
 	}
 
+	var badDigestAlgorithm *string
+	if validateProblems != nil {
+		badDigestAlgorithm = validateProblems.BadDigestAlgorithm
+	}
+
 	var badSubjectID *string
 	subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 	if err != nil {
@@ -234,6 +240,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		ErrorBadIssuer:                       badIssuer,
 		ErrorBadAudience:                     badAudience,
 		ErrorBadSignatureAlgorithm:           badSignatureAlgorithm,
+		ErrorBadDigestAlgorithm:              badDigestAlgorithm,
 		ErrorBadSubjectID:                    badSubjectID,
 		ErrorEmailOutsideOrganizationDomains: domainMismatchEmail,
 	})
@@ -278,6 +285,16 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 			ErrorMessage:          "Incorrect signature algorithm. This needs to be fixed in the Identity Provider.",
 			SAMLFlowID:            createSAMLLoginRes.SAMLFlowID,
 			GotSignatureAlgorithm: *badSignatureAlgorithm,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
+		return
+	}
+	if badDigestAlgorithm != nil {
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:       "Incorrect digest algorithm. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:         createSAMLLoginRes.SAMLFlowID,
+			GotDigestAlgorithm: *badDigestAlgorithm,
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}

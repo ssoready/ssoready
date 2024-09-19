@@ -340,6 +340,7 @@ message SAMLFlow {
     string bad_issuer = 18;
     string bad_audience = 19;
     string bad_signature_algorithm = 23;
+    string bad_digest_algorithm = 24;
     string bad_subject_id = 20;
     string email_outside_organization_domains = 21;
   }

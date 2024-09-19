@@ -29,6 +29,14 @@ func (e BadSignatureAlgorithmError) Error() string {
 	return fmt.Sprintf("dsig: bad signature algorithm: %s", e.BadAlgorithm)
 }
 
+type BadDigestAlgorithmError struct {
+	BadAlgorithm string
+}
+
+func (e BadDigestAlgorithmError) Error() string {
+	return fmt.Sprintf("dsig: bad digest algorithm: %s", e.BadAlgorithm)
+}
+
 func Verify(cert *x509.Certificate, data []byte) error {
 	var res samltypes.Response
 	if err := xml.Unmarshal(data, &res); err != nil {
@@ -41,6 +49,10 @@ func Verify(cert *x509.Certificate, data []byte) error {
 
 	if res.Assertion.Signature.SignedInfo.SignatureMethod.Algorithm != "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" {
 		return BadSignatureAlgorithmError{res.Assertion.Signature.SignedInfo.SignatureMethod.Algorithm}
+	}
+
+	if res.Assertion.Signature.SignedInfo.Reference.DigestMethod.Algorithm != "http://www.w3.org/2001/04/xmlenc#sha256" {
+		return BadDigestAlgorithmError{res.Assertion.Signature.SignedInfo.Reference.DigestMethod.Algorithm}
 	}
 
 	digestData, err := responseDigestData(res, data)

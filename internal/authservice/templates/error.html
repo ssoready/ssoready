@@ -65,6 +65,16 @@
                     <p class="text-sm text-gray-500">{{ .GotSignatureAlgorithm }}</p>
                 </div>
                 {{ end }}
+                {{ if .GotDigestAlgorithm }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Expected Digest Algorithm</p>
+                    <p class="text-sm text-gray-500">http://www.w3.org/2001/04/xmlenc#sha256</p>
+                </div>
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Actual Digest Algorithm</p>
+                    <p class="text-sm text-gray-500">{{ .GotDigestAlgorithm }}</p>
+                </div>
+                {{ end }}
                 {{ if .GotSubjectID }}
                 <div class="grid gap-2">
                     <p class="font-medium text-gray-900">Received Subject ID</p>

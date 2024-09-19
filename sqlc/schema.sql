@@ -271,7 +271,8 @@ CREATE TABLE public.saml_flows (
     error_unsigned_assertion boolean DEFAULT false NOT NULL,
     access_code_sha256 bytea,
     is_oauth boolean,
-    error_bad_signature_algorithm character varying
+    error_bad_signature_algorithm character varying,
+    error_bad_digest_algorithm character varying
 );
 
 
