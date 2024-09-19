@@ -84,9 +84,9 @@ returning *;
 insert into saml_flows (id, saml_connection_id, access_code_sha256, expire_time, state, create_time, update_time,
                         assertion, receive_assertion_time, error_unsigned_assertion, error_bad_issuer,
                         error_bad_audience, error_bad_signature_algorithm, error_bad_digest_algorithm,
-                        error_bad_subject_id,
-                        error_email_outside_organization_domains, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+                        error_bad_x509_certificate, error_bad_subject_id, error_email_outside_organization_domains,
+                        status)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
 on conflict (id) do update set access_code_sha256                       = excluded.access_code_sha256,
                                update_time                              = excluded.update_time,
                                assertion                                = excluded.assertion,
@@ -96,6 +96,7 @@ on conflict (id) do update set access_code_sha256                       = exclud
                                error_bad_audience                       = excluded.error_bad_audience,
                                error_bad_signature_algorithm            = excluded.error_bad_signature_algorithm,
                                error_bad_digest_algorithm               = excluded.error_bad_digest_algorithm,
+                               error_bad_x509_certificate               = excluded.error_bad_x509_certificate,
                                error_bad_subject_id                     = excluded.error_bad_subject_id,
                                error_email_outside_organization_domains = excluded.error_email_outside_organization_domains,
                                status                                   = excluded.status

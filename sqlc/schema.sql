@@ -272,7 +272,8 @@ CREATE TABLE public.saml_flows (
     access_code_sha256 bytea,
     is_oauth boolean,
     error_bad_signature_algorithm character varying,
-    error_bad_digest_algorithm character varying
+    error_bad_digest_algorithm character varying,
+    error_bad_x509_certificate bytea
 );
 
 

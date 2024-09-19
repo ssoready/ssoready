@@ -75,6 +75,26 @@
                     <p class="text-sm text-gray-500">{{ .GotDigestAlgorithm }}</p>
                 </div>
                 {{ end }}
+                {{ if .WantCertificatePEM }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Expected Certificate</p>
+                    <div class="bg-gray-100 rounded-lg px-6 py-4">
+                        <code class="text-sm">
+                            <pre class="max-h-20 overflow-auto">{{ .WantCertificatePEM }}</pre>
+                        </code>
+                    </div>
+                </div>
+                {{ end }}
+                {{ if .GotCertificatePEM }}
+                <div class="grid gap-2">
+                    <p class="font-medium text-gray-900">Actual Certificate</p>
+                    <div class="bg-gray-100 rounded-lg px-6 py-4">
+                        <code class="text-sm">
+                            <pre class="max-h-20 overflow-auto">{{ .GotCertificatePEM }}</pre>
+                        </code>
+                    </div>
+                </div>
+                {{ end }}
                 {{ if .GotSubjectID }}
                 <div class="grid gap-2">
                     <p class="font-medium text-gray-900">Received Subject ID</p>
