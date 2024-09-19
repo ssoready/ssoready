@@ -52,8 +52,6 @@ func Verify(cert *x509.Certificate, data []byte) error {
 		return err
 	}
 
-	fmt.Printf("%+v\n", res)
-
 	if res.Assertion.Signature.SignatureValue == "" {
 		return ErrUnsigned
 	}
