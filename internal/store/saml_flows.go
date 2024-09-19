@@ -156,6 +156,9 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 	if qSAMLFlow.ErrorBadAudience != nil {
 		res.Error = &ssoreadyv1.SAMLFlow_BadAudience{BadAudience: *qSAMLFlow.ErrorBadAudience}
 	}
+	if qSAMLFlow.ErrorBadSignatureAlgorithm != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_BadSignatureAlgorithm{BadSignatureAlgorithm: *qSAMLFlow.ErrorBadSignatureAlgorithm}
+	}
 	if qSAMLFlow.ErrorBadSubjectID != nil {
 		res.Error = &ssoreadyv1.SAMLFlow_BadSubjectId{BadSubjectId: *qSAMLFlow.ErrorBadSubjectID}
 	}

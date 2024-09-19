@@ -251,6 +251,26 @@ export function ViewSAMLFlowPage() {
             </AlertDescription>
           )}
 
+          {samlFlow.error.case === "badSignatureAlgorithm" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider provided a SAML signature
+                algorithm of{" "}
+                <span className="font-semibold">{samlFlow.error.value}</span>,
+                which SSOReady does not accept.
+              </p>
+
+              <p className="mt-4">
+                Your customer's IT admin needs to change the value to{" "}
+                <span className="font-semibold">
+                  http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+                </span>
+                , often simply displayed as{" "}
+                <span className="font-semibold">RSA-SHA256</span>.
+              </p>
+            </AlertDescription>
+          )}
+
           {samlFlow.error.case === "emailOutsideOrganizationDomains" && (
             <AlertDescription>
               Your customer's identity provider returned a{" "}

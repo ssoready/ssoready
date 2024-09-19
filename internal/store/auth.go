@@ -173,6 +173,7 @@ type AuthUpsertSAMLLoginEventRequest struct {
 	ErrorUnsignedAssertion               bool
 	ErrorBadIssuer                       *string
 	ErrorBadAudience                     *string
+	ErrorBadSignatureAlgorithm           *string
 	ErrorBadSubjectID                    *string
 	ErrorEmailOutsideOrganizationDomains *string
 }
@@ -207,7 +208,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	var assertionOk bool
-	if !req.ErrorUnsignedAssertion && req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
+	if !req.ErrorUnsignedAssertion && req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSignatureAlgorithm == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
 		assertionOk = true
 	}
 
@@ -239,6 +240,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		ErrorUnsignedAssertion:               req.ErrorUnsignedAssertion,
 		ErrorBadIssuer:                       req.ErrorBadIssuer,
 		ErrorBadAudience:                     req.ErrorBadAudience,
+		ErrorBadSignatureAlgorithm:           req.ErrorBadSignatureAlgorithm,
 		ErrorBadSubjectID:                    req.ErrorBadSubjectID,
 		ErrorEmailOutsideOrganizationDomains: req.ErrorEmailOutsideOrganizationDomains,
 		Status:                               status,

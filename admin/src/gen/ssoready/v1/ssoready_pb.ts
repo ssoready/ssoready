@@ -564,6 +564,12 @@ export class SAMLFlow extends Message<SAMLFlow> {
     case: "badAudience";
   } | {
     /**
+     * @generated from field: string bad_signature_algorithm = 23;
+     */
+    value: string;
+    case: "badSignatureAlgorithm";
+  } | {
+    /**
      * @generated from field: string bad_subject_id = 20;
      */
     value: string;
@@ -660,6 +666,7 @@ export class SAMLFlow extends Message<SAMLFlow> {
     { no: 22, name: "unsigned_assertion", kind: "message", T: Empty, oneof: "error" },
     { no: 18, name: "bad_issuer", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 19, name: "bad_audience", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
+    { no: 23, name: "bad_signature_algorithm", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 20, name: "bad_subject_id", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 21, name: "email_outside_organization_domains", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 3, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },

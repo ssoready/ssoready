@@ -48,6 +48,7 @@ type errorTemplateData struct {
 	GotIDPEntityID          string
 	WantAudienceRestriction string
 	GotAudienceRestriction  string
+	GotSignatureAlgorithm   string
 	GotSubjectID            string
 	WantEmailDomains        string
 }
@@ -194,6 +195,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		badAudience = validateProblems.BadSPEntityID
 	}
 
+	var badSignatureAlgorithm *string
+	if validateProblems != nil {
+		badSignatureAlgorithm = validateProblems.BadSignatureAlgorithm
+	}
+
 	var badSubjectID *string
 	subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 	if err != nil {
@@ -227,6 +233,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		ErrorUnsignedAssertion:               unsignedAssertion,
 		ErrorBadIssuer:                       badIssuer,
 		ErrorBadAudience:                     badAudience,
+		ErrorBadSignatureAlgorithm:           badSignatureAlgorithm,
 		ErrorBadSubjectID:                    badSubjectID,
 		ErrorEmailOutsideOrganizationDomains: domainMismatchEmail,
 	})
@@ -261,6 +268,16 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 			SAMLFlowID:              createSAMLLoginRes.SAMLFlowID,
 			WantAudienceRestriction: dataRes.SPEntityID,
 			GotAudienceRestriction:  *badAudience,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
+		return
+	}
+	if badSignatureAlgorithm != nil {
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:          "Incorrect signature algorithm. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:            createSAMLLoginRes.SAMLFlowID,
+			GotSignatureAlgorithm: *badSignatureAlgorithm,
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}
