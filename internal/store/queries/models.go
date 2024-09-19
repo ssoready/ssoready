@@ -272,6 +272,9 @@ type SamlFlow struct {
 	ErrorUnsignedAssertion               bool
 	AccessCodeSha256                     []byte
 	IsOauth                              *bool
+	ErrorBadSignatureAlgorithm           *string
+	ErrorBadDigestAlgorithm              *string
+	ErrorBadX509Certificate              []byte
 }
 
 type SamlOauthClient struct {

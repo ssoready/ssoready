@@ -2,7 +2,9 @@ package store
 
 import (
 	"context"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"time"
 
 	"github.com/google/uuid"
@@ -155,6 +157,25 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 	}
 	if qSAMLFlow.ErrorBadAudience != nil {
 		res.Error = &ssoreadyv1.SAMLFlow_BadAudience{BadAudience: *qSAMLFlow.ErrorBadAudience}
+	}
+	if qSAMLFlow.ErrorBadSignatureAlgorithm != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_BadSignatureAlgorithm{BadSignatureAlgorithm: *qSAMLFlow.ErrorBadSignatureAlgorithm}
+	}
+	if qSAMLFlow.ErrorBadDigestAlgorithm != nil {
+		res.Error = &ssoreadyv1.SAMLFlow_BadDigestAlgorithm{BadDigestAlgorithm: *qSAMLFlow.ErrorBadDigestAlgorithm}
+	}
+	if qSAMLFlow.ErrorBadX509Certificate != nil {
+		cert, err := x509.ParseCertificate(qSAMLFlow.ErrorBadX509Certificate)
+		if err != nil {
+			panic(err)
+		}
+
+		res.Error = &ssoreadyv1.SAMLFlow_BadCertificate{
+			BadCertificate: string(pem.EncodeToMemory(&pem.Block{
+				Type:  "CERTIFICATE",
+				Bytes: cert.Raw,
+			})),
+		}
 	}
 	if qSAMLFlow.ErrorBadSubjectID != nil {
 		res.Error = &ssoreadyv1.SAMLFlow_BadSubjectId{BadSubjectId: *qSAMLFlow.ErrorBadSubjectID}

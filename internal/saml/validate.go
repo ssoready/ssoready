@@ -21,9 +21,12 @@ type ValidateRequest struct {
 }
 
 type ValidateProblems struct {
-	UnsignedAssertion bool
-	BadIDPEntityID    *string
-	BadSPEntityID     *string
+	UnsignedAssertion     bool
+	BadIDPEntityID        *string
+	BadSPEntityID         *string
+	BadSignatureAlgorithm *string
+	BadDigestAlgorithm    *string
+	BadCertificate        *x509.Certificate
 }
 
 type ValidateResponse struct {
@@ -63,6 +66,21 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 	if err := dsig.Verify(req.IDPCertificate, data); err != nil {
 		if errors.Is(err, dsig.ErrUnsigned) {
 			return &res, &ValidateProblems{UnsignedAssertion: true}, nil
+		}
+
+		var badSigAlgError dsig.BadSignatureAlgorithmError
+		if errors.As(err, &badSigAlgError) {
+			return &res, &ValidateProblems{BadSignatureAlgorithm: &badSigAlgError.BadAlgorithm}, nil
+		}
+
+		var badDigestAlgError dsig.BadDigestAlgorithmError
+		if errors.As(err, &badDigestAlgError) {
+			return &res, &ValidateProblems{BadDigestAlgorithm: &badDigestAlgError.BadAlgorithm}, nil
+		}
+
+		var badCertificateError dsig.BadCertificateError
+		if errors.As(err, &badCertificateError) {
+			return &res, &ValidateProblems{BadCertificate: badCertificateError.BadCertificate}, nil
 		}
 
 		return &res, nil, fmt.Errorf("verify signature: %w", err)

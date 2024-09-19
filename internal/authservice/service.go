@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"embed"
 	_ "embed"
+	"encoding/pem"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -48,6 +49,10 @@ type errorTemplateData struct {
 	GotIDPEntityID          string
 	WantAudienceRestriction string
 	GotAudienceRestriction  string
+	GotSignatureAlgorithm   string
+	GotDigestAlgorithm      string
+	WantCertificatePEM      string
+	GotCertificatePEM       string
 	GotSubjectID            string
 	WantEmailDomains        string
 }
@@ -149,6 +154,9 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	dataRes, err := s.Store.AuthGetValidateData(ctx, &store.AuthGetValidateDataRequest{
 		SAMLConnectionID: samlConnID,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	cert, err := x509.ParseCertificate(dataRes.IDPX509Certificate)
 	if err != nil {
@@ -194,6 +202,21 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		badAudience = validateProblems.BadSPEntityID
 	}
 
+	var badSignatureAlgorithm *string
+	if validateProblems != nil {
+		badSignatureAlgorithm = validateProblems.BadSignatureAlgorithm
+	}
+
+	var badDigestAlgorithm *string
+	if validateProblems != nil {
+		badDigestAlgorithm = validateProblems.BadDigestAlgorithm
+	}
+
+	var badCertificate *x509.Certificate
+	if validateProblems != nil {
+		badCertificate = validateProblems.BadCertificate
+	}
+
 	var badSubjectID *string
 	subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
 	if err != nil {
@@ -227,6 +250,9 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		ErrorUnsignedAssertion:               unsignedAssertion,
 		ErrorBadIssuer:                       badIssuer,
 		ErrorBadAudience:                     badAudience,
+		ErrorBadSignatureAlgorithm:           badSignatureAlgorithm,
+		ErrorBadDigestAlgorithm:              badDigestAlgorithm,
+		ErrorBadCertificate:                  badCertificate,
 		ErrorBadSubjectID:                    badSubjectID,
 		ErrorEmailOutsideOrganizationDomains: domainMismatchEmail,
 	})
@@ -261,6 +287,47 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 			SAMLFlowID:              createSAMLLoginRes.SAMLFlowID,
 			WantAudienceRestriction: dataRes.SPEntityID,
 			GotAudienceRestriction:  *badAudience,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
+		return
+	}
+	if badSignatureAlgorithm != nil {
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:          "Incorrect signature algorithm. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:            createSAMLLoginRes.SAMLFlowID,
+			GotSignatureAlgorithm: *badSignatureAlgorithm,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
+		return
+	}
+	if badDigestAlgorithm != nil {
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:       "Incorrect digest algorithm. This needs to be fixed in the Identity Provider.",
+			SAMLFlowID:         createSAMLLoginRes.SAMLFlowID,
+			GotDigestAlgorithm: *badDigestAlgorithm,
+		}); err != nil {
+			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+		}
+		return
+	}
+	if badCertificate != nil {
+		wantCertPEM := pem.EncodeToMemory(&pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: cert.Raw,
+		})
+
+		gotCertPEM := pem.EncodeToMemory(&pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: badCertificate.Raw,
+		})
+
+		if err := errorTemplate.Execute(w, &errorTemplateData{
+			ErrorMessage:       "Incorrect certificate. This needs to be fixed in the Service Provider.",
+			SAMLFlowID:         createSAMLLoginRes.SAMLFlowID,
+			WantCertificatePEM: string(wantCertPEM),
+			GotCertificatePEM:  string(gotCertPEM),
 		}); err != nil {
 			panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 		}

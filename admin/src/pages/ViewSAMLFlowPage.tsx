@@ -31,6 +31,11 @@ import { OctagonX } from "lucide-react";
 import { LayoutMain } from "@/components/Layout";
 import { Helmet } from "react-helmet";
 import { useTitle } from "@/useTitle";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export function ViewSAMLFlowPage() {
   const { samlConnectionId, samlFlowId } = useParams();
@@ -220,6 +225,97 @@ export function ViewSAMLFlowPage() {
                   {samlConnection?.samlConnection?.spEntityId}
                 </span>{" "}
                 in your identity provider.
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.samlFlow.error.case === "badSignatureAlgorithm" && (
+            <AlertDescription>
+              <p>
+                Your identity provider provided a SAML signature algorithm of{" "}
+                <span className="font-semibold">
+                  {samlFlow.samlFlow.error.value}
+                </span>
+                , which we do not accept.
+              </p>
+
+              <p className="mt-4">
+                You need to change the value to{" "}
+                <span className="font-semibold">
+                  http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+                </span>
+                , often simply displayed as{" "}
+                <span className="font-semibold">RSA-SHA256</span>.
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.samlFlow.error.case === "badDigestAlgorithm" && (
+            <AlertDescription>
+              <p>
+                Your identity provider provided a SAML digest algorithm of{" "}
+                <span className="font-semibold">
+                  {samlFlow.samlFlow.error.value}
+                </span>
+                , which we do not accept.
+              </p>
+
+              <p className="mt-4">
+                You need to change the value to{" "}
+                <span className="font-semibold">
+                  http://www.w3.org/2001/04/xmlenc#sha256
+                </span>
+                , often simply displayed as{" "}
+                <span className="font-semibold">SHA256</span>.
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.samlFlow.error.case === "badCertificate" && (
+            <AlertDescription>
+              <p>
+                This request provided an incorrect SAML assertion signing
+                certificate.
+              </p>
+
+              <Collapsible>
+                <CollapsibleTrigger>
+                  <p className="mt-4">
+                    You've configured the the IDP Certificate to be: (click to
+                    toggle)
+                  </p>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <pre className="mt-2 inline-block py-2 px-4 rounded bg-red-100">
+                    {samlConnection?.samlConnection?.idpCertificate}
+                  </pre>
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Collapsible>
+                <CollapsibleTrigger>
+                  <p className="mt-4">
+                    This SAML request provided the following IDP Certificate:
+                    (click to toggle)
+                  </p>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <pre className="mt-2 inline-block py-2 px-4 rounded bg-red-100">
+                    {samlFlow.samlFlow.error.value}
+                  </pre>
+                </CollapsibleContent>
+              </Collapsible>
+
+              <p className="mt-4">
+                If you believe this login is legitimate, you need to{" "}
+                <Link
+                  className="underline underline-offset-4"
+                  to={`/saml/saml-connections/${samlConnectionId}/setup`}
+                >
+                  set up the SAML connection's
+                </Link>{" "}
+                Identity Provider Certificate to be the one included on this
+                login attempt.
               </p>
             </AlertDescription>
           )}

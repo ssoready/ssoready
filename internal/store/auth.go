@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -173,6 +174,9 @@ type AuthUpsertSAMLLoginEventRequest struct {
 	ErrorUnsignedAssertion               bool
 	ErrorBadIssuer                       *string
 	ErrorBadAudience                     *string
+	ErrorBadSignatureAlgorithm           *string
+	ErrorBadDigestAlgorithm              *string
+	ErrorBadCertificate                  *x509.Certificate
 	ErrorBadSubjectID                    *string
 	ErrorEmailOutsideOrganizationDomains *string
 }
@@ -207,7 +211,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	var assertionOk bool
-	if !req.ErrorUnsignedAssertion && req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
+	if !req.ErrorUnsignedAssertion && req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSignatureAlgorithm == nil && req.ErrorBadDigestAlgorithm == nil && req.ErrorBadCertificate == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
 		assertionOk = true
 	}
 
@@ -226,6 +230,11 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		status = queries.SamlFlowStatusInProgress
 	}
 
+	var badX509Certificate []byte
+	if req.ErrorBadCertificate != nil {
+		badX509Certificate = req.ErrorBadCertificate.Raw
+	}
+
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
 		ID:                                   samlFlowID,
 		SamlConnectionID:                     samlConnID,
@@ -239,6 +248,9 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		ErrorUnsignedAssertion:               req.ErrorUnsignedAssertion,
 		ErrorBadIssuer:                       req.ErrorBadIssuer,
 		ErrorBadAudience:                     req.ErrorBadAudience,
+		ErrorBadSignatureAlgorithm:           req.ErrorBadSignatureAlgorithm,
+		ErrorBadDigestAlgorithm:              req.ErrorBadDigestAlgorithm,
+		ErrorBadX509Certificate:              badX509Certificate,
 		ErrorBadSubjectID:                    req.ErrorBadSubjectID,
 		ErrorEmailOutsideOrganizationDomains: req.ErrorEmailOutsideOrganizationDomains,
 		Status:                               status,

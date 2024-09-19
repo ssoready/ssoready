@@ -42,6 +42,11 @@ type Response struct {
 				} `xml:"Reference"`
 			} `xml:"SignedInfo"`
 			SignatureValue string
+			KeyInfo        struct {
+				X509Data struct {
+					X509Certificate string `xml:"X509Certificate"`
+				} `xml:"X509Data"`
+			} `xml:"KeyInfo"`
 		} `xml:"Signature"`
 		Issuer struct {
 			XMLName xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion Issuer"`

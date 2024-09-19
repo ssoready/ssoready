@@ -31,6 +31,11 @@ import { OctagonX } from "lucide-react";
 import { Title } from "@/components/Title";
 import { DocsLink } from "@/components/DocsLink";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export function ViewSAMLFlowPage() {
   const { environmentId, organizationId, samlConnectionId, samlFlowId } =
@@ -228,6 +233,8 @@ export function ViewSAMLFlowPage() {
                 </Link>{" "}
                 Identity Provider Entity ID to{" "}
                 <span className="font-semibold">{samlFlow.error.value}</span>.
+                If you don't believe this login is legitimate, you don't need to
+                do anything.
               </p>
             </AlertDescription>
           )}
@@ -247,6 +254,96 @@ export function ViewSAMLFlowPage() {
                   {samlConnection?.spEntityId}
                 </span>
                 .
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.error.case === "badSignatureAlgorithm" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider provided a SAML signature
+                algorithm of{" "}
+                <span className="font-semibold">{samlFlow.error.value}</span>,
+                which SSOReady does not accept.
+              </p>
+
+              <p className="mt-4">
+                Your customer's IT admin needs to change the value to{" "}
+                <span className="font-semibold">
+                  http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+                </span>
+                , often simply displayed as{" "}
+                <span className="font-semibold">RSA-SHA256</span>.
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.error.case === "badDigestAlgorithm" && (
+            <AlertDescription>
+              <p>
+                Your customer's identity provider provided a SAML digest
+                algorithm of{" "}
+                <span className="font-semibold">{samlFlow.error.value}</span>,
+                which SSOReady does not accept.
+              </p>
+
+              <p className="mt-4">
+                Your customer's IT admin needs to change the value to{" "}
+                <span className="font-semibold">
+                  http://www.w3.org/2001/04/xmlenc#sha256
+                </span>
+                , often simply displayed as{" "}
+                <span className="font-semibold">SHA256</span>.
+              </p>
+            </AlertDescription>
+          )}
+
+          {samlFlow.error.case === "badCertificate" && (
+            <AlertDescription>
+              <p>
+                This request provided an incorrect SAML assertion signing
+                certificate.
+              </p>
+
+              <Collapsible>
+                <CollapsibleTrigger>
+                  <p className="mt-4">
+                    You've configured the the IDP Certificate to be: (click to
+                    toggle)
+                  </p>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <pre className="mt-2 inline-block py-2 px-4 rounded bg-red-100">
+                    {samlConnection?.idpCertificate}
+                  </pre>
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Collapsible>
+                <CollapsibleTrigger>
+                  <p className="mt-4">
+                    This SAML request provided the following IDP Certificate:
+                    (click to toggle)
+                  </p>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <pre className="mt-2 inline-block py-2 px-4 rounded bg-red-100">
+                    {samlFlow.error.value}
+                  </pre>
+                </CollapsibleContent>
+              </Collapsible>
+
+              <p className="mt-4">
+                If you believe this login is legitimate, you need to update{" "}
+                <Link
+                  className="underline underline-offset-4"
+                  to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
+                >
+                  the SAML connection's
+                </Link>{" "}
+                Identity Provider Certificate to be the one provided on this
+                request. If you don't believe this login is legitimate, you
+                don't need to do anything.
               </p>
             </AlertDescription>
           )}
