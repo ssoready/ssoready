@@ -46,6 +46,20 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 		return nil, err
 	}
 
+	samlFlowID, err := idformat.SAMLFlow.Parse(stateData.SAMLFlowID)
+	if err != nil {
+		return nil, err
+	}
+
+	qSAMLFlow, err := s.q.GetSAMLFlowByID(ctx, samlFlowID)
+	if err != nil {
+		return nil, err
+	}
+
+	if qSAMLFlow.SamlConnectionID != samlConnID {
+		return nil, fmt.Errorf("saml flow id does not match saml connection id")
+	}
+
 	return &AuthGetInitDataResponse{
 		RequestID:      stateData.SAMLFlowID,
 		IDPRedirectURL: *res.IdpRedirectUrl,
@@ -205,12 +219,12 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 			return nil, err
 		}
 
-		qSAMLConn, err := q.GetSAMLFlowByID(ctx, samlFlowID)
+		qSAMLFlow, err := q.GetSAMLFlowByID(ctx, samlFlowID)
 		if err != nil {
 			return nil, err
 		}
 
-		if qSAMLConn.SamlConnectionID != samlConnID {
+		if qSAMLFlow.SamlConnectionID != samlConnID {
 			return nil, fmt.Errorf("saml flow id does not match saml connection id")
 		}
 	}
