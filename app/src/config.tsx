@@ -17,6 +17,7 @@ export type Config = {
   GOOGLE_OAUTH_CLIENT_ID?: string;
   MICROSOFT_OAUTH_CLIENT_ID?: string;
   MICROSOFT_OAUTH_REDIRECT_URI?: string;
+  MICROSOFT_OAUTH_AUTHORIZE_URL?: string;
 };
 
 const Context = createContext<Config>(undefined as any);
