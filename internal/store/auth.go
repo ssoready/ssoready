@@ -200,6 +200,22 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		return nil, err
 	}
 
+	if req.SAMLFlowID != "" {
+		samlFlowID, err := idformat.SAMLFlow.Parse(req.SAMLFlowID)
+		if err != nil {
+			return nil, err
+		}
+
+		qSAMLConn, err := q.GetSAMLFlowByID(ctx, samlFlowID)
+		if err != nil {
+			return nil, err
+		}
+
+		if qSAMLConn.SamlConnectionID != samlConnID {
+			return nil, fmt.Errorf("saml flow id does not match saml connection id")
+		}
+	}
+
 	var samlFlowID uuid.UUID
 	if req.SAMLFlowID != "" {
 		samlFlowID, err = idformat.SAMLFlow.Parse(req.SAMLFlowID)

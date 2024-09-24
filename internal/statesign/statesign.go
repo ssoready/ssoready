@@ -14,12 +14,12 @@ type Signer struct {
 }
 
 type Data struct {
-	SAMLFlowID string
-	State      string
+	SAMLConnectionID string
+	SAMLFlowID       string
 }
 
 func (signer *Signer) Encode(d Data) string {
-	payload := fmt.Sprintf("%s.%s", d.SAMLFlowID, base64.RawURLEncoding.EncodeToString([]byte(d.State)))
+	payload := fmt.Sprintf("%s.%s", d.SAMLConnectionID, d.SAMLFlowID)
 	digest := auth.Sum([]byte(payload), &signer.Key)
 	return fmt.Sprintf("%s.%s", base64.RawURLEncoding.EncodeToString([]byte(payload)), base64.RawURLEncoding.EncodeToString(digest[:]))
 }
