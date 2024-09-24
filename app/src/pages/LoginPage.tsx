@@ -155,11 +155,15 @@ export function LoginPage() {
 }
 
 function MicrosoftLogin() {
-  const { MICROSOFT_OAUTH_CLIENT_ID, MICROSOFT_OAUTH_REDIRECT_URI } =
-    useConfig();
+  const {
+    MICROSOFT_OAUTH_CLIENT_ID,
+    MICROSOFT_OAUTH_REDIRECT_URI,
+    MICROSOFT_OAUTH_AUTHORIZE_URL,
+  } = useConfig();
 
   const microsoftRedirectUri = new URL(
-    "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    MICROSOFT_OAUTH_AUTHORIZE_URL ||
+      "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
   );
   microsoftRedirectUri.searchParams.set("response_type", "code");
   microsoftRedirectUri.searchParams.set("response_mode", "query");
