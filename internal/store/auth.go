@@ -85,7 +85,6 @@ func (s *Store) AuthUpsertInitiateData(ctx context.Context, req *AuthUpsertIniti
 		ID:               samlFlowID,
 		SamlConnectionID: qSAMLFlow.SamlConnectionID,
 		ExpireTime:       time.Now().Add(time.Hour),
-		State:            stateData.State,
 		CreateTime:       time.Now(),
 		UpdateTime:       time.Now(),
 		InitiateRequest:  &req.InitiateRequest,
