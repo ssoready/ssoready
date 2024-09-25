@@ -254,7 +254,7 @@ where token_sha256 = $1
 select *
 from environments
 where app_organization_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3;
 
@@ -306,7 +306,7 @@ returning *;
 select *
 from api_keys
 where environment_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3;
 
@@ -451,7 +451,7 @@ where id = $1;
 select *
 from saml_oauth_clients
 where environment_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3;
 
