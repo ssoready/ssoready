@@ -2309,7 +2309,7 @@ const listAPIKeys = `-- name: ListAPIKeys :many
 select id, secret_value, environment_id, secret_value_sha256, has_management_api_access
 from api_keys
 where environment_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3
 `
@@ -2382,7 +2382,7 @@ const listEnvironments = `-- name: ListEnvironments :many
 select id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url, custom_admin_domain, admin_url
 from environments
 where app_organization_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3
 `
@@ -2668,7 +2668,7 @@ const listSAMLOAuthClients = `-- name: ListSAMLOAuthClients :many
 select id, environment_id, client_secret_sha256
 from saml_oauth_clients
 where environment_id = $1
-  and id > $2
+  and id >= $2
 order by id
 limit $3
 `
