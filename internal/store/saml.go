@@ -89,7 +89,6 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	redirectURLQuery := url.Values{}
 	redirectURLQuery.Set("state", s.statesigner.Encode(statesign.Data{
 		SAMLFlowID: idformat.SAMLFlow.Format(samlFlowID),
-		State:      req.State,
 	}))
 
 	redirectURL, err := url.Parse(authURL)
