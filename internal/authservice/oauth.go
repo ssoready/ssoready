@@ -16,7 +16,6 @@ import (
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/saml"
-	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 )
@@ -129,9 +128,6 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 	if err := acsTemplate.Execute(w, &acsTemplateData{
 		SignOnURL:   dataRes.IDPRedirectURL,
 		SAMLRequest: initRes.SAMLRequest,
-		RelayState: s.StateSigner.Encode(statesign.Data{
-			SAMLFlowID: samlFlowID,
-		}),
 	}); err != nil {
 		panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 	}

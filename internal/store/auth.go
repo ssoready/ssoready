@@ -46,6 +46,20 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 		return nil, err
 	}
 
+	samlFlowID, err := idformat.SAMLFlow.Parse(stateData.SAMLFlowID)
+	if err != nil {
+		return nil, err
+	}
+
+	qSAMLFlow, err := s.q.GetSAMLFlowByID(ctx, samlFlowID)
+	if err != nil {
+		return nil, err
+	}
+
+	if qSAMLFlow.SamlConnectionID != samlConnID {
+		return nil, fmt.Errorf("saml flow id does not match saml connection id")
+	}
+
 	return &AuthGetInitDataResponse{
 		RequestID:      stateData.SAMLFlowID,
 		IDPRedirectURL: *res.IdpRedirectUrl,
@@ -85,7 +99,6 @@ func (s *Store) AuthUpsertInitiateData(ctx context.Context, req *AuthUpsertIniti
 		ID:               samlFlowID,
 		SamlConnectionID: qSAMLFlow.SamlConnectionID,
 		ExpireTime:       time.Now().Add(time.Hour),
-		State:            stateData.State,
 		CreateTime:       time.Now(),
 		UpdateTime:       time.Now(),
 		InitiateRequest:  &req.InitiateRequest,
@@ -198,6 +211,22 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	samlConnID, err := idformat.SAMLConnection.Parse(req.SAMLConnectionID)
 	if err != nil {
 		return nil, err
+	}
+
+	if req.SAMLFlowID != "" {
+		samlFlowID, err := idformat.SAMLFlow.Parse(req.SAMLFlowID)
+		if err != nil {
+			return nil, err
+		}
+
+		qSAMLFlow, err := q.GetSAMLFlowByID(ctx, samlFlowID)
+		if err != nil {
+			return nil, err
+		}
+
+		if qSAMLFlow.SamlConnectionID != samlConnID {
+			return nil, fmt.Errorf("saml flow id does not match saml connection id")
+		}
 	}
 
 	var samlFlowID uuid.UUID
