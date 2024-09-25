@@ -25,6 +25,7 @@ import (
 type acsTemplateData struct {
 	SignOnURL   string
 	SAMLRequest string
+	RelayState  string
 }
 
 var acsTemplate = template.Must(template.New("acs").Parse(`
@@ -32,6 +33,7 @@ var acsTemplate = template.Must(template.New("acs").Parse(`
 	<body>
 		<form method="POST" action="{{ .SignOnURL }}">
 			<input type="hidden" name="SAMLRequest" value="{{ .SAMLRequest }}"></input>
+			<input type="hidden" name="RelayState" value="{{ .RelayState }}"></input>
 		</form>
 		<script>
 			document.forms[0].submit();
@@ -131,6 +133,7 @@ func (s *Service) samlInit(w http.ResponseWriter, r *http.Request) {
 	if err := acsTemplate.Execute(w, &acsTemplateData{
 		SignOnURL:   dataRes.IDPRedirectURL,
 		SAMLRequest: initRes.SAMLRequest,
+		RelayState:  state,
 	}); err != nil {
 		panic(fmt.Errorf("acsTemplate.Execute: %w", err))
 	}
