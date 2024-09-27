@@ -815,25 +815,6 @@ message OnboardingRedeemSAMLAccessCodeRequest {
   string saml_access_code = 2;
 }
 
-message GetStripeCheckoutURLRequest {
-}
-
-message GetStripeCheckoutURLResponse {
-  string url = 1;
-}
-
-message RedeemStripeCheckoutRequest {
-  string stripe_checkout_session_id = 1;
-}
-
-message RedeemStripeCheckoutResponse {}
-
-message GetStripeBillingPortalURLRequest {}
-
-message GetStripeBillingPortalURLResponse {
-  string url = 1;
-}
-
 message GetAppOrganizationRequest {
 }
 
