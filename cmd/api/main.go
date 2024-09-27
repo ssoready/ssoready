@@ -19,7 +19,6 @@ import (
 	"github.com/segmentio/analytics-go/v3"
 	"github.com/ssoready/conf"
 	"github.com/ssoready/ssoready/internal/apiservice"
-	"github.com/ssoready/ssoready/internal/apistripewebhook"
 	"github.com/ssoready/ssoready/internal/appanalytics"
 	"github.com/ssoready/ssoready/internal/authn/authninterceptor"
 	"github.com/ssoready/ssoready/internal/flyio"
@@ -31,7 +30,6 @@ import (
 	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/sentryinterceptor"
 	"github.com/ssoready/ssoready/internal/store"
-	stripe "github.com/stripe/stripe-go/v79/client"
 )
 
 func main() {
@@ -58,11 +56,6 @@ func main() {
 		EmailChallengeFrom           string `conf:"email-challenge-from,noredact"`
 		EmailVerificationEndpoint    string `conf:"email-verification-endpoint,noredact"`
 		SegmentWriteKey              string `conf:"segment-write-key"`
-		StripeAPIKey                 string `conf:"stripe-api-key"`
-		StripeCheckoutSuccessURL     string `conf:"stripe-checkout-success-url"`
-		StripePriceIDProTier         string `conf:"stripe-price-id-pro-tier,noredact"`
-		StripeWebhookEndpointSecret  string `conf:"stripe-webhook-endpoint-secret"`
-		StripeBillingPortalReturnURL string `conf:"stripe-billing-portal-return-url,noredact"`
 		FlyioAPIKey                  string `conf:"flyio-api-key"`
 		FlyioAuthProxyAppID          string `conf:"flyio-authproxy-app-id,noredact"`
 		FlyioAuthProxyAppCNAMEValue  string `conf:"flyio-authproxy-app-cname-value,noredact"`
@@ -117,9 +110,6 @@ func main() {
 		analyticsClient = analytics.New(config.SegmentWriteKey)
 	}
 
-	stripeClient := &stripe.API{}
-	stripeClient.Init(config.StripeAPIKey, nil)
-
 	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
 		&apiservice.Service{
 			Store: store_,
@@ -133,14 +123,10 @@ func main() {
 				MicrosoftOAuthClientSecret: config.MicrosoftOAuthClientSecret,
 				MicrosoftOAuthRedirectURI:  config.MicrosoftOAuthRedirectURI,
 			},
-			ResendClient:                 resend.NewClient(config.ResendAPIKey),
-			EmailChallengeFrom:           config.EmailChallengeFrom,
-			EmailVerificationEndpoint:    config.EmailVerificationEndpoint,
-			SAMLMetadataHTTPClient:       http.DefaultClient,
-			StripeClient:                 stripeClient,
-			StripeCheckoutSuccessURL:     config.StripeCheckoutSuccessURL,
-			StripePriceIDProTier:         config.StripePriceIDProTier,
-			StripeBillingPortalReturnURL: config.StripeBillingPortalReturnURL,
+			ResendClient:              resend.NewClient(config.ResendAPIKey),
+			EmailChallengeFrom:        config.EmailChallengeFrom,
+			EmailVerificationEndpoint: config.EmailVerificationEndpoint,
+			SAMLMetadataHTTPClient:    http.DefaultClient,
 			FlyioClient: &flyio.Client{
 				HTTPClient: http.DefaultClient,
 				APIKey:     config.FlyioAPIKey,
@@ -162,12 +148,6 @@ func main() {
 		),
 	)
 
-	stripeWebhookService := apistripewebhook.Service{
-		Store:                store_,
-		StripeClient:         stripeClient,
-		StripeEndpointSecret: config.StripeWebhookEndpointSecret,
-	}
-
 	sentryHandler := sentryhttp.New(sentryhttp.Options{
 		Repanic: true,
 	})
@@ -187,8 +167,6 @@ func main() {
 		slog.InfoContext(r.Context(), "health")
 		w.WriteHeader(http.StatusOK)
 	}))
-
-	mux.Handle("/internal/stripe-webhook", stripeWebhookService.Handler())
 
 	mux.Handle("/internal/connect/", http.StripPrefix("/internal/connect", connectMux))
 

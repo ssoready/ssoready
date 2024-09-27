@@ -10,7 +10,6 @@ import (
 	"github.com/ssoready/ssoready/internal/google"
 	"github.com/ssoready/ssoready/internal/microsoft"
 	"github.com/ssoready/ssoready/internal/store"
-	stripe "github.com/stripe/stripe-go/v79/client"
 )
 
 type Service struct {
@@ -21,10 +20,6 @@ type Service struct {
 	EmailChallengeFrom           string
 	EmailVerificationEndpoint    string
 	SAMLMetadataHTTPClient       *http.Client
-	StripeClient                 *stripe.API
-	StripeCheckoutSuccessURL     string
-	StripePriceIDProTier         string
-	StripeBillingPortalReturnURL string
 	FlyioClient                  *flyio.Client
 	FlyioAuthProxyAppID          string
 	FlyioAuthProxyAppCNAMEValue  string

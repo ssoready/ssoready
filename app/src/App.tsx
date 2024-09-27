@@ -30,7 +30,6 @@ import { SettingsPage } from "@/pages/SettingsPage";
 import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
 import { ViewSCIMUserPage } from "@/pages/ViewSCIMUserPage";
 import { ViewSCIMGroupPage } from "@/pages/ViewSCIMGroupPage";
-import { StripeCheckoutSuccessPage } from "@/pages/internal/StripeCheckoutSuccessPage";
 import { ViewCustomDomainsPage } from "@/pages/ViewCustomDomainsPage";
 import { ViewBrandingSettingsPage } from "@/pages/ViewBrandingSettingsPage";
 import { ViewSCIMRequestPage } from "@/pages/ViewSCIMRequestPage";
@@ -64,10 +63,6 @@ export function AppRoutes() {
       <Route
         path="/internal/microsoft-callback"
         element={<MicrosoftCallbackPage />}
-      />
-      <Route
-        path="/internal/stripe-checkout-success"
-        element={<StripeCheckoutSuccessPage />}
       />
 
       <Route path="/" element={<LoginGate />}>

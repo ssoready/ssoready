@@ -48,9 +48,6 @@ const (
 	SSOReadyService_UpdateOnboardingState_FullMethodName                            = "/ssoready.v1.SSOReadyService/UpdateOnboardingState"
 	SSOReadyService_OnboardingGetSAMLRedirectURL_FullMethodName                     = "/ssoready.v1.SSOReadyService/OnboardingGetSAMLRedirectURL"
 	SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName                   = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
-	SSOReadyService_GetStripeCheckoutURL_FullMethodName                             = "/ssoready.v1.SSOReadyService/GetStripeCheckoutURL"
-	SSOReadyService_RedeemStripeCheckout_FullMethodName                             = "/ssoready.v1.SSOReadyService/RedeemStripeCheckout"
-	SSOReadyService_GetStripeBillingPortalURL_FullMethodName                        = "/ssoready.v1.SSOReadyService/GetStripeBillingPortalURL"
 	SSOReadyService_GetAppOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/GetAppOrganization"
 	SSOReadyService_ListAppUsers_FullMethodName                                     = "/ssoready.v1.SSOReadyService/ListAppUsers"
 	SSOReadyService_ListEnvironments_FullMethodName                                 = "/ssoready.v1.SSOReadyService/ListEnvironments"
@@ -174,9 +171,6 @@ type SSOReadyServiceClient interface {
 	UpdateOnboardingState(ctx context.Context, in *UpdateOnboardingStateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	OnboardingGetSAMLRedirectURL(ctx context.Context, in *OnboardingGetSAMLRedirectURLRequest, opts ...grpc.CallOption) (*GetSAMLRedirectURLResponse, error)
 	OnboardingRedeemSAMLAccessCode(ctx context.Context, in *OnboardingRedeemSAMLAccessCodeRequest, opts ...grpc.CallOption) (*RedeemSAMLAccessCodeResponse, error)
-	GetStripeCheckoutURL(ctx context.Context, in *GetStripeCheckoutURLRequest, opts ...grpc.CallOption) (*GetStripeCheckoutURLResponse, error)
-	RedeemStripeCheckout(ctx context.Context, in *RedeemStripeCheckoutRequest, opts ...grpc.CallOption) (*RedeemStripeCheckoutResponse, error)
-	GetStripeBillingPortalURL(ctx context.Context, in *GetStripeBillingPortalURLRequest, opts ...grpc.CallOption) (*GetStripeBillingPortalURLResponse, error)
 	GetAppOrganization(ctx context.Context, in *GetAppOrganizationRequest, opts ...grpc.CallOption) (*GetAppOrganizationResponse, error)
 	ListAppUsers(ctx context.Context, in *ListAppUsersRequest, opts ...grpc.CallOption) (*ListAppUsersResponse, error)
 	ListEnvironments(ctx context.Context, in *ListEnvironmentsRequest, opts ...grpc.CallOption) (*ListEnvironmentsResponse, error)
@@ -518,36 +512,6 @@ func (c *sSOReadyServiceClient) OnboardingRedeemSAMLAccessCode(ctx context.Conte
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RedeemSAMLAccessCodeResponse)
 	err := c.cc.Invoke(ctx, SSOReadyService_OnboardingRedeemSAMLAccessCode_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sSOReadyServiceClient) GetStripeCheckoutURL(ctx context.Context, in *GetStripeCheckoutURLRequest, opts ...grpc.CallOption) (*GetStripeCheckoutURLResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetStripeCheckoutURLResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_GetStripeCheckoutURL_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sSOReadyServiceClient) RedeemStripeCheckout(ctx context.Context, in *RedeemStripeCheckoutRequest, opts ...grpc.CallOption) (*RedeemStripeCheckoutResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RedeemStripeCheckoutResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_RedeemStripeCheckout_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sSOReadyServiceClient) GetStripeBillingPortalURL(ctx context.Context, in *GetStripeBillingPortalURLRequest, opts ...grpc.CallOption) (*GetStripeBillingPortalURLResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetStripeBillingPortalURLResponse)
-	err := c.cc.Invoke(ctx, SSOReadyService_GetStripeBillingPortalURL_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1188,9 +1152,6 @@ type SSOReadyServiceServer interface {
 	UpdateOnboardingState(context.Context, *UpdateOnboardingStateRequest) (*emptypb.Empty, error)
 	OnboardingGetSAMLRedirectURL(context.Context, *OnboardingGetSAMLRedirectURLRequest) (*GetSAMLRedirectURLResponse, error)
 	OnboardingRedeemSAMLAccessCode(context.Context, *OnboardingRedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error)
-	GetStripeCheckoutURL(context.Context, *GetStripeCheckoutURLRequest) (*GetStripeCheckoutURLResponse, error)
-	RedeemStripeCheckout(context.Context, *RedeemStripeCheckoutRequest) (*RedeemStripeCheckoutResponse, error)
-	GetStripeBillingPortalURL(context.Context, *GetStripeBillingPortalURLRequest) (*GetStripeBillingPortalURLResponse, error)
 	GetAppOrganization(context.Context, *GetAppOrganizationRequest) (*GetAppOrganizationResponse, error)
 	ListAppUsers(context.Context, *ListAppUsersRequest) (*ListAppUsersResponse, error)
 	ListEnvironments(context.Context, *ListEnvironmentsRequest) (*ListEnvironmentsResponse, error)
@@ -1341,15 +1302,6 @@ func (UnimplementedSSOReadyServiceServer) OnboardingGetSAMLRedirectURL(context.C
 }
 func (UnimplementedSSOReadyServiceServer) OnboardingRedeemSAMLAccessCode(context.Context, *OnboardingRedeemSAMLAccessCodeRequest) (*RedeemSAMLAccessCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OnboardingRedeemSAMLAccessCode not implemented")
-}
-func (UnimplementedSSOReadyServiceServer) GetStripeCheckoutURL(context.Context, *GetStripeCheckoutURLRequest) (*GetStripeCheckoutURLResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStripeCheckoutURL not implemented")
-}
-func (UnimplementedSSOReadyServiceServer) RedeemStripeCheckout(context.Context, *RedeemStripeCheckoutRequest) (*RedeemStripeCheckoutResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RedeemStripeCheckout not implemented")
-}
-func (UnimplementedSSOReadyServiceServer) GetStripeBillingPortalURL(context.Context, *GetStripeBillingPortalURLRequest) (*GetStripeBillingPortalURLResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStripeBillingPortalURL not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) GetAppOrganization(context.Context, *GetAppOrganizationRequest) (*GetAppOrganizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppOrganization not implemented")
@@ -2043,60 +1995,6 @@ func _SSOReadyService_OnboardingRedeemSAMLAccessCode_Handler(srv interface{}, ct
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SSOReadyServiceServer).OnboardingRedeemSAMLAccessCode(ctx, req.(*OnboardingRedeemSAMLAccessCodeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SSOReadyService_GetStripeCheckoutURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetStripeCheckoutURLRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).GetStripeCheckoutURL(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SSOReadyService_GetStripeCheckoutURL_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).GetStripeCheckoutURL(ctx, req.(*GetStripeCheckoutURLRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SSOReadyService_RedeemStripeCheckout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RedeemStripeCheckoutRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).RedeemStripeCheckout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SSOReadyService_RedeemStripeCheckout_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).RedeemStripeCheckout(ctx, req.(*RedeemStripeCheckoutRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SSOReadyService_GetStripeBillingPortalURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetStripeBillingPortalURLRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SSOReadyServiceServer).GetStripeBillingPortalURL(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SSOReadyService_GetStripeBillingPortalURL_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SSOReadyServiceServer).GetStripeBillingPortalURL(ctx, req.(*GetStripeBillingPortalURLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3245,18 +3143,6 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OnboardingRedeemSAMLAccessCode",
 			Handler:    _SSOReadyService_OnboardingRedeemSAMLAccessCode_Handler,
-		},
-		{
-			MethodName: "GetStripeCheckoutURL",
-			Handler:    _SSOReadyService_GetStripeCheckoutURL_Handler,
-		},
-		{
-			MethodName: "RedeemStripeCheckout",
-			Handler:    _SSOReadyService_RedeemStripeCheckout_Handler,
-		},
-		{
-			MethodName: "GetStripeBillingPortalURL",
-			Handler:    _SSOReadyService_GetStripeBillingPortalURL_Handler,
 		},
 		{
 			MethodName: "GetAppOrganization",

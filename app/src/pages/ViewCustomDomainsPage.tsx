@@ -16,7 +16,6 @@ import {
   checkEnvironmentCustomDomainSettingsCertificates,
   getAppOrganization,
   getEnvironmentCustomDomainSettings,
-  getStripeCheckoutURL,
   updateEnvironmentCustomDomainSettings,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { Badge } from "@/components/ui/badge";
@@ -55,6 +54,7 @@ import { Input } from "@/components/ui/input";
 import { GetEnvironmentCustomDomainSettingsResponse } from "@/gen/ssoready/v1/ssoready_pb";
 import { Title } from "@/components/Title";
 import { DocsLink } from "@/components/DocsLink";
+import { Link } from "react-router-dom";
 
 export function ViewCustomDomainsPage() {
   const { environmentId } = useParams();
@@ -82,12 +82,6 @@ export function ViewCustomDomainsPage() {
         environmentId,
       }),
     });
-  };
-
-  const getStripeCheckoutMutation = useMutation(getStripeCheckoutURL);
-  const handleClickUpsell = async () => {
-    const { url } = await getStripeCheckoutMutation.mutateAsync({});
-    window.location.href = url;
   };
 
   return (
@@ -240,14 +234,13 @@ export function ViewCustomDomainsPage() {
           {appOrganization && !appOrganization.entitledCustomDomains && (
             <div className="my-4 p-4 bg-muted rounded text-sm">
               <div className="font-semibold">
-                Custom Domains is a Pro-tier feature
+                Custom Domains is an Enterprise-tier feature
               </div>
-              <Button
-                type="button"
-                className="mt-4"
-                onClick={handleClickUpsell}
-              >
-                Upgrade to Pro
+
+              <Button className="mt-4" asChild>
+                <Link to="https://ssoready.com/pricing">
+                  Upgrade to Enterprise
+                </Link>
               </Button>
             </div>
           )}
@@ -399,14 +392,13 @@ export function ViewCustomDomainsPage() {
           {appOrganization && !appOrganization.entitledCustomDomains && (
             <div className="my-4 p-4 bg-muted rounded text-sm">
               <div className="font-semibold">
-                Custom Domains is a Pro-tier feature
+                Custom Domains is an Enterprise-tier feature
               </div>
-              <Button
-                type="button"
-                className="mt-4"
-                onClick={handleClickUpsell}
-              >
-                Upgrade to Pro
+
+              <Button className="mt-4" asChild>
+                <Link to="https://ssoready.com/pricing">
+                  Upgrade to Enterprise
+                </Link>
               </Button>
             </div>
           )}

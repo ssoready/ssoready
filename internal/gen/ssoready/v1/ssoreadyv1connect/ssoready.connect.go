@@ -115,15 +115,6 @@ const (
 	// SSOReadyServiceOnboardingRedeemSAMLAccessCodeProcedure is the fully-qualified name of the
 	// SSOReadyService's OnboardingRedeemSAMLAccessCode RPC.
 	SSOReadyServiceOnboardingRedeemSAMLAccessCodeProcedure = "/ssoready.v1.SSOReadyService/OnboardingRedeemSAMLAccessCode"
-	// SSOReadyServiceGetStripeCheckoutURLProcedure is the fully-qualified name of the SSOReadyService's
-	// GetStripeCheckoutURL RPC.
-	SSOReadyServiceGetStripeCheckoutURLProcedure = "/ssoready.v1.SSOReadyService/GetStripeCheckoutURL"
-	// SSOReadyServiceRedeemStripeCheckoutProcedure is the fully-qualified name of the SSOReadyService's
-	// RedeemStripeCheckout RPC.
-	SSOReadyServiceRedeemStripeCheckoutProcedure = "/ssoready.v1.SSOReadyService/RedeemStripeCheckout"
-	// SSOReadyServiceGetStripeBillingPortalURLProcedure is the fully-qualified name of the
-	// SSOReadyService's GetStripeBillingPortalURL RPC.
-	SSOReadyServiceGetStripeBillingPortalURLProcedure = "/ssoready.v1.SSOReadyService/GetStripeBillingPortalURL"
 	// SSOReadyServiceGetAppOrganizationProcedure is the fully-qualified name of the SSOReadyService's
 	// GetAppOrganization RPC.
 	SSOReadyServiceGetAppOrganizationProcedure = "/ssoready.v1.SSOReadyService/GetAppOrganization"
@@ -359,9 +350,6 @@ type SSOReadyServiceClient interface {
 	UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error)
 	OnboardingGetSAMLRedirectURL(context.Context, *connect.Request[v1.OnboardingGetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	OnboardingRedeemSAMLAccessCode(context.Context, *connect.Request[v1.OnboardingRedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
-	GetStripeCheckoutURL(context.Context, *connect.Request[v1.GetStripeCheckoutURLRequest]) (*connect.Response[v1.GetStripeCheckoutURLResponse], error)
-	RedeemStripeCheckout(context.Context, *connect.Request[v1.RedeemStripeCheckoutRequest]) (*connect.Response[v1.RedeemStripeCheckoutResponse], error)
-	GetStripeBillingPortalURL(context.Context, *connect.Request[v1.GetStripeBillingPortalURLRequest]) (*connect.Response[v1.GetStripeBillingPortalURLResponse], error)
 	GetAppOrganization(context.Context, *connect.Request[v1.GetAppOrganizationRequest]) (*connect.Response[v1.GetAppOrganizationResponse], error)
 	ListAppUsers(context.Context, *connect.Request[v1.ListAppUsersRequest]) (*connect.Response[v1.ListAppUsersResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
@@ -569,21 +557,6 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		onboardingRedeemSAMLAccessCode: connect.NewClient[v1.OnboardingRedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse](
 			httpClient,
 			baseURL+SSOReadyServiceOnboardingRedeemSAMLAccessCodeProcedure,
-			opts...,
-		),
-		getStripeCheckoutURL: connect.NewClient[v1.GetStripeCheckoutURLRequest, v1.GetStripeCheckoutURLResponse](
-			httpClient,
-			baseURL+SSOReadyServiceGetStripeCheckoutURLProcedure,
-			opts...,
-		),
-		redeemStripeCheckout: connect.NewClient[v1.RedeemStripeCheckoutRequest, v1.RedeemStripeCheckoutResponse](
-			httpClient,
-			baseURL+SSOReadyServiceRedeemStripeCheckoutProcedure,
-			opts...,
-		),
-		getStripeBillingPortalURL: connect.NewClient[v1.GetStripeBillingPortalURLRequest, v1.GetStripeBillingPortalURLResponse](
-			httpClient,
-			baseURL+SSOReadyServiceGetStripeBillingPortalURLProcedure,
 			opts...,
 		),
 		getAppOrganization: connect.NewClient[v1.GetAppOrganizationRequest, v1.GetAppOrganizationResponse](
@@ -904,9 +877,6 @@ type sSOReadyServiceClient struct {
 	updateOnboardingState                            *connect.Client[v1.UpdateOnboardingStateRequest, emptypb.Empty]
 	onboardingGetSAMLRedirectURL                     *connect.Client[v1.OnboardingGetSAMLRedirectURLRequest, v1.GetSAMLRedirectURLResponse]
 	onboardingRedeemSAMLAccessCode                   *connect.Client[v1.OnboardingRedeemSAMLAccessCodeRequest, v1.RedeemSAMLAccessCodeResponse]
-	getStripeCheckoutURL                             *connect.Client[v1.GetStripeCheckoutURLRequest, v1.GetStripeCheckoutURLResponse]
-	redeemStripeCheckout                             *connect.Client[v1.RedeemStripeCheckoutRequest, v1.RedeemStripeCheckoutResponse]
-	getStripeBillingPortalURL                        *connect.Client[v1.GetStripeBillingPortalURLRequest, v1.GetStripeBillingPortalURLResponse]
 	getAppOrganization                               *connect.Client[v1.GetAppOrganizationRequest, v1.GetAppOrganizationResponse]
 	listAppUsers                                     *connect.Client[v1.ListAppUsersRequest, v1.ListAppUsersResponse]
 	listEnvironments                                 *connect.Client[v1.ListEnvironmentsRequest, v1.ListEnvironmentsResponse]
@@ -1104,21 +1074,6 @@ func (c *sSOReadyServiceClient) OnboardingGetSAMLRedirectURL(ctx context.Context
 // OnboardingRedeemSAMLAccessCode calls ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode.
 func (c *sSOReadyServiceClient) OnboardingRedeemSAMLAccessCode(ctx context.Context, req *connect.Request[v1.OnboardingRedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
 	return c.onboardingRedeemSAMLAccessCode.CallUnary(ctx, req)
-}
-
-// GetStripeCheckoutURL calls ssoready.v1.SSOReadyService.GetStripeCheckoutURL.
-func (c *sSOReadyServiceClient) GetStripeCheckoutURL(ctx context.Context, req *connect.Request[v1.GetStripeCheckoutURLRequest]) (*connect.Response[v1.GetStripeCheckoutURLResponse], error) {
-	return c.getStripeCheckoutURL.CallUnary(ctx, req)
-}
-
-// RedeemStripeCheckout calls ssoready.v1.SSOReadyService.RedeemStripeCheckout.
-func (c *sSOReadyServiceClient) RedeemStripeCheckout(ctx context.Context, req *connect.Request[v1.RedeemStripeCheckoutRequest]) (*connect.Response[v1.RedeemStripeCheckoutResponse], error) {
-	return c.redeemStripeCheckout.CallUnary(ctx, req)
-}
-
-// GetStripeBillingPortalURL calls ssoready.v1.SSOReadyService.GetStripeBillingPortalURL.
-func (c *sSOReadyServiceClient) GetStripeBillingPortalURL(ctx context.Context, req *connect.Request[v1.GetStripeBillingPortalURLRequest]) (*connect.Response[v1.GetStripeBillingPortalURLResponse], error) {
-	return c.getStripeBillingPortalURL.CallUnary(ctx, req)
 }
 
 // GetAppOrganization calls ssoready.v1.SSOReadyService.GetAppOrganization.
@@ -1473,9 +1428,6 @@ type SSOReadyServiceHandler interface {
 	UpdateOnboardingState(context.Context, *connect.Request[v1.UpdateOnboardingStateRequest]) (*connect.Response[emptypb.Empty], error)
 	OnboardingGetSAMLRedirectURL(context.Context, *connect.Request[v1.OnboardingGetSAMLRedirectURLRequest]) (*connect.Response[v1.GetSAMLRedirectURLResponse], error)
 	OnboardingRedeemSAMLAccessCode(context.Context, *connect.Request[v1.OnboardingRedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error)
-	GetStripeCheckoutURL(context.Context, *connect.Request[v1.GetStripeCheckoutURLRequest]) (*connect.Response[v1.GetStripeCheckoutURLResponse], error)
-	RedeemStripeCheckout(context.Context, *connect.Request[v1.RedeemStripeCheckoutRequest]) (*connect.Response[v1.RedeemStripeCheckoutResponse], error)
-	GetStripeBillingPortalURL(context.Context, *connect.Request[v1.GetStripeBillingPortalURLRequest]) (*connect.Response[v1.GetStripeBillingPortalURLResponse], error)
 	GetAppOrganization(context.Context, *connect.Request[v1.GetAppOrganizationRequest]) (*connect.Response[v1.GetAppOrganizationResponse], error)
 	ListAppUsers(context.Context, *connect.Request[v1.ListAppUsersRequest]) (*connect.Response[v1.ListAppUsersResponse], error)
 	ListEnvironments(context.Context, *connect.Request[v1.ListEnvironmentsRequest]) (*connect.Response[v1.ListEnvironmentsResponse], error)
@@ -1679,21 +1631,6 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceOnboardingRedeemSAMLAccessCodeHandler := connect.NewUnaryHandler(
 		SSOReadyServiceOnboardingRedeemSAMLAccessCodeProcedure,
 		svc.OnboardingRedeemSAMLAccessCode,
-		opts...,
-	)
-	sSOReadyServiceGetStripeCheckoutURLHandler := connect.NewUnaryHandler(
-		SSOReadyServiceGetStripeCheckoutURLProcedure,
-		svc.GetStripeCheckoutURL,
-		opts...,
-	)
-	sSOReadyServiceRedeemStripeCheckoutHandler := connect.NewUnaryHandler(
-		SSOReadyServiceRedeemStripeCheckoutProcedure,
-		svc.RedeemStripeCheckout,
-		opts...,
-	)
-	sSOReadyServiceGetStripeBillingPortalURLHandler := connect.NewUnaryHandler(
-		SSOReadyServiceGetStripeBillingPortalURLProcedure,
-		svc.GetStripeBillingPortalURL,
 		opts...,
 	)
 	sSOReadyServiceGetAppOrganizationHandler := connect.NewUnaryHandler(
@@ -2039,12 +1976,6 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceOnboardingGetSAMLRedirectURLHandler.ServeHTTP(w, r)
 		case SSOReadyServiceOnboardingRedeemSAMLAccessCodeProcedure:
 			sSOReadyServiceOnboardingRedeemSAMLAccessCodeHandler.ServeHTTP(w, r)
-		case SSOReadyServiceGetStripeCheckoutURLProcedure:
-			sSOReadyServiceGetStripeCheckoutURLHandler.ServeHTTP(w, r)
-		case SSOReadyServiceRedeemStripeCheckoutProcedure:
-			sSOReadyServiceRedeemStripeCheckoutHandler.ServeHTTP(w, r)
-		case SSOReadyServiceGetStripeBillingPortalURLProcedure:
-			sSOReadyServiceGetStripeBillingPortalURLHandler.ServeHTTP(w, r)
 		case SSOReadyServiceGetAppOrganizationProcedure:
 			sSOReadyServiceGetAppOrganizationHandler.ServeHTTP(w, r)
 		case SSOReadyServiceListAppUsersProcedure:
@@ -2278,18 +2209,6 @@ func (UnimplementedSSOReadyServiceHandler) OnboardingGetSAMLRedirectURL(context.
 
 func (UnimplementedSSOReadyServiceHandler) OnboardingRedeemSAMLAccessCode(context.Context, *connect.Request[v1.OnboardingRedeemSAMLAccessCodeRequest]) (*connect.Response[v1.RedeemSAMLAccessCodeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode is not implemented"))
-}
-
-func (UnimplementedSSOReadyServiceHandler) GetStripeCheckoutURL(context.Context, *connect.Request[v1.GetStripeCheckoutURLRequest]) (*connect.Response[v1.GetStripeCheckoutURLResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetStripeCheckoutURL is not implemented"))
-}
-
-func (UnimplementedSSOReadyServiceHandler) RedeemStripeCheckout(context.Context, *connect.Request[v1.RedeemStripeCheckoutRequest]) (*connect.Response[v1.RedeemStripeCheckoutResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.RedeemStripeCheckout is not implemented"))
-}
-
-func (UnimplementedSSOReadyServiceHandler) GetStripeBillingPortalURL(context.Context, *connect.Request[v1.GetStripeBillingPortalURLRequest]) (*connect.Response[v1.GetStripeBillingPortalURLResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.GetStripeBillingPortalURL is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) GetAppOrganization(context.Context, *connect.Request[v1.GetAppOrganizationRequest]) (*connect.Response[v1.GetAppOrganizationResponse], error) {

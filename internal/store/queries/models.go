@@ -170,7 +170,6 @@ type AppOrganization struct {
 	GoogleHostedDomain    *string
 	MicrosoftTenantID     *string
 	EmailLoginsDisabled   *bool
-	StripeCustomerID      *string
 	EntitledManagementApi *bool
 	EntitledCustomDomains *bool
 }
