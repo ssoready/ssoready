@@ -3611,11 +3611,6 @@ export class GetAppOrganizationResponse extends Message<GetAppOrganizationRespon
    */
   entitledCustomDomains = false;
 
-  /**
-   * @generated from field: bool has_stripe_customer_id = 3;
-   */
-  hasStripeCustomerId = false;
-
   constructor(data?: PartialMessage<GetAppOrganizationResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3627,7 +3622,6 @@ export class GetAppOrganizationResponse extends Message<GetAppOrganizationRespon
     { no: 1, name: "google_hosted_domain", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "entitled_management_api", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 4, name: "entitled_custom_domains", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 3, name: "has_stripe_customer_id", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAppOrganizationResponse {

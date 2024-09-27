@@ -179,10 +179,6 @@ service SSOReadyService {
   rpc OnboardingGetSAMLRedirectURL(OnboardingGetSAMLRedirectURLRequest) returns (GetSAMLRedirectURLResponse);
   rpc OnboardingRedeemSAMLAccessCode(OnboardingRedeemSAMLAccessCodeRequest) returns (RedeemSAMLAccessCodeResponse);
 
-  rpc GetStripeCheckoutURL(GetStripeCheckoutURLRequest) returns (GetStripeCheckoutURLResponse);
-  rpc RedeemStripeCheckout(RedeemStripeCheckoutRequest) returns (RedeemStripeCheckoutResponse);
-  rpc GetStripeBillingPortalURL(GetStripeBillingPortalURLRequest) returns (GetStripeBillingPortalURLResponse);
-
   rpc GetAppOrganization(GetAppOrganizationRequest) returns (GetAppOrganizationResponse);
   rpc ListAppUsers(ListAppUsersRequest) returns (ListAppUsersResponse);
 
@@ -845,7 +841,6 @@ message GetAppOrganizationResponse {
   string google_hosted_domain = 1;
   bool entitled_management_api = 2;
   bool entitled_custom_domains = 4;
-  bool has_stripe_customer_id = 3;
 }
 
 message ListAppUsersRequest {

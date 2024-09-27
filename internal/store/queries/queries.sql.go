@@ -1136,7 +1136,7 @@ func (q *Queries) CreateAdminAccessToken(ctx context.Context, arg CreateAdminAcc
 const createAppOrganization = `-- name: CreateAppOrganization :one
 insert into app_organizations (id, google_hosted_domain, microsoft_tenant_id)
 values ($1, $2, $3)
-returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api, entitled_custom_domains
+returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, entitled_management_api, entitled_custom_domains
 `
 
 type CreateAppOrganizationParams struct {
@@ -1153,7 +1153,6 @@ func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrgani
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
-		&i.StripeCustomerID,
 		&i.EntitledManagementApi,
 		&i.EntitledCustomDomains,
 	)
@@ -1587,7 +1586,7 @@ func (q *Queries) GetAPIKeyBySecretValueSHA256(ctx context.Context, secretValueS
 }
 
 const getAppOrganizationByGoogleHostedDomain = `-- name: GetAppOrganizationByGoogleHostedDomain :one
-select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api, entitled_custom_domains
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, entitled_management_api, entitled_custom_domains
 from app_organizations
 where google_hosted_domain = $1
 `
@@ -1600,7 +1599,6 @@ func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, go
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
-		&i.StripeCustomerID,
 		&i.EntitledManagementApi,
 		&i.EntitledCustomDomains,
 	)
@@ -1608,7 +1606,7 @@ func (q *Queries) GetAppOrganizationByGoogleHostedDomain(ctx context.Context, go
 }
 
 const getAppOrganizationByID = `-- name: GetAppOrganizationByID :one
-select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api, entitled_custom_domains
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, entitled_management_api, entitled_custom_domains
 from app_organizations
 where id = $1
 `
@@ -1621,7 +1619,6 @@ func (q *Queries) GetAppOrganizationByID(ctx context.Context, id uuid.UUID) (App
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
-		&i.StripeCustomerID,
 		&i.EntitledManagementApi,
 		&i.EntitledCustomDomains,
 	)
@@ -1629,7 +1626,7 @@ func (q *Queries) GetAppOrganizationByID(ctx context.Context, id uuid.UUID) (App
 }
 
 const getAppOrganizationByMicrosoftTenantID = `-- name: GetAppOrganizationByMicrosoftTenantID :one
-select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api, entitled_custom_domains
+select id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, entitled_management_api, entitled_custom_domains
 from app_organizations
 where microsoft_tenant_id = $1
 `
@@ -1642,7 +1639,6 @@ func (q *Queries) GetAppOrganizationByMicrosoftTenantID(ctx context.Context, mic
 		&i.GoogleHostedDomain,
 		&i.MicrosoftTenantID,
 		&i.EmailLoginsDisabled,
-		&i.StripeCustomerID,
 		&i.EntitledManagementApi,
 		&i.EntitledCustomDomains,
 	)
@@ -3015,51 +3011,6 @@ func (q *Queries) RevokeAppSessionByID(ctx context.Context, id uuid.UUID) (AppSe
 		&i.Revoked,
 	)
 	return i, err
-}
-
-const updateAppOrganizationEntitlementsByStripeCustomerID = `-- name: UpdateAppOrganizationEntitlementsByStripeCustomerID :one
-update app_organizations
-set entitled_management_api = $1,
-    entitled_custom_domains = $2
-where stripe_customer_id = $3
-returning id, google_hosted_domain, microsoft_tenant_id, email_logins_disabled, stripe_customer_id, entitled_management_api, entitled_custom_domains
-`
-
-type UpdateAppOrganizationEntitlementsByStripeCustomerIDParams struct {
-	EntitledManagementApi *bool
-	EntitledCustomDomains *bool
-	StripeCustomerID      *string
-}
-
-func (q *Queries) UpdateAppOrganizationEntitlementsByStripeCustomerID(ctx context.Context, arg UpdateAppOrganizationEntitlementsByStripeCustomerIDParams) (AppOrganization, error) {
-	row := q.db.QueryRow(ctx, updateAppOrganizationEntitlementsByStripeCustomerID, arg.EntitledManagementApi, arg.EntitledCustomDomains, arg.StripeCustomerID)
-	var i AppOrganization
-	err := row.Scan(
-		&i.ID,
-		&i.GoogleHostedDomain,
-		&i.MicrosoftTenantID,
-		&i.EmailLoginsDisabled,
-		&i.StripeCustomerID,
-		&i.EntitledManagementApi,
-		&i.EntitledCustomDomains,
-	)
-	return i, err
-}
-
-const updateAppOrganizationStripeCustomerID = `-- name: UpdateAppOrganizationStripeCustomerID :exec
-update app_organizations
-set stripe_customer_id = $1
-where id = $2
-`
-
-type UpdateAppOrganizationStripeCustomerIDParams struct {
-	StripeCustomerID *string
-	ID               uuid.UUID
-}
-
-func (q *Queries) UpdateAppOrganizationStripeCustomerID(ctx context.Context, arg UpdateAppOrganizationStripeCustomerIDParams) error {
-	_, err := q.db.Exec(ctx, updateAppOrganizationStripeCustomerID, arg.StripeCustomerID, arg.ID)
-	return err
 }
 
 const updateEmailVerificationChallengeCompleteTime = `-- name: UpdateEmailVerificationChallengeCompleteTime :one

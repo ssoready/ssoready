@@ -28,7 +28,6 @@ require (
 	github.com/ssoready/conf v0.0.0-20240508183332-dbc356674c9e
 	github.com/ssoready/prettyuuid v0.0.0-20240423172315-97d04d6848dd
 	github.com/stretchr/testify v1.9.0
-	github.com/stripe/stripe-go/v79 v79.7.0
 	github.com/ucarion/cli v0.2.0
 	golang.org/x/crypto v0.25.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142

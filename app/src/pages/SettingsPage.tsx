@@ -9,8 +9,6 @@ import {
 import { useMutation, useQuery } from "@connectrpc/connect-query";
 import {
   getAppOrganization,
-  getStripeBillingPortalURL,
-  getStripeCheckoutURL,
   listAppUsers,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,58 +20,11 @@ export function SettingsPage() {
   const { data: appOrganization } = useQuery(getAppOrganization, {});
   const { data: appUsers } = useQuery(listAppUsers, {});
 
-  const getStripeBillingPortalURLMutation = useMutation(
-    getStripeBillingPortalURL,
-  );
-  const handleClickManageBilling = async () => {
-    const { url } = await getStripeBillingPortalURLMutation.mutateAsync({});
-    window.location.href = url;
-  };
-
-  const getStripeCheckoutURLMutation = useMutation(getStripeCheckoutURL);
-  const handleClickUpsell = async () => {
-    const { url } = await getStripeCheckoutURLMutation.mutateAsync({});
-    window.location.href = url;
-  };
-
   return (
     <div>
       <Title title="Settings" />
 
       <Card>
-        <CardHeader>
-          <CardTitle>Billing</CardTitle>
-          <CardDescription>
-            Manage your payment methods and subscription.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {appOrganization && appOrganization.hasStripeCustomerId && (
-            <>
-              <Button variant="outline" onClick={handleClickManageBilling}>
-                Manage Billing
-              </Button>
-            </>
-          )}
-
-          {appOrganization && !appOrganization.hasStripeCustomerId && (
-            <>
-              <p className="text-sm text-foreground">
-                SSOReady Pro gives you access to the Management API, which lets
-                you programmatically manage SSOReady organizations, SAML
-                connections, SCIM directories, and customer self-serve setup
-                URLs.
-              </p>
-
-              <Button className="mt-4" onClick={handleClickUpsell}>
-                Upgrade to Pro
-              </Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="mt-8">
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
           {appOrganization?.googleHostedDomain && (

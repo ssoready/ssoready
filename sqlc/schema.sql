@@ -106,7 +106,6 @@ CREATE TABLE public.app_organizations (
     google_hosted_domain character varying,
     microsoft_tenant_id character varying,
     email_logins_disabled boolean,
-    stripe_customer_id character varying,
     entitled_management_api boolean,
     entitled_custom_domains boolean
 );

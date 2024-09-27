@@ -3,7 +3,6 @@ import {
   createAPIKey,
   createSAMLOAuthClient,
   getAppOrganization,
-  getStripeCheckoutURL,
   listAPIKeys,
   listSAMLOAuthClients,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -198,12 +197,6 @@ function CreateAPIKeyButton() {
     ],
   );
 
-  const getStripeCheckoutMutation = useMutation(getStripeCheckoutURL);
-  const handleClickUpsell = async () => {
-    const { url } = await getStripeCheckoutMutation.mutateAsync({});
-    window.location.href = url;
-  };
-
   return (
     <>
       <AlertDialog open={createFormOpen} onOpenChange={setCreateFormOpen}>
@@ -265,14 +258,13 @@ function CreateAPIKeyButton() {
               {appOrganization && !appOrganization.entitledManagementApi && (
                 <div className="my-4 p-4 bg-muted rounded text-sm">
                   <div className="font-semibold">
-                    Management API is a Pro-tier feature
+                    Management API is an Enterprise-tier feature
                   </div>
-                  <Button
-                    type="button"
-                    className="mt-4"
-                    onClick={handleClickUpsell}
-                  >
-                    Upgrade to Pro
+
+                  <Button className="mt-4" asChild>
+                    <Link to="https://ssoready.com/pricing">
+                      Upgrade to Enterprise
+                    </Link>
                   </Button>
                 </div>
               )}

@@ -824,15 +824,3 @@ update scim_directories
 set bearer_token_sha256 = $1
 where id = $2
 returning *;
-
--- name: UpdateAppOrganizationStripeCustomerID :exec
-update app_organizations
-set stripe_customer_id = $1
-where id = $2;
-
--- name: UpdateAppOrganizationEntitlementsByStripeCustomerID :one
-update app_organizations
-set entitled_management_api = $1,
-    entitled_custom_domains = $2
-where stripe_customer_id = $3
-returning *;
