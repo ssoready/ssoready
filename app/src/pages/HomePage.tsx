@@ -50,52 +50,52 @@ export function HomePage() {
     <div className="flex flex-col gap-y-8">
       <Title title="Home" />
 
-      {onboardingState && onboardingState.onboardingEnvironmentId === "" ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Add SAML support this afternoon</CardTitle>
-            <CardDescription>
-              Our interactive onboarding flow shows you how SSOReady works, and
-              how you'll integrate it in your product.
-            </CardDescription>
-          </CardHeader>
+      {/*{onboardingState && onboardingState.onboardingEnvironmentId === "" ? (*/}
+      {/*  <Card>*/}
+      {/*    <CardHeader>*/}
+      {/*      <CardTitle>Add SAML support this afternoon</CardTitle>*/}
+      {/*      <CardDescription>*/}
+      {/*        Our interactive onboarding flow shows you how SSOReady works, and*/}
+      {/*        how you'll integrate it in your product.*/}
+      {/*      </CardDescription>*/}
+      {/*    </CardHeader>*/}
 
-          <CardContent>
-            <div className="flex items-center gap-x-4">
-              <Button asChild>
-                <Link to="/onboarding">
-                  Get started
-                  <ArrowRightIcon className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-              <span className="text-sm text-muted-foreground">or</span>
-              <Button variant="outline" asChild>
-                <a href="https://ssoready.com/docs">
-                  <BookOpenTextIcon className="h-4 w-4 mr-2" />
-                  Read the Docs
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome to SSOReady</CardTitle>
-          </CardHeader>
+      {/*    <CardContent>*/}
+      {/*      <div className="flex items-center gap-x-4">*/}
+      {/*        <Button asChild>*/}
+      {/*          <Link to="/onboarding">*/}
+      {/*            Get started*/}
+      {/*            <ArrowRightIcon className="h-4 w-4 ml-2" />*/}
+      {/*          </Link>*/}
+      {/*        </Button>*/}
+      {/*        <span className="text-sm text-muted-foreground">or</span>*/}
+      {/*        <Button variant="outline" asChild>*/}
+      {/*          <a href="https://ssoready.com/docs">*/}
+      {/*            <BookOpenTextIcon className="h-4 w-4 mr-2" />*/}
+      {/*            Read the Docs*/}
+      {/*          </a>*/}
+      {/*        </Button>*/}
+      {/*      </div>*/}
+      {/*    </CardContent>*/}
+      {/*  </Card>*/}
+      {/*) : (*/}
+      <Card>
+        <CardHeader>
+          <CardTitle>Welcome to SSOReady</CardTitle>
+        </CardHeader>
 
-          <CardContent>
-            <div className="flex items-center gap-x-4">
-              <Button variant="outline" asChild>
-                <a href="https://ssoready.com/docs">
-                  <BookOpenTextIcon className="h-4 w-4 mr-2" />
-                  Read the Docs
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+        <CardContent>
+          <div className="flex items-center gap-x-4">
+            <Button variant="outline" asChild>
+              <a href="https://ssoready.com/docs">
+                <BookOpenTextIcon className="h-4 w-4 mr-2" />
+                Read the Docs
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      {/*)}*/}
 
       <Card>
         <CardHeader>
