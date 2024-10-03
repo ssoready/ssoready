@@ -1381,21 +1381,22 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 
 const createSAMLFlowGetRedirect = `-- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured
 `
 
 type CreateSAMLFlowGetRedirectParams struct {
-	ID               uuid.UUID
-	SamlConnectionID uuid.UUID
-	ExpireTime       time.Time
-	State            string
-	CreateTime       time.Time
-	UpdateTime       time.Time
-	AuthRedirectUrl  *string
-	GetRedirectTime  *time.Time
-	Status           SamlFlowStatus
+	ID                               uuid.UUID
+	SamlConnectionID                 uuid.UUID
+	ExpireTime                       time.Time
+	State                            string
+	CreateTime                       time.Time
+	UpdateTime                       time.Time
+	AuthRedirectUrl                  *string
+	GetRedirectTime                  *time.Time
+	Status                           SamlFlowStatus
+	ErrorSamlConnectionNotConfigured bool
 }
 
 func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLFlowGetRedirectParams) (SamlFlow, error) {
@@ -1409,6 +1410,7 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 		arg.AuthRedirectUrl,
 		arg.GetRedirectTime,
 		arg.Status,
+		arg.ErrorSamlConnectionNotConfigured,
 	)
 	var i SamlFlow
 	err := row.Scan(

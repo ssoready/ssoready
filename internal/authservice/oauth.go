@@ -102,6 +102,13 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeFailedPrecondition {
+			if _, err := s.Store.UpsertNotConfiguredSAMLFlow(ctx, &store.UpsertNotConfiguredSAMLFlowRequest{
+				SAMLConnectionID:            samlConnID,
+				SAMLConnectionNotConfigured: true,
+			}); err != nil {
+				panic(err)
+			}
+
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

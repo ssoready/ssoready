@@ -80,6 +80,14 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	}
 
 	if samlRedirectData.IdpEntityID == nil || samlRedirectData.IdpRedirectUrl == nil || samlRedirectData.IdpX509Certificate == nil {
+		// upsert an errored saml flow
+		if _, err := s.upsertNotConfiguredSAMLFlow(ctx, q, &UpsertNotConfiguredSAMLFlowRequest{
+			SAMLConnectionID:            req.SamlConnectionId,
+			SAMLConnectionNotConfigured: true,
+		}); err != nil {
+			return nil, err
+		}
+
 		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-connections#not-yet-configured"))
 	}
 
@@ -199,4 +207,53 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	}
 
 	return res, nil
+}
+
+type UpsertNotConfiguredSAMLFlowRequest struct {
+	SAMLConnectionID            string
+	SAMLConnectionNotConfigured bool
+}
+
+func (s *Store) UpsertNotConfiguredSAMLFlow(ctx context.Context, req *UpsertNotConfiguredSAMLFlowRequest) (string, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer rollback()
+
+	id, err := s.upsertNotConfiguredSAMLFlow(ctx, q, req)
+	if err != nil {
+		return "", err
+	}
+
+	if err := commit(); err != nil {
+		return "", err
+	}
+
+	return id, nil
+}
+
+func (s *Store) upsertNotConfiguredSAMLFlow(ctx context.Context, q *queries.Queries, req *UpsertNotConfiguredSAMLFlowRequest) (string, error) {
+	samlConnID, err := idformat.SAMLConnection.Parse(req.SAMLConnectionID)
+	if err != nil {
+		return "", err
+	}
+
+	now := time.Now()
+	qSAMLFlow, err := q.CreateSAMLFlowGetRedirect(ctx, queries.CreateSAMLFlowGetRedirectParams{
+		ID:                               uuid.New(),
+		SamlConnectionID:                 samlConnID,
+		ExpireTime:                       time.Now().Add(time.Hour),
+		State:                            "",
+		CreateTime:                       time.Now(),
+		UpdateTime:                       time.Now(),
+		GetRedirectTime:                  &now,
+		Status:                           queries.SamlFlowStatusFailed,
+		ErrorSamlConnectionNotConfigured: req.SAMLConnectionNotConfigured,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return idformat.SAMLFlow.Format(qSAMLFlow.ID), nil
 }

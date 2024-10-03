@@ -66,8 +66,8 @@ where saml_connections.id = $1;
 
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
