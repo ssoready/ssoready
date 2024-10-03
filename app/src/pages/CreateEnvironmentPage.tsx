@@ -47,7 +47,15 @@ const FormSchema = z.object({
     .refine((arg) => !arg.includes(" "), {
       message: "Redirect URL must be a valid URL.",
     }),
-  authUrl: z.string(),
+  oauthRedirectUri: z
+    .string()
+    .url({
+      message: "OAuth Redirect URI must be a valid URL.",
+    })
+    .refine((arg) => !arg.includes(" "), {
+      message: "OAuth Redirect URI must be a valid URL.",
+    })
+    .optional(),
 });
 
 export function CreateEnvironmentPage() {
@@ -56,7 +64,7 @@ export function CreateEnvironmentPage() {
     defaultValues: {
       displayName: "",
       redirectUrl: "",
-      authUrl: "",
+      oauthRedirectUri: "",
     },
   });
 
@@ -70,7 +78,7 @@ export function CreateEnvironmentPage() {
         environment: {
           displayName: values.displayName,
           redirectUrl: values.redirectUrl,
-          authUrl: values.authUrl,
+          oauthRedirectUri: values.oauthRedirectUri,
         },
       });
 
@@ -124,6 +132,34 @@ export function CreateEnvironmentPage() {
                       After a SAML login, your users get redirected to this
                       address. You usually want to point this at an
                       SSOReady-specific page on your web application.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="oauthRedirectUri"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>OAuth Redirect URI</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="http://localhost:3000/api/auth/callback/ssoready-saml"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Optional. Only required if you're using{" "}
+                      <a
+                        className="underline underline-offset-4"
+                        href="https://ssoready.com/docs/saml-over-oauth-saml-nextauth-integration"
+                      >
+                        SAML-over-OAuth
+                      </a>
+                      . This is the URL SSOReady will redirect your users back
+                      to after they log in with SAML-over-OAuth.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

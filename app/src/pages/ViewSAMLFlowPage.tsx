@@ -222,6 +222,34 @@ export function ViewSAMLFlowPage() {
             </AlertDescription>
           )}
 
+          {samlFlow.error.case ===
+            "environmentOauthRedirectUriNotConfigured" && (
+            <AlertDescription>
+              <p>
+                You haven't configured an OAuth Redirect URI on your
+                environment, but this login flow used{" "}
+                <a
+                  className="underline underline-offset-4"
+                  href="https://ssoready.com/docs/saml-over-oauth-saml-nextauth-integration"
+                >
+                  SAML-over-OAuth
+                </a>
+                .
+              </p>
+
+              <p className="mt-4">
+                To fix this, you need to update the{" "}
+                <Link
+                  className="underline underline-offset-4"
+                  to={`/environments/${environmentId}`}
+                >
+                  environment
+                </Link>{" "}
+                to have an OAuth Redirect URI configured.
+              </p>
+            </AlertDescription>
+          )}
+
           {samlFlow.error.case === "unsignedAssertion" && (
             <AlertDescription>
               <p>

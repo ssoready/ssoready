@@ -552,6 +552,12 @@ export class SAMLFlow extends Message<SAMLFlow> {
     case: "samlConnectionNotConfigured";
   } | {
     /**
+     * @generated from field: google.protobuf.Empty environment_oauth_redirect_uri_not_configured = 27;
+     */
+    value: Empty;
+    case: "environmentOauthRedirectUriNotConfigured";
+  } | {
+    /**
      * @generated from field: google.protobuf.Empty unsigned_assertion = 22;
      */
     value: Empty;
@@ -682,6 +688,7 @@ export class SAMLFlow extends Message<SAMLFlow> {
     { no: 2, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 17, name: "status", kind: "enum", T: proto3.getEnumType(SAMLFlowStatus) },
     { no: 26, name: "saml_connection_not_configured", kind: "message", T: Empty, oneof: "error" },
+    { no: 27, name: "environment_oauth_redirect_uri_not_configured", kind: "message", T: Empty, oneof: "error" },
     { no: 22, name: "unsigned_assertion", kind: "message", T: Empty, oneof: "error" },
     { no: 18, name: "bad_issuer", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },
     { no: 19, name: "bad_audience", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "error" },

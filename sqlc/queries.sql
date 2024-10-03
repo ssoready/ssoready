@@ -66,8 +66,9 @@ where saml_connections.id = $1;
 
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured,
+                        error_environment_oauth_redirect_uri_not_configured)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
@@ -270,8 +271,8 @@ where app_organization_id = $1
   and id = $2;
 
 -- name: CreateEnvironment :one
-insert into environments (id, redirect_url, app_organization_id, display_name, auth_url)
-values ($1, $2, $3, $4, $5)
+insert into environments (id, redirect_url, oauth_redirect_uri, app_organization_id, display_name, auth_url)
+values ($1, $2, $3, $4, $5, $6)
 returning *;
 
 -- name: UpdateEnvironment :one

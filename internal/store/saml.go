@@ -210,8 +210,9 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 }
 
 type UpsertNotConfiguredSAMLFlowRequest struct {
-	SAMLConnectionID            string
-	SAMLConnectionNotConfigured bool
+	SAMLConnectionID                         string
+	SAMLConnectionNotConfigured              bool
+	EnvironmentOAuthRedirectURINotConfigured bool
 }
 
 func (s *Store) UpsertNotConfiguredSAMLFlow(ctx context.Context, req *UpsertNotConfiguredSAMLFlowRequest) (string, error) {
@@ -250,6 +251,7 @@ func (s *Store) upsertNotConfiguredSAMLFlow(ctx context.Context, q *queries.Quer
 		GetRedirectTime:                  &now,
 		Status:                           queries.SamlFlowStatusFailed,
 		ErrorSamlConnectionNotConfigured: req.SAMLConnectionNotConfigured,
+		ErrorEnvironmentOauthRedirectUriNotConfigured: req.EnvironmentOAuthRedirectURINotConfigured,
 	})
 	if err != nil {
 		return "", err

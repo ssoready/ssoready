@@ -74,6 +74,11 @@ func (s *Store) CreateEnvironment(ctx context.Context, req *ssoreadyv1.CreateEnv
 		return nil, fmt.Errorf("invalid redirect url: %w", err)
 	}
 
+	var oauthRedirectURI *string
+	if req.Environment.OauthRedirectUri != "" {
+		oauthRedirectURI = &req.Environment.OauthRedirectUri
+	}
+
 	var authURL *string
 	if req.Environment.AuthUrl != "" {
 		authURL = &req.Environment.AuthUrl
@@ -83,6 +88,7 @@ func (s *Store) CreateEnvironment(ctx context.Context, req *ssoreadyv1.CreateEnv
 		AppOrganizationID: authn.AppOrgID(ctx),
 		ID:                uuid.New(),
 		RedirectUrl:       &req.Environment.RedirectUrl,
+		OauthRedirectUri:  oauthRedirectURI,
 		DisplayName:       &req.Environment.DisplayName,
 		AuthUrl:           authURL,
 	})
