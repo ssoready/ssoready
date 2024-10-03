@@ -70,7 +70,7 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("one of saml_connection_id, organization_id, or organization_external_id must be provided"))
 	}
 
-	envAuthURL, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{
+	samlRedirectData, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{
 		AppOrganizationID: authn.AppOrgID(ctx),
 		EnvironmentID:     envID,
 		SamlConnectionID:  samlConnID,
@@ -79,9 +79,13 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		return nil, err
 	}
 
+	if samlRedirectData.IdpEntityID == nil || samlRedirectData.IdpRedirectUrl == nil || samlRedirectData.IdpX509Certificate == nil {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-connections#not-yet-configured"))
+	}
+
 	authURL := s.defaultAuthURL
-	if envAuthURL != nil {
-		authURL = *envAuthURL
+	if samlRedirectData.EnvironmentAuthUrl != nil {
+		authURL = *samlRedirectData.EnvironmentAuthUrl
 	}
 
 	samlFlowID := uuid.New()

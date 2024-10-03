@@ -141,7 +141,10 @@ where organizations.environment_id = $1
   and saml_connections.is_primary = true;
 
 -- name: GetSAMLRedirectURLData :one
-select environments.auth_url
+select environments.auth_url as environment_auth_url,
+       saml_connections.idp_entity_id,
+       saml_connections.idp_redirect_url,
+       saml_connections.idp_x509_certificate
 from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id

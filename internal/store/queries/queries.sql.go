@@ -2159,7 +2159,10 @@ func (q *Queries) GetSAMLOAuthClient(ctx context.Context, arg GetSAMLOAuthClient
 }
 
 const getSAMLRedirectURLData = `-- name: GetSAMLRedirectURLData :one
-select environments.auth_url
+select environments.auth_url as environment_auth_url,
+       saml_connections.idp_entity_id,
+       saml_connections.idp_redirect_url,
+       saml_connections.idp_x509_certificate
 from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
@@ -2174,11 +2177,23 @@ type GetSAMLRedirectURLDataParams struct {
 	SamlConnectionID  uuid.UUID
 }
 
-func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirectURLDataParams) (*string, error) {
+type GetSAMLRedirectURLDataRow struct {
+	EnvironmentAuthUrl *string
+	IdpEntityID        *string
+	IdpRedirectUrl     *string
+	IdpX509Certificate []byte
+}
+
+func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirectURLDataParams) (GetSAMLRedirectURLDataRow, error) {
 	row := q.db.QueryRow(ctx, getSAMLRedirectURLData, arg.AppOrganizationID, arg.EnvironmentID, arg.SamlConnectionID)
-	var auth_url *string
-	err := row.Scan(&auth_url)
-	return auth_url, err
+	var i GetSAMLRedirectURLDataRow
+	err := row.Scan(
+		&i.EnvironmentAuthUrl,
+		&i.IdpEntityID,
+		&i.IdpRedirectUrl,
+		&i.IdpX509Certificate,
+	)
+	return i, err
 }
 
 const getSCIMDirectory = `-- name: GetSCIMDirectory :one
