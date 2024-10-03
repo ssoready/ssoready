@@ -1,11 +1,13 @@
 package authservice
 
 import (
+	"connectrpc.com/connect"
 	"crypto/rsa"
 	"crypto/x509"
 	"embed"
 	_ "embed"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -152,6 +154,25 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		SAMLConnectionID: samlConnID,
 	})
 	if err != nil {
+		var connectErr *connect.Error
+		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeFailedPrecondition {
+			createSAMLLoginRes, err := s.Store.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
+				SAMLConnectionID:                 samlConnID,
+				ErrorSAMLConnectionNotConfigured: true,
+			})
+			if err != nil {
+				panic(err)
+			}
+
+			if err := errorTemplate.Execute(w, &errorTemplateData{
+				ErrorMessage: "SAML connection is not fully configured. This needs to be fixed in the Service Provider.",
+				SAMLFlowID:   createSAMLLoginRes.SAMLFlowID,
+			}); err != nil {
+				panic(fmt.Errorf("acsTemplate.Execute: %w", err))
+			}
+			return
+		}
+
 		panic(err)
 	}
 

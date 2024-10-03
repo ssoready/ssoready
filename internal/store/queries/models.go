@@ -274,6 +274,7 @@ type SamlFlow struct {
 	ErrorBadSignatureAlgorithm           *string
 	ErrorBadDigestAlgorithm              *string
 	ErrorBadX509Certificate              []byte
+	ErrorSamlConnectionNotConfigured     bool
 }
 
 type SamlOauthClient struct {

@@ -150,6 +150,10 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 		return nil, err
 	}
 
+	if res.IdpEntityID == nil || res.IdpX509Certificate == nil {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-connections#not-yet-configured"))
+	}
+
 	return &AuthGetValidateDataResponse{
 		SPEntityID:                  res.SpEntityID,
 		IDPEntityID:                 *res.IdpEntityID,
@@ -184,6 +188,7 @@ type AuthUpsertSAMLLoginEventRequest struct {
 	Email                                string
 	SubjectIDPAttributes                 map[string]string
 	SAMLAssertion                        string
+	ErrorSAMLConnectionNotConfigured     bool
 	ErrorUnsignedAssertion               bool
 	ErrorBadIssuer                       *string
 	ErrorBadAudience                     *string
@@ -240,7 +245,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	var assertionOk bool
-	if !req.ErrorUnsignedAssertion && req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSignatureAlgorithm == nil && req.ErrorBadDigestAlgorithm == nil && req.ErrorBadCertificate == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
+	if !req.ErrorSAMLConnectionNotConfigured && !req.ErrorUnsignedAssertion && req.ErrorBadIssuer == nil && req.ErrorBadAudience == nil && req.ErrorBadSignatureAlgorithm == nil && req.ErrorBadDigestAlgorithm == nil && req.ErrorBadCertificate == nil && req.ErrorBadSubjectID == nil && req.ErrorEmailOutsideOrganizationDomains == nil {
 		assertionOk = true
 	}
 
@@ -274,6 +279,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		UpdateTime:                           time.Now(),
 		Assertion:                            &req.SAMLAssertion,
 		ReceiveAssertionTime:                 &now,
+		ErrorSamlConnectionNotConfigured:     req.ErrorSAMLConnectionNotConfigured,
 		ErrorUnsignedAssertion:               req.ErrorUnsignedAssertion,
 		ErrorBadIssuer:                       req.ErrorBadIssuer,
 		ErrorBadAudience:                     req.ErrorBadAudience,
@@ -388,6 +394,10 @@ func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuth
 	samlConn, err := q.GetSAMLConnectionByID(ctx, samlConnID)
 	if err != nil {
 		return nil, err
+	}
+
+	if samlConn.IdpEntityID == nil || samlConn.IdpRedirectUrl == nil || samlConn.IdpX509Certificate == nil {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-connections#not-yet-configured"))
 	}
 
 	return &AuthGetOAuthAuthorizeDataResponse{

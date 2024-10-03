@@ -174,7 +174,11 @@ export function ViewSAMLFlowPage() {
                 <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-login-flows#user-email" />
               </InfoTooltip>
             </div>
-            <div className="text-sm col-span-3">{samlFlow?.email}</div>
+            <div className="text-sm col-span-3">
+              {samlFlow?.email || (
+                <span className="text-sm text-muted-foreground">None</span>
+              )}
+            </div>
 
             <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
               User Attributes
@@ -196,6 +200,27 @@ export function ViewSAMLFlowPage() {
         <Alert variant="destructive" className="bg-white shadow-sm">
           <OctagonX className="h-4 w-4" />
           <AlertTitle>This SAML flow was rejected by SSOReady</AlertTitle>
+
+          {samlFlow.error.case === "samlConnectionNotConfigured" && (
+            <AlertDescription>
+              <p>
+                You haven't finished configuring the SAML connection. Without an
+                IDP Entity ID, IDP Redirect URL, and IDP Certificate, SSOReady
+                cannot securely authenticate SAML logins.
+              </p>
+
+              <p className="mt-4">
+                To fix this, you need to update{" "}
+                <Link
+                  className="underline underline-offset-4"
+                  to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
+                >
+                  the SAML connection
+                </Link>{" "}
+                to have an IDP Entity ID, IDP Redirect URL, and IDP Certificate.
+              </p>
+            </AlertDescription>
+          )}
 
           {samlFlow.error.case === "unsignedAssertion" && (
             <AlertDescription>
@@ -426,17 +451,22 @@ export function ViewSAMLFlowPage() {
                   </span>
                 </div>
 
-                <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
-                  <code>
-                    <pre
-                      dangerouslySetInnerHTML={{
-                        __html: hljs.highlight(formatXml(samlFlow.assertion), {
-                          language: "xml",
-                        }).value,
-                      }}
-                    />
-                  </code>
-                </div>
+                {samlFlow.assertion && (
+                  <div className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm max-w-full overflow-auto">
+                    <code>
+                      <pre
+                        dangerouslySetInnerHTML={{
+                          __html: hljs.highlight(
+                            formatXml(samlFlow.assertion),
+                            {
+                              language: "xml",
+                            },
+                          ).value,
+                        }}
+                      />
+                    </code>
+                  </div>
+                )}
               </div>
             </Card>
           )}
