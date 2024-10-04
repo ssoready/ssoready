@@ -101,6 +101,32 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeFailedPrecondition {
+			if connectErr.Message() == "environment OAuth redirect URI not configured, see: https://ssoready.com/docs/ssoready-concepts/saml-login-flows#environment-oauth-redirect-uri-not-configured" {
+				if _, err := s.Store.UpsertNotConfiguredSAMLFlow(ctx, &store.UpsertNotConfiguredSAMLFlowRequest{
+					SAMLConnectionID:                         samlConnID,
+					EnvironmentOAuthRedirectURINotConfigured: true,
+				}); err != nil {
+					panic(err)
+				}
+
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			if connectErr.Message() == "saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-flows#saml-connection-not-fully-configured" {
+				if _, err := s.Store.UpsertNotConfiguredSAMLFlow(ctx, &store.UpsertNotConfiguredSAMLFlowRequest{
+					SAMLConnectionID:            samlConnID,
+					SAMLConnectionNotConfigured: true,
+				}); err != nil {
+					panic(err)
+				}
+
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
+
 		panic(fmt.Errorf("get oauth authorize data: %w", err))
 	}
 

@@ -245,35 +245,37 @@ type SamlConnection struct {
 }
 
 type SamlFlow struct {
-	ID                                   uuid.UUID
-	SamlConnectionID                     uuid.UUID
-	AccessCode                           *uuid.UUID
-	State                                string
-	CreateTime                           time.Time
-	ExpireTime                           time.Time
-	Email                                *string
-	SubjectIdpAttributes                 []byte
-	UpdateTime                           time.Time
-	AuthRedirectUrl                      *string
-	GetRedirectTime                      *time.Time
-	InitiateRequest                      *string
-	InitiateTime                         *time.Time
-	Assertion                            *string
-	AppRedirectUrl                       *string
-	ReceiveAssertionTime                 *time.Time
-	RedeemTime                           *time.Time
-	RedeemResponse                       []byte
-	ErrorBadIssuer                       *string
-	ErrorBadAudience                     *string
-	ErrorBadSubjectID                    *string
-	ErrorEmailOutsideOrganizationDomains *string
-	Status                               SamlFlowStatus
-	ErrorUnsignedAssertion               bool
-	AccessCodeSha256                     []byte
-	IsOauth                              *bool
-	ErrorBadSignatureAlgorithm           *string
-	ErrorBadDigestAlgorithm              *string
-	ErrorBadX509Certificate              []byte
+	ID                                            uuid.UUID
+	SamlConnectionID                              uuid.UUID
+	AccessCode                                    *uuid.UUID
+	State                                         string
+	CreateTime                                    time.Time
+	ExpireTime                                    time.Time
+	Email                                         *string
+	SubjectIdpAttributes                          []byte
+	UpdateTime                                    time.Time
+	AuthRedirectUrl                               *string
+	GetRedirectTime                               *time.Time
+	InitiateRequest                               *string
+	InitiateTime                                  *time.Time
+	Assertion                                     *string
+	AppRedirectUrl                                *string
+	ReceiveAssertionTime                          *time.Time
+	RedeemTime                                    *time.Time
+	RedeemResponse                                []byte
+	ErrorBadIssuer                                *string
+	ErrorBadAudience                              *string
+	ErrorBadSubjectID                             *string
+	ErrorEmailOutsideOrganizationDomains          *string
+	Status                                        SamlFlowStatus
+	ErrorUnsignedAssertion                        bool
+	AccessCodeSha256                              []byte
+	IsOauth                                       *bool
+	ErrorBadSignatureAlgorithm                    *string
+	ErrorBadDigestAlgorithm                       *string
+	ErrorBadX509Certificate                       []byte
+	ErrorSamlConnectionNotConfigured              bool
+	ErrorEnvironmentOauthRedirectUriNotConfigured bool
 }
 
 type SamlOauthClient struct {

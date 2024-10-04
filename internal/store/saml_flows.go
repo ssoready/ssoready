@@ -149,6 +149,12 @@ func parseSAMLFlow(qSAMLFlow queries.SamlFlow) *ssoreadyv1.SAMLFlow {
 		RedeemResponse:       string(qSAMLFlow.RedeemResponse),
 	}
 
+	if qSAMLFlow.ErrorSamlConnectionNotConfigured {
+		res.Error = &ssoreadyv1.SAMLFlow_SamlConnectionNotConfigured{SamlConnectionNotConfigured: &emptypb.Empty{}}
+	}
+	if qSAMLFlow.ErrorEnvironmentOauthRedirectUriNotConfigured {
+		res.Error = &ssoreadyv1.SAMLFlow_EnvironmentOauthRedirectUriNotConfigured{EnvironmentOauthRedirectUriNotConfigured: &emptypb.Empty{}}
+	}
 	if qSAMLFlow.ErrorUnsignedAssertion {
 		res.Error = &ssoreadyv1.SAMLFlow_UnsignedAssertion{UnsignedAssertion: &emptypb.Empty{}}
 	}

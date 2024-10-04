@@ -332,6 +332,8 @@ message SAMLFlow {
   SAMLFlowStatus status = 17;
 
   oneof error {
+    google.protobuf.Empty saml_connection_not_configured = 26;
+    google.protobuf.Empty environment_oauth_redirect_uri_not_configured = 27;
     google.protobuf.Empty unsigned_assertion = 22;
     string bad_issuer = 18;
     string bad_audience = 19;

@@ -272,7 +272,9 @@ CREATE TABLE public.saml_flows (
     is_oauth boolean,
     error_bad_signature_algorithm character varying,
     error_bad_digest_algorithm character varying,
-    error_bad_x509_certificate bytea
+    error_bad_x509_certificate bytea,
+    error_saml_connection_not_configured boolean DEFAULT false NOT NULL,
+    error_environment_oauth_redirect_uri_not_configured boolean DEFAULT false NOT NULL
 );
 
 

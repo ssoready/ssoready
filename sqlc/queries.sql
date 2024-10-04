@@ -66,8 +66,9 @@ where saml_connections.id = $1;
 
 -- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured,
+                        error_environment_oauth_redirect_uri_not_configured)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
@@ -82,15 +83,17 @@ returning *;
 
 -- name: UpsertSAMLFlowReceiveAssertion :one
 insert into saml_flows (id, saml_connection_id, access_code_sha256, expire_time, state, create_time, update_time,
-                        assertion, receive_assertion_time, error_unsigned_assertion, error_bad_issuer,
+                        assertion, receive_assertion_time, error_saml_connection_not_configured,
+                        error_unsigned_assertion, error_bad_issuer,
                         error_bad_audience, error_bad_signature_algorithm, error_bad_digest_algorithm,
                         error_bad_x509_certificate, error_bad_subject_id, error_email_outside_organization_domains,
                         status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 on conflict (id) do update set access_code_sha256                       = excluded.access_code_sha256,
                                update_time                              = excluded.update_time,
                                assertion                                = excluded.assertion,
                                receive_assertion_time                   = excluded.receive_assertion_time,
+                               error_saml_connection_not_configured     = excluded.error_saml_connection_not_configured,
                                error_unsigned_assertion                 = excluded.error_unsigned_assertion,
                                error_bad_issuer                         = excluded.error_bad_issuer,
                                error_bad_audience                       = excluded.error_bad_audience,
@@ -141,7 +144,10 @@ where organizations.environment_id = $1
   and saml_connections.is_primary = true;
 
 -- name: GetSAMLRedirectURLData :one
-select environments.auth_url
+select environments.auth_url as environment_auth_url,
+       saml_connections.idp_entity_id,
+       saml_connections.idp_redirect_url,
+       saml_connections.idp_x509_certificate
 from saml_connections
          join organizations on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
@@ -265,8 +271,8 @@ where app_organization_id = $1
   and id = $2;
 
 -- name: CreateEnvironment :one
-insert into environments (id, redirect_url, app_organization_id, display_name, auth_url)
-values ($1, $2, $3, $4, $5)
+insert into environments (id, redirect_url, oauth_redirect_uri, app_organization_id, display_name, auth_url)
+values ($1, $2, $3, $4, $5, $6)
 returning *;
 
 -- name: UpdateEnvironment :one
