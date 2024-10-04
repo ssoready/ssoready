@@ -184,6 +184,7 @@ func (s *Store) AuthCheckAssertionAlreadyProcessed(ctx context.Context, samlFlow
 
 type AuthUpsertSAMLLoginEventRequest struct {
 	SAMLConnectionID                     string
+	SAMLAssertionID                      *string
 	SAMLFlowID                           string
 	Email                                string
 	SubjectIDPAttributes                 map[string]string
@@ -271,6 +272,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 
 	qSAMLFlow, err := q.UpsertSAMLFlowReceiveAssertion(ctx, queries.UpsertSAMLFlowReceiveAssertionParams{
 		ID:                                   samlFlowID,
+		AssertionID:                          req.SAMLAssertionID,
 		SamlConnectionID:                     samlConnID,
 		AccessCodeSha256:                     accessCodeSHA,
 		ExpireTime:                           time.Now().Add(time.Hour),
