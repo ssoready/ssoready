@@ -363,7 +363,7 @@ func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuth
 	}
 
 	if derefOrEmpty(qEnv.OauthRedirectUri) == "" {
-		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("environment OAuth redirect URI not configured, see: /docs/ssoready-concepts/saml-login-flows#environment-oauth-redirect-uri-not-configured"))
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("environment OAuth redirect URI not configured, see: https://ssoready.com/docs/ssoready-concepts/saml-login-flows#environment-oauth-redirect-uri-not-configured"))
 	}
 
 	var samlConnID uuid.UUID
