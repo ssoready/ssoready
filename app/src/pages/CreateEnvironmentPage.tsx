@@ -55,7 +55,8 @@ const FormSchema = z.object({
     .refine((arg) => !arg.includes(" "), {
       message: "OAuth Redirect URI must be a valid URL.",
     })
-    .optional(),
+    .optional()
+    .or(z.literal("")),
 });
 
 export function CreateEnvironmentPage() {
@@ -143,7 +144,7 @@ export function CreateEnvironmentPage() {
                 name="oauthRedirectUri"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>OAuth Redirect URI</FormLabel>
+                    <FormLabel>OAuth Redirect URI (Optional)</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="http://localhost:3000/api/auth/callback/ssoready-saml"
@@ -151,7 +152,7 @@ export function CreateEnvironmentPage() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Optional. Only required if you're using{" "}
+                      Only required if you're using{" "}
                       <a
                         className="underline underline-offset-4"
                         href="https://ssoready.com/docs/saml-over-oauth-saml-nextauth-integration"
