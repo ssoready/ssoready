@@ -274,7 +274,8 @@ CREATE TABLE public.saml_flows (
     error_bad_digest_algorithm character varying,
     error_bad_x509_certificate bytea,
     error_saml_connection_not_configured boolean DEFAULT false NOT NULL,
-    error_environment_oauth_redirect_uri_not_configured boolean DEFAULT false NOT NULL
+    error_environment_oauth_redirect_uri_not_configured boolean DEFAULT false NOT NULL,
+    assertion_id character varying
 );
 
 
@@ -567,6 +568,14 @@ ALTER TABLE ONLY public.saml_flows
 
 ALTER TABLE ONLY public.saml_flows
     ADD CONSTRAINT saml_flows_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: saml_flows saml_flows_saml_connection_id_assertion_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.saml_flows
+    ADD CONSTRAINT saml_flows_saml_connection_id_assertion_id_key UNIQUE (saml_connection_id, assertion_id);
 
 
 --

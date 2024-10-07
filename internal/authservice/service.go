@@ -261,6 +261,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 	createSAMLLoginRes, err := s.Store.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
 		SAMLConnectionID:                     samlConnID,
+		SAMLAssertionID:                      &validateRes.AssertionID,
 		SAMLFlowID:                           validateRes.RequestID,
 		Email:                                email,
 		SubjectIDPAttributes:                 validateRes.SubjectAttributes,

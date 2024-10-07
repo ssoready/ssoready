@@ -31,6 +31,7 @@ type ValidateProblems struct {
 
 type ValidateResponse struct {
 	RequestID         string
+	AssertionID       string
 	Assertion         string
 	SubjectID         string
 	SubjectAttributes map[string]string
@@ -58,6 +59,7 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 
 	res := ValidateResponse{
 		RequestID:         samlRes.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo,
+		AssertionID:       samlRes.Assertion.ID,
 		Assertion:         string(data),
 		SubjectID:         samlRes.Assertion.Subject.NameID.Value,
 		SubjectAttributes: attrs,

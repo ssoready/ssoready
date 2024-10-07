@@ -9,6 +9,7 @@ type Response struct {
 	XMLName   xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:protocol Response"`
 	Assertion struct {
 		XMLName   xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:assertion Assertion"`
+		ID        string   `xml:"ID,attr"`
 		Signature struct {
 			XMLName    xml.Name `xml:"http://www.w3.org/2000/09/xmldsig# Signature"`
 			SignedInfo struct {

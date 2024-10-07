@@ -276,6 +276,7 @@ type SamlFlow struct {
 	ErrorBadX509Certificate                       []byte
 	ErrorSamlConnectionNotConfigured              bool
 	ErrorEnvironmentOauthRedirectUriNotConfigured bool
+	AssertionID                                   *string
 }
 
 type SamlOauthClient struct {
