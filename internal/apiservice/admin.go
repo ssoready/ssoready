@@ -85,6 +85,10 @@ func (s *Service) AppUpdateAdminSettingsLogo(ctx context.Context, req *connect.R
 		return nil, fmt.Errorf("s3: %w", err)
 	}
 
+	if err := s.Store.AppUpdateEnvironmentAdminLogoConfigured(ctx, req.Msg.EnvironmentId, true); err != nil {
+		return nil, err
+	}
+
 	return connect.NewResponse(&ssoreadyv1.AppUpdateAdminSettingsLogoResponse{
 		UploadUrl: presignRequest.URL,
 	}), nil

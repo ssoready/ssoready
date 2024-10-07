@@ -83,6 +83,40 @@ func (s *Store) AppUpdateAdminSettings(ctx context.Context, req *ssoreadyv1.AppU
 	return &ssoreadyv1.AppUpdateAdminSettingsResponse{}, nil
 }
 
+func (s *Store) AppUpdateEnvironmentAdminLogoConfigured(ctx context.Context, environmentID string, configured bool) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer rollback()
+
+	envID, err := idformat.Environment.Parse(environmentID)
+	if err != nil {
+		return fmt.Errorf("parse environment id: %w", err)
+	}
+
+	// authz check
+	if _, err := q.GetEnvironment(ctx, queries.GetEnvironmentParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                envID,
+	}); err != nil {
+		return fmt.Errorf("get environment: %w", err)
+	}
+
+	if _, err := q.UpdateEnvironmentAdminLogoConfigured(ctx, queries.UpdateEnvironmentAdminLogoConfiguredParams{
+		ID:                  envID,
+		AdminLogoConfigured: configured,
+	}); err != nil {
+		return err
+	}
+
+	if err := commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *Store) AppCreateAdminSetupURL(ctx context.Context, req *ssoreadyv1.AppCreateAdminSetupURLRequest) (*ssoreadyv1.AppCreateAdminSetupURLResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {

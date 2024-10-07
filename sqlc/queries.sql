@@ -498,6 +498,12 @@ set admin_application_name = $1,
 where id = $3
 returning *;
 
+-- name: UpdateEnvironmentAdminLogoConfigured :one
+update environments
+set admin_logo_configured = $1
+where id = $2
+returning *;
+
 -- name: CreateAdminAccessToken :one
 insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time, can_manage_saml,
                                  can_manage_scim)

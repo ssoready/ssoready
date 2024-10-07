@@ -3126,6 +3126,38 @@ func (q *Queries) UpdateEnvironment(ctx context.Context, arg UpdateEnvironmentPa
 	return i, err
 }
 
+const updateEnvironmentAdminLogoConfigured = `-- name: UpdateEnvironmentAdminLogoConfigured :one
+update environments
+set admin_logo_configured = $1
+where id = $2
+returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url, custom_admin_domain, admin_url, admin_logo_configured
+`
+
+type UpdateEnvironmentAdminLogoConfiguredParams struct {
+	AdminLogoConfigured bool
+	ID                  uuid.UUID
+}
+
+func (q *Queries) UpdateEnvironmentAdminLogoConfigured(ctx context.Context, arg UpdateEnvironmentAdminLogoConfiguredParams) (Environment, error) {
+	row := q.db.QueryRow(ctx, updateEnvironmentAdminLogoConfigured, arg.AdminLogoConfigured, arg.ID)
+	var i Environment
+	err := row.Scan(
+		&i.ID,
+		&i.RedirectUrl,
+		&i.AppOrganizationID,
+		&i.DisplayName,
+		&i.AuthUrl,
+		&i.OauthRedirectUri,
+		&i.CustomAuthDomain,
+		&i.AdminApplicationName,
+		&i.AdminReturnUrl,
+		&i.CustomAdminDomain,
+		&i.AdminUrl,
+		&i.AdminLogoConfigured,
+	)
+	return i, err
+}
+
 const updateEnvironmentAdminSettings = `-- name: UpdateEnvironmentAdminSettings :one
 update environments
 set admin_application_name = $1,
