@@ -17,5 +17,5 @@ const host = process.env.ADMIN_SERVE_HOST || "0.0.0.0"
 const port = parseInt(process.env.ADMIN_SERVE_PORT || "8083")
 
 app.listen(port, host, () => {
-    console.log(`serving ssoready app on ${host}:${port}`)
+    console.log(`serving ssoready admin on ${host}:${port}`)
 })

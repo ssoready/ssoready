@@ -174,7 +174,8 @@ CREATE TABLE public.environments (
     admin_application_name character varying,
     admin_return_url character varying,
     custom_admin_domain character varying,
-    admin_url character varying
+    admin_url character varying,
+    admin_logo_configured boolean DEFAULT false NOT NULL
 );
 
 

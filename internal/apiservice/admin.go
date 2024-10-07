@@ -23,13 +23,16 @@ func (s *Service) AppGetAdminSettings(ctx context.Context, req *connect.Request[
 		return nil, fmt.Errorf("store: %w", err)
 	}
 
-	adminLogoURL, err := s.adminLogoURL(ctx, req.Msg.EnvironmentId)
-	if err != nil {
-		return nil, fmt.Errorf("admin logo url: %w", err)
+	var adminLogoURL string
+	if res.AdminLogoConfigured {
+		adminLogoURL, err = s.adminLogoURL(ctx, req.Msg.EnvironmentId)
+		if err != nil {
+			return nil, fmt.Errorf("admin logo url: %w", err)
+		}
 	}
 
-	res.AdminLogoUrl = adminLogoURL
-	return connect.NewResponse(res), nil
+	res.AppGetAdminSettingsResponse.AdminLogoUrl = adminLogoURL
+	return connect.NewResponse(res.AppGetAdminSettingsResponse), nil
 }
 
 // note well: adminLogoURL does no authz checks
@@ -82,6 +85,10 @@ func (s *Service) AppUpdateAdminSettingsLogo(ctx context.Context, req *connect.R
 		return nil, fmt.Errorf("s3: %w", err)
 	}
 
+	if err := s.Store.AppUpdateEnvironmentAdminLogoConfigured(ctx, req.Msg.EnvironmentId, true); err != nil {
+		return nil, err
+	}
+
 	return connect.NewResponse(&ssoreadyv1.AppUpdateAdminSettingsLogoResponse{
 		UploadUrl: presignRequest.URL,
 	}), nil
@@ -111,9 +118,12 @@ func (s *Service) AdminWhoami(ctx context.Context, req *connect.Request[ssoready
 		return nil, fmt.Errorf("store: %w", err)
 	}
 
-	adminLogoURL, err := s.adminLogoURL(ctx, whoamiRes.EnvironmentID)
-	if err != nil {
-		return nil, fmt.Errorf("admin logo url: %w", err)
+	var adminLogoURL string
+	if whoamiRes.AdminLogoConfigured {
+		adminLogoURL, err = s.adminLogoURL(ctx, whoamiRes.EnvironmentID)
+		if err != nil {
+			return nil, fmt.Errorf("admin logo url: %w", err)
+		}
 	}
 
 	return connect.NewResponse(&ssoreadyv1.AdminWhoamiResponse{

@@ -211,6 +211,7 @@ type Environment struct {
 	AdminReturnUrl       *string
 	CustomAdminDomain    *string
 	AdminUrl             *string
+	AdminLogoConfigured  bool
 }
 
 type OnboardingState struct {
