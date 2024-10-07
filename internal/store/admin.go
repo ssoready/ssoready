@@ -19,7 +19,12 @@ import (
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
 
-func (s *Store) AppGetAdminSettings(ctx context.Context, req *ssoreadyv1.AppGetAdminSettingsRequest) (*ssoreadyv1.AppGetAdminSettingsResponse, error) {
+type GetAdminSettingsResponse struct {
+	AdminLogoConfigured         bool
+	AppGetAdminSettingsResponse *ssoreadyv1.AppGetAdminSettingsResponse
+}
+
+func (s *Store) AppGetAdminSettings(ctx context.Context, req *ssoreadyv1.AppGetAdminSettingsRequest) (*GetAdminSettingsResponse, error) {
 	envID, err := idformat.Environment.Parse(req.EnvironmentId)
 	if err != nil {
 		return nil, fmt.Errorf("parse environment id: %w", err)
@@ -33,10 +38,13 @@ func (s *Store) AppGetAdminSettings(ctx context.Context, req *ssoreadyv1.AppGetA
 		return nil, fmt.Errorf("get environment: %w", err)
 	}
 
-	return &ssoreadyv1.AppGetAdminSettingsResponse{
-		AdminApplicationName: derefOrEmpty(qEnv.AdminApplicationName),
-		AdminReturnUrl:       derefOrEmpty(qEnv.AdminReturnUrl),
-		AdminLogoUrl:         "", // set by apiservice, requires s3 api call
+	return &GetAdminSettingsResponse{
+		AppGetAdminSettingsResponse: &ssoreadyv1.AppGetAdminSettingsResponse{
+			AdminApplicationName: derefOrEmpty(qEnv.AdminApplicationName),
+			AdminReturnUrl:       derefOrEmpty(qEnv.AdminReturnUrl),
+			AdminLogoUrl:         "", // set by apiservice, requires s3 api call
+		},
+		AdminLogoConfigured: qEnv.AdminLogoConfigured,
 	}, nil
 }
 
@@ -221,6 +229,7 @@ type AdminWhoamiResponse struct {
 	AdminApplicationName string
 	AdminReturnURL       string
 	EnvironmentID        string
+	AdminLogoConfigured  bool
 }
 
 func (s *Store) AdminWhoami(ctx context.Context, req *ssoreadyv1.AdminWhoamiRequest) (*AdminWhoamiResponse, error) {
@@ -248,6 +257,7 @@ func (s *Store) AdminWhoami(ctx context.Context, req *ssoreadyv1.AdminWhoamiRequ
 		AdminApplicationName: derefOrEmpty(qEnv.AdminApplicationName),
 		AdminReturnURL:       derefOrEmpty(qEnv.AdminReturnUrl),
 		EnvironmentID:        idformat.Environment.Format(qEnv.ID),
+		AdminLogoConfigured:  qEnv.AdminLogoConfigured,
 	}, nil
 }
 
