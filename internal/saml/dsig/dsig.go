@@ -7,12 +7,10 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
-	"encoding/xml"
 	"fmt"
 	"strings"
 
 	"github.com/ssoready/ssoready/internal/saml/c14n"
-	"github.com/ssoready/ssoready/internal/saml/samltypes"
 	"github.com/ssoready/ssoready/internal/saml/uxml"
 )
 
@@ -46,103 +44,165 @@ func (e BadCertificateError) Error() string {
 	return fmt.Sprintf("dsig: bad certificate on response")
 }
 
-func Verify(cert *x509.Certificate, data []byte) error {
-	var res samltypes.Response
-	if err := xml.Unmarshal(data, &res); err != nil {
-		return err
+func Verify(cert *x509.Certificate, data []byte) ([]byte, error) {
+	unverifiedDoc, err := uxml.Parse(data)
+	if err != nil {
+		return nil, err
 	}
 
-	if res.Assertion.Signature.SignatureValue == "" {
-		return ErrUnsigned
+	signatureValue, _ := onlyPathHoistNames(path{
+		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
+		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "SignatureValue"},
+	}, unverifiedDoc.Root)
+
+	if signatureValue.Element == nil || signatureValue.Element.Children[0].Text == nil {
+		return nil, ErrUnsigned
 	}
 
-	if res.Assertion.Signature.SignedInfo.SignatureMethod.Algorithm != "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" {
-		return BadSignatureAlgorithmError{res.Assertion.Signature.SignedInfo.SignatureMethod.Algorithm}
+	signatureBase64 := *signatureValue.Element.Children[0].Text
+
+	signatureMethod, _ := onlyPathHoistNames(path{
+		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
+		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "SignedInfo"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "SignatureMethod"},
+	}, unverifiedDoc.Root)
+
+	signatureMethodAlgorithm, _ := attrValueIgnoreNamespace(signatureMethod, "Algorithm")
+	if signatureMethodAlgorithm != "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" {
+		return nil, BadSignatureAlgorithmError{signatureMethodAlgorithm}
 	}
 
-	if res.Assertion.Signature.SignedInfo.Reference.DigestMethod.Algorithm != "http://www.w3.org/2001/04/xmlenc#sha256" {
-		return BadDigestAlgorithmError{res.Assertion.Signature.SignedInfo.Reference.DigestMethod.Algorithm}
+	digestMethod, _ := onlyPathHoistNames(path{
+		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
+		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "SignedInfo"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Reference"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "DigestMethod"},
+	}, unverifiedDoc.Root)
+
+	digestMethodAlgorithm, _ := attrValueIgnoreNamespace(digestMethod, "Algorithm")
+	if digestMethodAlgorithm != "http://www.w3.org/2001/04/xmlenc#sha256" {
+		return nil, BadDigestAlgorithmError{digestMethodAlgorithm}
 	}
 
-	resCertBase64 := res.Assertion.Signature.KeyInfo.X509Data.X509Certificate
+	x509Certificate, _ := onlyPathHoistNames(path{
+		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
+		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "KeyInfo"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "X509Data"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "X509Certificate"},
+	}, unverifiedDoc.Root)
+
+	resCertBase64 := *x509Certificate.Element.Children[0].Text
 	resCertBase64 = strings.ReplaceAll(resCertBase64, " ", "")
 	resCertBase64 = strings.ReplaceAll(resCertBase64, "\n", "")
 	resCertRaw, err := base64.StdEncoding.DecodeString(resCertBase64)
 	if err != nil {
-		return fmt.Errorf("parse saml response certificate: %w", err)
+		return nil, fmt.Errorf("parse saml response certificate: %w", err)
 	}
 
 	if !bytes.Equal(resCertRaw, cert.Raw) {
 		badCert, err := x509.ParseCertificate(resCertRaw)
 		if err != nil {
-			return fmt.Errorf("parse saml response certificate: %w", err)
+			return nil, fmt.Errorf("parse saml response certificate: %w", err)
 		}
 
-		return BadCertificateError{BadCertificate: badCert}
+		return nil, BadCertificateError{BadCertificate: badCert}
 	}
 
-	digestData, err := responseDigestData(res, data)
+	digestData, err := responseDigestData(unverifiedDoc)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	digestHash := sha256.Sum256(digestData)
 	digestHashBase64 := base64.StdEncoding.EncodeToString(digestHash[:])
 
-	if res.Assertion.Signature.SignedInfo.Reference.DigestValue != digestHashBase64 {
-		return ErrBadDigest
+	digestValue, _ := onlyPathHoistNames(path{
+		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
+		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "SignedInfo"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Reference"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "DigestValue"},
+	}, unverifiedDoc.Root)
+
+	if *digestValue.Element.Children[0].Text != digestHashBase64 {
+		return nil, ErrBadDigest
 	}
 
 	publicKey, ok := cert.PublicKey.(*rsa.PublicKey)
 	if !ok {
-		return ErrNoRSAPublicKey
+		return nil, ErrNoRSAPublicKey
 	}
 
 	signatureData, err := responseSignatureData(data)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	signatureHash := sha256.Sum256(signatureData)
 
-	signatureBase64 := res.Assertion.Signature.SignatureValue
+	//signatureBase64 := signatureBase64
 	signatureBase64 = strings.ReplaceAll(signatureBase64, " ", "")
 	signatureBase64 = strings.ReplaceAll(signatureBase64, "\n", "")
 	expectedSignature, err := base64.StdEncoding.DecodeString(signatureBase64)
 	if err != nil {
-		return err
-	}
-
-	if err := rsa.VerifyPKCS1v15(publicKey, crypto.SHA256, signatureHash[:], expectedSignature); err != nil {
-		return fmt.Errorf("verify signature: %w", err)
-	}
-
-	return nil
-}
-
-func responseDigestData(res samltypes.Response, data []byte) ([]byte, error) {
-	doc, err := uxml.Parse(data)
-	if err != nil {
 		return nil, err
 	}
 
-	// todo hoist here, and get rid of onlyPath?
+	if err := rsa.VerifyPKCS1v15(publicKey, crypto.SHA256, signatureHash[:], expectedSignature); err != nil {
+		return nil, fmt.Errorf("verify signature: %w", err)
+	}
+
+	return digestData, nil
+}
+
+func responseDigestData(unverifiedDoc *uxml.Document) ([]byte, error) {
 	assertion, _ := onlyPathHoistNames(path{
 		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
 		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
-	}, doc.Root)
+	}, unverifiedDoc.Root)
 
 	nosig := exceptPath(path{
 		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
 		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
 	}, assertion)
 
+	transforms, _ := onlyPathHoistNames(path{
+		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
+		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "SignedInfo"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Reference"},
+		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Transforms"},
+	}, unverifiedDoc.Root)
+
 	var inclusiveNamespaces []string
-	for _, t := range res.Assertion.Signature.SignedInfo.Reference.Transforms.Transform {
+	for _, t := range transforms.Element.Children {
+		algorithm, _ := attrValueIgnoreNamespace(t, "Algorithm")
+		if algorithm != "http://www.w3.org/2001/10/xml-exc-c14n#" {
+			continue
+		}
+
+		var inclusiveNamespacesElement uxml.Node
+		for _, c := range t.Element.Children {
+			if c.Element.Name.Local == "InclusiveNamespaces" {
+				inclusiveNamespacesElement = c
+			}
+		}
+		prefixList, _ := attrValueIgnoreNamespace(inclusiveNamespacesElement, "PrefixList")
+
 		// ensure inclusiveNamespaces remains empty if PrefixList is empty
 		// ("empty" here likely just means the assertion XML lacks InclusiveNamespaces at all)
-		if t.Algorithm == "http://www.w3.org/2001/10/xml-exc-c14n#" && t.InclusiveNamespaces.PrefixList != "" {
-			inclusiveNamespaces = strings.Split(t.InclusiveNamespaces.PrefixList, " ")
+		if prefixList != "" {
+			inclusiveNamespaces = strings.Split(prefixList, " ")
 		}
 	}
 

@@ -82,6 +82,19 @@ func onlyPathHoistNamesInternal(p path, s stack.Stack, n uxml.Node) (uxml.Node, 
 		}}, true
 	}
 
+	// if multiple children match the next path segment (p[1]) then refuse to find a match
+	var nextSegmentMatch bool
+	for _, c := range n.Element.Children {
+		if c.Element != nil && c.Element.Name.URI == p[1].URI && c.Element.Name.Local == p[1].Local {
+			if nextSegmentMatch {
+				// existing match; refuse to proceed
+				return uxml.Node{}, false
+			}
+
+			nextSegmentMatch = true
+		}
+	}
+
 	for _, c := range n.Element.Children {
 		if find, ok := onlyPathHoistNamesInternal(p[1:], s, c); ok {
 			return find, true
@@ -130,4 +143,23 @@ func pathsEqual(a, b path) bool {
 		}
 	}
 	return true
+}
+
+func attrValueIgnoreNamespace(n uxml.Node, localName string) (string, bool) {
+	if n.Element == nil {
+		return "", false
+	}
+
+	var out string
+	for _, a := range n.Element.Attrs {
+		if a.Name.Local == localName {
+			if out != "" {
+				return "", false // multiple matches; refuse to find result
+			}
+
+			out = a.Value
+		}
+	}
+
+	return out, true
 }

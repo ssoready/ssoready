@@ -42,30 +42,17 @@ var (
 )
 
 func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error) {
-	data, err := base64.StdEncoding.DecodeString(req.SAMLResponse)
+	unverifiedData, err := base64.StdEncoding.DecodeString(req.SAMLResponse)
 	if err != nil {
 		return nil, nil, fmt.Errorf("parse saml response: %w", err)
 	}
 
-	var samlRes samltypes.Response
-	if err := xml.Unmarshal(data, &samlRes); err != nil {
-		return nil, nil, fmt.Errorf("unmarshal saml response: %w", err)
-	}
-
-	attrs := map[string]string{}
-	for _, attr := range samlRes.Assertion.AttributeStatement.Attributes {
-		attrs[attr.Name] = attr.Value
-	}
-
 	res := ValidateResponse{
-		RequestID:         samlRes.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo,
-		AssertionID:       samlRes.Assertion.ID,
-		Assertion:         string(data),
-		SubjectID:         samlRes.Assertion.Subject.NameID.Value,
-		SubjectAttributes: attrs,
+		Assertion: string(unverifiedData),
 	}
 
-	if err := dsig.Verify(req.IDPCertificate, data); err != nil {
+	verifiedData, err := dsig.Verify(req.IDPCertificate, unverifiedData)
+	if err != nil {
 		if errors.Is(err, dsig.ErrUnsigned) {
 			return &res, &ValidateProblems{UnsignedAssertion: true}, nil
 		}
@@ -88,19 +75,34 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 		return &res, nil, fmt.Errorf("verify signature: %w", err)
 	}
 
-	if samlRes.Assertion.Issuer.Name != req.IDPEntityID {
-		return &res, &ValidateProblems{BadIDPEntityID: &samlRes.Assertion.Issuer.Name}, nil
+	var assertion samltypes.Assertion
+	if err := xml.Unmarshal(verifiedData, &assertion); err != nil {
+		panic(err)
 	}
 
-	if samlRes.Assertion.Conditions.AudienceRestriction.Audience.Name != req.SPEntityID {
-		return &res, &ValidateProblems{BadSPEntityID: &samlRes.Assertion.Conditions.AudienceRestriction.Audience.Name}, nil
+	attrs := map[string]string{}
+	for _, attr := range assertion.AttributeStatement.Attributes {
+		attrs[attr.Name] = attr.Value
 	}
 
-	if req.Now.Before(samlRes.Assertion.Conditions.NotBefore) {
+	res.RequestID = assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo
+	res.AssertionID = assertion.ID
+	res.SubjectID = assertion.Subject.NameID.Value
+	res.SubjectAttributes = attrs
+
+	if assertion.Issuer.Name != req.IDPEntityID {
+		return &res, &ValidateProblems{BadIDPEntityID: &assertion.Issuer.Name}, nil
+	}
+
+	if assertion.Conditions.AudienceRestriction.Audience.Name != req.SPEntityID {
+		return &res, &ValidateProblems{BadSPEntityID: &assertion.Conditions.AudienceRestriction.Audience.Name}, nil
+	}
+
+	if req.Now.Before(assertion.Conditions.NotBefore) {
 		return &res, nil, errExpired
 	}
 
-	if req.Now.After(samlRes.Assertion.Conditions.NotOnOrAfter) {
+	if req.Now.After(assertion.Conditions.NotOnOrAfter) {
 		return &res, nil, errExpired
 	}
 
