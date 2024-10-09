@@ -144,3 +144,22 @@ func pathsEqual(a, b path) bool {
 	}
 	return true
 }
+
+func attrValueIgnoreNamespace(n uxml.Node, localName string) (string, bool) {
+	if n.Element == nil {
+		return "", false
+	}
+
+	var out string
+	for _, a := range n.Element.Attrs {
+		if a.Name.Local == localName {
+			if out != "" {
+				return "", false // multiple matches; refuse to find result
+			}
+
+			out = a.Value
+		}
+	}
+
+	return out, true
+}
