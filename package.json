@@ -1,4 +1,11 @@
 {
+  "scripts": {
+    "dev": "npm-run-all -l -p dev:*",
+    "dev:api": "dotenv -- go run ./cmd/api",
+    "dev:auth": "dotenv -- go run ./cmd/auth",
+    "dev:app": "cd app && npm run dev",
+    "dev:admin": "cd admin && npm run dev"
+  },
   "dependencies": {
     "@bufbuild/buf": "^1.31.0",
     "@bufbuild/protoc-gen-es": "^1.9.0",
@@ -6,6 +13,7 @@
     "@connectrpc/protoc-gen-connect-query": "^1.3.1",
     "@types/axios": "^0.14.0",
     "axios": "^1.7.4",
-    "dotenv-cli": "^7.4.2"
+    "dotenv-cli": "^7.4.2",
+    "npm-run-all": "^4.1.5"
   }
 }
