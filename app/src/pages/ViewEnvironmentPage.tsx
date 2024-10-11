@@ -190,6 +190,7 @@ export function ViewEnvironmentPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Organization ID</TableHead>
+                <TableHead>Display Name</TableHead>
                 <TableHead>External ID</TableHead>
                 <TableHead>Domains</TableHead>
               </TableRow>
@@ -207,7 +208,20 @@ export function ViewEnvironmentPage() {
                         {org.id}
                       </Link>
                     </TableCell>
-                    <TableCell>{org.externalId}</TableCell>
+                    <TableCell>
+                      {org.displayName || (
+                        <span className="text-muted-foreground">
+                          Not configured
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {org.externalId || (
+                        <span className="text-muted-foreground">
+                          Not configured
+                        </span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
                         {org.domains.map((domain, i) => (
