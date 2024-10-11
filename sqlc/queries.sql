@@ -360,8 +360,8 @@ from organization_domains
 where organization_id = any ($1::uuid[]);
 
 -- name: CreateOrganization :one
-insert into organizations (id, environment_id, external_id)
-values ($1, $2, $3)
+insert into organizations (id, environment_id, external_id, display_name)
+values ($1, $2, $3, $4)
 returning *;
 
 -- name: CreateOrganizationDomain :one
@@ -371,8 +371,9 @@ returning *;
 
 -- name: UpdateOrganization :one
 update organizations
-set external_id = $1
-where id = $2
+set external_id  = $1,
+    display_name = $2
+where id = $3
 returning *;
 
 -- name: DeleteOrganizationDomains :exec

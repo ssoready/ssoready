@@ -9,6 +9,7 @@ import React from "react";
 import { useParams } from "react-router";
 import { useQuery } from "@connectrpc/connect-query";
 import {
+  appGetOrganization,
   appGetSCIMUser,
   appListSCIMGroups,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -43,6 +44,9 @@ export function ViewSCIMUserPage() {
   const { data: scimUser } = useQuery(appGetSCIMUser, {
     id: scimUserId,
   });
+  const { data: organization } = useQuery(appGetOrganization, {
+    id: organizationId,
+  });
   const {
     data: listSCIMGroupsResponses,
     fetchNextPage,
@@ -67,7 +71,7 @@ export function ViewSCIMUserPage() {
               <Link
                 to={`/environments/${environmentId}/organizations/${organizationId}`}
               >
-                {organizationId}
+                {organization?.displayName || organizationId}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

@@ -109,6 +109,11 @@ func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOr
 		return nil, err
 	}
 
+	var displayName *string
+	if req.Organization.DisplayName != "" {
+		displayName = &req.Organization.DisplayName
+	}
+
 	var externalID *string
 	if req.Organization.ExternalId != "" {
 		externalID = &req.Organization.ExternalId
@@ -117,6 +122,7 @@ func (s *Store) CreateOrganization(ctx context.Context, req *ssoreadyv1.CreateOr
 	qOrg, err := q.CreateOrganization(ctx, queries.CreateOrganizationParams{
 		ID:            uuid.New(),
 		EnvironmentID: envID,
+		DisplayName:   displayName,
 		ExternalID:    externalID,
 	})
 	if err != nil {
@@ -172,14 +178,20 @@ func (s *Store) UpdateOrganization(ctx context.Context, req *ssoreadyv1.UpdateOr
 		return nil, err
 	}
 
+	var displayName *string
+	if req.Organization.DisplayName != "" {
+		displayName = &req.Organization.DisplayName
+	}
+
 	var externalID *string
 	if req.Organization.ExternalId != "" {
 		externalID = &req.Organization.ExternalId
 	}
 
 	qOrg, err := q.UpdateOrganization(ctx, queries.UpdateOrganizationParams{
-		ID:         id,
-		ExternalID: externalID,
+		ID:          id,
+		DisplayName: displayName,
+		ExternalID:  externalID,
 	})
 	if err != nil {
 		return nil, err

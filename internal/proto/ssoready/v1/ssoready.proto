@@ -283,6 +283,8 @@ message Organization {
   string id = 1;
   // The environment this organization belongs to.
   string environment_id = 2;
+  // An optional human-friendly name for this organization.
+  string display_name = 5;
   // An identifier you can attach to an organization. Meant to be used to correlate an SSOReady organization to your
   // internal equivalent concept.
   //

@@ -365,6 +365,13 @@ export class Organization extends Message<Organization> {
   environmentId = "";
 
   /**
+   * An optional human-friendly name for this organization.
+   *
+   * @generated from field: string display_name = 5;
+   */
+  displayName = "";
+
+  /**
    * An identifier you can attach to an organization. Meant to be used to correlate an SSOReady organization to your
    * internal equivalent concept.
    *
@@ -395,6 +402,7 @@ export class Organization extends Message<Organization> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "environment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "external_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "domains", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);

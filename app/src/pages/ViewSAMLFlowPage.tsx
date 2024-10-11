@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import { disableQuery, useQuery } from "@connectrpc/connect-query";
 import {
+  appGetOrganization,
   appGetSAMLConnection,
   appGetSAMLFlow,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
@@ -46,6 +47,9 @@ export function ViewSAMLFlowPage() {
   const { data: samlConnection } = useQuery(appGetSAMLConnection, {
     id: samlConnectionId,
   });
+  const { data: organization } = useQuery(appGetOrganization, {
+    id: organizationId,
+  });
 
   return (
     <div className="flex flex-col gap-8">
@@ -58,7 +62,7 @@ export function ViewSAMLFlowPage() {
               <Link
                 to={`/environments/${environmentId}/organizations/${organizationId}`}
               >
-                {organizationId}
+                {organization?.displayName || organizationId}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

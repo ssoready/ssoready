@@ -127,12 +127,14 @@ export function ViewOrganizationPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <Title title="Organization" />
+      <Title title={organization?.displayName || "Organization"} />
 
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbPage>{organizationId}</BreadcrumbPage>
+            <BreadcrumbPage>
+              {organization?.displayName || organizationId}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -142,7 +144,9 @@ export function ViewOrganizationPage() {
           <div className="flex justify-between items-center">
             <div className="flex flex-col space-y-1.5">
               <div className="flex gap-4">
-                <CardTitle>Organization</CardTitle>
+                <CardTitle>
+                  {organization?.displayName || "Organization"}
+                </CardTitle>
 
                 <span className="text-xs font-mono bg-gray-100 py-1 px-2 rounded-sm">
                   {organizationId}
@@ -437,6 +441,7 @@ function AdminSetupURLCard() {
 }
 
 const FormSchema = z.object({
+  displayName: z.string(),
   externalId: z.string(),
   domains: z.array(z.string()).min(1, {
     message: "At least one domain is required.",
@@ -451,6 +456,7 @@ function EditOrganizationAlertDialog({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      displayName: organization.displayName,
       externalId: organization.externalId,
       domains: organization.domains,
     },
@@ -465,6 +471,7 @@ function EditOrganizationAlertDialog({
       await updateOrganizationMutation.mutateAsync({
         organization: {
           id: organization.id,
+          displayName: values.displayName,
           externalId: values.externalId,
           domains: values.domains,
         },
@@ -494,6 +501,23 @@ function EditOrganizationAlertDialog({
             </AlertDialogHeader>
 
             <div className="my-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>DisplayName</FormLabel>
+                    <FormControl>
+                      <Input placeholder="AcmeCorp" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      An optional human-friendly name for the organization.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="externalId"

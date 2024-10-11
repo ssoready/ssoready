@@ -1303,21 +1303,32 @@ func (q *Queries) CreateEnvironment(ctx context.Context, arg CreateEnvironmentPa
 }
 
 const createOrganization = `-- name: CreateOrganization :one
-insert into organizations (id, environment_id, external_id)
-values ($1, $2, $3)
-returning id, environment_id, external_id
+insert into organizations (id, environment_id, external_id, display_name)
+values ($1, $2, $3, $4)
+returning id, environment_id, external_id, display_name
 `
 
 type CreateOrganizationParams struct {
 	ID            uuid.UUID
 	EnvironmentID uuid.UUID
 	ExternalID    *string
+	DisplayName   *string
 }
 
 func (q *Queries) CreateOrganization(ctx context.Context, arg CreateOrganizationParams) (Organization, error) {
-	row := q.db.QueryRow(ctx, createOrganization, arg.ID, arg.EnvironmentID, arg.ExternalID)
+	row := q.db.QueryRow(ctx, createOrganization,
+		arg.ID,
+		arg.EnvironmentID,
+		arg.ExternalID,
+		arg.DisplayName,
+	)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ExternalID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
@@ -1843,7 +1854,7 @@ func (q *Queries) GetOnboardingState(ctx context.Context, appOrganizationID uuid
 }
 
 const getOrganization = `-- name: GetOrganization :one
-select organizations.id, organizations.environment_id, organizations.external_id
+select organizations.id, organizations.environment_id, organizations.external_id, organizations.display_name
 from organizations
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
@@ -1858,12 +1869,17 @@ type GetOrganizationParams struct {
 func (q *Queries) GetOrganization(ctx context.Context, arg GetOrganizationParams) (Organization, error) {
 	row := q.db.QueryRow(ctx, getOrganization, arg.AppOrganizationID, arg.ID)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ExternalID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
 const getOrganizationByID = `-- name: GetOrganizationByID :one
-select id, environment_id, external_id
+select id, environment_id, external_id, display_name
 from organizations
 where id = $1
 `
@@ -1871,7 +1887,12 @@ where id = $1
 func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organization, error) {
 	row := q.db.QueryRow(ctx, getOrganizationByID, id)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ExternalID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
@@ -2486,7 +2507,7 @@ func (q *Queries) ListOrganizationDomains(ctx context.Context, dollar_1 []uuid.U
 }
 
 const listOrganizations = `-- name: ListOrganizations :many
-select id, environment_id, external_id
+select id, environment_id, external_id, display_name
 from organizations
 where environment_id = $1
   and id >= $2
@@ -2509,7 +2530,12 @@ func (q *Queries) ListOrganizations(ctx context.Context, arg ListOrganizationsPa
 	var items []Organization
 	for rows.Next() {
 		var i Organization
-		if err := rows.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.EnvironmentID,
+			&i.ExternalID,
+			&i.DisplayName,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -2962,7 +2988,7 @@ func (q *Queries) ListSCIMUsersInSCIMGroup(ctx context.Context, arg ListSCIMUser
 }
 
 const managementGetOrganization = `-- name: ManagementGetOrganization :one
-select id, environment_id, external_id
+select id, environment_id, external_id, display_name
 from organizations
 where environment_id = $1
   and id = $2
@@ -2976,7 +3002,12 @@ type ManagementGetOrganizationParams struct {
 func (q *Queries) ManagementGetOrganization(ctx context.Context, arg ManagementGetOrganizationParams) (Organization, error) {
 	row := q.db.QueryRow(ctx, managementGetOrganization, arg.EnvironmentID, arg.ID)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ExternalID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
@@ -3361,20 +3392,27 @@ func (q *Queries) UpdateOnboardingState(ctx context.Context, arg UpdateOnboardin
 
 const updateOrganization = `-- name: UpdateOrganization :one
 update organizations
-set external_id = $1
-where id = $2
-returning id, environment_id, external_id
+set external_id  = $1,
+    display_name = $2
+where id = $3
+returning id, environment_id, external_id, display_name
 `
 
 type UpdateOrganizationParams struct {
-	ExternalID *string
-	ID         uuid.UUID
+	ExternalID  *string
+	DisplayName *string
+	ID          uuid.UUID
 }
 
 func (q *Queries) UpdateOrganization(ctx context.Context, arg UpdateOrganizationParams) (Organization, error) {
-	row := q.db.QueryRow(ctx, updateOrganization, arg.ExternalID, arg.ID)
+	row := q.db.QueryRow(ctx, updateOrganization, arg.ExternalID, arg.DisplayName, arg.ID)
 	var i Organization
-	err := row.Scan(&i.ID, &i.EnvironmentID, &i.ExternalID)
+	err := row.Scan(
+		&i.ID,
+		&i.EnvironmentID,
+		&i.ExternalID,
+		&i.DisplayName,
+	)
 	return i, err
 }
 
