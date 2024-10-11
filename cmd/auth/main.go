@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/cyrusaf/ctxlog"
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/gorilla/mux"
@@ -22,11 +23,12 @@ import (
 	"github.com/ssoready/ssoready/internal/hexkey"
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/secretload"
+	"github.com/ssoready/ssoready/internal/slogcorrelation"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
 func main() {
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
+	slog.SetDefault(slog.New(ctxlog.NewHandler(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))))
 
 	if err := secretload.Load(context.Background()); err != nil {
 		panic(fmt.Errorf("load secrets: %w", err))
@@ -107,7 +109,7 @@ func main() {
 	logMux := logHTTP(sentryMux)
 
 	slog.Info("serve")
-	if err := http.ListenAndServe(config.ServeAddr, logMux); err != nil {
+	if err := http.ListenAndServe(config.ServeAddr, slogcorrelation.NewHandler(logMux)); err != nil {
 		panic(err)
 	}
 }

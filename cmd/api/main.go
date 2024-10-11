@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/vanguard"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/cyrusaf/ctxlog"
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -29,11 +30,12 @@ import (
 	"github.com/ssoready/ssoready/internal/pagetoken"
 	"github.com/ssoready/ssoready/internal/secretload"
 	"github.com/ssoready/ssoready/internal/sentryinterceptor"
+	"github.com/ssoready/ssoready/internal/slogcorrelation"
 	"github.com/ssoready/ssoready/internal/store"
 )
 
 func main() {
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true})))
+	slog.SetDefault(slog.New(ctxlog.NewHandler(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))))
 
 	if err := secretload.Load(context.Background()); err != nil {
 		panic(fmt.Errorf("load secrets: %w", err))
@@ -178,7 +180,7 @@ func main() {
 	mux.Handle("/", transcoder)
 
 	slog.Info("serve")
-	if err := http.ListenAndServe(config.ServeAddr, mux); err != nil {
+	if err := http.ListenAndServe(config.ServeAddr, slogcorrelation.NewHandler(mux)); err != nil {
 		panic(err)
 	}
 }
