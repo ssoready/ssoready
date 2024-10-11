@@ -226,6 +226,7 @@ type Organization struct {
 	ID            uuid.UUID
 	EnvironmentID uuid.UUID
 	ExternalID    *string
+	DisplayName   *string
 }
 
 type OrganizationDomain struct {
