@@ -468,7 +468,7 @@ function CreateOrganizationAlertDialog({
                 name="displayName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>DisplayName</FormLabel>
+                    <FormLabel>Display Name</FormLabel>
                     <FormControl>
                       <Input placeholder="AcmeCorp" {...field} />
                     </FormControl>

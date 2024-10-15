@@ -24,7 +24,7 @@ export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
 
     return (
       <>
-        <div className="flex">
+        <div className="flex gap-x-2">
           <Input
             value={pendingDataPoint}
             onChange={(e) => setPendingDataPoint(e.target.value)}
@@ -45,20 +45,18 @@ export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
                 onBlur(e);
               }
             }}
-            className="pr-[4.1rem]"
             {...props}
             ref={ref}
           />
           <Button
             type="button"
             variant="secondary"
-            className="absolute h-[3.5vh] mt-[3px] rounded-lg right-7 p-[0.9rem]"
             onClick={addPendingDataPoint}
           >
             Add
           </Button>
         </div>
-        {value.length > 0 && 
+        {value.length > 0 && (
           <div className="rounded-md min-h-[2.5rem] overflow-y-auto p-2 flex gap-2 flex-wrap items-center">
             {value.map((item, idx) => (
               <Badge key={idx} variant="secondary">
@@ -75,7 +73,7 @@ export const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(
               </Badge>
             ))}
           </div>
-        }
+        )}
       </>
     );
   },
