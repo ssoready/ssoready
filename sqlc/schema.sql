@@ -216,7 +216,8 @@ ALTER TABLE public.organization_domains OWNER TO postgres;
 CREATE TABLE public.organizations (
     id uuid NOT NULL,
     environment_id uuid NOT NULL,
-    external_id character varying
+    external_id character varying,
+    display_name character varying
 );
 
 

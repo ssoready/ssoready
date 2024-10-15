@@ -2,6 +2,7 @@ import React, { useCallback, useId, useState } from "react";
 import { useMatch, useParams } from "react-router";
 import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
+  appGetOrganization,
   appGetSAMLConnection,
   appListSAMLFlows,
   appUpdateSAMLConnection,
@@ -83,6 +84,9 @@ export function ViewSAMLConnectionPage() {
   const { data: samlConnection } = useQuery(appGetSAMLConnection, {
     id: samlConnectionId,
   });
+  const { data: organization } = useQuery(appGetOrganization, {
+    id: organizationId,
+  });
   const flowsPathMatch = useMatch(
     "/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows",
   );
@@ -98,7 +102,7 @@ export function ViewSAMLConnectionPage() {
               <Link
                 to={`/environments/${environmentId}/organizations/${organizationId}`}
               >
-                {organizationId}
+                {organization?.displayName || organizationId}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

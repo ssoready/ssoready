@@ -190,6 +190,7 @@ export function ViewEnvironmentPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Organization ID</TableHead>
+                <TableHead>Display Name</TableHead>
                 <TableHead>External ID</TableHead>
                 <TableHead>Domains</TableHead>
               </TableRow>
@@ -207,7 +208,20 @@ export function ViewEnvironmentPage() {
                         {org.id}
                       </Link>
                     </TableCell>
-                    <TableCell>{org.externalId}</TableCell>
+                    <TableCell>
+                      {org.displayName || (
+                        <span className="text-muted-foreground">
+                          Not configured
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {org.externalId || (
+                        <span className="text-muted-foreground">
+                          Not configured
+                        </span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
                         {org.domains.map((domain, i) => (
@@ -381,6 +395,7 @@ function EditEnvironmentAlertDialog({
 }
 
 const OrgFormSchema = z.object({
+  displayName: z.string(),
   externalId: z.string(),
   domains: z.array(z.string()).min(1, {
     message: "At least one domain is required.",
@@ -395,6 +410,7 @@ function CreateOrganizationAlertDialog({
   const form = useForm<z.infer<typeof OrgFormSchema>>({
     resolver: zodResolver(OrgFormSchema),
     defaultValues: {
+      displayName: "",
       externalId: "",
       domains: [],
     },
@@ -410,6 +426,7 @@ function CreateOrganizationAlertDialog({
       const organization = await createOrganizationMutation.mutateAsync({
         organization: {
           environmentId: environment.id,
+          displayName: values.displayName,
           externalId: values.externalId,
           domains: values.domains,
         },
@@ -446,6 +463,23 @@ function CreateOrganizationAlertDialog({
             </AlertDialogHeader>
 
             <div className="my-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>DisplayName</FormLabel>
+                    <FormControl>
+                      <Input placeholder="AcmeCorp" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      An optional human-friendly name for the organization.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="externalId"

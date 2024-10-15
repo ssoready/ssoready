@@ -121,6 +121,11 @@ func (s *Store) AppCreateOrganization(ctx context.Context, req *ssoreadyv1.AppCr
 		return nil, err
 	}
 
+	var displayName *string
+	if req.Organization.DisplayName != "" {
+		displayName = &req.Organization.DisplayName
+	}
+
 	var externalID *string
 	if req.Organization.ExternalId != "" {
 		externalID = &req.Organization.ExternalId
@@ -129,6 +134,7 @@ func (s *Store) AppCreateOrganization(ctx context.Context, req *ssoreadyv1.AppCr
 	qOrg, err := q.CreateOrganization(ctx, queries.CreateOrganizationParams{
 		ID:            uuid.New(),
 		EnvironmentID: envID,
+		DisplayName:   displayName,
 		ExternalID:    externalID,
 	})
 	if err != nil {
@@ -179,14 +185,20 @@ func (s *Store) AppUpdateOrganization(ctx context.Context, req *ssoreadyv1.AppUp
 		return nil, err
 	}
 
+	var displayName *string
+	if req.Organization.DisplayName != "" {
+		displayName = &req.Organization.DisplayName
+	}
+
 	var externalID *string
 	if req.Organization.ExternalId != "" {
 		externalID = &req.Organization.ExternalId
 	}
 
 	qOrg, err := q.UpdateOrganization(ctx, queries.UpdateOrganizationParams{
-		ID:         id,
-		ExternalID: externalID,
+		ID:          id,
+		DisplayName: displayName,
+		ExternalID:  externalID,
 	})
 	if err != nil {
 		return nil, err
@@ -224,6 +236,7 @@ func parseOrganization(qOrg queries.Organization, qOrgDomains []queries.Organiza
 	return &ssoreadyv1.Organization{
 		Id:            idformat.Organization.Format(qOrg.ID),
 		EnvironmentId: idformat.Environment.Format(qOrg.EnvironmentID),
+		DisplayName:   derefOrEmpty(qOrg.DisplayName),
 		ExternalId:    derefOrEmpty(qOrg.ExternalID),
 		Domains:       domains,
 	}

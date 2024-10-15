@@ -7,6 +7,7 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appGetOrganization,
   appGetSCIMDirectory,
   appListSCIMGroups,
   appListSCIMRequests,
@@ -84,6 +85,9 @@ export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
   const { data: scimDirectory } = useQuery(appGetSCIMDirectory, {
     id: scimDirectoryId,
+  });
+  const { data: organization } = useQuery(appGetOrganization, {
+    id: organizationId,
   });
 
   const groupsPathMatch = useMatch(
@@ -186,7 +190,7 @@ export function ViewSCIMDirectoryPage() {
                 <Link
                   to={`/environments/${environmentId}/organizations/${organizationId}`}
                 >
-                  {organizationId}
+                  {organization?.displayName || organizationId}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

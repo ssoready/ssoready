@@ -11,7 +11,10 @@ import { DocsLink } from "@/components/DocsLink";
 import { useParams } from "react-router";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { useQuery } from "@connectrpc/connect-query";
-import { appGetSCIMRequest } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import {
+  appGetOrganization,
+  appGetSCIMRequest,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
 import {
   SCIMRequest,
   SCIMRequestHTTPMethod,
@@ -38,6 +41,9 @@ export function ViewSCIMRequestPage() {
   const { data: scimRequest } = useQuery(appGetSCIMRequest, {
     id: scimRequestId,
   });
+  const { data: organization } = useQuery(appGetOrganization, {
+    id: organizationId,
+  });
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -50,7 +56,7 @@ export function ViewSCIMRequestPage() {
               <Link
                 to={`/environments/${environmentId}/organizations/${organizationId}`}
               >
-                {organizationId}
+                {organization?.displayName || organizationId}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

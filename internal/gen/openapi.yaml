@@ -794,6 +794,9 @@ components:
                 environmentId:
                     type: string
                     description: The environment this organization belongs to.
+                displayName:
+                    type: string
+                    description: An optional human-friendly name for this organization.
                 externalId:
                     type: string
                     description: |-
