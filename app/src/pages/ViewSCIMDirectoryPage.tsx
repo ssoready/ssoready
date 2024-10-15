@@ -574,7 +574,7 @@ function RequestsCard() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Timestamp</TableHead>
-              <TableHead>Error</TableHead>
+              <TableHead>Result</TableHead>
               <TableHead>Endpoint</TableHead>
             </TableRow>
           </TableHeader>
