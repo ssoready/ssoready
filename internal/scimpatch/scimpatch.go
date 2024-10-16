@@ -27,7 +27,6 @@ func Patch(ops []Operation, v any) error {
 		if len(segments) == 0 {
 			switch op.Op {
 			case "replace":
-				fmt.Println("top-level replace")
 				f.Set(reflect.ValueOf(op.Value))
 				continue
 			case "add":
@@ -35,19 +34,16 @@ func Patch(ops []Operation, v any) error {
 			}
 		}
 
+		f = f.Elem()
 		for _, segment := range segments[:len(segments)-1] {
-			fmt.Println("mapindex", segment)
-			f = f.Elem().MapIndex(reflect.ValueOf(segment))
+			f = f.MapIndex(reflect.ValueOf(segment)).Elem()
 		}
+		key := reflect.ValueOf(segments[len(segments)-1])
 		switch op.Op {
 		case "replace":
-			fmt.Println("set map index", f.Kind(), f)
-			f.Elem().SetMapIndex(reflect.ValueOf(segments[len(segments)-1]), reflect.ValueOf(op.Value))
+			f.SetMapIndex(key, reflect.ValueOf(op.Value))
 		case "add":
-			f = f.Elem().MapIndex(reflect.ValueOf(segments[len(segments)-1]))
-
-			fmt.Println("set append", f.Kind(), f)
-			f.Elem().Set(reflect.Append(f.Elem(), reflect.ValueOf(op.Value)))
+			f.SetMapIndex(key, reflect.Append(f.MapIndex(key).Elem(), reflect.ValueOf(op.Value)))
 		}
 	}
 	return nil
