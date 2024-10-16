@@ -164,7 +164,7 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		if errors.Is(err, store.ErrSCIMUserNotFound) {
 			w.WriteHeader(http.StatusNotFound)
-			return err
+			return nil
 		}
 
 		return err
