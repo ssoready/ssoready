@@ -614,6 +614,13 @@ where scim_directory_id = $3
   and id = $4
 returning *;
 
+-- name: AuthUpdateSCIMUserEmail :one
+update scim_users
+set email = $1
+where scim_directory_id = $2
+  and id = $3
+returning *;
+
 -- name: AuthMarkSCIMUserDeleted :one
 update scim_users
 set deleted = true

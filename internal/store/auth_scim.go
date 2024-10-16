@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
@@ -275,6 +276,49 @@ func (s *Store) AuthUpdateSCIMUser(ctx context.Context, req *AuthUpdateSCIMUserR
 	return &AuthUpdateSCIMUserResponse{
 		SCIMUser: parseSCIMUser(qSCIMUser),
 	}, nil
+}
+
+type AuthUpdateSCIMUserEmailRequest struct {
+	SCIMDirectoryID string
+	SCIMUserID      string
+	Email           string
+}
+
+func (s *Store) AuthUpdateSCIMUserEmail(ctx context.Context, req *AuthUpdateSCIMUserEmailRequest) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	scimUserID, err := idformat.SCIMUser.Parse(req.SCIMUserID)
+	if err != nil {
+		return fmt.Errorf("parse scim user id: %w", err)
+	}
+
+	// check that the user belongs to the scim dir
+	if _, err := q.AuthUpdateSCIMUserEmail(ctx, queries.AuthUpdateSCIMUserEmailParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimUserID,
+		Email:           req.Email,
+	}); err != nil {
+		return fmt.Errorf("update scim user email: %w", err)
+	}
+
+	if _, err := q.AuthMarkSCIMUserDeleted(ctx, scimUserID); err != nil {
+		return fmt.Errorf("mark scim user deleted: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return fmt.Errorf("commit: %w", err)
+	}
+
+	return nil
 }
 
 type AuthDeleteSCIMUserRequest struct {

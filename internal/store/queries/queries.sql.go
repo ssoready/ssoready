@@ -986,6 +986,33 @@ func (q *Queries) AuthUpdateSCIMUser(ctx context.Context, arg AuthUpdateSCIMUser
 	return i, err
 }
 
+const authUpdateSCIMUserEmail = `-- name: AuthUpdateSCIMUserEmail :one
+update scim_users
+set email = $1
+where scim_directory_id = $2
+  and id = $3
+returning id, scim_directory_id, email, deleted, attributes
+`
+
+type AuthUpdateSCIMUserEmailParams struct {
+	Email           string
+	ScimDirectoryID uuid.UUID
+	ID              uuid.UUID
+}
+
+func (q *Queries) AuthUpdateSCIMUserEmail(ctx context.Context, arg AuthUpdateSCIMUserEmailParams) (ScimUser, error) {
+	row := q.db.QueryRow(ctx, authUpdateSCIMUserEmail, arg.Email, arg.ScimDirectoryID, arg.ID)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ScimDirectoryID,
+		&i.Email,
+		&i.Deleted,
+		&i.Attributes,
+	)
+	return i, err
+}
+
 const authUpsertSCIMUser = `-- name: AuthUpsertSCIMUser :one
 insert into scim_users (id, scim_directory_id, email, deleted, attributes)
 values ($1, $2, $3, $4, $5)
