@@ -183,6 +183,33 @@ func (s *Store) AuthGetSCIMUser(ctx context.Context, req *AuthGetSCIMUserRequest
 	return parseSCIMUser(qSCIMUser), nil
 }
 
+type AuthGetSCIMUserIncludeDeletedRequest struct {
+	SCIMDirectoryID string
+	SCIMUserID      string
+}
+
+func (s *Store) AuthGetSCIMUserIncludeDeleted(ctx context.Context, req *AuthGetSCIMUserIncludeDeletedRequest) (*ssoreadyv1.SCIMUser, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	scimUserID, err := idformat.SCIMUser.Parse(req.SCIMUserID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim user id: %w", err)
+	}
+
+	qSCIMUser, err := s.q.AuthGetSCIMUserIncludeDeleted(ctx, queries.AuthGetSCIMUserIncludeDeletedParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimUserID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get scim user include deleted: %w", err)
+	}
+
+	return parseSCIMUser(qSCIMUser), nil
+}
+
 type AuthCreateSCIMUserRequest struct {
 	SCIMUser *ssoreadyv1.SCIMUser
 }

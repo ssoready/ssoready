@@ -14,8 +14,11 @@ type Operation struct {
 
 func Patch(ops []Operation, v any) error {
 	for _, op := range ops {
-		if op.Op != "replace" && op.Op != "add" {
-			return fmt.Errorf("unsupported SCIM PATCH operation: %q", op.Path)
+		opReplace := op.Op == "replace" || op.Op == "Replace"
+		opAdd := op.Op == "add" || op.Op == "Add"
+
+		if !opReplace && !opAdd {
+			return fmt.Errorf("unsupported SCIM PATCH operation: %q", op.Op)
 		}
 
 		var segments []string
@@ -25,11 +28,11 @@ func Patch(ops []Operation, v any) error {
 
 		f := reflect.ValueOf(v).Elem()
 		if len(segments) == 0 {
-			switch op.Op {
-			case "replace":
+			switch {
+			case opReplace:
 				f.Set(reflect.ValueOf(op.Value))
 				continue
-			case "add":
+			case opAdd:
 				return fmt.Errorf("unsupported top-level SCIM add operation")
 			}
 		}
@@ -39,10 +42,10 @@ func Patch(ops []Operation, v any) error {
 			f = f.MapIndex(reflect.ValueOf(segment)).Elem()
 		}
 		key := reflect.ValueOf(segments[len(segments)-1])
-		switch op.Op {
-		case "replace":
+		switch {
+		case opReplace:
 			f.SetMapIndex(key, reflect.ValueOf(op.Value))
-		case "add":
+		case opAdd:
 			f.SetMapIndex(key, reflect.Append(f.MapIndex(key).Elem(), reflect.ValueOf(op.Value)))
 		}
 	}

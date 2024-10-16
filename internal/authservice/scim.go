@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ssoready/ssoready/internal/scimpatch"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -149,14 +150,6 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimUserID := mux.Vars(r)["scim_user_id"]
 
-	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
-		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
-			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return err
-		}
-		return err
-	}
-
 	scimUser, err := s.Store.AuthGetSCIMUser(ctx, &store.AuthGetSCIMUserRequest{
 		SCIMDirectoryID: scimDirectoryID,
 		SCIMUserID:      scimUserID,
@@ -170,9 +163,7 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	resource := scimUser.Attributes.AsMap()
-	resource["id"] = scimUser.Id
-	resource["userName"] = scimUser.Email
+	resource := scimUserToResource(scimUser)
 	resource["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:User"}
 
 	w.Header().Set("Content-Type", "application/scim+json")
@@ -186,14 +177,6 @@ func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
 func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
-
-	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
-		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
-			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return nil
-		}
-		panic(err)
-	}
 
 	defer r.Body.Close()
 	var resource map[string]any
@@ -335,7 +318,7 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 		SCIMUser: &ssoreadyv1.SCIMUser{
 			Id:              scimUserID,
 			ScimDirectoryId: scimDirectoryID,
-			Email:           userName, // todo validate it's an email
+			Email:           userName,
 			Deleted:         !active,
 			Attributes:      attributes,
 		},
@@ -363,20 +346,8 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimUserID := mux.Vars(r)["scim_user_id"]
 
-	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
-		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
-			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return nil
-		}
-		panic(err)
-	}
-
 	var patch struct {
-		Operations []struct {
-			Op    string `json:"op"`
-			Path  string `json:"path"`
-			Value any    `json:"value"`
-		} `json:"operations"`
+		Operations []scimpatch.Operation `json:"operations"`
 	}
 
 	defer r.Body.Close()
@@ -384,67 +355,67 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 		panic(err)
 	}
 
-	// this is how entra deactivates users
-	if len(patch.Operations) == 1 && patch.Operations[0].Op == "Replace" && patch.Operations[0].Path == "active" && patch.Operations[0].Value == "False" {
-		if err := s.Store.AuthDeleteSCIMUser(ctx, &store.AuthDeleteSCIMUserRequest{
-			SCIMDirectoryID: scimDirectoryID,
-			SCIMUserID:      scimUserID,
-		}); err != nil {
+	scimUser, err := s.Store.AuthGetSCIMUserIncludeDeleted(ctx, &store.AuthGetSCIMUserIncludeDeletedRequest{
+		SCIMDirectoryID: scimDirectoryID,
+		SCIMUserID:      scimUserID,
+	})
+	if err != nil {
+		panic(fmt.Errorf("store: get scim user for patch: %w", err))
+	}
+
+	// convert scimUser to its SCIM representation
+	scimUserResource := scimUserToResource(scimUser)
+	scimUserResourceInterface := any(scimUserResource) // scimpatch.Patch needs to take an *any
+
+	// apply patches
+	if err := scimpatch.Patch(patch.Operations, &scimUserResourceInterface); err != nil {
+		panic(fmt.Errorf("store: apply scim patches: %w", err))
+	}
+
+	// convert back to our representation
+	patchedSCIMUser := scimUserFromResource(scimDirectoryID, scimUserID, scimUserResource)
+
+	// validate email
+	emailDomain, err := emailaddr.Parse(patchedSCIMUser.Email)
+	if err != nil {
+		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
+		return &badUsernameError{BadUsername: patchedSCIMUser.Email}
+	}
+
+	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
+	if err != nil {
+		return err
+	}
+
+	var domainOk bool
+	for _, domain := range allowedDomains {
+		if emailDomain == domain {
+			domainOk = true
+		}
+	}
+
+	if !domainOk {
+		msg, err := json.Marshal(map[string]any{
+			"status": http.StatusBadRequest,
+			"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
+		})
+		if err != nil {
 			panic(err)
 		}
 
-		w.WriteHeader(http.StatusNoContent)
-		return nil
+		http.Error(w, string(msg), http.StatusBadRequest)
+		return &emailOutsideOrgDomainsError{BadEmail: patchedSCIMUser.Email}
 	}
 
-	// this is how entra updates user emails
-	if len(patch.Operations) == 1 && patch.Operations[0].Op == "Replace" && patch.Operations[0].Path == "userName" {
-		userName := patch.Operations[0].Value.(string)
-
-		emailDomain, err := emailaddr.Parse(userName)
-		if err != nil {
-			http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
-			return &badUsernameError{BadUsername: userName}
-		}
-
-		allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
-		if err != nil {
-			return err
-		}
-
-		var domainOk bool
-		for _, domain := range allowedDomains {
-			if emailDomain == domain {
-				domainOk = true
-			}
-		}
-
-		if !domainOk {
-			msg, err := json.Marshal(map[string]any{
-				"status": http.StatusBadRequest,
-				"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
-			})
-			if err != nil {
-				panic(err)
-			}
-
-			http.Error(w, string(msg), http.StatusBadRequest)
-			return &emailOutsideOrgDomainsError{BadEmail: userName}
-		}
-
-		if err := s.Store.AuthUpdateSCIMUserEmail(ctx, &store.AuthUpdateSCIMUserEmailRequest{
-			SCIMDirectoryID: scimDirectoryID,
-			SCIMUserID:      scimUserID,
-			Email:           userName,
-		}); err != nil {
-			panic(err)
-		}
-
-		w.WriteHeader(http.StatusNoContent)
-		return nil
+	// write patched scim user back to database
+	if _, err := s.Store.AuthUpdateSCIMUser(ctx, &store.AuthUpdateSCIMUserRequest{
+		SCIMUser: patchedSCIMUser,
+	}); err != nil {
+		return fmt.Errorf("store: update patched user: %w", err)
 	}
 
-	panic("unsupported group PATCH operation type")
+	w.WriteHeader(http.StatusNoContent)
+	return nil
 }
 
 func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) error {
@@ -791,6 +762,48 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	panic("unsupported group PATCH operation type")
+}
+
+// scimUserToResource converts our representation of a scim user to its SCIM HTTP representation
+func scimUserToResource(scimUser *ssoreadyv1.SCIMUser) map[string]any {
+	r := scimUser.Attributes.AsMap()
+	r["id"] = scimUser.Id
+	r["userName"] = scimUser.Email
+
+	// normalize Entra-style "active" property
+	if r["active"] == "True" {
+		r["active"] = true
+	} else if r["active"] == "False" {
+		r["active"] = false
+	}
+
+	return r
+}
+
+func scimUserFromResource(scimDirectoryID, scimUserID string, r map[string]any) *ssoreadyv1.SCIMUser {
+	// if included, id and schemas are not attributes
+	delete(r, "id")
+	delete(r, "schemas")
+
+	// normalize Entra-style "active" property
+	if r["active"] == "True" {
+		r["active"] = true
+	} else if r["active"] == "False" {
+		r["active"] = false
+	}
+
+	attrs, err := structpb.NewStruct(r)
+	if err != nil {
+		panic(fmt.Errorf("convert attributes to structpb: %w", err))
+	}
+
+	return &ssoreadyv1.SCIMUser{
+		Id:              scimUserID,
+		ScimDirectoryId: scimDirectoryID,
+		Email:           r["userName"].(string),
+		Deleted:         !r["active"].(bool),
+		Attributes:      attrs,
+	}
 }
 
 type badUsernameError struct {
