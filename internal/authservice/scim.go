@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"log/slog"
 	"net/http"
@@ -17,6 +15,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/gorilla/mux"
 	"github.com/ssoready/ssoready/internal/emailaddr"
@@ -388,6 +389,53 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 		if err := s.Store.AuthDeleteSCIMUser(ctx, &store.AuthDeleteSCIMUserRequest{
 			SCIMDirectoryID: scimDirectoryID,
 			SCIMUserID:      scimUserID,
+		}); err != nil {
+			panic(err)
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+		return nil
+	}
+
+	// this is how entra updates user emails
+	if len(patch.Operations) == 1 && patch.Operations[0].Op == "Replace" && patch.Operations[0].Path == "userName" {
+		userName := patch.Operations[0].Value.(string)
+
+		emailDomain, err := emailaddr.Parse(userName)
+		if err != nil {
+			http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
+			return &badUsernameError{BadUsername: userName}
+		}
+
+		allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
+		if err != nil {
+			return err
+		}
+
+		var domainOk bool
+		for _, domain := range allowedDomains {
+			if emailDomain == domain {
+				domainOk = true
+			}
+		}
+
+		if !domainOk {
+			msg, err := json.Marshal(map[string]any{
+				"status": http.StatusBadRequest,
+				"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
+			})
+			if err != nil {
+				panic(err)
+			}
+
+			http.Error(w, string(msg), http.StatusBadRequest)
+			return &emailOutsideOrgDomainsError{BadEmail: userName}
+		}
+
+		if err := s.Store.AuthUpdateSCIMUserEmail(ctx, &store.AuthUpdateSCIMUserEmailRequest{
+			SCIMDirectoryID: scimDirectoryID,
+			SCIMUserID:      scimUserID,
+			Email:           userName,
 		}); err != nil {
 			panic(err)
 		}
