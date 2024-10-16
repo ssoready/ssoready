@@ -124,11 +124,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) error {
 
 	resources := []any{} // intentionally initialized to avoid returning `null` instead of `[]`
 	for _, scimUser := range scimUsers.SCIMUsers {
-		resource := scimUser.Attributes.AsMap()
-		resource["id"] = scimUser.Id
-		resource["userName"] = scimUser.Email
-
-		resources = append(resources, resource)
+		resources = append(resources, scimUserToResource(scimUser))
 	}
 
 	w.Header().Set("Content-Type", "application/scim+json")
@@ -227,7 +223,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	scimUser, err := s.Store.AuthCreateSCIMUser(ctx, &store.AuthCreateSCIMUserRequest{
 		SCIMUser: &ssoreadyv1.SCIMUser{
 			ScimDirectoryId: scimDirectoryID,
-			Email:           userName, // todo validate it's an email
+			Email:           userName,
 			Deleted:         false,
 			Attributes:      attributes,
 		},
@@ -239,9 +235,8 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusCreated)
 
-	response := scimUser.SCIMUser.Attributes.AsMap()
+	response := scimUserToResource(scimUser.SCIMUser)
 	response["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:User"}
-	response["id"] = scimUser.SCIMUser.Id
 
 	w.Header().Set("Content-Type", "application/scim+json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -254,14 +249,6 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimUserID := mux.Vars(r)["scim_user_id"]
-
-	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
-		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
-			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return err
-		}
-		return err
-	}
 
 	defer r.Body.Close()
 	var resource map[string]any
@@ -330,9 +317,8 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
 
-	response := scimUser.SCIMUser.Attributes.AsMap()
+	response := scimUserToResource(scimUser.SCIMUser)
 	response["schemas"] = []string{"urn:ietf:params:scim:schemas:core:2.0:User"}
-	response["id"] = scimUser.SCIMUser.Id
 
 	w.Header().Set("Content-Type", "application/scim+json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -422,14 +408,6 @@ func (s *Service) scimDeleteUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
 	scimUserID := mux.Vars(r)["scim_user_id"]
-
-	if err := s.scimVerifyBearerToken(ctx, scimDirectoryID, r.Header.Get("Authorization")); err != nil {
-		if errors.Is(err, store.ErrAuthSCIMBadBearerToken) {
-			http.Error(w, "invalid bearer token", http.StatusUnauthorized)
-			return nil
-		}
-		panic(err)
-	}
 
 	if err := s.Store.AuthDeleteSCIMUser(ctx, &store.AuthDeleteSCIMUserRequest{
 		SCIMDirectoryID: scimDirectoryID,
