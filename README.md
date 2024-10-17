@@ -1,36 +1,79 @@
-<p align="center">
-<img src="https://github.com/ucarion/documentation/blob/main/Frame%2024%20(2).png?raw=true#gh-light-mode-only">
-<img src="https://github.com/ucarion/documentation/blob/main/Frame%2025%20(2).png?raw=true#gh-dark-mode-only">
-</p>
+![](https://i.imgur.com/W5POwyc.png)
 
-# SSOReady
+<div align="center">
+  <h1>SSOReady</h1>
+  <a href="https://github.com/ssoready/ssoready-typescript"><img src="https://img.shields.io/npm/v/ssoready.svg?style=flat&color=ECDC68" /></a>
+  <a href="https://github.com/ssoready/ssoready-python"><img src="https://img.shields.io/pypi/v/ssoready.svg?style=flat" /></a>
+  <a href="https://github.com/ssoready/ssoready/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
+  <a href="https://github.com/ssoready/ssoready/stargazers"><img src="https://img.shields.io/github/stars/ssoready/ssoready?style=flat&logo=github&color=white" /></a>
+  <br />
+  <br />
+  <a href="https://ssoready.com/docs/saml/saml-quickstart">SAML Quickstart</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://ssoready.com/docs/scim/scim-quickstart">SCIM Quickstart</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://ssoready.com">Website</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://ssoready.com/docs">Docs</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://ssoready.com/blog">Blog</a>
+  <br />
+  <hr />
+</div>
 
-[![](https://img.shields.io/badge/Community_Discord-Join_us!-blue?logo=discord&logoColor=white)](https://discord.gg/NJNE7P5NK7)
+## What is SSOReady?
 
-We're building dev tools for implementing Enterprise SSO. You can use SSOReady to add SAML and SCIM support to your
-product this afternoon, for free, forever. You can think of us as an open source alternative to products like Auth0 or
-WorkOS.
+[SSOReady](https://ssoready.com) ([YC
+W24](https://www.ycombinator.com/companies/ssoready)) is an **open-source,
+straightforward** way to add SAML and SCIM support to your product:
 
-* MIT-Licensed
-* Self-hosted, or free at [app.ssoready.com](https://app.ssoready.com)
-* Keeps you in control of your users database
-* [Well-documented](https://ssoready.com/docs), straightforward implementation
-* Supports [SAML](https://ssoready.com/docs/saml/saml-quickstart) and [SCIM](https://ssoready.com/docs/scim/scim-quickstart)
-* [Python](https://github.com/ssoready/ssoready-python) and
-  [TypeScript/Node.js](https://github.com/ssoready/ssoready-typescript) SDKs, more in development
+* **[SSOReady SAML](https://ssoready.com/docs/saml/saml-quickstart)**: Everything you need to add SAML ("Enterprise SSO") to your product today.
+* **[SSOReady SCIM](https://ssoready.com/docs/scim/scim-quickstart)**: Everything you need to add SCIM ("Enterprise Directory Sync") to your product today.
+* **[Self-serve Setup UI](https://ssoready.com/docs/idp-configuration/enabling-self-service-configuration-for-your-customers)**:
+  A hosted UI your customers use to onboard themselves onto SAML and/or
+  SCIM.
 
-## Documentation
+**With SSOReady, you're in control:**
 
-For full documentation, check out https://ssoready.com/docs.
+* SSOReady can be used in *any* application, regardless of what stack you use. We provide
+  [TypeScript](https://github.com/ssoready/ssoready-typescript) and [Python](https://github.com/ssoready/ssoready-python)
+  packages as thin wrappers over a [straightforward HTTP API](https://ssoready.com/docs/api-reference/saml/redeem-saml-access-code). 
+* SSOReady is just an authentication middleware layer. SSOReady doesn’t "own" your users or require any changes to your users database.
+* You can use our cloud-hosted instance or [self-host yourself](https://ssoready.com/docs/self-hosting-ssoready), with the Enterprise plan giving you SLA'd support either way. 
 
-At a super high level, all it takes to add SAML to your product is to:
+**SSOReady can be extended with these products, available on the [Enterprise plan](https://ssoready.com/pricing):**
 
-1. Sign up on [app.ssoready.com](https://app.ssoready.com) for free
-2. From your login page, call the `getRedirectUrl` endpoint when you want a user to sign in with SAML
-3. Your user gets redirected back to a callback page you choose, e.g. `your-app.com/ssoready-callback?saml_access_code=...`. You
-   call `redeemSamlAccessCode` with the `saml_access_code` and log them in.
+* [Custom Domains & Branding](https://ssoready.com/docs/ssoready-concepts/environments#custom-domains): Run
+  SSOReady on a domain you control, and make your entire SAML/SCIM experience on-brand. 
+* [Management API](https://ssoready.com/docs/management-api): Completely automate everything about SAML
+  and SCIM programmatically at scale.
+* [Enterprise Support](https://ssoready.com/pricing): SLA'd support, including for self-hosted deployments.
 
-Calling the `getRedirectUrl` endpoint looks like this in TypeScript:
+## Getting started
+
+The fastest way to get started with SSOReady is to follow the quickstart for
+what you want to add support for:
+
+* [SAML Quickstart](https://ssoready.com/docs/saml/saml-quickstart)
+* [SCIM Quickstart](https://ssoready.com/docs/scim/scim-quickstart)
+
+Most folks implement SAML and SCIM in an afternoon. It only takes two lines of
+code.
+
+## How SSOReady works
+
+This section provides a high-level overview of how SSOReady works, and how it's possible to implement SAML and SCIM in
+just an afternoon. For a more thorough introduction, visit the [SAML
+quickstart](https://ssoready.com/docs/saml/saml-quickstart) or the [SCIM
+quickstart](https://ssoready.com/docs/scim/scim-quickstart).
+
+### SAML in two lines of code
+
+SAML (aka "Enterprise SSO") consists of two steps: an *initiation* step where you redirect your users to their corporate
+identity provider, and a *handling* step where you log them in once you know who they are.
+
+To initiate logins, you'll use SSOReady's [Get SAML Redirect
+URL](https://ssoready.com/docs/api-reference/saml/get-saml-redirect-url) endpoint:
 
 ```typescript
 // this is how you implement a "Sign in with SSO" button
@@ -43,19 +86,41 @@ const { redirectUrl } = await ssoready.saml.getSamlRedirectUrl({
 // redirect the user to `redirectUrl`...
 ```
 
-And `redeemSamlAccessCode` looks like this:
+You can use whatever your preferred ID is for organizations (you might call them "workspaces" or "teams") as your
+`organizationExternalId`. You configure those IDs inside SSOReady, and SSOReady handles keeping track of that
+organization's SAML and SCIM settings.
+
+To handle logins, you'll use SSOReady's [Redeem SAML Access
+Code](https://ssoready.com/docs/api-reference/saml/redeem-saml-access-code) endpoint:
 
 ```typescript
 // this goes in your handler for POST /ssoready-callback
 const { email, organizationExternalId } = await ssoready.saml.redeemSamlAccessCode({
-    samlAccessCode: "saml_access_code_..."
+  samlAccessCode: "saml_access_code_..."
 });
 
 // log the user in as `email` inside `organizationExternalId`...
 ```
 
-Check out [the quickstart](https://ssoready.com/docs) for the details spelled out more concretely. The whole point of
-this project is to make enterprise SSO super obvious and easy.
+You configure the URL for your `/ssoready-callback` endpoint in SSOReady.
+
+### SCIM in one line of code
+
+SCIM (aka "Enterprise directory sync") is basically a way for you to get a list of your customer's employees offline.
+
+To get a customer's employees, you'll use SSOReady's [List SCIM
+Users](https://ssoready.com/docs/api-reference/scim/list-scim-users) endpoint:
+
+```typescript
+const { scimUsers, nextPageToken } = await ssoready.scim.listScimUsers({
+  organizationExternalId: "my_custom_external_id"
+});
+
+// create users from each scimUser
+for (const { email, deleted, attributes } of scimUsers) {
+  // ...
+}
+```
 
 ## Philosophy
 
@@ -76,8 +141,7 @@ totally unacceptable. MIT-licensing the software gives you insurance against us
 ever doing that. Do whatever you want with the code. Fork us if we ever
 misbehave.
 
-## Reporting problems
+## Security
 
-Please feel welcome to use [GitHub issues](https://github.com/ssoready/ssoready/issues) or reach out directly at founders@ssoready.com. We want to know about any bugs you encounter, any features you'd like to request, or any questions you need answered. 
-
-We take security *extremely* seriously. If you become aware of any potential vulnerabilities, **please contact us immediately using security-contact@ssoready.com**. You will receive a response laying out next steps within 24 hours; in most cases, you should expect an immediate response. Do not open a GitHub issue. Do not post on any forums. If you feel unsure about whether something matters, know that we will be very grateful even for a false alarm. 
+If you have a security issue to report, please contact us at
+security@ssoready.com.
