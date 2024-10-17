@@ -771,8 +771,8 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	// jumpcloud adds members to groups via an `add` on members
-	if len(patch.Operations) == 1 && patch.Operations[0].Op == "add" && patch.Operations[0].Path == "members" {
+	// jumpcloud adds members to groups via an `add` on members; entra uses an `Add`
+	if len(patch.Operations) == 1 && (patch.Operations[0].Op == "add" || patch.Operations[0].Op == "Add") && patch.Operations[0].Path == "members" {
 		value := patch.Operations[0].Value.([]any)
 		scimUserID := value[0].(map[string]any)["value"].(string)
 
