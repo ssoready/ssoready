@@ -26,7 +26,7 @@ require (
 	github.com/rs/cors v1.11.0
 	github.com/segmentio/analytics-go/v3 v3.3.0
 	github.com/ssoready/conf v0.0.0-20240508183332-dbc356674c9e
-	github.com/ssoready/prettyuuid v0.0.0-20240423172315-97d04d6848dd
+	github.com/ssoready/prettyuuid v0.0.0-20241023163822-285da46017b3
 	github.com/stretchr/testify v1.9.0
 	github.com/ucarion/cli v0.2.0
 	golang.org/x/crypto v0.25.0
