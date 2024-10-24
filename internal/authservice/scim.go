@@ -351,15 +351,19 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 
 	// convert scimUser to its SCIM representation
 	scimUserResource := scimUserToResource(scimUser)
-	scimUserResourceInterface := any(scimUserResource) // scimpatch.Patch needs to take an *any
+
+	slog.InfoContext(ctx, "patched_user_fetch", "scim_user", scimUser, "scim_user_resource", scimUserResource)
 
 	// apply patches
-	if err := scimpatch.Patch(patch.Operations, &scimUserResourceInterface); err != nil {
-		panic(fmt.Errorf("store: apply scim patches: %w", err))
+	if err := scimpatch.Patch(patch.Operations, &scimUserResource); err != nil {
+		http.Error(w, fmt.Sprintf("unsupported PATCH operation: %s", err.Error()), http.StatusBadRequest)
+		return nil
 	}
 
 	// convert back to our representation
 	patchedSCIMUser := scimUserFromResource(scimDirectoryID, scimUserID, scimUserResource)
+
+	slog.InfoContext(ctx, "patched_user_fetch", "patched_scim_user_resource", scimUserResource, "patched_scim_user", patchedSCIMUser)
 
 	// validate email
 	emailDomain, err := emailaddr.Parse(patchedSCIMUser.Email)
@@ -775,11 +779,15 @@ func scimUserFromResource(scimDirectoryID, scimUserID string, r map[string]any) 
 		panic(fmt.Errorf("convert attributes to structpb: %w", err))
 	}
 
+	// at this point, deliberately throw away non-well-typed values
+	email, _ := r["userName"].(string)
+	active, _ := r["active"].(bool)
+
 	return &ssoreadyv1.SCIMUser{
 		Id:              scimUserID,
 		ScimDirectoryId: scimDirectoryID,
-		Email:           r["userName"].(string),
-		Deleted:         !r["active"].(bool),
+		Email:           email,
+		Deleted:         !active,
 		Attributes:      attrs,
 	}
 }

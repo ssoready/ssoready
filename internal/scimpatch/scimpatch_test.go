@@ -81,6 +81,45 @@ func TestPatch(t *testing.T) {
 			ops:  []scimpatch.Operation{{Op: "Add", Path: "foo", Value: []any{"yyy"}}},
 			out:  map[string]any{"foo": []any{"xxx", "yyy"}},
 		},
+
+		{
+			name: "special-case for entra patches on enterprise user",
+			in: map[string]any{
+				"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": map[string]any{
+					"foo": "xxx",
+				},
+			},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:bar",
+					Value: "yyy",
+				},
+			},
+			out: map[string]any{
+				"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": map[string]any{
+					"foo": "xxx",
+					"bar": "yyy",
+				},
+			},
+		},
+		{
+			// inferred behavior; not seen in wild -- case where there's no sub-":" in the path
+			name: "special-case for entra patches on enterprise user",
+			in:   map[string]any{},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
+					Value: map[string]any{"foo": "xxx"},
+				},
+			},
+			out: map[string]any{
+				"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": map[string]any{
+					"foo": "xxx",
+				},
+			},
+		},
 	}
 
 	for _, tt := range testCases {
