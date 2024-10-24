@@ -27,6 +27,14 @@ func TestParse(t *testing.T) {
 			in:  "jdoe@EXAMPLE.com",
 			out: "example.com",
 		},
+		{
+			in:  "john-doe@example.com",
+			out: "example.com",
+		},
+		{
+			in:  "john-doe.foo@example.com",
+			out: "example.com",
+		},
 	}
 
 	for _, tt := range testCases {
