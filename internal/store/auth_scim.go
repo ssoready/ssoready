@@ -310,10 +310,6 @@ func (s *Store) AuthUpdateSCIMUserEmail(ctx context.Context, req *AuthUpdateSCIM
 		return fmt.Errorf("update scim user email: %w", err)
 	}
 
-	if _, err := q.AuthMarkSCIMUserDeleted(ctx, scimUserID); err != nil {
-		return fmt.Errorf("mark scim user deleted: %w", err)
-	}
-
 	if err := commit(); err != nil {
 		return fmt.Errorf("commit: %w", err)
 	}
