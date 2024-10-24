@@ -10,15 +10,15 @@ import (
 func TestPatch(t *testing.T) {
 	testCases := []struct {
 		name string
-		in   any
+		in   map[string]any
 		ops  []scimpatch.Operation
-		out  any
+		out  map[string]any
 	}{
 		{
 			name: "replace entire value",
 			in:   map[string]any{"foo": "xxx"},
-			ops:  []scimpatch.Operation{{Op: "replace", Path: "", Value: "yyy"}},
-			out:  "yyy",
+			ops:  []scimpatch.Operation{{Op: "replace", Path: "", Value: map[string]any{"bar": "yyy"}}},
+			out:  map[string]any{"bar": "yyy"},
 		},
 		{
 			name: "replace top-level prop",
@@ -48,6 +48,31 @@ func TestPatch(t *testing.T) {
 			name: "add to slice",
 			in:   map[string]any{"foo": []any{"xxx"}},
 			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: "yyy"}},
+			out:  map[string]any{"foo": []any{"xxx", "yyy"}},
+		},
+		{
+			name: "add to empty property",
+			in:   map[string]any{},
+			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: "yyy"}},
+			out:  map[string]any{"foo": "yyy"},
+		},
+		{
+			name: "add to sub-object",
+			in:   map[string]any{"foo": map[string]any{"bar": "xxx"}},
+			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: map[string]any{"baz": "yyy"}}},
+			out:  map[string]any{"foo": map[string]any{"bar": "xxx", "baz": "yyy"}},
+		},
+
+		{
+			name: "uppercase Replace op",
+			in:   map[string]any{"foo": "xxx"},
+			ops:  []scimpatch.Operation{{Op: "Replace", Path: "", Value: map[string]any{"bar": "yyy"}}},
+			out:  map[string]any{"bar": "yyy"},
+		},
+		{
+			name: "uppercase Add op",
+			in:   map[string]any{"foo": []any{"xxx"}},
+			ops:  []scimpatch.Operation{{Op: "Add", Path: "foo", Value: "yyy"}},
 			out:  map[string]any{"foo": []any{"xxx", "yyy"}},
 		},
 	}
