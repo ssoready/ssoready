@@ -47,8 +47,14 @@ func TestPatch(t *testing.T) {
 		{
 			name: "add to slice",
 			in:   map[string]any{"foo": []any{"xxx"}},
-			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: "yyy"}},
+			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: []any{"yyy"}}},
 			out:  map[string]any{"foo": []any{"xxx", "yyy"}},
+		},
+		{
+			name: "add multiple to slice", // this is inferred from spec; unclear if used in the wild
+			in:   map[string]any{"foo": []any{"xxx"}},
+			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: []any{"yyy", "zzz"}}},
+			out:  map[string]any{"foo": []any{"xxx", "yyy", "zzz"}},
 		},
 		{
 			name: "add to empty property",
@@ -72,7 +78,7 @@ func TestPatch(t *testing.T) {
 		{
 			name: "uppercase Add op",
 			in:   map[string]any{"foo": []any{"xxx"}},
-			ops:  []scimpatch.Operation{{Op: "Add", Path: "foo", Value: "yyy"}},
+			ops:  []scimpatch.Operation{{Op: "Add", Path: "foo", Value: []any{"yyy"}}},
 			out:  map[string]any{"foo": []any{"xxx", "yyy"}},
 		},
 	}
