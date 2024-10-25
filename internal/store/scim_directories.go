@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
+	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
@@ -238,6 +239,8 @@ func (s *Store) AppDeleteSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppD
 	}
 	defer rollback()
 
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_directory_id", req.ScimDirectoryId)
+
 	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
 	if err != nil {
 		return nil, fmt.Errorf("parse scim directory id: %w", err)
@@ -250,25 +253,40 @@ func (s *Store) AppDeleteSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppD
 		return nil, fmt.Errorf("get scim directory: %w", err)
 	}
 
-	if err := q.DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx, scimDirID); err != nil {
+	scimUserGroupMembershipsCount, err := q.DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx, scimDirID)
+	if err != nil {
 		return nil, fmt.Errorf("delete user group memberships: %w", err)
 	}
 
-	if err := q.DeleteSCIMGroupsBySCIMDirectory(ctx, scimDirID); err != nil {
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_user_group_memberships_count", scimUserGroupMembershipsCount)
+
+	scimGroupsCount, err := q.DeleteSCIMGroupsBySCIMDirectory(ctx, scimDirID)
+	if err != nil {
 		return nil, fmt.Errorf("delete groups: %w", err)
 	}
 
-	if err := q.DeleteSCIMUsersBySCIMDirectory(ctx, scimDirID); err != nil {
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_groups_count", scimGroupsCount)
+
+	scimUsersCount, err := q.DeleteSCIMUsersBySCIMDirectory(ctx, scimDirID)
+	if err != nil {
 		return nil, fmt.Errorf("delete users: %w", err)
 	}
 
-	if err := q.DeleteSCIMRequestsBySCIMDirectory(ctx, scimDirID); err != nil {
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_user_count", scimUsersCount)
+
+	scimRequestsCount, err := q.DeleteSCIMRequestsBySCIMDirectory(ctx, scimDirID)
+	if err != nil {
 		return nil, fmt.Errorf("delete scim requests: %w", err)
 	}
 
-	if err := q.DeleteSCIMDirectory(ctx, scimDirID); err != nil {
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_request_count", scimRequestsCount)
+
+	scimDirectoriesCount, err := q.DeleteSCIMDirectory(ctx, scimDirID)
+	if err != nil {
 		return nil, fmt.Errorf("delete scim directory: %w", err)
 	}
+
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_directories_count", scimDirectoriesCount)
 
 	if err := commit(); err != nil {
 		return nil, fmt.Errorf("commit: %w", err)

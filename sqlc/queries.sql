@@ -912,27 +912,27 @@ set bearer_token_sha256 = $1
 where id = $2
 returning *;
 
--- name: DeleteSCIMDirectory :exec
+-- name: DeleteSCIMDirectory :execrows
 delete
 from scim_directories
 where id = $1;
 
--- name: DeleteSCIMUsersBySCIMDirectory :exec
+-- name: DeleteSCIMUsersBySCIMDirectory :execrows
 delete
 from scim_users
 where scim_directory_id = $1;
 
--- name: DeleteSCIMGroupsBySCIMDirectory :exec
+-- name: DeleteSCIMGroupsBySCIMDirectory :execrows
 delete
 from scim_groups
 where scim_directory_id = $1;
 
--- name: DeleteSCIMUserGroupMembershipsBySCIMDirectory :exec
+-- name: DeleteSCIMUserGroupMembershipsBySCIMDirectory :execrows
 delete
 from scim_user_group_memberships
 where scim_directory_id = $1;
 
--- name: DeleteSCIMRequestsBySCIMDirectory :exec
+-- name: DeleteSCIMRequestsBySCIMDirectory :execrows
 delete
 from scim_requests
 where scim_directory_id = $1;

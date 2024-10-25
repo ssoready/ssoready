@@ -1637,59 +1637,74 @@ func (q *Queries) DeleteSAMLOAuthClient(ctx context.Context, id uuid.UUID) error
 	return err
 }
 
-const deleteSCIMDirectory = `-- name: DeleteSCIMDirectory :exec
+const deleteSCIMDirectory = `-- name: DeleteSCIMDirectory :execrows
 delete
 from scim_directories
 where id = $1
 `
 
-func (q *Queries) DeleteSCIMDirectory(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSCIMDirectory, id)
-	return err
+func (q *Queries) DeleteSCIMDirectory(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMDirectory, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
-const deleteSCIMGroupsBySCIMDirectory = `-- name: DeleteSCIMGroupsBySCIMDirectory :exec
+const deleteSCIMGroupsBySCIMDirectory = `-- name: DeleteSCIMGroupsBySCIMDirectory :execrows
 delete
 from scim_groups
 where scim_directory_id = $1
 `
 
-func (q *Queries) DeleteSCIMGroupsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSCIMGroupsBySCIMDirectory, scimDirectoryID)
-	return err
+func (q *Queries) DeleteSCIMGroupsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMGroupsBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
-const deleteSCIMRequestsBySCIMDirectory = `-- name: DeleteSCIMRequestsBySCIMDirectory :exec
+const deleteSCIMRequestsBySCIMDirectory = `-- name: DeleteSCIMRequestsBySCIMDirectory :execrows
 delete
 from scim_requests
 where scim_directory_id = $1
 `
 
-func (q *Queries) DeleteSCIMRequestsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSCIMRequestsBySCIMDirectory, scimDirectoryID)
-	return err
+func (q *Queries) DeleteSCIMRequestsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMRequestsBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
-const deleteSCIMUserGroupMembershipsBySCIMDirectory = `-- name: DeleteSCIMUserGroupMembershipsBySCIMDirectory :exec
+const deleteSCIMUserGroupMembershipsBySCIMDirectory = `-- name: DeleteSCIMUserGroupMembershipsBySCIMDirectory :execrows
 delete
 from scim_user_group_memberships
 where scim_directory_id = $1
 `
 
-func (q *Queries) DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSCIMUserGroupMembershipsBySCIMDirectory, scimDirectoryID)
-	return err
+func (q *Queries) DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMUserGroupMembershipsBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
-const deleteSCIMUsersBySCIMDirectory = `-- name: DeleteSCIMUsersBySCIMDirectory :exec
+const deleteSCIMUsersBySCIMDirectory = `-- name: DeleteSCIMUsersBySCIMDirectory :execrows
 delete
 from scim_users
 where scim_directory_id = $1
 `
 
-func (q *Queries) DeleteSCIMUsersBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSCIMUsersBySCIMDirectory, scimDirectoryID)
-	return err
+func (q *Queries) DeleteSCIMUsersBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMUsersBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getAPIKey = `-- name: GetAPIKey :one
