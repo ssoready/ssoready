@@ -642,7 +642,7 @@ function DangerZoneCard() {
       scimDirectoryId,
     });
 
-    toast.success("SCIM Directory deleted");
+    toast.success("SCIM directory deleted");
     navigate(`/environments/${environmentId}/organizations/${organizationId}`);
   };
 

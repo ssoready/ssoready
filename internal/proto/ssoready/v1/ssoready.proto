@@ -215,6 +215,7 @@ service SSOReadyService {
   rpc AppGetSAMLConnection(AppGetSAMLConnectionRequest) returns (SAMLConnection);
   rpc AppCreateSAMLConnection(AppCreateSAMLConnectionRequest) returns (SAMLConnection);
   rpc AppUpdateSAMLConnection(AppUpdateSAMLConnectionRequest) returns (SAMLConnection);
+  rpc AppDeleteSAMLConnection(AppDeleteSAMLConnectionRequest) returns (google.protobuf.Empty);
 
   rpc AppListSAMLFlows(AppListSAMLFlowsRequest) returns (AppListSAMLFlowsResponse);
   rpc AppGetSAMLFlow(AppGetSAMLFlowRequest) returns (SAMLFlow);
@@ -1009,6 +1010,10 @@ message AppCreateSAMLConnectionRequest {
 
 message AppUpdateSAMLConnectionRequest {
   SAMLConnection saml_connection = 1;
+}
+
+message AppDeleteSAMLConnectionRequest {
+  string saml_connection_id = 1;
 }
 
 message AppListSAMLFlowsRequest {

@@ -1,7 +1,9 @@
 import React, { useCallback, useId, useState } from "react";
-import { useMatch, useParams } from "react-router";
+import { useMatch, useNavigate, useParams } from "react-router";
 import { useInfiniteQuery, useQuery } from "@connectrpc/connect-query";
 import {
+  appDeleteSAMLConnection,
+  appDeleteSCIMDirectory,
   appGetOrganization,
   appGetSAMLConnection,
   appListSAMLFlows,
@@ -58,6 +60,7 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -78,6 +81,7 @@ import { Switch } from "@/components/ui/switch";
 import { DocsLink } from "@/components/DocsLink";
 import { Title } from "@/components/Title";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import { toast } from "sonner";
 
 export function ViewSAMLConnectionPage() {
   const { environmentId, organizationId, samlConnectionId } = useParams();
@@ -87,9 +91,6 @@ export function ViewSAMLConnectionPage() {
   const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
-  const flowsPathMatch = useMatch(
-    "/environments/:environmentId/organizations/:organizationId/saml-connections/:samlConnectionId/flows",
-  );
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -159,145 +160,122 @@ export function ViewSAMLConnectionPage() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue={flowsPathMatch ? "flows" : "config"}>
-        <TabsList>
-          <TabsTrigger value="config" asChild>
-            <Link
-              to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}`}
-            >
-              Configuration
-            </Link>
-          </TabsTrigger>
-          <TabsTrigger value="flows" asChild>
-            <Link
-              to={`/environments/${environmentId}/organizations/${organizationId}/saml-connections/${samlConnectionId}/flows`}
-            >
-              Login Flows
-            </Link>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="config">
-          <Card>
-            <CardHeader>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Service Provider Configuration
+            <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#service-provider-configuration" />
+          </CardTitle>
+          <CardDescription>
+            The configuration here is assigned automatically by SSOReady, and
+            needs to be inputted into your customer's Identity Provider by their
+            IT admin.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-5 gap-y-2 items-center">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
+              Assertion Consumer Service (ACS) URL
+              <InfoTooltip>
+                An HTTP endpoint that receives SAML assertions.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#assertion-consumer-service-acs-url" />
+              </InfoTooltip>
+            </div>
+            <div className="text-sm col-span-3">{samlConnection?.spAcsUrl}</div>
+
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
+              SP Entity ID
+              <InfoTooltip>
+                An identifier indicating which application a SAML assertion is
+                intended for.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#sp-entity-id" />
+              </InfoTooltip>
+            </div>
+            <div className="text-sm col-span-3">
+              {samlConnection?.spEntityId}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col space-y-1.5">
               <CardTitle>
-                Service Provider Configuration
-                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#service-provider-configuration" />
+                Identity Provider Configuration
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#identity-provider-configuration" />
               </CardTitle>
               <CardDescription>
-                The configuration here is assigned automatically by SSOReady,
-                and needs to be inputted into your customer's Identity Provider
-                by their IT admin.
+                The configuration here needs to be copied over from the
+                customer's Identity Provider ("IDP").
               </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-5 gap-y-2 items-center">
-                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
-                  Assertion Consumer Service (ACS) URL
-                  <InfoTooltip>
-                    An HTTP endpoint that receives SAML assertions.
-                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#assertion-consumer-service-acs-url" />
-                  </InfoTooltip>
-                </div>
-                <div className="text-sm col-span-3">
-                  {samlConnection?.spAcsUrl}
-                </div>
+            </div>
 
-                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
-                  SP Entity ID
-                  <InfoTooltip>
-                    An identifier indicating which application a SAML assertion
-                    is intended for.
-                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#sp-entity-id" />
-                  </InfoTooltip>
+            {samlConnection && (
+              <EditSAMLConnectionIDPSettingsAlertDialog
+                samlConnection={samlConnection}
+              />
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-5 gap-y-2 items-center">
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
+              IDP Entity ID
+              <InfoTooltip>
+                An identifier the IDP assigns for the SAML connection.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#idp-entity-id" />
+              </InfoTooltip>
+            </div>
+            <div className="text-sm col-span-3">
+              {samlConnection?.idpEntityId || (
+                <div className="text-sm text-muted-foreground">
+                  Not configured
                 </div>
-                <div className="text-sm col-span-3">
-                  {samlConnection?.spEntityId}
+              )}
+            </div>
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
+              Redirect URL
+              <InfoTooltip>
+                An HTTP endpoint on the IDP that accepts SAML initiation
+                requests.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#redirect-url" />
+              </InfoTooltip>
+            </div>
+            <div className="text-sm col-span-3">
+              {samlConnection?.idpRedirectUrl || (
+                <div className="text-sm text-muted-foreground">
+                  Not configured
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              )}
+            </div>
 
-          <Card className="mt-4">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col space-y-1.5">
-                  <CardTitle>
-                    Identity Provider Configuration
-                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#identity-provider-configuration" />
-                  </CardTitle>
-                  <CardDescription>
-                    The configuration here needs to be copied over from the
-                    customer's Identity Provider ("IDP").
-                  </CardDescription>
+            <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2 self-start">
+              Certificate
+              <InfoTooltip>
+                An X.509 certificate the IDP uses to sign assertions.
+                <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#certificate" />
+              </InfoTooltip>
+            </div>
+            <div className="text-sm col-span-3">
+              {samlConnection?.idpCertificate ? (
+                <div className="bg-black rounded-lg px-6 py-4 mt-4 inline-block">
+                  <code className="text-sm text-white">
+                    <pre>{samlConnection?.idpCertificate}</pre>
+                  </code>
                 </div>
-
-                {samlConnection && (
-                  <EditSAMLConnectionIDPSettingsAlertDialog
-                    samlConnection={samlConnection}
-                  />
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-5 gap-y-2 items-center">
-                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
-                  IDP Entity ID
-                  <InfoTooltip>
-                    An identifier the IDP assigns for the SAML connection.
-                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#idp-entity-id" />
-                  </InfoTooltip>
+              ) : (
+                <div className="text-sm text-muted-foreground">
+                  Not configured
                 </div>
-                <div className="text-sm col-span-3">
-                  {samlConnection?.idpEntityId || (
-                    <div className="text-sm text-muted-foreground">
-                      Not configured
-                    </div>
-                  )}
-                </div>
-                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2">
-                  Redirect URL
-                  <InfoTooltip>
-                    An HTTP endpoint on the IDP that accepts SAML initiation
-                    requests.
-                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#redirect-url" />
-                  </InfoTooltip>
-                </div>
-                <div className="text-sm col-span-3">
-                  {samlConnection?.idpRedirectUrl || (
-                    <div className="text-sm text-muted-foreground">
-                      Not configured
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-sm col-span-2 text-muted-foreground flex items-center gap-x-2 self-start">
-                  Certificate
-                  <InfoTooltip>
-                    An X.509 certificate the IDP uses to sign assertions.
-                    <DocsLink to="https://ssoready.com/docs/ssoready-concepts/saml-connections#certificate" />
-                  </InfoTooltip>
-                </div>
-                <div className="text-sm col-span-3">
-                  {samlConnection?.idpCertificate ? (
-                    <div className="bg-black rounded-lg px-6 py-4 mt-4 inline-block">
-                      <code className="text-sm text-white">
-                        <pre>{samlConnection?.idpCertificate}</pre>
-                      </code>
-                    </div>
-                  ) : (
-                    <div className="text-sm text-muted-foreground">
-                      Not configured
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="flows">
-          <ListLoginFlowsTabContent />
-        </TabsContent>
-      </Tabs>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <ListLoginFlowsTabContent />
+      <DangerZoneCard />
     </div>
   );
 }
@@ -649,5 +627,69 @@ function EditSAMLConnectionIDPSettingsAlertDialog({
         </Form>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function DangerZoneCard() {
+  const { environmentId, organizationId, samlConnectionId } = useParams();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const handleDelete = () => {
+    setConfirmDeleteOpen(true);
+  };
+
+  const deleteSAMLConnectionMutation = useMutation(appDeleteSAMLConnection);
+  const navigate = useNavigate();
+  const handleConfirmDelete = async () => {
+    await deleteSAMLConnectionMutation.mutateAsync({
+      samlConnectionId,
+    });
+
+    toast.success("SAML connection deleted");
+    navigate(`/environments/${environmentId}/organizations/${organizationId}`);
+  };
+
+  return (
+    <>
+      <AlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete SAML Connection?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deleting a SAML connection cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Permanently Delete SAML Connection
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Card className="border-destructive">
+        <CardHeader>
+          <CardTitle>Danger Zone</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-sm font-semibold">
+                Delete SAML Connection
+              </div>
+              <p className="text-sm">
+                Delete this SAML Connection. This cannot be undone.
+              </p>
+            </div>
+
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete SAML Connection
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

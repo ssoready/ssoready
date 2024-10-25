@@ -77,6 +77,7 @@ const (
 	SSOReadyService_AppGetSAMLConnection_FullMethodName                             = "/ssoready.v1.SSOReadyService/AppGetSAMLConnection"
 	SSOReadyService_AppCreateSAMLConnection_FullMethodName                          = "/ssoready.v1.SSOReadyService/AppCreateSAMLConnection"
 	SSOReadyService_AppUpdateSAMLConnection_FullMethodName                          = "/ssoready.v1.SSOReadyService/AppUpdateSAMLConnection"
+	SSOReadyService_AppDeleteSAMLConnection_FullMethodName                          = "/ssoready.v1.SSOReadyService/AppDeleteSAMLConnection"
 	SSOReadyService_AppListSAMLFlows_FullMethodName                                 = "/ssoready.v1.SSOReadyService/AppListSAMLFlows"
 	SSOReadyService_AppGetSAMLFlow_FullMethodName                                   = "/ssoready.v1.SSOReadyService/AppGetSAMLFlow"
 	SSOReadyService_ParseSAMLMetadata_FullMethodName                                = "/ssoready.v1.SSOReadyService/ParseSAMLMetadata"
@@ -201,6 +202,7 @@ type SSOReadyServiceClient interface {
 	AppGetSAMLConnection(ctx context.Context, in *AppGetSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	AppCreateSAMLConnection(ctx context.Context, in *AppCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
 	AppUpdateSAMLConnection(ctx context.Context, in *AppUpdateSAMLConnectionRequest, opts ...grpc.CallOption) (*SAMLConnection, error)
+	AppDeleteSAMLConnection(ctx context.Context, in *AppDeleteSAMLConnectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AppListSAMLFlows(ctx context.Context, in *AppListSAMLFlowsRequest, opts ...grpc.CallOption) (*AppListSAMLFlowsResponse, error)
 	AppGetSAMLFlow(ctx context.Context, in *AppGetSAMLFlowRequest, opts ...grpc.CallOption) (*SAMLFlow, error)
 	ParseSAMLMetadata(ctx context.Context, in *ParseSAMLMetadataRequest, opts ...grpc.CallOption) (*ParseSAMLMetadataResponse, error)
@@ -810,6 +812,16 @@ func (c *sSOReadyServiceClient) AppUpdateSAMLConnection(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AppDeleteSAMLConnection(ctx context.Context, in *AppDeleteSAMLConnectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppDeleteSAMLConnection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AppListSAMLFlows(ctx context.Context, in *AppListSAMLFlowsRequest, opts ...grpc.CallOption) (*AppListSAMLFlowsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppListSAMLFlowsResponse)
@@ -1193,6 +1205,7 @@ type SSOReadyServiceServer interface {
 	AppGetSAMLConnection(context.Context, *AppGetSAMLConnectionRequest) (*SAMLConnection, error)
 	AppCreateSAMLConnection(context.Context, *AppCreateSAMLConnectionRequest) (*SAMLConnection, error)
 	AppUpdateSAMLConnection(context.Context, *AppUpdateSAMLConnectionRequest) (*SAMLConnection, error)
+	AppDeleteSAMLConnection(context.Context, *AppDeleteSAMLConnectionRequest) (*emptypb.Empty, error)
 	AppListSAMLFlows(context.Context, *AppListSAMLFlowsRequest) (*AppListSAMLFlowsResponse, error)
 	AppGetSAMLFlow(context.Context, *AppGetSAMLFlowRequest) (*SAMLFlow, error)
 	ParseSAMLMetadata(context.Context, *ParseSAMLMetadataRequest) (*ParseSAMLMetadataResponse, error)
@@ -1402,6 +1415,9 @@ func (UnimplementedSSOReadyServiceServer) AppCreateSAMLConnection(context.Contex
 }
 func (UnimplementedSSOReadyServiceServer) AppUpdateSAMLConnection(context.Context, *AppUpdateSAMLConnectionRequest) (*SAMLConnection, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppUpdateSAMLConnection not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppDeleteSAMLConnection(context.Context, *AppDeleteSAMLConnectionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppDeleteSAMLConnection not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AppListSAMLFlows(context.Context, *AppListSAMLFlowsRequest) (*AppListSAMLFlowsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppListSAMLFlows not implemented")
@@ -2537,6 +2553,24 @@ func _SSOReadyService_AppUpdateSAMLConnection_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AppDeleteSAMLConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppDeleteSAMLConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppDeleteSAMLConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppDeleteSAMLConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppDeleteSAMLConnection(ctx, req.(*AppDeleteSAMLConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AppListSAMLFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AppListSAMLFlowsRequest)
 	if err := dec(in); err != nil {
@@ -3293,6 +3327,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppUpdateSAMLConnection",
 			Handler:    _SSOReadyService_AppUpdateSAMLConnection_Handler,
+		},
+		{
+			MethodName: "AppDeleteSAMLConnection",
+			Handler:    _SSOReadyService_AppDeleteSAMLConnection_Handler,
 		},
 		{
 			MethodName: "AppListSAMLFlows",

@@ -1598,6 +1598,28 @@ func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID 
 	return err
 }
 
+const deleteSAMLConnection = `-- name: DeleteSAMLConnection :exec
+delete
+from saml_connections
+where id = $1
+`
+
+func (q *Queries) DeleteSAMLConnection(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteSAMLConnection, id)
+	return err
+}
+
+const deleteSAMLFlowsBySAMLConnectionID = `-- name: DeleteSAMLFlowsBySAMLConnectionID :exec
+delete
+from saml_flows
+where saml_connection_id = $1
+`
+
+func (q *Queries) DeleteSAMLFlowsBySAMLConnectionID(ctx context.Context, samlConnectionID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteSAMLFlowsBySAMLConnectionID, samlConnectionID)
+	return err
+}
+
 const deleteSAMLOAuthClient = `-- name: DeleteSAMLOAuthClient :exec
 delete
 from saml_oauth_clients

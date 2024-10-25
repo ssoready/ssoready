@@ -6241,6 +6241,51 @@ func (x *AppUpdateSAMLConnectionRequest) GetSamlConnection() *SAMLConnection {
 	return nil
 }
 
+type AppDeleteSAMLConnectionRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SamlConnectionId string `protobuf:"bytes,1,opt,name=saml_connection_id,json=samlConnectionId,proto3" json:"saml_connection_id,omitempty"`
+}
+
+func (x *AppDeleteSAMLConnectionRequest) Reset() {
+	*x = AppDeleteSAMLConnectionRequest{}
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[106]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AppDeleteSAMLConnectionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppDeleteSAMLConnectionRequest) ProtoMessage() {}
+
+func (x *AppDeleteSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[106]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppDeleteSAMLConnectionRequest.ProtoReflect.Descriptor instead.
+func (*AppDeleteSAMLConnectionRequest) Descriptor() ([]byte, []int) {
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{106}
+}
+
+func (x *AppDeleteSAMLConnectionRequest) GetSamlConnectionId() string {
+	if x != nil {
+		return x.SamlConnectionId
+	}
+	return ""
+}
+
 type AppListSAMLFlowsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -6252,7 +6297,7 @@ type AppListSAMLFlowsRequest struct {
 
 func (x *AppListSAMLFlowsRequest) Reset() {
 	*x = AppListSAMLFlowsRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[106]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6264,7 +6309,7 @@ func (x *AppListSAMLFlowsRequest) String() string {
 func (*AppListSAMLFlowsRequest) ProtoMessage() {}
 
 func (x *AppListSAMLFlowsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[106]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6277,7 +6322,7 @@ func (x *AppListSAMLFlowsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSAMLFlowsRequest.ProtoReflect.Descriptor instead.
 func (*AppListSAMLFlowsRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{106}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *AppListSAMLFlowsRequest) GetSamlConnectionId() string {
@@ -6305,7 +6350,7 @@ type AppListSAMLFlowsResponse struct {
 
 func (x *AppListSAMLFlowsResponse) Reset() {
 	*x = AppListSAMLFlowsResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[107]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6317,7 +6362,7 @@ func (x *AppListSAMLFlowsResponse) String() string {
 func (*AppListSAMLFlowsResponse) ProtoMessage() {}
 
 func (x *AppListSAMLFlowsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[107]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6330,7 +6375,7 @@ func (x *AppListSAMLFlowsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSAMLFlowsResponse.ProtoReflect.Descriptor instead.
 func (*AppListSAMLFlowsResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{107}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *AppListSAMLFlowsResponse) GetSamlFlows() []*SAMLFlow {
@@ -6357,7 +6402,7 @@ type AppGetSAMLFlowRequest struct {
 
 func (x *AppGetSAMLFlowRequest) Reset() {
 	*x = AppGetSAMLFlowRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[108]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6369,7 +6414,7 @@ func (x *AppGetSAMLFlowRequest) String() string {
 func (*AppGetSAMLFlowRequest) ProtoMessage() {}
 
 func (x *AppGetSAMLFlowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[108]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6382,7 +6427,7 @@ func (x *AppGetSAMLFlowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppGetSAMLFlowRequest.ProtoReflect.Descriptor instead.
 func (*AppGetSAMLFlowRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{108}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *AppGetSAMLFlowRequest) GetId() string {
@@ -6402,7 +6447,7 @@ type ParseSAMLMetadataRequest struct {
 
 func (x *ParseSAMLMetadataRequest) Reset() {
 	*x = ParseSAMLMetadataRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[109]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6414,7 +6459,7 @@ func (x *ParseSAMLMetadataRequest) String() string {
 func (*ParseSAMLMetadataRequest) ProtoMessage() {}
 
 func (x *ParseSAMLMetadataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[109]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6427,7 +6472,7 @@ func (x *ParseSAMLMetadataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseSAMLMetadataRequest.ProtoReflect.Descriptor instead.
 func (*ParseSAMLMetadataRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{109}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *ParseSAMLMetadataRequest) GetUrl() string {
@@ -6449,7 +6494,7 @@ type ParseSAMLMetadataResponse struct {
 
 func (x *ParseSAMLMetadataResponse) Reset() {
 	*x = ParseSAMLMetadataResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[110]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6461,7 +6506,7 @@ func (x *ParseSAMLMetadataResponse) String() string {
 func (*ParseSAMLMetadataResponse) ProtoMessage() {}
 
 func (x *ParseSAMLMetadataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[110]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6474,7 +6519,7 @@ func (x *ParseSAMLMetadataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseSAMLMetadataResponse.ProtoReflect.Descriptor instead.
 func (*ParseSAMLMetadataResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{110}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *ParseSAMLMetadataResponse) GetIdpRedirectUrl() string {
@@ -6509,7 +6554,7 @@ type AppListSCIMDirectoriesRequest struct {
 
 func (x *AppListSCIMDirectoriesRequest) Reset() {
 	*x = AppListSCIMDirectoriesRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[111]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6521,7 +6566,7 @@ func (x *AppListSCIMDirectoriesRequest) String() string {
 func (*AppListSCIMDirectoriesRequest) ProtoMessage() {}
 
 func (x *AppListSCIMDirectoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[111]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6534,7 +6579,7 @@ func (x *AppListSCIMDirectoriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMDirectoriesRequest.ProtoReflect.Descriptor instead.
 func (*AppListSCIMDirectoriesRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{111}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *AppListSCIMDirectoriesRequest) GetOrganizationId() string {
@@ -6562,7 +6607,7 @@ type AppListSCIMDirectoriesResponse struct {
 
 func (x *AppListSCIMDirectoriesResponse) Reset() {
 	*x = AppListSCIMDirectoriesResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[112]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6574,7 +6619,7 @@ func (x *AppListSCIMDirectoriesResponse) String() string {
 func (*AppListSCIMDirectoriesResponse) ProtoMessage() {}
 
 func (x *AppListSCIMDirectoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[112]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6587,7 +6632,7 @@ func (x *AppListSCIMDirectoriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMDirectoriesResponse.ProtoReflect.Descriptor instead.
 func (*AppListSCIMDirectoriesResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{112}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *AppListSCIMDirectoriesResponse) GetScimDirectories() []*SCIMDirectory {
@@ -6614,7 +6659,7 @@ type AppGetSCIMDirectoryRequest struct {
 
 func (x *AppGetSCIMDirectoryRequest) Reset() {
 	*x = AppGetSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[113]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6626,7 +6671,7 @@ func (x *AppGetSCIMDirectoryRequest) String() string {
 func (*AppGetSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AppGetSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[113]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6639,7 +6684,7 @@ func (x *AppGetSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppGetSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AppGetSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{113}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *AppGetSCIMDirectoryRequest) GetId() string {
@@ -6659,7 +6704,7 @@ type AppCreateSCIMDirectoryRequest struct {
 
 func (x *AppCreateSCIMDirectoryRequest) Reset() {
 	*x = AppCreateSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[114]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6671,7 +6716,7 @@ func (x *AppCreateSCIMDirectoryRequest) String() string {
 func (*AppCreateSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AppCreateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[114]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6684,7 +6729,7 @@ func (x *AppCreateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppCreateSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AppCreateSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{114}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{115}
 }
 
 func (x *AppCreateSCIMDirectoryRequest) GetScimDirectory() *SCIMDirectory {
@@ -6704,7 +6749,7 @@ type AppUpdateSCIMDirectoryRequest struct {
 
 func (x *AppUpdateSCIMDirectoryRequest) Reset() {
 	*x = AppUpdateSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[115]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6716,7 +6761,7 @@ func (x *AppUpdateSCIMDirectoryRequest) String() string {
 func (*AppUpdateSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AppUpdateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[115]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6729,7 +6774,7 @@ func (x *AppUpdateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppUpdateSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AppUpdateSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{115}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *AppUpdateSCIMDirectoryRequest) GetScimDirectory() *SCIMDirectory {
@@ -6749,7 +6794,7 @@ type AppRotateSCIMDirectoryBearerTokenRequest struct {
 
 func (x *AppRotateSCIMDirectoryBearerTokenRequest) Reset() {
 	*x = AppRotateSCIMDirectoryBearerTokenRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[116]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6761,7 +6806,7 @@ func (x *AppRotateSCIMDirectoryBearerTokenRequest) String() string {
 func (*AppRotateSCIMDirectoryBearerTokenRequest) ProtoMessage() {}
 
 func (x *AppRotateSCIMDirectoryBearerTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[116]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6774,7 +6819,7 @@ func (x *AppRotateSCIMDirectoryBearerTokenRequest) ProtoReflect() protoreflect.M
 
 // Deprecated: Use AppRotateSCIMDirectoryBearerTokenRequest.ProtoReflect.Descriptor instead.
 func (*AppRotateSCIMDirectoryBearerTokenRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{116}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *AppRotateSCIMDirectoryBearerTokenRequest) GetScimDirectoryId() string {
@@ -6794,7 +6839,7 @@ type AppDeleteSCIMDirectoryRequest struct {
 
 func (x *AppDeleteSCIMDirectoryRequest) Reset() {
 	*x = AppDeleteSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[117]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6806,7 +6851,7 @@ func (x *AppDeleteSCIMDirectoryRequest) String() string {
 func (*AppDeleteSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AppDeleteSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[117]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6819,7 +6864,7 @@ func (x *AppDeleteSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppDeleteSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AppDeleteSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{117}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{118}
 }
 
 func (x *AppDeleteSCIMDirectoryRequest) GetScimDirectoryId() string {
@@ -6839,7 +6884,7 @@ type AppRotateSCIMDirectoryBearerTokenResponse struct {
 
 func (x *AppRotateSCIMDirectoryBearerTokenResponse) Reset() {
 	*x = AppRotateSCIMDirectoryBearerTokenResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[118]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6851,7 +6896,7 @@ func (x *AppRotateSCIMDirectoryBearerTokenResponse) String() string {
 func (*AppRotateSCIMDirectoryBearerTokenResponse) ProtoMessage() {}
 
 func (x *AppRotateSCIMDirectoryBearerTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[118]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6864,7 +6909,7 @@ func (x *AppRotateSCIMDirectoryBearerTokenResponse) ProtoReflect() protoreflect.
 
 // Deprecated: Use AppRotateSCIMDirectoryBearerTokenResponse.ProtoReflect.Descriptor instead.
 func (*AppRotateSCIMDirectoryBearerTokenResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{118}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{119}
 }
 
 func (x *AppRotateSCIMDirectoryBearerTokenResponse) GetBearerToken() string {
@@ -6886,7 +6931,7 @@ type AppListSCIMUsersRequest struct {
 
 func (x *AppListSCIMUsersRequest) Reset() {
 	*x = AppListSCIMUsersRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[119]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6898,7 +6943,7 @@ func (x *AppListSCIMUsersRequest) String() string {
 func (*AppListSCIMUsersRequest) ProtoMessage() {}
 
 func (x *AppListSCIMUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[119]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6911,7 +6956,7 @@ func (x *AppListSCIMUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMUsersRequest.ProtoReflect.Descriptor instead.
 func (*AppListSCIMUsersRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{119}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{120}
 }
 
 func (x *AppListSCIMUsersRequest) GetScimDirectoryId() string {
@@ -6946,7 +6991,7 @@ type AppListSCIMUsersResponse struct {
 
 func (x *AppListSCIMUsersResponse) Reset() {
 	*x = AppListSCIMUsersResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[120]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6958,7 +7003,7 @@ func (x *AppListSCIMUsersResponse) String() string {
 func (*AppListSCIMUsersResponse) ProtoMessage() {}
 
 func (x *AppListSCIMUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[120]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6971,7 +7016,7 @@ func (x *AppListSCIMUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMUsersResponse.ProtoReflect.Descriptor instead.
 func (*AppListSCIMUsersResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{120}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{121}
 }
 
 func (x *AppListSCIMUsersResponse) GetScimUsers() []*SCIMUser {
@@ -6998,7 +7043,7 @@ type AppGetSCIMUserRequest struct {
 
 func (x *AppGetSCIMUserRequest) Reset() {
 	*x = AppGetSCIMUserRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[121]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7010,7 +7055,7 @@ func (x *AppGetSCIMUserRequest) String() string {
 func (*AppGetSCIMUserRequest) ProtoMessage() {}
 
 func (x *AppGetSCIMUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[121]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7023,7 +7068,7 @@ func (x *AppGetSCIMUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppGetSCIMUserRequest.ProtoReflect.Descriptor instead.
 func (*AppGetSCIMUserRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{121}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *AppGetSCIMUserRequest) GetId() string {
@@ -7045,7 +7090,7 @@ type AppListSCIMGroupsRequest struct {
 
 func (x *AppListSCIMGroupsRequest) Reset() {
 	*x = AppListSCIMGroupsRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[122]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7057,7 +7102,7 @@ func (x *AppListSCIMGroupsRequest) String() string {
 func (*AppListSCIMGroupsRequest) ProtoMessage() {}
 
 func (x *AppListSCIMGroupsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[122]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7070,7 +7115,7 @@ func (x *AppListSCIMGroupsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMGroupsRequest.ProtoReflect.Descriptor instead.
 func (*AppListSCIMGroupsRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{122}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *AppListSCIMGroupsRequest) GetScimDirectoryId() string {
@@ -7104,7 +7149,7 @@ type AppGetSCIMGroupRequest struct {
 
 func (x *AppGetSCIMGroupRequest) Reset() {
 	*x = AppGetSCIMGroupRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[123]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7116,7 +7161,7 @@ func (x *AppGetSCIMGroupRequest) String() string {
 func (*AppGetSCIMGroupRequest) ProtoMessage() {}
 
 func (x *AppGetSCIMGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[123]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7129,7 +7174,7 @@ func (x *AppGetSCIMGroupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppGetSCIMGroupRequest.ProtoReflect.Descriptor instead.
 func (*AppGetSCIMGroupRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{123}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *AppGetSCIMGroupRequest) GetId() string {
@@ -7150,7 +7195,7 @@ type AppListSCIMGroupsResponse struct {
 
 func (x *AppListSCIMGroupsResponse) Reset() {
 	*x = AppListSCIMGroupsResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[124]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7162,7 +7207,7 @@ func (x *AppListSCIMGroupsResponse) String() string {
 func (*AppListSCIMGroupsResponse) ProtoMessage() {}
 
 func (x *AppListSCIMGroupsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[124]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7175,7 +7220,7 @@ func (x *AppListSCIMGroupsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMGroupsResponse.ProtoReflect.Descriptor instead.
 func (*AppListSCIMGroupsResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{124}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *AppListSCIMGroupsResponse) GetScimGroups() []*SCIMGroup {
@@ -7203,7 +7248,7 @@ type AppListSCIMRequestsRequest struct {
 
 func (x *AppListSCIMRequestsRequest) Reset() {
 	*x = AppListSCIMRequestsRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[125]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[126]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7215,7 +7260,7 @@ func (x *AppListSCIMRequestsRequest) String() string {
 func (*AppListSCIMRequestsRequest) ProtoMessage() {}
 
 func (x *AppListSCIMRequestsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[125]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[126]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7228,7 +7273,7 @@ func (x *AppListSCIMRequestsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMRequestsRequest.ProtoReflect.Descriptor instead.
 func (*AppListSCIMRequestsRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{125}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *AppListSCIMRequestsRequest) GetScimDirectoryId() string {
@@ -7256,7 +7301,7 @@ type AppListSCIMRequestsResponse struct {
 
 func (x *AppListSCIMRequestsResponse) Reset() {
 	*x = AppListSCIMRequestsResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[126]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[127]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7268,7 +7313,7 @@ func (x *AppListSCIMRequestsResponse) String() string {
 func (*AppListSCIMRequestsResponse) ProtoMessage() {}
 
 func (x *AppListSCIMRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[126]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[127]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7281,7 +7326,7 @@ func (x *AppListSCIMRequestsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppListSCIMRequestsResponse.ProtoReflect.Descriptor instead.
 func (*AppListSCIMRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{126}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *AppListSCIMRequestsResponse) GetScimRequests() []*SCIMRequest {
@@ -7308,7 +7353,7 @@ type AppGetSCIMRequestRequest struct {
 
 func (x *AppGetSCIMRequestRequest) Reset() {
 	*x = AppGetSCIMRequestRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[127]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[128]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7320,7 +7365,7 @@ func (x *AppGetSCIMRequestRequest) String() string {
 func (*AppGetSCIMRequestRequest) ProtoMessage() {}
 
 func (x *AppGetSCIMRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[127]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[128]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7333,7 +7378,7 @@ func (x *AppGetSCIMRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppGetSCIMRequestRequest.ProtoReflect.Descriptor instead.
 func (*AppGetSCIMRequestRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{127}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *AppGetSCIMRequestRequest) GetId() string {
@@ -7353,7 +7398,7 @@ type AppGetSCIMRequestResponse struct {
 
 func (x *AppGetSCIMRequestResponse) Reset() {
 	*x = AppGetSCIMRequestResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[128]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[129]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7365,7 +7410,7 @@ func (x *AppGetSCIMRequestResponse) String() string {
 func (*AppGetSCIMRequestResponse) ProtoMessage() {}
 
 func (x *AppGetSCIMRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[128]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[129]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7378,7 +7423,7 @@ func (x *AppGetSCIMRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppGetSCIMRequestResponse.ProtoReflect.Descriptor instead.
 func (*AppGetSCIMRequestResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{128}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *AppGetSCIMRequestResponse) GetScimRequest() *SCIMRequest {
@@ -7398,7 +7443,7 @@ type AdminRedeemOneTimeTokenRequest struct {
 
 func (x *AdminRedeemOneTimeTokenRequest) Reset() {
 	*x = AdminRedeemOneTimeTokenRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[129]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7410,7 +7455,7 @@ func (x *AdminRedeemOneTimeTokenRequest) String() string {
 func (*AdminRedeemOneTimeTokenRequest) ProtoMessage() {}
 
 func (x *AdminRedeemOneTimeTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[129]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7423,7 +7468,7 @@ func (x *AdminRedeemOneTimeTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminRedeemOneTimeTokenRequest.ProtoReflect.Descriptor instead.
 func (*AdminRedeemOneTimeTokenRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{129}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *AdminRedeemOneTimeTokenRequest) GetOneTimeToken() string {
@@ -7443,7 +7488,7 @@ type AdminRedeemOneTimeTokenResponse struct {
 
 func (x *AdminRedeemOneTimeTokenResponse) Reset() {
 	*x = AdminRedeemOneTimeTokenResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[130]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7455,7 +7500,7 @@ func (x *AdminRedeemOneTimeTokenResponse) String() string {
 func (*AdminRedeemOneTimeTokenResponse) ProtoMessage() {}
 
 func (x *AdminRedeemOneTimeTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[130]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7468,7 +7513,7 @@ func (x *AdminRedeemOneTimeTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminRedeemOneTimeTokenResponse.ProtoReflect.Descriptor instead.
 func (*AdminRedeemOneTimeTokenResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{130}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{131}
 }
 
 func (x *AdminRedeemOneTimeTokenResponse) GetAdminSessionToken() string {
@@ -7486,7 +7531,7 @@ type AdminWhoamiRequest struct {
 
 func (x *AdminWhoamiRequest) Reset() {
 	*x = AdminWhoamiRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[131]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7498,7 +7543,7 @@ func (x *AdminWhoamiRequest) String() string {
 func (*AdminWhoamiRequest) ProtoMessage() {}
 
 func (x *AdminWhoamiRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[131]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7511,7 +7556,7 @@ func (x *AdminWhoamiRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminWhoamiRequest.ProtoReflect.Descriptor instead.
 func (*AdminWhoamiRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{131}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{132}
 }
 
 type AdminWhoamiResponse struct {
@@ -7528,7 +7573,7 @@ type AdminWhoamiResponse struct {
 
 func (x *AdminWhoamiResponse) Reset() {
 	*x = AdminWhoamiResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[132]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[133]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7540,7 +7585,7 @@ func (x *AdminWhoamiResponse) String() string {
 func (*AdminWhoamiResponse) ProtoMessage() {}
 
 func (x *AdminWhoamiResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[132]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[133]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7553,7 +7598,7 @@ func (x *AdminWhoamiResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminWhoamiResponse.ProtoReflect.Descriptor instead.
 func (*AdminWhoamiResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{132}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{133}
 }
 
 func (x *AdminWhoamiResponse) GetCanManageSaml() bool {
@@ -7601,7 +7646,7 @@ type AdminListSAMLConnectionsRequest struct {
 
 func (x *AdminListSAMLConnectionsRequest) Reset() {
 	*x = AdminListSAMLConnectionsRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[133]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[134]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7613,7 +7658,7 @@ func (x *AdminListSAMLConnectionsRequest) String() string {
 func (*AdminListSAMLConnectionsRequest) ProtoMessage() {}
 
 func (x *AdminListSAMLConnectionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[133]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[134]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7626,7 +7671,7 @@ func (x *AdminListSAMLConnectionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSAMLConnectionsRequest.ProtoReflect.Descriptor instead.
 func (*AdminListSAMLConnectionsRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{133}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{134}
 }
 
 func (x *AdminListSAMLConnectionsRequest) GetPageToken() string {
@@ -7647,7 +7692,7 @@ type AdminListSAMLConnectionsResponse struct {
 
 func (x *AdminListSAMLConnectionsResponse) Reset() {
 	*x = AdminListSAMLConnectionsResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[134]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[135]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7659,7 +7704,7 @@ func (x *AdminListSAMLConnectionsResponse) String() string {
 func (*AdminListSAMLConnectionsResponse) ProtoMessage() {}
 
 func (x *AdminListSAMLConnectionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[134]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[135]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7672,7 +7717,7 @@ func (x *AdminListSAMLConnectionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSAMLConnectionsResponse.ProtoReflect.Descriptor instead.
 func (*AdminListSAMLConnectionsResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{134}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{135}
 }
 
 func (x *AdminListSAMLConnectionsResponse) GetSamlConnections() []*SAMLConnection {
@@ -7699,7 +7744,7 @@ type AdminGetSAMLConnectionRequest struct {
 
 func (x *AdminGetSAMLConnectionRequest) Reset() {
 	*x = AdminGetSAMLConnectionRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[135]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[136]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7711,7 +7756,7 @@ func (x *AdminGetSAMLConnectionRequest) String() string {
 func (*AdminGetSAMLConnectionRequest) ProtoMessage() {}
 
 func (x *AdminGetSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[135]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[136]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7724,7 +7769,7 @@ func (x *AdminGetSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSAMLConnectionRequest.ProtoReflect.Descriptor instead.
 func (*AdminGetSAMLConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{135}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{136}
 }
 
 func (x *AdminGetSAMLConnectionRequest) GetId() string {
@@ -7744,7 +7789,7 @@ type AdminGetSAMLConnectionResponse struct {
 
 func (x *AdminGetSAMLConnectionResponse) Reset() {
 	*x = AdminGetSAMLConnectionResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[136]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[137]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7756,7 +7801,7 @@ func (x *AdminGetSAMLConnectionResponse) String() string {
 func (*AdminGetSAMLConnectionResponse) ProtoMessage() {}
 
 func (x *AdminGetSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[136]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[137]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7769,7 +7814,7 @@ func (x *AdminGetSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSAMLConnectionResponse.ProtoReflect.Descriptor instead.
 func (*AdminGetSAMLConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{136}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{137}
 }
 
 func (x *AdminGetSAMLConnectionResponse) GetSamlConnection() *SAMLConnection {
@@ -7789,7 +7834,7 @@ type AdminCreateSAMLConnectionRequest struct {
 
 func (x *AdminCreateSAMLConnectionRequest) Reset() {
 	*x = AdminCreateSAMLConnectionRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[137]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[138]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7801,7 +7846,7 @@ func (x *AdminCreateSAMLConnectionRequest) String() string {
 func (*AdminCreateSAMLConnectionRequest) ProtoMessage() {}
 
 func (x *AdminCreateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[137]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[138]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7814,7 +7859,7 @@ func (x *AdminCreateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminCreateSAMLConnectionRequest.ProtoReflect.Descriptor instead.
 func (*AdminCreateSAMLConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{137}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{138}
 }
 
 func (x *AdminCreateSAMLConnectionRequest) GetSamlConnection() *SAMLConnection {
@@ -7834,7 +7879,7 @@ type AdminCreateSAMLConnectionResponse struct {
 
 func (x *AdminCreateSAMLConnectionResponse) Reset() {
 	*x = AdminCreateSAMLConnectionResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[138]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[139]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7846,7 +7891,7 @@ func (x *AdminCreateSAMLConnectionResponse) String() string {
 func (*AdminCreateSAMLConnectionResponse) ProtoMessage() {}
 
 func (x *AdminCreateSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[138]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[139]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7859,7 +7904,7 @@ func (x *AdminCreateSAMLConnectionResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use AdminCreateSAMLConnectionResponse.ProtoReflect.Descriptor instead.
 func (*AdminCreateSAMLConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{138}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{139}
 }
 
 func (x *AdminCreateSAMLConnectionResponse) GetSamlConnection() *SAMLConnection {
@@ -7879,7 +7924,7 @@ type AdminUpdateSAMLConnectionRequest struct {
 
 func (x *AdminUpdateSAMLConnectionRequest) Reset() {
 	*x = AdminUpdateSAMLConnectionRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[139]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[140]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7891,7 +7936,7 @@ func (x *AdminUpdateSAMLConnectionRequest) String() string {
 func (*AdminUpdateSAMLConnectionRequest) ProtoMessage() {}
 
 func (x *AdminUpdateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[139]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[140]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7904,7 +7949,7 @@ func (x *AdminUpdateSAMLConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminUpdateSAMLConnectionRequest.ProtoReflect.Descriptor instead.
 func (*AdminUpdateSAMLConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{139}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{140}
 }
 
 func (x *AdminUpdateSAMLConnectionRequest) GetSamlConnection() *SAMLConnection {
@@ -7924,7 +7969,7 @@ type AdminUpdateSAMLConnectionResponse struct {
 
 func (x *AdminUpdateSAMLConnectionResponse) Reset() {
 	*x = AdminUpdateSAMLConnectionResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[140]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[141]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7936,7 +7981,7 @@ func (x *AdminUpdateSAMLConnectionResponse) String() string {
 func (*AdminUpdateSAMLConnectionResponse) ProtoMessage() {}
 
 func (x *AdminUpdateSAMLConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[140]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[141]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7949,7 +7994,7 @@ func (x *AdminUpdateSAMLConnectionResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use AdminUpdateSAMLConnectionResponse.ProtoReflect.Descriptor instead.
 func (*AdminUpdateSAMLConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{140}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{141}
 }
 
 func (x *AdminUpdateSAMLConnectionResponse) GetSamlConnection() *SAMLConnection {
@@ -7970,7 +8015,7 @@ type AdminParseSAMLMetadataRequest struct {
 
 func (x *AdminParseSAMLMetadataRequest) Reset() {
 	*x = AdminParseSAMLMetadataRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[141]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[142]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7982,7 +8027,7 @@ func (x *AdminParseSAMLMetadataRequest) String() string {
 func (*AdminParseSAMLMetadataRequest) ProtoMessage() {}
 
 func (x *AdminParseSAMLMetadataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[141]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[142]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7995,7 +8040,7 @@ func (x *AdminParseSAMLMetadataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminParseSAMLMetadataRequest.ProtoReflect.Descriptor instead.
 func (*AdminParseSAMLMetadataRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{141}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{142}
 }
 
 func (x *AdminParseSAMLMetadataRequest) GetUrl() string {
@@ -8024,7 +8069,7 @@ type AdminParseSAMLMetadataResponse struct {
 
 func (x *AdminParseSAMLMetadataResponse) Reset() {
 	*x = AdminParseSAMLMetadataResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[142]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[143]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8036,7 +8081,7 @@ func (x *AdminParseSAMLMetadataResponse) String() string {
 func (*AdminParseSAMLMetadataResponse) ProtoMessage() {}
 
 func (x *AdminParseSAMLMetadataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[142]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[143]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8049,7 +8094,7 @@ func (x *AdminParseSAMLMetadataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminParseSAMLMetadataResponse.ProtoReflect.Descriptor instead.
 func (*AdminParseSAMLMetadataResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{142}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{143}
 }
 
 func (x *AdminParseSAMLMetadataResponse) GetIdpRedirectUrl() string {
@@ -8084,7 +8129,7 @@ type AdminListSAMLFlowsRequest struct {
 
 func (x *AdminListSAMLFlowsRequest) Reset() {
 	*x = AdminListSAMLFlowsRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[143]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[144]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8096,7 +8141,7 @@ func (x *AdminListSAMLFlowsRequest) String() string {
 func (*AdminListSAMLFlowsRequest) ProtoMessage() {}
 
 func (x *AdminListSAMLFlowsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[143]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[144]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8109,7 +8154,7 @@ func (x *AdminListSAMLFlowsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSAMLFlowsRequest.ProtoReflect.Descriptor instead.
 func (*AdminListSAMLFlowsRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{143}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{144}
 }
 
 func (x *AdminListSAMLFlowsRequest) GetSamlConnectionId() string {
@@ -8137,7 +8182,7 @@ type AdminListSAMLFlowsResponse struct {
 
 func (x *AdminListSAMLFlowsResponse) Reset() {
 	*x = AdminListSAMLFlowsResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[144]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[145]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8149,7 +8194,7 @@ func (x *AdminListSAMLFlowsResponse) String() string {
 func (*AdminListSAMLFlowsResponse) ProtoMessage() {}
 
 func (x *AdminListSAMLFlowsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[144]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[145]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8162,7 +8207,7 @@ func (x *AdminListSAMLFlowsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSAMLFlowsResponse.ProtoReflect.Descriptor instead.
 func (*AdminListSAMLFlowsResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{144}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{145}
 }
 
 func (x *AdminListSAMLFlowsResponse) GetSamlFlows() []*SAMLFlow {
@@ -8189,7 +8234,7 @@ type AdminGetSAMLFlowRequest struct {
 
 func (x *AdminGetSAMLFlowRequest) Reset() {
 	*x = AdminGetSAMLFlowRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[145]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[146]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8201,7 +8246,7 @@ func (x *AdminGetSAMLFlowRequest) String() string {
 func (*AdminGetSAMLFlowRequest) ProtoMessage() {}
 
 func (x *AdminGetSAMLFlowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[145]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[146]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8214,7 +8259,7 @@ func (x *AdminGetSAMLFlowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSAMLFlowRequest.ProtoReflect.Descriptor instead.
 func (*AdminGetSAMLFlowRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{145}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{146}
 }
 
 func (x *AdminGetSAMLFlowRequest) GetId() string {
@@ -8234,7 +8279,7 @@ type AdminGetSAMLFlowResponse struct {
 
 func (x *AdminGetSAMLFlowResponse) Reset() {
 	*x = AdminGetSAMLFlowResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[146]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[147]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8246,7 +8291,7 @@ func (x *AdminGetSAMLFlowResponse) String() string {
 func (*AdminGetSAMLFlowResponse) ProtoMessage() {}
 
 func (x *AdminGetSAMLFlowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[146]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[147]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8259,7 +8304,7 @@ func (x *AdminGetSAMLFlowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSAMLFlowResponse.ProtoReflect.Descriptor instead.
 func (*AdminGetSAMLFlowResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{146}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{147}
 }
 
 func (x *AdminGetSAMLFlowResponse) GetSamlFlow() *SAMLFlow {
@@ -8279,7 +8324,7 @@ type AdminListSCIMDirectoriesRequest struct {
 
 func (x *AdminListSCIMDirectoriesRequest) Reset() {
 	*x = AdminListSCIMDirectoriesRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[147]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[148]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8291,7 +8336,7 @@ func (x *AdminListSCIMDirectoriesRequest) String() string {
 func (*AdminListSCIMDirectoriesRequest) ProtoMessage() {}
 
 func (x *AdminListSCIMDirectoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[147]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[148]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8304,7 +8349,7 @@ func (x *AdminListSCIMDirectoriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSCIMDirectoriesRequest.ProtoReflect.Descriptor instead.
 func (*AdminListSCIMDirectoriesRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{147}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{148}
 }
 
 func (x *AdminListSCIMDirectoriesRequest) GetPageToken() string {
@@ -8325,7 +8370,7 @@ type AdminListSCIMDirectoriesResponse struct {
 
 func (x *AdminListSCIMDirectoriesResponse) Reset() {
 	*x = AdminListSCIMDirectoriesResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[148]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[149]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8337,7 +8382,7 @@ func (x *AdminListSCIMDirectoriesResponse) String() string {
 func (*AdminListSCIMDirectoriesResponse) ProtoMessage() {}
 
 func (x *AdminListSCIMDirectoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[148]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[149]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8350,7 +8395,7 @@ func (x *AdminListSCIMDirectoriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminListSCIMDirectoriesResponse.ProtoReflect.Descriptor instead.
 func (*AdminListSCIMDirectoriesResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{148}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{149}
 }
 
 func (x *AdminListSCIMDirectoriesResponse) GetScimDirectories() []*SCIMDirectory {
@@ -8377,7 +8422,7 @@ type AdminGetSCIMDirectoryRequest struct {
 
 func (x *AdminGetSCIMDirectoryRequest) Reset() {
 	*x = AdminGetSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[149]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[150]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8389,7 +8434,7 @@ func (x *AdminGetSCIMDirectoryRequest) String() string {
 func (*AdminGetSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AdminGetSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[149]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[150]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8402,7 +8447,7 @@ func (x *AdminGetSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AdminGetSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{149}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{150}
 }
 
 func (x *AdminGetSCIMDirectoryRequest) GetId() string {
@@ -8422,7 +8467,7 @@ type AdminGetSCIMDirectoryResponse struct {
 
 func (x *AdminGetSCIMDirectoryResponse) Reset() {
 	*x = AdminGetSCIMDirectoryResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[150]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[151]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8434,7 +8479,7 @@ func (x *AdminGetSCIMDirectoryResponse) String() string {
 func (*AdminGetSCIMDirectoryResponse) ProtoMessage() {}
 
 func (x *AdminGetSCIMDirectoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[150]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[151]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8447,7 +8492,7 @@ func (x *AdminGetSCIMDirectoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminGetSCIMDirectoryResponse.ProtoReflect.Descriptor instead.
 func (*AdminGetSCIMDirectoryResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{150}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{151}
 }
 
 func (x *AdminGetSCIMDirectoryResponse) GetScimDirectory() *SCIMDirectory {
@@ -8467,7 +8512,7 @@ type AdminCreateSCIMDirectoryRequest struct {
 
 func (x *AdminCreateSCIMDirectoryRequest) Reset() {
 	*x = AdminCreateSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[151]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[152]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8479,7 +8524,7 @@ func (x *AdminCreateSCIMDirectoryRequest) String() string {
 func (*AdminCreateSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AdminCreateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[151]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[152]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8492,7 +8537,7 @@ func (x *AdminCreateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminCreateSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AdminCreateSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{151}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{152}
 }
 
 func (x *AdminCreateSCIMDirectoryRequest) GetScimDirectory() *SCIMDirectory {
@@ -8512,7 +8557,7 @@ type AdminCreateSCIMDirectoryResponse struct {
 
 func (x *AdminCreateSCIMDirectoryResponse) Reset() {
 	*x = AdminCreateSCIMDirectoryResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[152]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[153]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8524,7 +8569,7 @@ func (x *AdminCreateSCIMDirectoryResponse) String() string {
 func (*AdminCreateSCIMDirectoryResponse) ProtoMessage() {}
 
 func (x *AdminCreateSCIMDirectoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[152]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[153]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8537,7 +8582,7 @@ func (x *AdminCreateSCIMDirectoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminCreateSCIMDirectoryResponse.ProtoReflect.Descriptor instead.
 func (*AdminCreateSCIMDirectoryResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{152}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{153}
 }
 
 func (x *AdminCreateSCIMDirectoryResponse) GetScimDirectory() *SCIMDirectory {
@@ -8557,7 +8602,7 @@ type AdminUpdateSCIMDirectoryRequest struct {
 
 func (x *AdminUpdateSCIMDirectoryRequest) Reset() {
 	*x = AdminUpdateSCIMDirectoryRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[153]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[154]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8569,7 +8614,7 @@ func (x *AdminUpdateSCIMDirectoryRequest) String() string {
 func (*AdminUpdateSCIMDirectoryRequest) ProtoMessage() {}
 
 func (x *AdminUpdateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[153]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[154]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8582,7 +8627,7 @@ func (x *AdminUpdateSCIMDirectoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminUpdateSCIMDirectoryRequest.ProtoReflect.Descriptor instead.
 func (*AdminUpdateSCIMDirectoryRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{153}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{154}
 }
 
 func (x *AdminUpdateSCIMDirectoryRequest) GetScimDirectory() *SCIMDirectory {
@@ -8602,7 +8647,7 @@ type AdminUpdateSCIMDirectoryResponse struct {
 
 func (x *AdminUpdateSCIMDirectoryResponse) Reset() {
 	*x = AdminUpdateSCIMDirectoryResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[154]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[155]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8614,7 +8659,7 @@ func (x *AdminUpdateSCIMDirectoryResponse) String() string {
 func (*AdminUpdateSCIMDirectoryResponse) ProtoMessage() {}
 
 func (x *AdminUpdateSCIMDirectoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[154]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[155]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8627,7 +8672,7 @@ func (x *AdminUpdateSCIMDirectoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminUpdateSCIMDirectoryResponse.ProtoReflect.Descriptor instead.
 func (*AdminUpdateSCIMDirectoryResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{154}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{155}
 }
 
 func (x *AdminUpdateSCIMDirectoryResponse) GetScimDirectory() *SCIMDirectory {
@@ -8647,7 +8692,7 @@ type AdminRotateSCIMDirectoryBearerTokenRequest struct {
 
 func (x *AdminRotateSCIMDirectoryBearerTokenRequest) Reset() {
 	*x = AdminRotateSCIMDirectoryBearerTokenRequest{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[155]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[156]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8659,7 +8704,7 @@ func (x *AdminRotateSCIMDirectoryBearerTokenRequest) String() string {
 func (*AdminRotateSCIMDirectoryBearerTokenRequest) ProtoMessage() {}
 
 func (x *AdminRotateSCIMDirectoryBearerTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[155]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[156]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8672,7 +8717,7 @@ func (x *AdminRotateSCIMDirectoryBearerTokenRequest) ProtoReflect() protoreflect
 
 // Deprecated: Use AdminRotateSCIMDirectoryBearerTokenRequest.ProtoReflect.Descriptor instead.
 func (*AdminRotateSCIMDirectoryBearerTokenRequest) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{155}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{156}
 }
 
 func (x *AdminRotateSCIMDirectoryBearerTokenRequest) GetScimDirectoryId() string {
@@ -8692,7 +8737,7 @@ type AdminRotateSCIMDirectoryBearerTokenResponse struct {
 
 func (x *AdminRotateSCIMDirectoryBearerTokenResponse) Reset() {
 	*x = AdminRotateSCIMDirectoryBearerTokenResponse{}
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[156]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[157]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8704,7 +8749,7 @@ func (x *AdminRotateSCIMDirectoryBearerTokenResponse) String() string {
 func (*AdminRotateSCIMDirectoryBearerTokenResponse) ProtoMessage() {}
 
 func (x *AdminRotateSCIMDirectoryBearerTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ssoready_v1_ssoready_proto_msgTypes[156]
+	mi := &file_ssoready_v1_ssoready_proto_msgTypes[157]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8717,7 +8762,7 @@ func (x *AdminRotateSCIMDirectoryBearerTokenResponse) ProtoReflect() protoreflec
 
 // Deprecated: Use AdminRotateSCIMDirectoryBearerTokenResponse.ProtoReflect.Descriptor instead.
 func (*AdminRotateSCIMDirectoryBearerTokenResponse) Descriptor() ([]byte, []int) {
-	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{156}
+	return file_ssoready_v1_ssoready_proto_rawDescGZIP(), []int{157}
 }
 
 func (x *AdminRotateSCIMDirectoryBearerTokenResponse) GetBearerToken() string {
@@ -9589,7 +9634,12 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x5f, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x1b, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
 	0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0e,
-	0x73, 0x61, 0x6d, 0x6c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x66,
+	0x73, 0x61, 0x6d, 0x6c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x4e,
+	0x0a, 0x1e, 0x41, 0x70, 0x70, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43,
+	0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x2c, 0x0a, 0x12, 0x73, 0x61, 0x6d, 0x6c, 0x5f, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x10, 0x73, 0x61,
+	0x6d, 0x6c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x66,
 	0x0a, 0x17, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x46, 0x6c, 0x6f,
 	0x77, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2c, 0x0a, 0x12, 0x73, 0x61, 0x6d,
 	0x6c, 0x5f, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18,
@@ -9938,7 +9988,7 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x51, 0x55, 0x45, 0x53, 0x54, 0x5f, 0x48, 0x54, 0x54, 0x50, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55,
 	0x53, 0x5f, 0x34, 0x30, 0x31, 0x10, 0x05, 0x12, 0x20, 0x0a, 0x1c, 0x53, 0x43, 0x49, 0x4d, 0x5f,
 	0x52, 0x45, 0x51, 0x55, 0x45, 0x53, 0x54, 0x5f, 0x48, 0x54, 0x54, 0x50, 0x5f, 0x53, 0x54, 0x41,
-	0x54, 0x55, 0x53, 0x5f, 0x34, 0x30, 0x34, 0x10, 0x06, 0x32, 0xff, 0x4a, 0x0a, 0x0f, 0x53, 0x53,
+	0x54, 0x55, 0x53, 0x5f, 0x34, 0x30, 0x34, 0x10, 0x06, 0x32, 0xdf, 0x4b, 0x0a, 0x0f, 0x53, 0x53,
 	0x4f, 0x52, 0x65, 0x61, 0x64, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x83, 0x01,
 	0x0a, 0x12, 0x47, 0x65, 0x74, 0x53, 0x41, 0x4d, 0x4c, 0x52, 0x65, 0x64, 0x69, 0x72, 0x65, 0x63,
 	0x74, 0x55, 0x52, 0x4c, 0x12, 0x26, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e,
@@ -10344,7 +10394,13 @@ var file_ssoready_v1_ssoready_proto_rawDesc = []byte{
 	0x64, 0x61, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69,
 	0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x73, 0x73, 0x6f, 0x72,
 	0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e,
-	0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x5f, 0x0a, 0x10, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73,
+	0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x5e, 0x0a, 0x17, 0x41, 0x70, 0x70, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x2b, 0x2e, 0x73, 0x73, 0x6f, 0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e,
+	0x41, 0x70, 0x70, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x41, 0x4d, 0x4c, 0x43, 0x6f, 0x6e,
+	0x6e, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16,
+	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
+	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x5f, 0x0a, 0x10, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73,
 	0x74, 0x53, 0x41, 0x4d, 0x4c, 0x46, 0x6c, 0x6f, 0x77, 0x73, 0x12, 0x24, 0x2e, 0x73, 0x73, 0x6f,
 	0x72, 0x65, 0x61, 0x64, 0x79, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x70, 0x70, 0x4c, 0x69, 0x73, 0x74,
 	0x53, 0x41, 0x4d, 0x4c, 0x46, 0x6c, 0x6f, 0x77, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
@@ -10566,7 +10622,7 @@ func file_ssoready_v1_ssoready_proto_rawDescGZIP() []byte {
 }
 
 var file_ssoready_v1_ssoready_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_ssoready_v1_ssoready_proto_msgTypes = make([]protoimpl.MessageInfo, 159)
+var file_ssoready_v1_ssoready_proto_msgTypes = make([]protoimpl.MessageInfo, 160)
 var file_ssoready_v1_ssoready_proto_goTypes = []any{
 	(SAMLFlowStatus)(0),                                              // 0: ssoready.v1.SAMLFlowStatus
 	(SCIMRequestHTTPMethod)(0),                                       // 1: ssoready.v1.SCIMRequestHTTPMethod
@@ -10677,84 +10733,85 @@ var file_ssoready_v1_ssoready_proto_goTypes = []any{
 	(*AppGetSAMLConnectionRequest)(nil),                              // 106: ssoready.v1.AppGetSAMLConnectionRequest
 	(*AppCreateSAMLConnectionRequest)(nil),                           // 107: ssoready.v1.AppCreateSAMLConnectionRequest
 	(*AppUpdateSAMLConnectionRequest)(nil),                           // 108: ssoready.v1.AppUpdateSAMLConnectionRequest
-	(*AppListSAMLFlowsRequest)(nil),                                  // 109: ssoready.v1.AppListSAMLFlowsRequest
-	(*AppListSAMLFlowsResponse)(nil),                                 // 110: ssoready.v1.AppListSAMLFlowsResponse
-	(*AppGetSAMLFlowRequest)(nil),                                    // 111: ssoready.v1.AppGetSAMLFlowRequest
-	(*ParseSAMLMetadataRequest)(nil),                                 // 112: ssoready.v1.ParseSAMLMetadataRequest
-	(*ParseSAMLMetadataResponse)(nil),                                // 113: ssoready.v1.ParseSAMLMetadataResponse
-	(*AppListSCIMDirectoriesRequest)(nil),                            // 114: ssoready.v1.AppListSCIMDirectoriesRequest
-	(*AppListSCIMDirectoriesResponse)(nil),                           // 115: ssoready.v1.AppListSCIMDirectoriesResponse
-	(*AppGetSCIMDirectoryRequest)(nil),                               // 116: ssoready.v1.AppGetSCIMDirectoryRequest
-	(*AppCreateSCIMDirectoryRequest)(nil),                            // 117: ssoready.v1.AppCreateSCIMDirectoryRequest
-	(*AppUpdateSCIMDirectoryRequest)(nil),                            // 118: ssoready.v1.AppUpdateSCIMDirectoryRequest
-	(*AppRotateSCIMDirectoryBearerTokenRequest)(nil),                 // 119: ssoready.v1.AppRotateSCIMDirectoryBearerTokenRequest
-	(*AppDeleteSCIMDirectoryRequest)(nil),                            // 120: ssoready.v1.AppDeleteSCIMDirectoryRequest
-	(*AppRotateSCIMDirectoryBearerTokenResponse)(nil),                // 121: ssoready.v1.AppRotateSCIMDirectoryBearerTokenResponse
-	(*AppListSCIMUsersRequest)(nil),                                  // 122: ssoready.v1.AppListSCIMUsersRequest
-	(*AppListSCIMUsersResponse)(nil),                                 // 123: ssoready.v1.AppListSCIMUsersResponse
-	(*AppGetSCIMUserRequest)(nil),                                    // 124: ssoready.v1.AppGetSCIMUserRequest
-	(*AppListSCIMGroupsRequest)(nil),                                 // 125: ssoready.v1.AppListSCIMGroupsRequest
-	(*AppGetSCIMGroupRequest)(nil),                                   // 126: ssoready.v1.AppGetSCIMGroupRequest
-	(*AppListSCIMGroupsResponse)(nil),                                // 127: ssoready.v1.AppListSCIMGroupsResponse
-	(*AppListSCIMRequestsRequest)(nil),                               // 128: ssoready.v1.AppListSCIMRequestsRequest
-	(*AppListSCIMRequestsResponse)(nil),                              // 129: ssoready.v1.AppListSCIMRequestsResponse
-	(*AppGetSCIMRequestRequest)(nil),                                 // 130: ssoready.v1.AppGetSCIMRequestRequest
-	(*AppGetSCIMRequestResponse)(nil),                                // 131: ssoready.v1.AppGetSCIMRequestResponse
-	(*AdminRedeemOneTimeTokenRequest)(nil),                           // 132: ssoready.v1.AdminRedeemOneTimeTokenRequest
-	(*AdminRedeemOneTimeTokenResponse)(nil),                          // 133: ssoready.v1.AdminRedeemOneTimeTokenResponse
-	(*AdminWhoamiRequest)(nil),                                       // 134: ssoready.v1.AdminWhoamiRequest
-	(*AdminWhoamiResponse)(nil),                                      // 135: ssoready.v1.AdminWhoamiResponse
-	(*AdminListSAMLConnectionsRequest)(nil),                          // 136: ssoready.v1.AdminListSAMLConnectionsRequest
-	(*AdminListSAMLConnectionsResponse)(nil),                         // 137: ssoready.v1.AdminListSAMLConnectionsResponse
-	(*AdminGetSAMLConnectionRequest)(nil),                            // 138: ssoready.v1.AdminGetSAMLConnectionRequest
-	(*AdminGetSAMLConnectionResponse)(nil),                           // 139: ssoready.v1.AdminGetSAMLConnectionResponse
-	(*AdminCreateSAMLConnectionRequest)(nil),                         // 140: ssoready.v1.AdminCreateSAMLConnectionRequest
-	(*AdminCreateSAMLConnectionResponse)(nil),                        // 141: ssoready.v1.AdminCreateSAMLConnectionResponse
-	(*AdminUpdateSAMLConnectionRequest)(nil),                         // 142: ssoready.v1.AdminUpdateSAMLConnectionRequest
-	(*AdminUpdateSAMLConnectionResponse)(nil),                        // 143: ssoready.v1.AdminUpdateSAMLConnectionResponse
-	(*AdminParseSAMLMetadataRequest)(nil),                            // 144: ssoready.v1.AdminParseSAMLMetadataRequest
-	(*AdminParseSAMLMetadataResponse)(nil),                           // 145: ssoready.v1.AdminParseSAMLMetadataResponse
-	(*AdminListSAMLFlowsRequest)(nil),                                // 146: ssoready.v1.AdminListSAMLFlowsRequest
-	(*AdminListSAMLFlowsResponse)(nil),                               // 147: ssoready.v1.AdminListSAMLFlowsResponse
-	(*AdminGetSAMLFlowRequest)(nil),                                  // 148: ssoready.v1.AdminGetSAMLFlowRequest
-	(*AdminGetSAMLFlowResponse)(nil),                                 // 149: ssoready.v1.AdminGetSAMLFlowResponse
-	(*AdminListSCIMDirectoriesRequest)(nil),                          // 150: ssoready.v1.AdminListSCIMDirectoriesRequest
-	(*AdminListSCIMDirectoriesResponse)(nil),                         // 151: ssoready.v1.AdminListSCIMDirectoriesResponse
-	(*AdminGetSCIMDirectoryRequest)(nil),                             // 152: ssoready.v1.AdminGetSCIMDirectoryRequest
-	(*AdminGetSCIMDirectoryResponse)(nil),                            // 153: ssoready.v1.AdminGetSCIMDirectoryResponse
-	(*AdminCreateSCIMDirectoryRequest)(nil),                          // 154: ssoready.v1.AdminCreateSCIMDirectoryRequest
-	(*AdminCreateSCIMDirectoryResponse)(nil),                         // 155: ssoready.v1.AdminCreateSCIMDirectoryResponse
-	(*AdminUpdateSCIMDirectoryRequest)(nil),                          // 156: ssoready.v1.AdminUpdateSCIMDirectoryRequest
-	(*AdminUpdateSCIMDirectoryResponse)(nil),                         // 157: ssoready.v1.AdminUpdateSCIMDirectoryResponse
-	(*AdminRotateSCIMDirectoryBearerTokenRequest)(nil),               // 158: ssoready.v1.AdminRotateSCIMDirectoryBearerTokenRequest
-	(*AdminRotateSCIMDirectoryBearerTokenResponse)(nil),              // 159: ssoready.v1.AdminRotateSCIMDirectoryBearerTokenResponse
-	nil,                           // 160: ssoready.v1.SAMLFlow.AttributesEntry
-	nil,                           // 161: ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
-	(*emptypb.Empty)(nil),         // 162: google.protobuf.Empty
-	(*timestamppb.Timestamp)(nil), // 163: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),       // 164: google.protobuf.Struct
+	(*AppDeleteSAMLConnectionRequest)(nil),                           // 109: ssoready.v1.AppDeleteSAMLConnectionRequest
+	(*AppListSAMLFlowsRequest)(nil),                                  // 110: ssoready.v1.AppListSAMLFlowsRequest
+	(*AppListSAMLFlowsResponse)(nil),                                 // 111: ssoready.v1.AppListSAMLFlowsResponse
+	(*AppGetSAMLFlowRequest)(nil),                                    // 112: ssoready.v1.AppGetSAMLFlowRequest
+	(*ParseSAMLMetadataRequest)(nil),                                 // 113: ssoready.v1.ParseSAMLMetadataRequest
+	(*ParseSAMLMetadataResponse)(nil),                                // 114: ssoready.v1.ParseSAMLMetadataResponse
+	(*AppListSCIMDirectoriesRequest)(nil),                            // 115: ssoready.v1.AppListSCIMDirectoriesRequest
+	(*AppListSCIMDirectoriesResponse)(nil),                           // 116: ssoready.v1.AppListSCIMDirectoriesResponse
+	(*AppGetSCIMDirectoryRequest)(nil),                               // 117: ssoready.v1.AppGetSCIMDirectoryRequest
+	(*AppCreateSCIMDirectoryRequest)(nil),                            // 118: ssoready.v1.AppCreateSCIMDirectoryRequest
+	(*AppUpdateSCIMDirectoryRequest)(nil),                            // 119: ssoready.v1.AppUpdateSCIMDirectoryRequest
+	(*AppRotateSCIMDirectoryBearerTokenRequest)(nil),                 // 120: ssoready.v1.AppRotateSCIMDirectoryBearerTokenRequest
+	(*AppDeleteSCIMDirectoryRequest)(nil),                            // 121: ssoready.v1.AppDeleteSCIMDirectoryRequest
+	(*AppRotateSCIMDirectoryBearerTokenResponse)(nil),                // 122: ssoready.v1.AppRotateSCIMDirectoryBearerTokenResponse
+	(*AppListSCIMUsersRequest)(nil),                                  // 123: ssoready.v1.AppListSCIMUsersRequest
+	(*AppListSCIMUsersResponse)(nil),                                 // 124: ssoready.v1.AppListSCIMUsersResponse
+	(*AppGetSCIMUserRequest)(nil),                                    // 125: ssoready.v1.AppGetSCIMUserRequest
+	(*AppListSCIMGroupsRequest)(nil),                                 // 126: ssoready.v1.AppListSCIMGroupsRequest
+	(*AppGetSCIMGroupRequest)(nil),                                   // 127: ssoready.v1.AppGetSCIMGroupRequest
+	(*AppListSCIMGroupsResponse)(nil),                                // 128: ssoready.v1.AppListSCIMGroupsResponse
+	(*AppListSCIMRequestsRequest)(nil),                               // 129: ssoready.v1.AppListSCIMRequestsRequest
+	(*AppListSCIMRequestsResponse)(nil),                              // 130: ssoready.v1.AppListSCIMRequestsResponse
+	(*AppGetSCIMRequestRequest)(nil),                                 // 131: ssoready.v1.AppGetSCIMRequestRequest
+	(*AppGetSCIMRequestResponse)(nil),                                // 132: ssoready.v1.AppGetSCIMRequestResponse
+	(*AdminRedeemOneTimeTokenRequest)(nil),                           // 133: ssoready.v1.AdminRedeemOneTimeTokenRequest
+	(*AdminRedeemOneTimeTokenResponse)(nil),                          // 134: ssoready.v1.AdminRedeemOneTimeTokenResponse
+	(*AdminWhoamiRequest)(nil),                                       // 135: ssoready.v1.AdminWhoamiRequest
+	(*AdminWhoamiResponse)(nil),                                      // 136: ssoready.v1.AdminWhoamiResponse
+	(*AdminListSAMLConnectionsRequest)(nil),                          // 137: ssoready.v1.AdminListSAMLConnectionsRequest
+	(*AdminListSAMLConnectionsResponse)(nil),                         // 138: ssoready.v1.AdminListSAMLConnectionsResponse
+	(*AdminGetSAMLConnectionRequest)(nil),                            // 139: ssoready.v1.AdminGetSAMLConnectionRequest
+	(*AdminGetSAMLConnectionResponse)(nil),                           // 140: ssoready.v1.AdminGetSAMLConnectionResponse
+	(*AdminCreateSAMLConnectionRequest)(nil),                         // 141: ssoready.v1.AdminCreateSAMLConnectionRequest
+	(*AdminCreateSAMLConnectionResponse)(nil),                        // 142: ssoready.v1.AdminCreateSAMLConnectionResponse
+	(*AdminUpdateSAMLConnectionRequest)(nil),                         // 143: ssoready.v1.AdminUpdateSAMLConnectionRequest
+	(*AdminUpdateSAMLConnectionResponse)(nil),                        // 144: ssoready.v1.AdminUpdateSAMLConnectionResponse
+	(*AdminParseSAMLMetadataRequest)(nil),                            // 145: ssoready.v1.AdminParseSAMLMetadataRequest
+	(*AdminParseSAMLMetadataResponse)(nil),                           // 146: ssoready.v1.AdminParseSAMLMetadataResponse
+	(*AdminListSAMLFlowsRequest)(nil),                                // 147: ssoready.v1.AdminListSAMLFlowsRequest
+	(*AdminListSAMLFlowsResponse)(nil),                               // 148: ssoready.v1.AdminListSAMLFlowsResponse
+	(*AdminGetSAMLFlowRequest)(nil),                                  // 149: ssoready.v1.AdminGetSAMLFlowRequest
+	(*AdminGetSAMLFlowResponse)(nil),                                 // 150: ssoready.v1.AdminGetSAMLFlowResponse
+	(*AdminListSCIMDirectoriesRequest)(nil),                          // 151: ssoready.v1.AdminListSCIMDirectoriesRequest
+	(*AdminListSCIMDirectoriesResponse)(nil),                         // 152: ssoready.v1.AdminListSCIMDirectoriesResponse
+	(*AdminGetSCIMDirectoryRequest)(nil),                             // 153: ssoready.v1.AdminGetSCIMDirectoryRequest
+	(*AdminGetSCIMDirectoryResponse)(nil),                            // 154: ssoready.v1.AdminGetSCIMDirectoryResponse
+	(*AdminCreateSCIMDirectoryRequest)(nil),                          // 155: ssoready.v1.AdminCreateSCIMDirectoryRequest
+	(*AdminCreateSCIMDirectoryResponse)(nil),                         // 156: ssoready.v1.AdminCreateSCIMDirectoryResponse
+	(*AdminUpdateSCIMDirectoryRequest)(nil),                          // 157: ssoready.v1.AdminUpdateSCIMDirectoryRequest
+	(*AdminUpdateSCIMDirectoryResponse)(nil),                         // 158: ssoready.v1.AdminUpdateSCIMDirectoryResponse
+	(*AdminRotateSCIMDirectoryBearerTokenRequest)(nil),               // 159: ssoready.v1.AdminRotateSCIMDirectoryBearerTokenRequest
+	(*AdminRotateSCIMDirectoryBearerTokenResponse)(nil),              // 160: ssoready.v1.AdminRotateSCIMDirectoryBearerTokenResponse
+	nil,                           // 161: ssoready.v1.SAMLFlow.AttributesEntry
+	nil,                           // 162: ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
+	(*emptypb.Empty)(nil),         // 163: google.protobuf.Empty
+	(*timestamppb.Timestamp)(nil), // 164: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),       // 165: google.protobuf.Struct
 }
 var file_ssoready_v1_ssoready_proto_depIdxs = []int32{
 	0,   // 0: ssoready.v1.SAMLFlow.status:type_name -> ssoready.v1.SAMLFlowStatus
-	162, // 1: ssoready.v1.SAMLFlow.saml_connection_not_configured:type_name -> google.protobuf.Empty
-	162, // 2: ssoready.v1.SAMLFlow.environment_oauth_redirect_uri_not_configured:type_name -> google.protobuf.Empty
-	162, // 3: ssoready.v1.SAMLFlow.unsigned_assertion:type_name -> google.protobuf.Empty
-	160, // 4: ssoready.v1.SAMLFlow.attributes:type_name -> ssoready.v1.SAMLFlow.AttributesEntry
-	163, // 5: ssoready.v1.SAMLFlow.create_time:type_name -> google.protobuf.Timestamp
-	163, // 6: ssoready.v1.SAMLFlow.update_time:type_name -> google.protobuf.Timestamp
-	163, // 7: ssoready.v1.SAMLFlow.get_redirect_time:type_name -> google.protobuf.Timestamp
-	163, // 8: ssoready.v1.SAMLFlow.initiate_time:type_name -> google.protobuf.Timestamp
-	163, // 9: ssoready.v1.SAMLFlow.receive_assertion_time:type_name -> google.protobuf.Timestamp
-	163, // 10: ssoready.v1.SAMLFlow.redeem_time:type_name -> google.protobuf.Timestamp
-	164, // 11: ssoready.v1.SCIMUser.attributes:type_name -> google.protobuf.Struct
-	164, // 12: ssoready.v1.SCIMGroup.attributes:type_name -> google.protobuf.Struct
-	163, // 13: ssoready.v1.SCIMRequest.timestamp:type_name -> google.protobuf.Timestamp
+	163, // 1: ssoready.v1.SAMLFlow.saml_connection_not_configured:type_name -> google.protobuf.Empty
+	163, // 2: ssoready.v1.SAMLFlow.environment_oauth_redirect_uri_not_configured:type_name -> google.protobuf.Empty
+	163, // 3: ssoready.v1.SAMLFlow.unsigned_assertion:type_name -> google.protobuf.Empty
+	161, // 4: ssoready.v1.SAMLFlow.attributes:type_name -> ssoready.v1.SAMLFlow.AttributesEntry
+	164, // 5: ssoready.v1.SAMLFlow.create_time:type_name -> google.protobuf.Timestamp
+	164, // 6: ssoready.v1.SAMLFlow.update_time:type_name -> google.protobuf.Timestamp
+	164, // 7: ssoready.v1.SAMLFlow.get_redirect_time:type_name -> google.protobuf.Timestamp
+	164, // 8: ssoready.v1.SAMLFlow.initiate_time:type_name -> google.protobuf.Timestamp
+	164, // 9: ssoready.v1.SAMLFlow.receive_assertion_time:type_name -> google.protobuf.Timestamp
+	164, // 10: ssoready.v1.SAMLFlow.redeem_time:type_name -> google.protobuf.Timestamp
+	165, // 11: ssoready.v1.SCIMUser.attributes:type_name -> google.protobuf.Struct
+	165, // 12: ssoready.v1.SCIMGroup.attributes:type_name -> google.protobuf.Struct
+	164, // 13: ssoready.v1.SCIMRequest.timestamp:type_name -> google.protobuf.Timestamp
 	1,   // 14: ssoready.v1.SCIMRequest.http_request_method:type_name -> ssoready.v1.SCIMRequestHTTPMethod
-	164, // 15: ssoready.v1.SCIMRequest.http_request_body:type_name -> google.protobuf.Struct
+	165, // 15: ssoready.v1.SCIMRequest.http_request_body:type_name -> google.protobuf.Struct
 	2,   // 16: ssoready.v1.SCIMRequest.http_response_status:type_name -> ssoready.v1.SCIMRequestHTTPStatus
-	164, // 17: ssoready.v1.SCIMRequest.http_response_body:type_name -> google.protobuf.Struct
-	162, // 18: ssoready.v1.SCIMRequest.bad_bearer_token:type_name -> google.protobuf.Empty
-	161, // 19: ssoready.v1.RedeemSAMLAccessCodeResponse.attributes:type_name -> ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
+	165, // 17: ssoready.v1.SCIMRequest.http_response_body:type_name -> google.protobuf.Struct
+	163, // 18: ssoready.v1.SCIMRequest.bad_bearer_token:type_name -> google.protobuf.Empty
+	162, // 19: ssoready.v1.RedeemSAMLAccessCodeResponse.attributes:type_name -> ssoready.v1.RedeemSAMLAccessCodeResponse.AttributesEntry
 	11,  // 20: ssoready.v1.ListSCIMUsersResponse.scim_users:type_name -> ssoready.v1.SCIMUser
 	11,  // 21: ssoready.v1.GetSCIMUserResponse.scim_user:type_name -> ssoready.v1.SCIMUser
 	12,  // 22: ssoready.v1.ListSCIMGroupsResponse.scim_groups:type_name -> ssoready.v1.SCIMGroup
@@ -10870,123 +10927,125 @@ var file_ssoready_v1_ssoready_proto_depIdxs = []int32{
 	106, // 132: ssoready.v1.SSOReadyService.AppGetSAMLConnection:input_type -> ssoready.v1.AppGetSAMLConnectionRequest
 	107, // 133: ssoready.v1.SSOReadyService.AppCreateSAMLConnection:input_type -> ssoready.v1.AppCreateSAMLConnectionRequest
 	108, // 134: ssoready.v1.SSOReadyService.AppUpdateSAMLConnection:input_type -> ssoready.v1.AppUpdateSAMLConnectionRequest
-	109, // 135: ssoready.v1.SSOReadyService.AppListSAMLFlows:input_type -> ssoready.v1.AppListSAMLFlowsRequest
-	111, // 136: ssoready.v1.SSOReadyService.AppGetSAMLFlow:input_type -> ssoready.v1.AppGetSAMLFlowRequest
-	112, // 137: ssoready.v1.SSOReadyService.ParseSAMLMetadata:input_type -> ssoready.v1.ParseSAMLMetadataRequest
-	114, // 138: ssoready.v1.SSOReadyService.AppListSCIMDirectories:input_type -> ssoready.v1.AppListSCIMDirectoriesRequest
-	116, // 139: ssoready.v1.SSOReadyService.AppGetSCIMDirectory:input_type -> ssoready.v1.AppGetSCIMDirectoryRequest
-	117, // 140: ssoready.v1.SSOReadyService.AppCreateSCIMDirectory:input_type -> ssoready.v1.AppCreateSCIMDirectoryRequest
-	118, // 141: ssoready.v1.SSOReadyService.AppUpdateSCIMDirectory:input_type -> ssoready.v1.AppUpdateSCIMDirectoryRequest
-	119, // 142: ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken:input_type -> ssoready.v1.AppRotateSCIMDirectoryBearerTokenRequest
-	120, // 143: ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory:input_type -> ssoready.v1.AppDeleteSCIMDirectoryRequest
-	122, // 144: ssoready.v1.SSOReadyService.AppListSCIMUsers:input_type -> ssoready.v1.AppListSCIMUsersRequest
-	124, // 145: ssoready.v1.SSOReadyService.AppGetSCIMUser:input_type -> ssoready.v1.AppGetSCIMUserRequest
-	125, // 146: ssoready.v1.SSOReadyService.AppListSCIMGroups:input_type -> ssoready.v1.AppListSCIMGroupsRequest
-	126, // 147: ssoready.v1.SSOReadyService.AppGetSCIMGroup:input_type -> ssoready.v1.AppGetSCIMGroupRequest
-	128, // 148: ssoready.v1.SSOReadyService.AppListSCIMRequests:input_type -> ssoready.v1.AppListSCIMRequestsRequest
-	130, // 149: ssoready.v1.SSOReadyService.AppGetSCIMRequest:input_type -> ssoready.v1.AppGetSCIMRequestRequest
-	132, // 150: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:input_type -> ssoready.v1.AdminRedeemOneTimeTokenRequest
-	134, // 151: ssoready.v1.SSOReadyService.AdminWhoami:input_type -> ssoready.v1.AdminWhoamiRequest
-	136, // 152: ssoready.v1.SSOReadyService.AdminListSAMLConnections:input_type -> ssoready.v1.AdminListSAMLConnectionsRequest
-	138, // 153: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:input_type -> ssoready.v1.AdminGetSAMLConnectionRequest
-	140, // 154: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:input_type -> ssoready.v1.AdminCreateSAMLConnectionRequest
-	142, // 155: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:input_type -> ssoready.v1.AdminUpdateSAMLConnectionRequest
-	144, // 156: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:input_type -> ssoready.v1.AdminParseSAMLMetadataRequest
-	146, // 157: ssoready.v1.SSOReadyService.AdminListSAMLFlows:input_type -> ssoready.v1.AdminListSAMLFlowsRequest
-	148, // 158: ssoready.v1.SSOReadyService.AdminGetSAMLFlow:input_type -> ssoready.v1.AdminGetSAMLFlowRequest
-	150, // 159: ssoready.v1.SSOReadyService.AdminListSCIMDirectories:input_type -> ssoready.v1.AdminListSCIMDirectoriesRequest
-	152, // 160: ssoready.v1.SSOReadyService.AdminGetSCIMDirectory:input_type -> ssoready.v1.AdminGetSCIMDirectoryRequest
-	154, // 161: ssoready.v1.SSOReadyService.AdminCreateSCIMDirectory:input_type -> ssoready.v1.AdminCreateSCIMDirectoryRequest
-	156, // 162: ssoready.v1.SSOReadyService.AdminUpdateSCIMDirectory:input_type -> ssoready.v1.AdminUpdateSCIMDirectoryRequest
-	158, // 163: ssoready.v1.SSOReadyService.AdminRotateSCIMDirectoryBearerToken:input_type -> ssoready.v1.AdminRotateSCIMDirectoryBearerTokenRequest
-	15,  // 164: ssoready.v1.SSOReadyService.GetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
-	17,  // 165: ssoready.v1.SSOReadyService.RedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
-	19,  // 166: ssoready.v1.SSOReadyService.ListSCIMUsers:output_type -> ssoready.v1.ListSCIMUsersResponse
-	21,  // 167: ssoready.v1.SSOReadyService.GetSCIMUser:output_type -> ssoready.v1.GetSCIMUserResponse
-	23,  // 168: ssoready.v1.SSOReadyService.ListSCIMGroups:output_type -> ssoready.v1.ListSCIMGroupsResponse
-	25,  // 169: ssoready.v1.SSOReadyService.GetSCIMGroup:output_type -> ssoready.v1.GetSCIMGroupResponse
-	27,  // 170: ssoready.v1.SSOReadyService.ListOrganizations:output_type -> ssoready.v1.ListOrganizationsResponse
-	29,  // 171: ssoready.v1.SSOReadyService.GetOrganization:output_type -> ssoready.v1.GetOrganizationResponse
-	31,  // 172: ssoready.v1.SSOReadyService.CreateOrganization:output_type -> ssoready.v1.CreateOrganizationResponse
-	33,  // 173: ssoready.v1.SSOReadyService.UpdateOrganization:output_type -> ssoready.v1.UpdateOrganizationResponse
-	35,  // 174: ssoready.v1.SSOReadyService.CreateSetupURL:output_type -> ssoready.v1.CreateSetupURLResponse
-	37,  // 175: ssoready.v1.SSOReadyService.ListSAMLConnections:output_type -> ssoready.v1.ListSAMLConnectionsResponse
-	39,  // 176: ssoready.v1.SSOReadyService.GetSAMLConnection:output_type -> ssoready.v1.GetSAMLConnectionResponse
-	41,  // 177: ssoready.v1.SSOReadyService.CreateSAMLConnection:output_type -> ssoready.v1.CreateSAMLConnectionResponse
-	43,  // 178: ssoready.v1.SSOReadyService.UpdateSAMLConnection:output_type -> ssoready.v1.UpdateSAMLConnectionResponse
-	45,  // 179: ssoready.v1.SSOReadyService.ListSCIMDirectories:output_type -> ssoready.v1.ListSCIMDirectoriesResponse
-	47,  // 180: ssoready.v1.SSOReadyService.GetSCIMDirectory:output_type -> ssoready.v1.GetSCIMDirectoryResponse
-	49,  // 181: ssoready.v1.SSOReadyService.CreateSCIMDirectory:output_type -> ssoready.v1.CreateSCIMDirectoryResponse
-	51,  // 182: ssoready.v1.SSOReadyService.UpdateSCIMDirectory:output_type -> ssoready.v1.UpdateSCIMDirectoryResponse
-	53,  // 183: ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken:output_type -> ssoready.v1.RotateSCIMDirectoryBearerTokenResponse
-	162, // 184: ssoready.v1.SSOReadyService.VerifyEmail:output_type -> google.protobuf.Empty
-	56,  // 185: ssoready.v1.SSOReadyService.SignIn:output_type -> ssoready.v1.SignInResponse
-	58,  // 186: ssoready.v1.SSOReadyService.SignOut:output_type -> ssoready.v1.SignOutResponse
-	60,  // 187: ssoready.v1.SSOReadyService.Whoami:output_type -> ssoready.v1.WhoamiResponse
-	62,  // 188: ssoready.v1.SSOReadyService.GetOnboardingState:output_type -> ssoready.v1.GetOnboardingStateResponse
-	162, // 189: ssoready.v1.SSOReadyService.UpdateOnboardingState:output_type -> google.protobuf.Empty
-	15,  // 190: ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
-	17,  // 191: ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
-	67,  // 192: ssoready.v1.SSOReadyService.GetAppOrganization:output_type -> ssoready.v1.GetAppOrganizationResponse
-	69,  // 193: ssoready.v1.SSOReadyService.ListAppUsers:output_type -> ssoready.v1.ListAppUsersResponse
-	71,  // 194: ssoready.v1.SSOReadyService.ListEnvironments:output_type -> ssoready.v1.ListEnvironmentsResponse
-	4,   // 195: ssoready.v1.SSOReadyService.GetEnvironment:output_type -> ssoready.v1.Environment
-	4,   // 196: ssoready.v1.SSOReadyService.CreateEnvironment:output_type -> ssoready.v1.Environment
-	4,   // 197: ssoready.v1.SSOReadyService.UpdateEnvironment:output_type -> ssoready.v1.Environment
-	76,  // 198: ssoready.v1.SSOReadyService.GetEnvironmentCustomDomainSettings:output_type -> ssoready.v1.GetEnvironmentCustomDomainSettingsResponse
-	78,  // 199: ssoready.v1.SSOReadyService.UpdateEnvironmentCustomDomainSettings:output_type -> ssoready.v1.UpdateEnvironmentCustomDomainSettingsResponse
-	80,  // 200: ssoready.v1.SSOReadyService.CheckEnvironmentCustomDomainSettingsCertificates:output_type -> ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesResponse
-	82,  // 201: ssoready.v1.SSOReadyService.ListAPIKeys:output_type -> ssoready.v1.ListAPIKeysResponse
-	5,   // 202: ssoready.v1.SSOReadyService.GetAPIKey:output_type -> ssoready.v1.APIKey
-	5,   // 203: ssoready.v1.SSOReadyService.CreateAPIKey:output_type -> ssoready.v1.APIKey
-	162, // 204: ssoready.v1.SSOReadyService.DeleteAPIKey:output_type -> google.protobuf.Empty
-	87,  // 205: ssoready.v1.SSOReadyService.ListSAMLOAuthClients:output_type -> ssoready.v1.ListSAMLOAuthClientsResponse
-	6,   // 206: ssoready.v1.SSOReadyService.GetSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
-	6,   // 207: ssoready.v1.SSOReadyService.CreateSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
-	162, // 208: ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient:output_type -> google.protobuf.Empty
-	92,  // 209: ssoready.v1.SSOReadyService.AppListOrganizations:output_type -> ssoready.v1.AppListOrganizationsResponse
-	7,   // 210: ssoready.v1.SSOReadyService.AppGetOrganization:output_type -> ssoready.v1.Organization
-	7,   // 211: ssoready.v1.SSOReadyService.AppCreateOrganization:output_type -> ssoready.v1.Organization
-	7,   // 212: ssoready.v1.SSOReadyService.AppUpdateOrganization:output_type -> ssoready.v1.Organization
-	97,  // 213: ssoready.v1.SSOReadyService.AppGetAdminSettings:output_type -> ssoready.v1.AppGetAdminSettingsResponse
-	99,  // 214: ssoready.v1.SSOReadyService.AppUpdateAdminSettings:output_type -> ssoready.v1.AppUpdateAdminSettingsResponse
-	101, // 215: ssoready.v1.SSOReadyService.AppUpdateAdminSettingsLogo:output_type -> ssoready.v1.AppUpdateAdminSettingsLogoResponse
-	103, // 216: ssoready.v1.SSOReadyService.AppCreateAdminSetupURL:output_type -> ssoready.v1.AppCreateAdminSetupURLResponse
-	105, // 217: ssoready.v1.SSOReadyService.AppListSAMLConnections:output_type -> ssoready.v1.AppListSAMLConnectionsResponse
-	8,   // 218: ssoready.v1.SSOReadyService.AppGetSAMLConnection:output_type -> ssoready.v1.SAMLConnection
-	8,   // 219: ssoready.v1.SSOReadyService.AppCreateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
-	8,   // 220: ssoready.v1.SSOReadyService.AppUpdateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
-	110, // 221: ssoready.v1.SSOReadyService.AppListSAMLFlows:output_type -> ssoready.v1.AppListSAMLFlowsResponse
-	9,   // 222: ssoready.v1.SSOReadyService.AppGetSAMLFlow:output_type -> ssoready.v1.SAMLFlow
-	113, // 223: ssoready.v1.SSOReadyService.ParseSAMLMetadata:output_type -> ssoready.v1.ParseSAMLMetadataResponse
-	115, // 224: ssoready.v1.SSOReadyService.AppListSCIMDirectories:output_type -> ssoready.v1.AppListSCIMDirectoriesResponse
-	10,  // 225: ssoready.v1.SSOReadyService.AppGetSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
-	10,  // 226: ssoready.v1.SSOReadyService.AppCreateSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
-	10,  // 227: ssoready.v1.SSOReadyService.AppUpdateSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
-	121, // 228: ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken:output_type -> ssoready.v1.AppRotateSCIMDirectoryBearerTokenResponse
-	162, // 229: ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory:output_type -> google.protobuf.Empty
-	123, // 230: ssoready.v1.SSOReadyService.AppListSCIMUsers:output_type -> ssoready.v1.AppListSCIMUsersResponse
-	11,  // 231: ssoready.v1.SSOReadyService.AppGetSCIMUser:output_type -> ssoready.v1.SCIMUser
-	127, // 232: ssoready.v1.SSOReadyService.AppListSCIMGroups:output_type -> ssoready.v1.AppListSCIMGroupsResponse
-	12,  // 233: ssoready.v1.SSOReadyService.AppGetSCIMGroup:output_type -> ssoready.v1.SCIMGroup
-	129, // 234: ssoready.v1.SSOReadyService.AppListSCIMRequests:output_type -> ssoready.v1.AppListSCIMRequestsResponse
-	131, // 235: ssoready.v1.SSOReadyService.AppGetSCIMRequest:output_type -> ssoready.v1.AppGetSCIMRequestResponse
-	133, // 236: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:output_type -> ssoready.v1.AdminRedeemOneTimeTokenResponse
-	135, // 237: ssoready.v1.SSOReadyService.AdminWhoami:output_type -> ssoready.v1.AdminWhoamiResponse
-	137, // 238: ssoready.v1.SSOReadyService.AdminListSAMLConnections:output_type -> ssoready.v1.AdminListSAMLConnectionsResponse
-	139, // 239: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:output_type -> ssoready.v1.AdminGetSAMLConnectionResponse
-	141, // 240: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:output_type -> ssoready.v1.AdminCreateSAMLConnectionResponse
-	143, // 241: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:output_type -> ssoready.v1.AdminUpdateSAMLConnectionResponse
-	145, // 242: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:output_type -> ssoready.v1.AdminParseSAMLMetadataResponse
-	147, // 243: ssoready.v1.SSOReadyService.AdminListSAMLFlows:output_type -> ssoready.v1.AdminListSAMLFlowsResponse
-	149, // 244: ssoready.v1.SSOReadyService.AdminGetSAMLFlow:output_type -> ssoready.v1.AdminGetSAMLFlowResponse
-	151, // 245: ssoready.v1.SSOReadyService.AdminListSCIMDirectories:output_type -> ssoready.v1.AdminListSCIMDirectoriesResponse
-	153, // 246: ssoready.v1.SSOReadyService.AdminGetSCIMDirectory:output_type -> ssoready.v1.AdminGetSCIMDirectoryResponse
-	155, // 247: ssoready.v1.SSOReadyService.AdminCreateSCIMDirectory:output_type -> ssoready.v1.AdminCreateSCIMDirectoryResponse
-	157, // 248: ssoready.v1.SSOReadyService.AdminUpdateSCIMDirectory:output_type -> ssoready.v1.AdminUpdateSCIMDirectoryResponse
-	159, // 249: ssoready.v1.SSOReadyService.AdminRotateSCIMDirectoryBearerToken:output_type -> ssoready.v1.AdminRotateSCIMDirectoryBearerTokenResponse
-	164, // [164:250] is the sub-list for method output_type
-	78,  // [78:164] is the sub-list for method input_type
+	109, // 135: ssoready.v1.SSOReadyService.AppDeleteSAMLConnection:input_type -> ssoready.v1.AppDeleteSAMLConnectionRequest
+	110, // 136: ssoready.v1.SSOReadyService.AppListSAMLFlows:input_type -> ssoready.v1.AppListSAMLFlowsRequest
+	112, // 137: ssoready.v1.SSOReadyService.AppGetSAMLFlow:input_type -> ssoready.v1.AppGetSAMLFlowRequest
+	113, // 138: ssoready.v1.SSOReadyService.ParseSAMLMetadata:input_type -> ssoready.v1.ParseSAMLMetadataRequest
+	115, // 139: ssoready.v1.SSOReadyService.AppListSCIMDirectories:input_type -> ssoready.v1.AppListSCIMDirectoriesRequest
+	117, // 140: ssoready.v1.SSOReadyService.AppGetSCIMDirectory:input_type -> ssoready.v1.AppGetSCIMDirectoryRequest
+	118, // 141: ssoready.v1.SSOReadyService.AppCreateSCIMDirectory:input_type -> ssoready.v1.AppCreateSCIMDirectoryRequest
+	119, // 142: ssoready.v1.SSOReadyService.AppUpdateSCIMDirectory:input_type -> ssoready.v1.AppUpdateSCIMDirectoryRequest
+	120, // 143: ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken:input_type -> ssoready.v1.AppRotateSCIMDirectoryBearerTokenRequest
+	121, // 144: ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory:input_type -> ssoready.v1.AppDeleteSCIMDirectoryRequest
+	123, // 145: ssoready.v1.SSOReadyService.AppListSCIMUsers:input_type -> ssoready.v1.AppListSCIMUsersRequest
+	125, // 146: ssoready.v1.SSOReadyService.AppGetSCIMUser:input_type -> ssoready.v1.AppGetSCIMUserRequest
+	126, // 147: ssoready.v1.SSOReadyService.AppListSCIMGroups:input_type -> ssoready.v1.AppListSCIMGroupsRequest
+	127, // 148: ssoready.v1.SSOReadyService.AppGetSCIMGroup:input_type -> ssoready.v1.AppGetSCIMGroupRequest
+	129, // 149: ssoready.v1.SSOReadyService.AppListSCIMRequests:input_type -> ssoready.v1.AppListSCIMRequestsRequest
+	131, // 150: ssoready.v1.SSOReadyService.AppGetSCIMRequest:input_type -> ssoready.v1.AppGetSCIMRequestRequest
+	133, // 151: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:input_type -> ssoready.v1.AdminRedeemOneTimeTokenRequest
+	135, // 152: ssoready.v1.SSOReadyService.AdminWhoami:input_type -> ssoready.v1.AdminWhoamiRequest
+	137, // 153: ssoready.v1.SSOReadyService.AdminListSAMLConnections:input_type -> ssoready.v1.AdminListSAMLConnectionsRequest
+	139, // 154: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:input_type -> ssoready.v1.AdminGetSAMLConnectionRequest
+	141, // 155: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:input_type -> ssoready.v1.AdminCreateSAMLConnectionRequest
+	143, // 156: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:input_type -> ssoready.v1.AdminUpdateSAMLConnectionRequest
+	145, // 157: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:input_type -> ssoready.v1.AdminParseSAMLMetadataRequest
+	147, // 158: ssoready.v1.SSOReadyService.AdminListSAMLFlows:input_type -> ssoready.v1.AdminListSAMLFlowsRequest
+	149, // 159: ssoready.v1.SSOReadyService.AdminGetSAMLFlow:input_type -> ssoready.v1.AdminGetSAMLFlowRequest
+	151, // 160: ssoready.v1.SSOReadyService.AdminListSCIMDirectories:input_type -> ssoready.v1.AdminListSCIMDirectoriesRequest
+	153, // 161: ssoready.v1.SSOReadyService.AdminGetSCIMDirectory:input_type -> ssoready.v1.AdminGetSCIMDirectoryRequest
+	155, // 162: ssoready.v1.SSOReadyService.AdminCreateSCIMDirectory:input_type -> ssoready.v1.AdminCreateSCIMDirectoryRequest
+	157, // 163: ssoready.v1.SSOReadyService.AdminUpdateSCIMDirectory:input_type -> ssoready.v1.AdminUpdateSCIMDirectoryRequest
+	159, // 164: ssoready.v1.SSOReadyService.AdminRotateSCIMDirectoryBearerToken:input_type -> ssoready.v1.AdminRotateSCIMDirectoryBearerTokenRequest
+	15,  // 165: ssoready.v1.SSOReadyService.GetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
+	17,  // 166: ssoready.v1.SSOReadyService.RedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
+	19,  // 167: ssoready.v1.SSOReadyService.ListSCIMUsers:output_type -> ssoready.v1.ListSCIMUsersResponse
+	21,  // 168: ssoready.v1.SSOReadyService.GetSCIMUser:output_type -> ssoready.v1.GetSCIMUserResponse
+	23,  // 169: ssoready.v1.SSOReadyService.ListSCIMGroups:output_type -> ssoready.v1.ListSCIMGroupsResponse
+	25,  // 170: ssoready.v1.SSOReadyService.GetSCIMGroup:output_type -> ssoready.v1.GetSCIMGroupResponse
+	27,  // 171: ssoready.v1.SSOReadyService.ListOrganizations:output_type -> ssoready.v1.ListOrganizationsResponse
+	29,  // 172: ssoready.v1.SSOReadyService.GetOrganization:output_type -> ssoready.v1.GetOrganizationResponse
+	31,  // 173: ssoready.v1.SSOReadyService.CreateOrganization:output_type -> ssoready.v1.CreateOrganizationResponse
+	33,  // 174: ssoready.v1.SSOReadyService.UpdateOrganization:output_type -> ssoready.v1.UpdateOrganizationResponse
+	35,  // 175: ssoready.v1.SSOReadyService.CreateSetupURL:output_type -> ssoready.v1.CreateSetupURLResponse
+	37,  // 176: ssoready.v1.SSOReadyService.ListSAMLConnections:output_type -> ssoready.v1.ListSAMLConnectionsResponse
+	39,  // 177: ssoready.v1.SSOReadyService.GetSAMLConnection:output_type -> ssoready.v1.GetSAMLConnectionResponse
+	41,  // 178: ssoready.v1.SSOReadyService.CreateSAMLConnection:output_type -> ssoready.v1.CreateSAMLConnectionResponse
+	43,  // 179: ssoready.v1.SSOReadyService.UpdateSAMLConnection:output_type -> ssoready.v1.UpdateSAMLConnectionResponse
+	45,  // 180: ssoready.v1.SSOReadyService.ListSCIMDirectories:output_type -> ssoready.v1.ListSCIMDirectoriesResponse
+	47,  // 181: ssoready.v1.SSOReadyService.GetSCIMDirectory:output_type -> ssoready.v1.GetSCIMDirectoryResponse
+	49,  // 182: ssoready.v1.SSOReadyService.CreateSCIMDirectory:output_type -> ssoready.v1.CreateSCIMDirectoryResponse
+	51,  // 183: ssoready.v1.SSOReadyService.UpdateSCIMDirectory:output_type -> ssoready.v1.UpdateSCIMDirectoryResponse
+	53,  // 184: ssoready.v1.SSOReadyService.RotateSCIMDirectoryBearerToken:output_type -> ssoready.v1.RotateSCIMDirectoryBearerTokenResponse
+	163, // 185: ssoready.v1.SSOReadyService.VerifyEmail:output_type -> google.protobuf.Empty
+	56,  // 186: ssoready.v1.SSOReadyService.SignIn:output_type -> ssoready.v1.SignInResponse
+	58,  // 187: ssoready.v1.SSOReadyService.SignOut:output_type -> ssoready.v1.SignOutResponse
+	60,  // 188: ssoready.v1.SSOReadyService.Whoami:output_type -> ssoready.v1.WhoamiResponse
+	62,  // 189: ssoready.v1.SSOReadyService.GetOnboardingState:output_type -> ssoready.v1.GetOnboardingStateResponse
+	163, // 190: ssoready.v1.SSOReadyService.UpdateOnboardingState:output_type -> google.protobuf.Empty
+	15,  // 191: ssoready.v1.SSOReadyService.OnboardingGetSAMLRedirectURL:output_type -> ssoready.v1.GetSAMLRedirectURLResponse
+	17,  // 192: ssoready.v1.SSOReadyService.OnboardingRedeemSAMLAccessCode:output_type -> ssoready.v1.RedeemSAMLAccessCodeResponse
+	67,  // 193: ssoready.v1.SSOReadyService.GetAppOrganization:output_type -> ssoready.v1.GetAppOrganizationResponse
+	69,  // 194: ssoready.v1.SSOReadyService.ListAppUsers:output_type -> ssoready.v1.ListAppUsersResponse
+	71,  // 195: ssoready.v1.SSOReadyService.ListEnvironments:output_type -> ssoready.v1.ListEnvironmentsResponse
+	4,   // 196: ssoready.v1.SSOReadyService.GetEnvironment:output_type -> ssoready.v1.Environment
+	4,   // 197: ssoready.v1.SSOReadyService.CreateEnvironment:output_type -> ssoready.v1.Environment
+	4,   // 198: ssoready.v1.SSOReadyService.UpdateEnvironment:output_type -> ssoready.v1.Environment
+	76,  // 199: ssoready.v1.SSOReadyService.GetEnvironmentCustomDomainSettings:output_type -> ssoready.v1.GetEnvironmentCustomDomainSettingsResponse
+	78,  // 200: ssoready.v1.SSOReadyService.UpdateEnvironmentCustomDomainSettings:output_type -> ssoready.v1.UpdateEnvironmentCustomDomainSettingsResponse
+	80,  // 201: ssoready.v1.SSOReadyService.CheckEnvironmentCustomDomainSettingsCertificates:output_type -> ssoready.v1.CheckEnvironmentCustomDomainSettingsCertificatesResponse
+	82,  // 202: ssoready.v1.SSOReadyService.ListAPIKeys:output_type -> ssoready.v1.ListAPIKeysResponse
+	5,   // 203: ssoready.v1.SSOReadyService.GetAPIKey:output_type -> ssoready.v1.APIKey
+	5,   // 204: ssoready.v1.SSOReadyService.CreateAPIKey:output_type -> ssoready.v1.APIKey
+	163, // 205: ssoready.v1.SSOReadyService.DeleteAPIKey:output_type -> google.protobuf.Empty
+	87,  // 206: ssoready.v1.SSOReadyService.ListSAMLOAuthClients:output_type -> ssoready.v1.ListSAMLOAuthClientsResponse
+	6,   // 207: ssoready.v1.SSOReadyService.GetSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
+	6,   // 208: ssoready.v1.SSOReadyService.CreateSAMLOAuthClient:output_type -> ssoready.v1.SAMLOAuthClient
+	163, // 209: ssoready.v1.SSOReadyService.DeleteSAMLOAuthClient:output_type -> google.protobuf.Empty
+	92,  // 210: ssoready.v1.SSOReadyService.AppListOrganizations:output_type -> ssoready.v1.AppListOrganizationsResponse
+	7,   // 211: ssoready.v1.SSOReadyService.AppGetOrganization:output_type -> ssoready.v1.Organization
+	7,   // 212: ssoready.v1.SSOReadyService.AppCreateOrganization:output_type -> ssoready.v1.Organization
+	7,   // 213: ssoready.v1.SSOReadyService.AppUpdateOrganization:output_type -> ssoready.v1.Organization
+	97,  // 214: ssoready.v1.SSOReadyService.AppGetAdminSettings:output_type -> ssoready.v1.AppGetAdminSettingsResponse
+	99,  // 215: ssoready.v1.SSOReadyService.AppUpdateAdminSettings:output_type -> ssoready.v1.AppUpdateAdminSettingsResponse
+	101, // 216: ssoready.v1.SSOReadyService.AppUpdateAdminSettingsLogo:output_type -> ssoready.v1.AppUpdateAdminSettingsLogoResponse
+	103, // 217: ssoready.v1.SSOReadyService.AppCreateAdminSetupURL:output_type -> ssoready.v1.AppCreateAdminSetupURLResponse
+	105, // 218: ssoready.v1.SSOReadyService.AppListSAMLConnections:output_type -> ssoready.v1.AppListSAMLConnectionsResponse
+	8,   // 219: ssoready.v1.SSOReadyService.AppGetSAMLConnection:output_type -> ssoready.v1.SAMLConnection
+	8,   // 220: ssoready.v1.SSOReadyService.AppCreateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
+	8,   // 221: ssoready.v1.SSOReadyService.AppUpdateSAMLConnection:output_type -> ssoready.v1.SAMLConnection
+	163, // 222: ssoready.v1.SSOReadyService.AppDeleteSAMLConnection:output_type -> google.protobuf.Empty
+	111, // 223: ssoready.v1.SSOReadyService.AppListSAMLFlows:output_type -> ssoready.v1.AppListSAMLFlowsResponse
+	9,   // 224: ssoready.v1.SSOReadyService.AppGetSAMLFlow:output_type -> ssoready.v1.SAMLFlow
+	114, // 225: ssoready.v1.SSOReadyService.ParseSAMLMetadata:output_type -> ssoready.v1.ParseSAMLMetadataResponse
+	116, // 226: ssoready.v1.SSOReadyService.AppListSCIMDirectories:output_type -> ssoready.v1.AppListSCIMDirectoriesResponse
+	10,  // 227: ssoready.v1.SSOReadyService.AppGetSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
+	10,  // 228: ssoready.v1.SSOReadyService.AppCreateSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
+	10,  // 229: ssoready.v1.SSOReadyService.AppUpdateSCIMDirectory:output_type -> ssoready.v1.SCIMDirectory
+	122, // 230: ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken:output_type -> ssoready.v1.AppRotateSCIMDirectoryBearerTokenResponse
+	163, // 231: ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory:output_type -> google.protobuf.Empty
+	124, // 232: ssoready.v1.SSOReadyService.AppListSCIMUsers:output_type -> ssoready.v1.AppListSCIMUsersResponse
+	11,  // 233: ssoready.v1.SSOReadyService.AppGetSCIMUser:output_type -> ssoready.v1.SCIMUser
+	128, // 234: ssoready.v1.SSOReadyService.AppListSCIMGroups:output_type -> ssoready.v1.AppListSCIMGroupsResponse
+	12,  // 235: ssoready.v1.SSOReadyService.AppGetSCIMGroup:output_type -> ssoready.v1.SCIMGroup
+	130, // 236: ssoready.v1.SSOReadyService.AppListSCIMRequests:output_type -> ssoready.v1.AppListSCIMRequestsResponse
+	132, // 237: ssoready.v1.SSOReadyService.AppGetSCIMRequest:output_type -> ssoready.v1.AppGetSCIMRequestResponse
+	134, // 238: ssoready.v1.SSOReadyService.AdminRedeemOneTimeToken:output_type -> ssoready.v1.AdminRedeemOneTimeTokenResponse
+	136, // 239: ssoready.v1.SSOReadyService.AdminWhoami:output_type -> ssoready.v1.AdminWhoamiResponse
+	138, // 240: ssoready.v1.SSOReadyService.AdminListSAMLConnections:output_type -> ssoready.v1.AdminListSAMLConnectionsResponse
+	140, // 241: ssoready.v1.SSOReadyService.AdminGetSAMLConnection:output_type -> ssoready.v1.AdminGetSAMLConnectionResponse
+	142, // 242: ssoready.v1.SSOReadyService.AdminCreateSAMLConnection:output_type -> ssoready.v1.AdminCreateSAMLConnectionResponse
+	144, // 243: ssoready.v1.SSOReadyService.AdminUpdateSAMLConnection:output_type -> ssoready.v1.AdminUpdateSAMLConnectionResponse
+	146, // 244: ssoready.v1.SSOReadyService.AdminParseSAMLMetadata:output_type -> ssoready.v1.AdminParseSAMLMetadataResponse
+	148, // 245: ssoready.v1.SSOReadyService.AdminListSAMLFlows:output_type -> ssoready.v1.AdminListSAMLFlowsResponse
+	150, // 246: ssoready.v1.SSOReadyService.AdminGetSAMLFlow:output_type -> ssoready.v1.AdminGetSAMLFlowResponse
+	152, // 247: ssoready.v1.SSOReadyService.AdminListSCIMDirectories:output_type -> ssoready.v1.AdminListSCIMDirectoriesResponse
+	154, // 248: ssoready.v1.SSOReadyService.AdminGetSCIMDirectory:output_type -> ssoready.v1.AdminGetSCIMDirectoryResponse
+	156, // 249: ssoready.v1.SSOReadyService.AdminCreateSCIMDirectory:output_type -> ssoready.v1.AdminCreateSCIMDirectoryResponse
+	158, // 250: ssoready.v1.SSOReadyService.AdminUpdateSCIMDirectory:output_type -> ssoready.v1.AdminUpdateSCIMDirectoryResponse
+	160, // 251: ssoready.v1.SSOReadyService.AdminRotateSCIMDirectoryBearerToken:output_type -> ssoready.v1.AdminRotateSCIMDirectoryBearerTokenResponse
+	165, // [165:252] is the sub-list for method output_type
+	78,  // [78:165] is the sub-list for method input_type
 	78,  // [78:78] is the sub-list for extension type_name
 	78,  // [78:78] is the sub-list for extension extendee
 	0,   // [0:78] is the sub-list for field type_name
@@ -11020,7 +11079,7 @@ func file_ssoready_v1_ssoready_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_ssoready_v1_ssoready_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   159,
+			NumMessages:   160,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

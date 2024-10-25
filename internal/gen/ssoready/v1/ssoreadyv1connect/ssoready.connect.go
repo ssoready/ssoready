@@ -202,6 +202,9 @@ const (
 	// SSOReadyServiceAppUpdateSAMLConnectionProcedure is the fully-qualified name of the
 	// SSOReadyService's AppUpdateSAMLConnection RPC.
 	SSOReadyServiceAppUpdateSAMLConnectionProcedure = "/ssoready.v1.SSOReadyService/AppUpdateSAMLConnection"
+	// SSOReadyServiceAppDeleteSAMLConnectionProcedure is the fully-qualified name of the
+	// SSOReadyService's AppDeleteSAMLConnection RPC.
+	SSOReadyServiceAppDeleteSAMLConnectionProcedure = "/ssoready.v1.SSOReadyService/AppDeleteSAMLConnection"
 	// SSOReadyServiceAppListSAMLFlowsProcedure is the fully-qualified name of the SSOReadyService's
 	// AppListSAMLFlows RPC.
 	SSOReadyServiceAppListSAMLFlowsProcedure = "/ssoready.v1.SSOReadyService/AppListSAMLFlows"
@@ -382,6 +385,7 @@ type SSOReadyServiceClient interface {
 	AppGetSAMLConnection(context.Context, *connect.Request[v1.AppGetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppCreateSAMLConnection(context.Context, *connect.Request[v1.AppCreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppUpdateSAMLConnection(context.Context, *connect.Request[v1.AppUpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
+	AppDeleteSAMLConnection(context.Context, *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSAMLFlows(context.Context, *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error)
 	AppGetSAMLFlow(context.Context, *connect.Request[v1.AppGetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
@@ -708,6 +712,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAppUpdateSAMLConnectionProcedure,
 			opts...,
 		),
+		appDeleteSAMLConnection: connect.NewClient[v1.AppDeleteSAMLConnectionRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceAppDeleteSAMLConnectionProcedure,
+			opts...,
+		),
 		appListSAMLFlows: connect.NewClient[v1.AppListSAMLFlowsRequest, v1.AppListSAMLFlowsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppListSAMLFlowsProcedure,
@@ -915,6 +924,7 @@ type sSOReadyServiceClient struct {
 	appGetSAMLConnection                             *connect.Client[v1.AppGetSAMLConnectionRequest, v1.SAMLConnection]
 	appCreateSAMLConnection                          *connect.Client[v1.AppCreateSAMLConnectionRequest, v1.SAMLConnection]
 	appUpdateSAMLConnection                          *connect.Client[v1.AppUpdateSAMLConnectionRequest, v1.SAMLConnection]
+	appDeleteSAMLConnection                          *connect.Client[v1.AppDeleteSAMLConnectionRequest, emptypb.Empty]
 	appListSAMLFlows                                 *connect.Client[v1.AppListSAMLFlowsRequest, v1.AppListSAMLFlowsResponse]
 	appGetSAMLFlow                                   *connect.Client[v1.AppGetSAMLFlowRequest, v1.SAMLFlow]
 	parseSAMLMetadata                                *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
@@ -1234,6 +1244,11 @@ func (c *sSOReadyServiceClient) AppUpdateSAMLConnection(ctx context.Context, req
 	return c.appUpdateSAMLConnection.CallUnary(ctx, req)
 }
 
+// AppDeleteSAMLConnection calls ssoready.v1.SSOReadyService.AppDeleteSAMLConnection.
+func (c *sSOReadyServiceClient) AppDeleteSAMLConnection(ctx context.Context, req *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.appDeleteSAMLConnection.CallUnary(ctx, req)
+}
+
 // AppListSAMLFlows calls ssoready.v1.SSOReadyService.AppListSAMLFlows.
 func (c *sSOReadyServiceClient) AppListSAMLFlows(ctx context.Context, req *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error) {
 	return c.appListSAMLFlows.CallUnary(ctx, req)
@@ -1472,6 +1487,7 @@ type SSOReadyServiceHandler interface {
 	AppGetSAMLConnection(context.Context, *connect.Request[v1.AppGetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppCreateSAMLConnection(context.Context, *connect.Request[v1.AppCreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppUpdateSAMLConnection(context.Context, *connect.Request[v1.AppUpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
+	AppDeleteSAMLConnection(context.Context, *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSAMLFlows(context.Context, *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error)
 	AppGetSAMLFlow(context.Context, *connect.Request[v1.AppGetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
@@ -1794,6 +1810,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AppUpdateSAMLConnection,
 		opts...,
 	)
+	sSOReadyServiceAppDeleteSAMLConnectionHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppDeleteSAMLConnectionProcedure,
+		svc.AppDeleteSAMLConnection,
+		opts...,
+	)
 	sSOReadyServiceAppListSAMLFlowsHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppListSAMLFlowsProcedure,
 		svc.AppListSAMLFlows,
@@ -2055,6 +2076,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppCreateSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppUpdateSAMLConnectionProcedure:
 			sSOReadyServiceAppUpdateSAMLConnectionHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppDeleteSAMLConnectionProcedure:
+			sSOReadyServiceAppDeleteSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSAMLFlowsProcedure:
 			sSOReadyServiceAppListSAMLFlowsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppGetSAMLFlowProcedure:
@@ -2348,6 +2371,10 @@ func (UnimplementedSSOReadyServiceHandler) AppCreateSAMLConnection(context.Conte
 
 func (UnimplementedSSOReadyServiceHandler) AppUpdateSAMLConnection(context.Context, *connect.Request[v1.AppUpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppUpdateSAMLConnection is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppDeleteSAMLConnection(context.Context, *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppDeleteSAMLConnection is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AppListSAMLFlows(context.Context, *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error) {

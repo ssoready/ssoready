@@ -5097,6 +5097,43 @@ export class AppUpdateSAMLConnectionRequest extends Message<AppUpdateSAMLConnect
 }
 
 /**
+ * @generated from message ssoready.v1.AppDeleteSAMLConnectionRequest
+ */
+export class AppDeleteSAMLConnectionRequest extends Message<AppDeleteSAMLConnectionRequest> {
+  /**
+   * @generated from field: string saml_connection_id = 1;
+   */
+  samlConnectionId = "";
+
+  constructor(data?: PartialMessage<AppDeleteSAMLConnectionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppDeleteSAMLConnectionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppDeleteSAMLConnectionRequest {
+    return new AppDeleteSAMLConnectionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppDeleteSAMLConnectionRequest {
+    return new AppDeleteSAMLConnectionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppDeleteSAMLConnectionRequest {
+    return new AppDeleteSAMLConnectionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppDeleteSAMLConnectionRequest | PlainMessage<AppDeleteSAMLConnectionRequest> | undefined, b: AppDeleteSAMLConnectionRequest | PlainMessage<AppDeleteSAMLConnectionRequest> | undefined): boolean {
+    return proto3.util.equals(AppDeleteSAMLConnectionRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AppListSAMLFlowsRequest
  */
 export class AppListSAMLFlowsRequest extends Message<AppListSAMLFlowsRequest> {
