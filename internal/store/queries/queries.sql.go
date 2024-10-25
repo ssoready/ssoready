@@ -147,8 +147,10 @@ func (q *Queries) AdminGetSCIMDirectory(ctx context.Context, arg AdminGetSCIMDir
 const appGetSCIMGroup = `-- name: AppGetSCIMGroup :one
 select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
 from scim_groups
-         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_groups.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_groups.id = $2
@@ -175,8 +177,10 @@ func (q *Queries) AppGetSCIMGroup(ctx context.Context, arg AppGetSCIMGroupParams
 const appGetSCIMRequest = `-- name: AppGetSCIMRequest :one
 select scim_requests.id, scim_requests.scim_directory_id, scim_requests.timestamp, scim_requests.http_request_url, scim_requests.http_request_method, scim_requests.http_request_body, scim_requests.http_response_status, scim_requests.http_response_body, scim_requests.error_bad_bearer_token, scim_requests.error_bad_username, scim_requests.error_email_outside_organization_domains
 from scim_requests
-         join scim_directories on scim_requests.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_requests.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_requests.id = $2
@@ -209,8 +213,10 @@ func (q *Queries) AppGetSCIMRequest(ctx context.Context, arg AppGetSCIMRequestPa
 const appGetSCIMUser = `-- name: AppGetSCIMUser :one
 select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
 from scim_users
-         join scim_directories on scim_users.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_users.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_users.id = $2
@@ -282,7 +288,10 @@ func (q *Queries) AppListSCIMRequests(ctx context.Context, arg AppListSCIMReques
 }
 
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
-select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id from saml_flows where id = $1 and access_code_sha256 is not null)
+select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+              from saml_flows
+              where id = $1
+                and access_code_sha256 is not null)
 `
 
 func (q *Queries) AuthCheckAssertionAlreadyProcessed(ctx context.Context, id uuid.UUID) (bool, error) {
@@ -332,7 +341,8 @@ func (q *Queries) AuthCountSCIMUsers(ctx context.Context, scimDirectoryID uuid.U
 }
 
 const authCreateSCIMGroup = `-- name: AuthCreateSCIMGroup :one
-insert into scim_groups (id, scim_directory_id, display_name, attributes, deleted)
+insert into scim_groups (id, scim_directory_id, display_name, attributes,
+                         deleted)
 values ($1, $2, $3, $4, $5)
 returning id, scim_directory_id, display_name, deleted, attributes
 `
@@ -365,9 +375,11 @@ func (q *Queries) AuthCreateSCIMGroup(ctx context.Context, arg AuthCreateSCIMGro
 }
 
 const authCreateSCIMRequest = `-- name: AuthCreateSCIMRequest :one
-insert into scim_requests (id, scim_directory_id, timestamp, http_request_url, http_request_method,
+insert into scim_requests (id, scim_directory_id, timestamp, http_request_url,
+                           http_request_method,
                            http_request_body, http_response_status,
-                           http_response_body, error_bad_bearer_token, error_bad_username,
+                           http_response_body, error_bad_bearer_token,
+                           error_bad_username,
                            error_email_outside_organization_domains)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning id, scim_directory_id, timestamp, http_request_url, http_request_method, http_request_body, http_response_status, http_response_body, error_bad_bearer_token, error_bad_username, error_email_outside_organization_domains
@@ -439,8 +451,10 @@ func (q *Queries) AuthGetInitData(ctx context.Context, id uuid.UUID) (AuthGetIni
 const authGetSAMLConnectionDomains = `-- name: AuthGetSAMLConnectionDomains :many
 select organization_domains.domain
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
-         join organization_domains on organizations.id = organization_domains.organization_id
+         join organizations
+              on saml_connections.organization_id = organizations.id
+         join organization_domains
+              on organizations.id = organization_domains.organization_id
 where saml_connections.id = $1
 `
 
@@ -513,7 +527,8 @@ func (q *Queries) AuthGetSAMLFlow(ctx context.Context, id uuid.UUID) (SamlFlow, 
 const authGetSAMLOAuthClient = `-- name: AuthGetSAMLOAuthClient :one
 select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256, environments.app_organization_id
 from saml_oauth_clients
-         join environments on saml_oauth_clients.environment_id = environments.id
+         join environments
+              on saml_oauth_clients.environment_id = environments.id
 where saml_oauth_clients.id = $1
 `
 
@@ -539,7 +554,8 @@ func (q *Queries) AuthGetSAMLOAuthClient(ctx context.Context, id uuid.UUID) (Aut
 const authGetSAMLOAuthClientWithSecret = `-- name: AuthGetSAMLOAuthClientWithSecret :one
 select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256, environments.app_organization_id
 from saml_oauth_clients
-         join environments on saml_oauth_clients.environment_id = environments.id
+         join environments
+              on saml_oauth_clients.environment_id = environments.id
 where saml_oauth_clients.id = $1
   and saml_oauth_clients.client_secret_sha256 = $2
 `
@@ -615,8 +631,10 @@ func (q *Queries) AuthGetSCIMDirectoryByIDAndBearerToken(ctx context.Context, ar
 const authGetSCIMDirectoryOrganizationDomains = `-- name: AuthGetSCIMDirectoryOrganizationDomains :many
 select organization_domains.domain
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
-         join organization_domains on organizations.id = organization_domains.organization_id
+         join organizations
+              on scim_directories.organization_id = organizations.id
+         join organization_domains
+              on organizations.id = organization_domains.organization_id
 where scim_directories.id = $1
 `
 
@@ -749,7 +767,8 @@ select saml_connections.sp_entity_id,
        environments.redirect_url,
        environments.oauth_redirect_uri
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1
 `
@@ -1049,7 +1068,8 @@ func (q *Queries) AuthUpsertSCIMUser(ctx context.Context, arg AuthUpsertSCIMUser
 }
 
 const authUpsertSCIMUserGroupMembership = `-- name: AuthUpsertSCIMUserGroupMembership :exec
-insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id,
+                                         scim_group_id)
 values ($1, $2, $3, $4)
 on conflict (scim_user_id, scim_group_id) do nothing
 `
@@ -1092,7 +1112,8 @@ func (q *Queries) CheckExistsEmailVerificationChallenge(ctx context.Context, arg
 }
 
 const createAPIKey = `-- name: CreateAPIKey :one
-insert into api_keys (id, secret_value, secret_value_sha256, environment_id, has_management_api_access)
+insert into api_keys (id, secret_value, secret_value_sha256, environment_id,
+                      has_management_api_access)
 values ($1, '', $2, $3, $4)
 returning id, secret_value, environment_id, secret_value_sha256, has_management_api_access
 `
@@ -1123,7 +1144,8 @@ func (q *Queries) CreateAPIKey(ctx context.Context, arg CreateAPIKeyParams) (Api
 }
 
 const createAdminAccessToken = `-- name: CreateAdminAccessToken :one
-insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time, can_manage_saml,
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256,
+                                 create_time, expire_time, can_manage_saml,
                                  can_manage_scim)
 values ($1, $2, $3, $4, $5, $6, $7)
 returning id, organization_id, one_time_token_sha256, access_token_sha256, create_time, expire_time, can_manage_saml, can_manage_scim
@@ -1190,7 +1212,8 @@ func (q *Queries) CreateAppOrganization(ctx context.Context, arg CreateAppOrgani
 }
 
 const createAppSession = `-- name: CreateAppSession :one
-insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256, revoked)
+insert into app_sessions (id, app_user_id, create_time, expire_time, token,
+                          token_sha256, revoked)
 values ($1, $2, $3, $4, '', $5, $6)
 returning id, app_user_id, create_time, expire_time, token, token_sha256, revoked
 `
@@ -1288,7 +1311,8 @@ func (q *Queries) CreateEmailVerificationChallenge(ctx context.Context, arg Crea
 }
 
 const createEnvironment = `-- name: CreateEnvironment :one
-insert into environments (id, redirect_url, oauth_redirect_uri, app_organization_id, display_name, auth_url)
+insert into environments (id, redirect_url, oauth_redirect_uri,
+                          app_organization_id, display_name, auth_url)
 values ($1, $2, $3, $4, $5, $6)
 returning id, redirect_url, app_organization_id, display_name, auth_url, oauth_redirect_uri, custom_auth_domain, admin_application_name, admin_return_url, custom_admin_domain, admin_url, admin_logo_configured
 `
@@ -1379,7 +1403,8 @@ func (q *Queries) CreateOrganizationDomain(ctx context.Context, arg CreateOrgani
 }
 
 const createSAMLConnection = `-- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id, sp_acs_url, idp_entity_id, idp_redirect_url,
+insert into saml_connections (id, organization_id, sp_entity_id, sp_acs_url,
+                              idp_entity_id, idp_redirect_url,
                               idp_x509_certificate,
                               is_primary)
 values ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -1423,8 +1448,10 @@ func (q *Queries) CreateSAMLConnection(ctx context.Context, arg CreateSAMLConnec
 }
 
 const createSAMLFlowGetRedirect = `-- name: CreateSAMLFlowGetRedirect :one
-insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time,
+                        update_time,
+                        auth_redirect_url, get_redirect_time, status,
+                        error_saml_connection_not_configured,
                         error_environment_oauth_redirect_uri_not_configured)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
@@ -1516,7 +1543,8 @@ func (q *Queries) CreateSAMLOAuthClient(ctx context.Context, arg CreateSAMLOAuth
 }
 
 const createSCIMDirectory = `-- name: CreateSCIMDirectory :one
-insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
+insert into scim_directories (id, organization_id, bearer_token_sha256,
+                              is_primary, scim_base_url)
 values ($1, $2, $3, $4, $5)
 returning id, organization_id, scim_base_url, bearer_token_sha256, is_primary
 `
@@ -1570,6 +1598,34 @@ func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID 
 	return err
 }
 
+const deleteSAMLConnection = `-- name: DeleteSAMLConnection :execrows
+delete
+from saml_connections
+where id = $1
+`
+
+func (q *Queries) DeleteSAMLConnection(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSAMLConnection, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const deleteSAMLFlowsBySAMLConnectionID = `-- name: DeleteSAMLFlowsBySAMLConnectionID :execrows
+delete
+from saml_flows
+where saml_connection_id = $1
+`
+
+func (q *Queries) DeleteSAMLFlowsBySAMLConnectionID(ctx context.Context, samlConnectionID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSAMLFlowsBySAMLConnectionID, samlConnectionID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const deleteSAMLOAuthClient = `-- name: DeleteSAMLOAuthClient :exec
 delete
 from saml_oauth_clients
@@ -1579,6 +1635,76 @@ where id = $1
 func (q *Queries) DeleteSAMLOAuthClient(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.Exec(ctx, deleteSAMLOAuthClient, id)
 	return err
+}
+
+const deleteSCIMDirectory = `-- name: DeleteSCIMDirectory :execrows
+delete
+from scim_directories
+where id = $1
+`
+
+func (q *Queries) DeleteSCIMDirectory(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMDirectory, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const deleteSCIMGroupsBySCIMDirectory = `-- name: DeleteSCIMGroupsBySCIMDirectory :execrows
+delete
+from scim_groups
+where scim_directory_id = $1
+`
+
+func (q *Queries) DeleteSCIMGroupsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMGroupsBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const deleteSCIMRequestsBySCIMDirectory = `-- name: DeleteSCIMRequestsBySCIMDirectory :execrows
+delete
+from scim_requests
+where scim_directory_id = $1
+`
+
+func (q *Queries) DeleteSCIMRequestsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMRequestsBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const deleteSCIMUserGroupMembershipsBySCIMDirectory = `-- name: DeleteSCIMUserGroupMembershipsBySCIMDirectory :execrows
+delete
+from scim_user_group_memberships
+where scim_directory_id = $1
+`
+
+func (q *Queries) DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMUserGroupMembershipsBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const deleteSCIMUsersBySCIMDirectory = `-- name: DeleteSCIMUsersBySCIMDirectory :execrows
+delete
+from scim_users
+where scim_directory_id = $1
+`
+
+func (q *Queries) DeleteSCIMUsersBySCIMDirectory(ctx context.Context, scimDirectoryID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSCIMUsersBySCIMDirectory, scimDirectoryID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getAPIKey = `-- name: GetAPIKey :one
@@ -1926,7 +2052,8 @@ func (q *Queries) GetOrganizationByID(ctx context.Context, id uuid.UUID) (Organi
 const getPrimarySAMLConnectionIDByOrganizationExternalID = `-- name: GetPrimarySAMLConnectionIDByOrganizationExternalID :one
 select saml_connections.id
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.external_id = $2
   and saml_connections.is_primary = true
@@ -1947,7 +2074,8 @@ func (q *Queries) GetPrimarySAMLConnectionIDByOrganizationExternalID(ctx context
 const getPrimarySAMLConnectionIDByOrganizationID = `-- name: GetPrimarySAMLConnectionIDByOrganizationID :one
 select saml_connections.id
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.id = $2
   and saml_connections.is_primary = true
@@ -1968,7 +2096,8 @@ func (q *Queries) GetPrimarySAMLConnectionIDByOrganizationID(ctx context.Context
 const getPrimarySCIMDirectoryIDByOrganizationExternalID = `-- name: GetPrimarySCIMDirectoryIDByOrganizationExternalID :one
 select scim_directories.id
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.external_id = $2
   and scim_directories.is_primary = true
@@ -1989,7 +2118,8 @@ func (q *Queries) GetPrimarySCIMDirectoryIDByOrganizationExternalID(ctx context.
 const getPrimarySCIMDirectoryIDByOrganizationID = `-- name: GetPrimarySCIMDirectoryIDByOrganizationID :one
 select scim_directories.id
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.id = $2
   and scim_directories.is_primary = true
@@ -2016,8 +2146,10 @@ select saml_flows.id             as saml_flow_id,
        organizations.external_id as organization_external_id,
        environments.id           as environment_id
 from saml_flows
-         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
-         join organizations on saml_connections.organization_id = organizations.id
+         join saml_connections
+              on saml_flows.saml_connection_id = saml_connections.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and environments.id = $3
@@ -2058,7 +2190,8 @@ func (q *Queries) GetSAMLAccessCodeData(ctx context.Context, arg GetSAMLAccessCo
 const getSAMLConnection = `-- name: GetSAMLConnection :one
 select saml_connections.id, saml_connections.organization_id, saml_connections.idp_redirect_url, saml_connections.idp_x509_certificate, saml_connections.idp_entity_id, saml_connections.sp_entity_id, saml_connections.is_primary, saml_connections.sp_acs_url
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_connections.id = $2
@@ -2110,8 +2243,10 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 const getSAMLFlow = `-- name: GetSAMLFlow :one
 select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.email, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time, saml_flows.redeem_response, saml_flows.error_bad_issuer, saml_flows.error_bad_audience, saml_flows.error_bad_subject_id, saml_flows.error_email_outside_organization_domains, saml_flows.status, saml_flows.error_unsigned_assertion, saml_flows.access_code_sha256, saml_flows.is_oauth, saml_flows.error_bad_signature_algorithm, saml_flows.error_bad_digest_algorithm, saml_flows.error_bad_x509_certificate, saml_flows.error_saml_connection_not_configured, saml_flows.error_environment_oauth_redirect_uri_not_configured, saml_flows.assertion_id
 from saml_flows
-         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
-         join organizations on saml_connections.organization_id = organizations.id
+         join saml_connections
+              on saml_flows.saml_connection_id = saml_connections.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_flows.id = $2
@@ -2211,7 +2346,8 @@ func (q *Queries) GetSAMLFlowByID(ctx context.Context, id uuid.UUID) (SamlFlow, 
 const getSAMLOAuthClient = `-- name: GetSAMLOAuthClient :one
 select saml_oauth_clients.id, saml_oauth_clients.environment_id, saml_oauth_clients.client_secret_sha256
 from saml_oauth_clients
-         join environments on saml_oauth_clients.environment_id = environments.id
+         join environments
+              on saml_oauth_clients.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_oauth_clients.id = $2
 `
@@ -2234,7 +2370,8 @@ select environments.auth_url as environment_auth_url,
        saml_connections.idp_redirect_url,
        saml_connections.idp_x509_certificate
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and environments.id = $2
@@ -2269,7 +2406,8 @@ func (q *Queries) GetSAMLRedirectURLData(ctx context.Context, arg GetSAMLRedirec
 const getSCIMDirectory = `-- name: GetSCIMDirectory :one
 select scim_directories.id, scim_directories.organization_id, scim_directories.scim_base_url, scim_directories.bearer_token_sha256, scim_directories.is_primary
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_directories.id = $2
@@ -2315,7 +2453,8 @@ func (q *Queries) GetSCIMDirectoryByID(ctx context.Context, id uuid.UUID) (ScimD
 const getSCIMDirectoryByIDAndEnvironmentID = `-- name: GetSCIMDirectoryByIDAndEnvironmentID :one
 select scim_directories.id
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_directories.id = $2
 `
@@ -2335,8 +2474,10 @@ func (q *Queries) GetSCIMDirectoryByIDAndEnvironmentID(ctx context.Context, arg 
 const getSCIMGroup = `-- name: GetSCIMGroup :one
 select scim_groups.id, scim_groups.scim_directory_id, scim_groups.display_name, scim_groups.deleted, scim_groups.attributes
 from scim_groups
-         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_groups.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_groups.id = $2
 `
@@ -2362,8 +2503,10 @@ func (q *Queries) GetSCIMGroup(ctx context.Context, arg GetSCIMGroupParams) (Sci
 const getSCIMUser = `-- name: GetSCIMUser :one
 select scim_users.id, scim_users.scim_directory_id, scim_users.email, scim_users.deleted, scim_users.attributes
 from scim_users
-         join scim_directories on scim_users.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_users.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_users.id = $2
 `
@@ -2971,7 +3114,10 @@ select id, scim_directory_id, email, deleted, attributes
 from scim_users
 where scim_users.scim_directory_id = $1
   and scim_users.id >= $2
-  and exists(select id, scim_directory_id, scim_user_id, scim_group_id from scim_user_group_memberships where scim_group_id = $4 and scim_user_id = scim_users.id)
+  and exists(select id, scim_directory_id, scim_user_id, scim_group_id
+             from scim_user_group_memberships
+             where scim_group_id = $4
+               and scim_user_id = scim_users.id)
 order by scim_users.id
 limit $3
 `
@@ -3041,7 +3187,8 @@ func (q *Queries) ManagementGetOrganization(ctx context.Context, arg ManagementG
 const managementGetSAMLConnection = `-- name: ManagementGetSAMLConnection :one
 select saml_connections.id, saml_connections.organization_id, saml_connections.idp_redirect_url, saml_connections.idp_x509_certificate, saml_connections.idp_entity_id, saml_connections.sp_entity_id, saml_connections.is_primary, saml_connections.sp_acs_url
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
 where organizations.environment_id = $1
   and saml_connections.id = $2
 `
@@ -3070,7 +3217,8 @@ func (q *Queries) ManagementGetSAMLConnection(ctx context.Context, arg Managemen
 const managementGetSCIMDirectory = `-- name: ManagementGetSCIMDirectory :one
 select scim_directories.id, scim_directories.organization_id, scim_directories.scim_base_url, scim_directories.bearer_token_sha256, scim_directories.is_primary
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_directories.id = $2
 `
@@ -3379,7 +3527,8 @@ func (q *Queries) UpdateEnvironmentCustomAuthDomain(ctx context.Context, arg Upd
 }
 
 const updateOnboardingState = `-- name: UpdateOnboardingState :one
-insert into onboarding_states (app_organization_id, dummyidp_app_id, onboarding_environment_id,
+insert into onboarding_states (app_organization_id, dummyidp_app_id,
+                               onboarding_environment_id,
                                onboarding_organization_id,
                                onboarding_saml_connection_id)
 values ($1, $2, $3, $4, $5)
@@ -3685,7 +3834,8 @@ func (q *Queries) UpdateSCIMDirectoryBearerToken(ctx context.Context, arg Update
 }
 
 const upsertSAMLFlowInitiate = `-- name: UpsertSAMLFlowInitiate :one
-insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time,
+                        update_time,
                         initiate_request, initiate_time, status, is_oauth)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 on conflict (id) do update set update_time      = excluded.update_time,
@@ -3760,12 +3910,17 @@ func (q *Queries) UpsertSAMLFlowInitiate(ctx context.Context, arg UpsertSAMLFlow
 }
 
 const upsertSAMLFlowReceiveAssertion = `-- name: UpsertSAMLFlowReceiveAssertion :one
-insert into saml_flows (id, saml_connection_id, assertion_id, access_code_sha256, expire_time, state, create_time,
-                        update_time, assertion, receive_assertion_time, error_saml_connection_not_configured,
-                        error_unsigned_assertion, error_bad_issuer, error_bad_audience, error_bad_signature_algorithm,
-                        error_bad_digest_algorithm, error_bad_x509_certificate, error_bad_subject_id,
+insert into saml_flows (id, saml_connection_id, assertion_id,
+                        access_code_sha256, expire_time, state, create_time,
+                        update_time, assertion, receive_assertion_time,
+                        error_saml_connection_not_configured,
+                        error_unsigned_assertion, error_bad_issuer,
+                        error_bad_audience, error_bad_signature_algorithm,
+                        error_bad_digest_algorithm, error_bad_x509_certificate,
+                        error_bad_subject_id,
                         error_email_outside_organization_domains, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
+        $17, $18, $19, $20)
 on conflict (id) do update set assertion_id                             = excluded.assertion_id,
                                access_code_sha256                       = excluded.access_code_sha256,
                                update_time                              = excluded.update_time,

@@ -5,12 +5,14 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *Store) AppListSAMLConnections(ctx context.Context, req *ssoreadyv1.AppListSAMLConnectionsRequest) (*ssoreadyv1.AppListSAMLConnectionsResponse, error) {
@@ -224,6 +226,49 @@ func (s *Store) AppUpdateSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 	}
 
 	return parseSAMLConnection(qSAMLConn), nil
+}
+
+func (s *Store) AppDeleteSAMLConnection(ctx context.Context, req *ssoreadyv1.AppDeleteSAMLConnectionRequest) (*emptypb.Empty, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	slog.InfoContext(ctx, "delete_saml_connection", "saml_connection_id", req.SamlConnectionId)
+
+	samlConnID, err := idformat.SAMLConnection.Parse(req.SamlConnectionId)
+	if err != nil {
+		return nil, fmt.Errorf("parse saml connection id: %w", err)
+	}
+
+	// idor check
+	if _, err = q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                samlConnID,
+	}); err != nil {
+		return nil, fmt.Errorf("get saml connection: %w", err)
+	}
+
+	flowsCount, err := q.DeleteSAMLFlowsBySAMLConnectionID(ctx, samlConnID)
+	if err != nil {
+		return nil, fmt.Errorf("delete saml flows: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_saml_connection", "flows_count", flowsCount)
+
+	samlConnsCount, err := q.DeleteSAMLConnection(ctx, samlConnID)
+	if err != nil {
+		return nil, fmt.Errorf("delete saml connection: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_saml_connection", "saml_conns_count", samlConnsCount)
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConnection {

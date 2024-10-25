@@ -215,6 +215,7 @@ service SSOReadyService {
   rpc AppGetSAMLConnection(AppGetSAMLConnectionRequest) returns (SAMLConnection);
   rpc AppCreateSAMLConnection(AppCreateSAMLConnectionRequest) returns (SAMLConnection);
   rpc AppUpdateSAMLConnection(AppUpdateSAMLConnectionRequest) returns (SAMLConnection);
+  rpc AppDeleteSAMLConnection(AppDeleteSAMLConnectionRequest) returns (google.protobuf.Empty);
 
   rpc AppListSAMLFlows(AppListSAMLFlowsRequest) returns (AppListSAMLFlowsResponse);
   rpc AppGetSAMLFlow(AppGetSAMLFlowRequest) returns (SAMLFlow);
@@ -226,6 +227,7 @@ service SSOReadyService {
   rpc AppCreateSCIMDirectory(AppCreateSCIMDirectoryRequest) returns (SCIMDirectory);
   rpc AppUpdateSCIMDirectory(AppUpdateSCIMDirectoryRequest) returns (SCIMDirectory);
   rpc AppRotateSCIMDirectoryBearerToken(AppRotateSCIMDirectoryBearerTokenRequest) returns (AppRotateSCIMDirectoryBearerTokenResponse);
+  rpc AppDeleteSCIMDirectory(AppDeleteSCIMDirectoryRequest) returns (google.protobuf.Empty);
 
   rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
   rpc AppGetSCIMUser(AppGetSCIMUserRequest) returns (SCIMUser);
@@ -1010,6 +1012,10 @@ message AppUpdateSAMLConnectionRequest {
   SAMLConnection saml_connection = 1;
 }
 
+message AppDeleteSAMLConnectionRequest {
+  string saml_connection_id = 1;
+}
+
 message AppListSAMLFlowsRequest {
   string saml_connection_id = 1;
   string page_token = 2;
@@ -1057,6 +1063,10 @@ message AppUpdateSCIMDirectoryRequest {
 }
 
 message AppRotateSCIMDirectoryBearerTokenRequest {
+  string scim_directory_id = 1;
+}
+
+message AppDeleteSCIMDirectoryRequest {
   string scim_directory_id = 1;
 }
 

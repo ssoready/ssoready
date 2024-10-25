@@ -5,6 +5,7 @@ import (
 
 	"connectrpc.com/connect"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *Service) AppListSCIMDirectories(ctx context.Context, req *connect.Request[ssoreadyv1.AppListSCIMDirectoriesRequest]) (*connect.Response[ssoreadyv1.AppListSCIMDirectoriesResponse], error) {
@@ -45,6 +46,15 @@ func (s *Service) AppUpdateSCIMDirectory(ctx context.Context, req *connect.Reque
 
 func (s *Service) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[ssoreadyv1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse], error) {
 	res, err := s.Store.AppRotateSCIMDirectoryBearerToken(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(res), nil
+}
+
+func (s *Service) AppDeleteSCIMDirectory(ctx context.Context, req *connect.Request[ssoreadyv1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error) {
+	res, err := s.Store.AppDeleteSCIMDirectory(ctx, req.Msg)
 	if err != nil {
 		return nil, err
 	}

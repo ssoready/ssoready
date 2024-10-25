@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { AdminCreateSAMLConnectionRequest, AdminCreateSAMLConnectionResponse, AdminCreateSCIMDirectoryRequest, AdminCreateSCIMDirectoryResponse, AdminGetSAMLConnectionRequest, AdminGetSAMLConnectionResponse, AdminGetSAMLFlowRequest, AdminGetSAMLFlowResponse, AdminGetSCIMDirectoryRequest, AdminGetSCIMDirectoryResponse, AdminListSAMLConnectionsRequest, AdminListSAMLConnectionsResponse, AdminListSAMLFlowsRequest, AdminListSAMLFlowsResponse, AdminListSCIMDirectoriesRequest, AdminListSCIMDirectoriesResponse, AdminParseSAMLMetadataRequest, AdminParseSAMLMetadataResponse, AdminRedeemOneTimeTokenRequest, AdminRedeemOneTimeTokenResponse, AdminRotateSCIMDirectoryBearerTokenRequest, AdminRotateSCIMDirectoryBearerTokenResponse, AdminUpdateSAMLConnectionRequest, AdminUpdateSAMLConnectionResponse, AdminUpdateSCIMDirectoryRequest, AdminUpdateSCIMDirectoryResponse, AdminWhoamiRequest, AdminWhoamiResponse, APIKey, AppCreateAdminSetupURLRequest, AppCreateAdminSetupURLResponse, AppCreateOrganizationRequest, AppCreateSAMLConnectionRequest, AppCreateSCIMDirectoryRequest, AppGetAdminSettingsRequest, AppGetAdminSettingsResponse, AppGetOrganizationRequest, AppGetSAMLConnectionRequest, AppGetSAMLFlowRequest, AppGetSCIMDirectoryRequest, AppGetSCIMGroupRequest, AppGetSCIMRequestRequest, AppGetSCIMRequestResponse, AppGetSCIMUserRequest, AppListOrganizationsRequest, AppListOrganizationsResponse, AppListSAMLConnectionsRequest, AppListSAMLConnectionsResponse, AppListSAMLFlowsRequest, AppListSAMLFlowsResponse, AppListSCIMDirectoriesRequest, AppListSCIMDirectoriesResponse, AppListSCIMGroupsRequest, AppListSCIMGroupsResponse, AppListSCIMRequestsRequest, AppListSCIMRequestsResponse, AppListSCIMUsersRequest, AppListSCIMUsersResponse, AppRotateSCIMDirectoryBearerTokenRequest, AppRotateSCIMDirectoryBearerTokenResponse, AppUpdateAdminSettingsLogoRequest, AppUpdateAdminSettingsLogoResponse, AppUpdateAdminSettingsRequest, AppUpdateAdminSettingsResponse, AppUpdateOrganizationRequest, AppUpdateSAMLConnectionRequest, AppUpdateSCIMDirectoryRequest, CheckEnvironmentCustomDomainSettingsCertificatesRequest, CheckEnvironmentCustomDomainSettingsCertificatesResponse, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateOrganizationResponse, CreateSAMLConnectionRequest, CreateSAMLConnectionResponse, CreateSAMLOAuthClientRequest, CreateSCIMDirectoryRequest, CreateSCIMDirectoryResponse, CreateSetupURLRequest, CreateSetupURLResponse, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetAppOrganizationRequest, GetAppOrganizationResponse, GetEnvironmentCustomDomainSettingsRequest, GetEnvironmentCustomDomainSettingsResponse, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetOrganizationResponse, GetSAMLConnectionRequest, GetSAMLConnectionResponse, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, GetSCIMDirectoryRequest, GetSCIMDirectoryResponse, GetSCIMGroupRequest, GetSCIMGroupResponse, GetSCIMUserRequest, GetSCIMUserResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListAppUsersRequest, ListAppUsersResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, ListSCIMDirectoriesRequest, ListSCIMDirectoriesResponse, ListSCIMGroupsRequest, ListSCIMGroupsResponse, ListSCIMUsersRequest, ListSCIMUsersResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, RotateSCIMDirectoryBearerTokenRequest, RotateSCIMDirectoryBearerTokenResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SCIMDirectory, SCIMGroup, SCIMUser, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentCustomDomainSettingsRequest, UpdateEnvironmentCustomDomainSettingsResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateOrganizationResponse, UpdateSAMLConnectionRequest, UpdateSAMLConnectionResponse, UpdateSCIMDirectoryRequest, UpdateSCIMDirectoryResponse, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
+import { AdminCreateSAMLConnectionRequest, AdminCreateSAMLConnectionResponse, AdminCreateSCIMDirectoryRequest, AdminCreateSCIMDirectoryResponse, AdminGetSAMLConnectionRequest, AdminGetSAMLConnectionResponse, AdminGetSAMLFlowRequest, AdminGetSAMLFlowResponse, AdminGetSCIMDirectoryRequest, AdminGetSCIMDirectoryResponse, AdminListSAMLConnectionsRequest, AdminListSAMLConnectionsResponse, AdminListSAMLFlowsRequest, AdminListSAMLFlowsResponse, AdminListSCIMDirectoriesRequest, AdminListSCIMDirectoriesResponse, AdminParseSAMLMetadataRequest, AdminParseSAMLMetadataResponse, AdminRedeemOneTimeTokenRequest, AdminRedeemOneTimeTokenResponse, AdminRotateSCIMDirectoryBearerTokenRequest, AdminRotateSCIMDirectoryBearerTokenResponse, AdminUpdateSAMLConnectionRequest, AdminUpdateSAMLConnectionResponse, AdminUpdateSCIMDirectoryRequest, AdminUpdateSCIMDirectoryResponse, AdminWhoamiRequest, AdminWhoamiResponse, APIKey, AppCreateAdminSetupURLRequest, AppCreateAdminSetupURLResponse, AppCreateOrganizationRequest, AppCreateSAMLConnectionRequest, AppCreateSCIMDirectoryRequest, AppDeleteSAMLConnectionRequest, AppDeleteSCIMDirectoryRequest, AppGetAdminSettingsRequest, AppGetAdminSettingsResponse, AppGetOrganizationRequest, AppGetSAMLConnectionRequest, AppGetSAMLFlowRequest, AppGetSCIMDirectoryRequest, AppGetSCIMGroupRequest, AppGetSCIMRequestRequest, AppGetSCIMRequestResponse, AppGetSCIMUserRequest, AppListOrganizationsRequest, AppListOrganizationsResponse, AppListSAMLConnectionsRequest, AppListSAMLConnectionsResponse, AppListSAMLFlowsRequest, AppListSAMLFlowsResponse, AppListSCIMDirectoriesRequest, AppListSCIMDirectoriesResponse, AppListSCIMGroupsRequest, AppListSCIMGroupsResponse, AppListSCIMRequestsRequest, AppListSCIMRequestsResponse, AppListSCIMUsersRequest, AppListSCIMUsersResponse, AppRotateSCIMDirectoryBearerTokenRequest, AppRotateSCIMDirectoryBearerTokenResponse, AppUpdateAdminSettingsLogoRequest, AppUpdateAdminSettingsLogoResponse, AppUpdateAdminSettingsRequest, AppUpdateAdminSettingsResponse, AppUpdateOrganizationRequest, AppUpdateSAMLConnectionRequest, AppUpdateSCIMDirectoryRequest, CheckEnvironmentCustomDomainSettingsCertificatesRequest, CheckEnvironmentCustomDomainSettingsCertificatesResponse, CreateAPIKeyRequest, CreateEnvironmentRequest, CreateOrganizationRequest, CreateOrganizationResponse, CreateSAMLConnectionRequest, CreateSAMLConnectionResponse, CreateSAMLOAuthClientRequest, CreateSCIMDirectoryRequest, CreateSCIMDirectoryResponse, CreateSetupURLRequest, CreateSetupURLResponse, DeleteAPIKeyRequest, DeleteSAMLOAuthClientRequest, Environment, GetAPIKeyRequest, GetAppOrganizationRequest, GetAppOrganizationResponse, GetEnvironmentCustomDomainSettingsRequest, GetEnvironmentCustomDomainSettingsResponse, GetEnvironmentRequest, GetOnboardingStateRequest, GetOnboardingStateResponse, GetOrganizationRequest, GetOrganizationResponse, GetSAMLConnectionRequest, GetSAMLConnectionResponse, GetSAMLOAuthClientRequest, GetSAMLRedirectURLRequest, GetSAMLRedirectURLResponse, GetSCIMDirectoryRequest, GetSCIMDirectoryResponse, GetSCIMGroupRequest, GetSCIMGroupResponse, GetSCIMUserRequest, GetSCIMUserResponse, ListAPIKeysRequest, ListAPIKeysResponse, ListAppUsersRequest, ListAppUsersResponse, ListEnvironmentsRequest, ListEnvironmentsResponse, ListOrganizationsRequest, ListOrganizationsResponse, ListSAMLConnectionsRequest, ListSAMLConnectionsResponse, ListSAMLOAuthClientsRequest, ListSAMLOAuthClientsResponse, ListSCIMDirectoriesRequest, ListSCIMDirectoriesResponse, ListSCIMGroupsRequest, ListSCIMGroupsResponse, ListSCIMUsersRequest, ListSCIMUsersResponse, OnboardingGetSAMLRedirectURLRequest, OnboardingRedeemSAMLAccessCodeRequest, Organization, ParseSAMLMetadataRequest, ParseSAMLMetadataResponse, RedeemSAMLAccessCodeRequest, RedeemSAMLAccessCodeResponse, RotateSCIMDirectoryBearerTokenRequest, RotateSCIMDirectoryBearerTokenResponse, SAMLConnection, SAMLFlow, SAMLOAuthClient, SCIMDirectory, SCIMGroup, SCIMUser, SignInRequest, SignInResponse, SignOutRequest, SignOutResponse, UpdateEnvironmentCustomDomainSettingsRequest, UpdateEnvironmentCustomDomainSettingsResponse, UpdateEnvironmentRequest, UpdateOnboardingStateRequest, UpdateOrganizationRequest, UpdateOrganizationResponse, UpdateSAMLConnectionRequest, UpdateSAMLConnectionResponse, UpdateSCIMDirectoryRequest, UpdateSCIMDirectoryResponse, VerifyEmailRequest, WhoamiRequest, WhoamiResponse } from "./ssoready_pb.js";
 
 /**
  * Gets a SAML initiation URL to redirect your users to.
@@ -857,6 +857,20 @@ export const appUpdateSAMLConnection = {
 } as const;
 
 /**
+ * @generated from rpc ssoready.v1.SSOReadyService.AppDeleteSAMLConnection
+ */
+export const appDeleteSAMLConnection = {
+  localName: "appDeleteSAMLConnection",
+  name: "AppDeleteSAMLConnection",
+  kind: MethodKind.Unary,
+  I: AppDeleteSAMLConnectionRequest,
+  O: Empty,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
  * @generated from rpc ssoready.v1.SSOReadyService.AppListSAMLFlows
  */
 export const appListSAMLFlows = {
@@ -963,6 +977,20 @@ export const appRotateSCIMDirectoryBearerToken = {
   kind: MethodKind.Unary,
   I: AppRotateSCIMDirectoryBearerTokenRequest,
   O: AppRotateSCIMDirectoryBearerTokenResponse,
+  service: {
+    typeName: "ssoready.v1.SSOReadyService"
+  }
+} as const;
+
+/**
+ * @generated from rpc ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory
+ */
+export const appDeleteSCIMDirectory = {
+  localName: "appDeleteSCIMDirectory",
+  name: "AppDeleteSCIMDirectory",
+  kind: MethodKind.Unary,
+  I: AppDeleteSCIMDirectoryRequest,
+  O: Empty,
   service: {
     typeName: "ssoready.v1.SSOReadyService"
   }

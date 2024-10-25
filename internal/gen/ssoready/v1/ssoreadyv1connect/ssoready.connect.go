@@ -202,6 +202,9 @@ const (
 	// SSOReadyServiceAppUpdateSAMLConnectionProcedure is the fully-qualified name of the
 	// SSOReadyService's AppUpdateSAMLConnection RPC.
 	SSOReadyServiceAppUpdateSAMLConnectionProcedure = "/ssoready.v1.SSOReadyService/AppUpdateSAMLConnection"
+	// SSOReadyServiceAppDeleteSAMLConnectionProcedure is the fully-qualified name of the
+	// SSOReadyService's AppDeleteSAMLConnection RPC.
+	SSOReadyServiceAppDeleteSAMLConnectionProcedure = "/ssoready.v1.SSOReadyService/AppDeleteSAMLConnection"
 	// SSOReadyServiceAppListSAMLFlowsProcedure is the fully-qualified name of the SSOReadyService's
 	// AppListSAMLFlows RPC.
 	SSOReadyServiceAppListSAMLFlowsProcedure = "/ssoready.v1.SSOReadyService/AppListSAMLFlows"
@@ -226,6 +229,9 @@ const (
 	// SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's AppRotateSCIMDirectoryBearerToken RPC.
 	SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure = "/ssoready.v1.SSOReadyService/AppRotateSCIMDirectoryBearerToken"
+	// SSOReadyServiceAppDeleteSCIMDirectoryProcedure is the fully-qualified name of the
+	// SSOReadyService's AppDeleteSCIMDirectory RPC.
+	SSOReadyServiceAppDeleteSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/AppDeleteSCIMDirectory"
 	// SSOReadyServiceAppListSCIMUsersProcedure is the fully-qualified name of the SSOReadyService's
 	// AppListSCIMUsers RPC.
 	SSOReadyServiceAppListSCIMUsersProcedure = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
@@ -379,6 +385,7 @@ type SSOReadyServiceClient interface {
 	AppGetSAMLConnection(context.Context, *connect.Request[v1.AppGetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppCreateSAMLConnection(context.Context, *connect.Request[v1.AppCreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppUpdateSAMLConnection(context.Context, *connect.Request[v1.AppUpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
+	AppDeleteSAMLConnection(context.Context, *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSAMLFlows(context.Context, *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error)
 	AppGetSAMLFlow(context.Context, *connect.Request[v1.AppGetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
@@ -387,6 +394,7 @@ type SSOReadyServiceClient interface {
 	AppCreateSCIMDirectory(context.Context, *connect.Request[v1.AppCreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppUpdateSCIMDirectory(context.Context, *connect.Request[v1.AppUpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error)
+	AppDeleteSCIMDirectory(context.Context, *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppGetSCIMUser(context.Context, *connect.Request[v1.AppGetSCIMUserRequest]) (*connect.Response[v1.SCIMUser], error)
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
@@ -704,6 +712,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAppUpdateSAMLConnectionProcedure,
 			opts...,
 		),
+		appDeleteSAMLConnection: connect.NewClient[v1.AppDeleteSAMLConnectionRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceAppDeleteSAMLConnectionProcedure,
+			opts...,
+		),
 		appListSAMLFlows: connect.NewClient[v1.AppListSAMLFlowsRequest, v1.AppListSAMLFlowsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppListSAMLFlowsProcedure,
@@ -742,6 +755,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		appRotateSCIMDirectoryBearerToken: connect.NewClient[v1.AppRotateSCIMDirectoryBearerTokenRequest, v1.AppRotateSCIMDirectoryBearerTokenResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure,
+			opts...,
+		),
+		appDeleteSCIMDirectory: connect.NewClient[v1.AppDeleteSCIMDirectoryRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceAppDeleteSCIMDirectoryProcedure,
 			opts...,
 		),
 		appListSCIMUsers: connect.NewClient[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse](
@@ -906,6 +924,7 @@ type sSOReadyServiceClient struct {
 	appGetSAMLConnection                             *connect.Client[v1.AppGetSAMLConnectionRequest, v1.SAMLConnection]
 	appCreateSAMLConnection                          *connect.Client[v1.AppCreateSAMLConnectionRequest, v1.SAMLConnection]
 	appUpdateSAMLConnection                          *connect.Client[v1.AppUpdateSAMLConnectionRequest, v1.SAMLConnection]
+	appDeleteSAMLConnection                          *connect.Client[v1.AppDeleteSAMLConnectionRequest, emptypb.Empty]
 	appListSAMLFlows                                 *connect.Client[v1.AppListSAMLFlowsRequest, v1.AppListSAMLFlowsResponse]
 	appGetSAMLFlow                                   *connect.Client[v1.AppGetSAMLFlowRequest, v1.SAMLFlow]
 	parseSAMLMetadata                                *connect.Client[v1.ParseSAMLMetadataRequest, v1.ParseSAMLMetadataResponse]
@@ -914,6 +933,7 @@ type sSOReadyServiceClient struct {
 	appCreateSCIMDirectory                           *connect.Client[v1.AppCreateSCIMDirectoryRequest, v1.SCIMDirectory]
 	appUpdateSCIMDirectory                           *connect.Client[v1.AppUpdateSCIMDirectoryRequest, v1.SCIMDirectory]
 	appRotateSCIMDirectoryBearerToken                *connect.Client[v1.AppRotateSCIMDirectoryBearerTokenRequest, v1.AppRotateSCIMDirectoryBearerTokenResponse]
+	appDeleteSCIMDirectory                           *connect.Client[v1.AppDeleteSCIMDirectoryRequest, emptypb.Empty]
 	appListSCIMUsers                                 *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
 	appGetSCIMUser                                   *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
 	appListSCIMGroups                                *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
@@ -1224,6 +1244,11 @@ func (c *sSOReadyServiceClient) AppUpdateSAMLConnection(ctx context.Context, req
 	return c.appUpdateSAMLConnection.CallUnary(ctx, req)
 }
 
+// AppDeleteSAMLConnection calls ssoready.v1.SSOReadyService.AppDeleteSAMLConnection.
+func (c *sSOReadyServiceClient) AppDeleteSAMLConnection(ctx context.Context, req *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.appDeleteSAMLConnection.CallUnary(ctx, req)
+}
+
 // AppListSAMLFlows calls ssoready.v1.SSOReadyService.AppListSAMLFlows.
 func (c *sSOReadyServiceClient) AppListSAMLFlows(ctx context.Context, req *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error) {
 	return c.appListSAMLFlows.CallUnary(ctx, req)
@@ -1263,6 +1288,11 @@ func (c *sSOReadyServiceClient) AppUpdateSCIMDirectory(ctx context.Context, req 
 // ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken.
 func (c *sSOReadyServiceClient) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error) {
 	return c.appRotateSCIMDirectoryBearerToken.CallUnary(ctx, req)
+}
+
+// AppDeleteSCIMDirectory calls ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory.
+func (c *sSOReadyServiceClient) AppDeleteSCIMDirectory(ctx context.Context, req *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.appDeleteSCIMDirectory.CallUnary(ctx, req)
 }
 
 // AppListSCIMUsers calls ssoready.v1.SSOReadyService.AppListSCIMUsers.
@@ -1457,6 +1487,7 @@ type SSOReadyServiceHandler interface {
 	AppGetSAMLConnection(context.Context, *connect.Request[v1.AppGetSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppCreateSAMLConnection(context.Context, *connect.Request[v1.AppCreateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
 	AppUpdateSAMLConnection(context.Context, *connect.Request[v1.AppUpdateSAMLConnectionRequest]) (*connect.Response[v1.SAMLConnection], error)
+	AppDeleteSAMLConnection(context.Context, *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSAMLFlows(context.Context, *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error)
 	AppGetSAMLFlow(context.Context, *connect.Request[v1.AppGetSAMLFlowRequest]) (*connect.Response[v1.SAMLFlow], error)
 	ParseSAMLMetadata(context.Context, *connect.Request[v1.ParseSAMLMetadataRequest]) (*connect.Response[v1.ParseSAMLMetadataResponse], error)
@@ -1465,6 +1496,7 @@ type SSOReadyServiceHandler interface {
 	AppCreateSCIMDirectory(context.Context, *connect.Request[v1.AppCreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppUpdateSCIMDirectory(context.Context, *connect.Request[v1.AppUpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error)
+	AppDeleteSCIMDirectory(context.Context, *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppGetSCIMUser(context.Context, *connect.Request[v1.AppGetSCIMUserRequest]) (*connect.Response[v1.SCIMUser], error)
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
@@ -1778,6 +1810,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AppUpdateSAMLConnection,
 		opts...,
 	)
+	sSOReadyServiceAppDeleteSAMLConnectionHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppDeleteSAMLConnectionProcedure,
+		svc.AppDeleteSAMLConnection,
+		opts...,
+	)
 	sSOReadyServiceAppListSAMLFlowsHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppListSAMLFlowsProcedure,
 		svc.AppListSAMLFlows,
@@ -1816,6 +1853,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceAppRotateSCIMDirectoryBearerTokenHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure,
 		svc.AppRotateSCIMDirectoryBearerToken,
+		opts...,
+	)
+	sSOReadyServiceAppDeleteSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppDeleteSCIMDirectoryProcedure,
+		svc.AppDeleteSCIMDirectory,
 		opts...,
 	)
 	sSOReadyServiceAppListSCIMUsersHandler := connect.NewUnaryHandler(
@@ -2034,6 +2076,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppCreateSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppUpdateSAMLConnectionProcedure:
 			sSOReadyServiceAppUpdateSAMLConnectionHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppDeleteSAMLConnectionProcedure:
+			sSOReadyServiceAppDeleteSAMLConnectionHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSAMLFlowsProcedure:
 			sSOReadyServiceAppListSAMLFlowsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppGetSAMLFlowProcedure:
@@ -2050,6 +2094,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppUpdateSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure:
 			sSOReadyServiceAppRotateSCIMDirectoryBearerTokenHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppDeleteSCIMDirectoryProcedure:
+			sSOReadyServiceAppDeleteSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSCIMUsersProcedure:
 			sSOReadyServiceAppListSCIMUsersHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppGetSCIMUserProcedure:
@@ -2327,6 +2373,10 @@ func (UnimplementedSSOReadyServiceHandler) AppUpdateSAMLConnection(context.Conte
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppUpdateSAMLConnection is not implemented"))
 }
 
+func (UnimplementedSSOReadyServiceHandler) AppDeleteSAMLConnection(context.Context, *connect.Request[v1.AppDeleteSAMLConnectionRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppDeleteSAMLConnection is not implemented"))
+}
+
 func (UnimplementedSSOReadyServiceHandler) AppListSAMLFlows(context.Context, *connect.Request[v1.AppListSAMLFlowsRequest]) (*connect.Response[v1.AppListSAMLFlowsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppListSAMLFlows is not implemented"))
 }
@@ -2357,6 +2407,10 @@ func (UnimplementedSSOReadyServiceHandler) AppUpdateSCIMDirectory(context.Contex
 
 func (UnimplementedSSOReadyServiceHandler) AppRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppDeleteSCIMDirectory(context.Context, *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {
