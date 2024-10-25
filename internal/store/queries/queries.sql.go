@@ -1598,26 +1598,32 @@ func (q *Queries) DeleteOrganizationDomains(ctx context.Context, organizationID 
 	return err
 }
 
-const deleteSAMLConnection = `-- name: DeleteSAMLConnection :exec
+const deleteSAMLConnection = `-- name: DeleteSAMLConnection :execrows
 delete
 from saml_connections
 where id = $1
 `
 
-func (q *Queries) DeleteSAMLConnection(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSAMLConnection, id)
-	return err
+func (q *Queries) DeleteSAMLConnection(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSAMLConnection, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
-const deleteSAMLFlowsBySAMLConnectionID = `-- name: DeleteSAMLFlowsBySAMLConnectionID :exec
+const deleteSAMLFlowsBySAMLConnectionID = `-- name: DeleteSAMLFlowsBySAMLConnectionID :execrows
 delete
 from saml_flows
 where saml_connection_id = $1
 `
 
-func (q *Queries) DeleteSAMLFlowsBySAMLConnectionID(ctx context.Context, samlConnectionID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSAMLFlowsBySAMLConnectionID, samlConnectionID)
-	return err
+func (q *Queries) DeleteSAMLFlowsBySAMLConnectionID(ctx context.Context, samlConnectionID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSAMLFlowsBySAMLConnectionID, samlConnectionID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const deleteSAMLOAuthClient = `-- name: DeleteSAMLOAuthClient :exec

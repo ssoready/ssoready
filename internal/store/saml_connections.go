@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
@@ -234,6 +235,8 @@ func (s *Store) AppDeleteSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 	}
 	defer rollback()
 
+	slog.InfoContext(ctx, "delete_saml_connection", "saml_connection_id", req.SamlConnectionId)
+
 	samlConnID, err := idformat.SAMLConnection.Parse(req.SamlConnectionId)
 	if err != nil {
 		return nil, fmt.Errorf("parse saml connection id: %w", err)
@@ -247,13 +250,19 @@ func (s *Store) AppDeleteSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 		return nil, fmt.Errorf("get saml connection: %w", err)
 	}
 
-	if err := q.DeleteSAMLFlowsBySAMLConnectionID(ctx, samlConnID); err != nil {
+	flowsCount, err := q.DeleteSAMLFlowsBySAMLConnectionID(ctx, samlConnID)
+	if err != nil {
 		return nil, fmt.Errorf("delete saml flows: %w", err)
 	}
 
-	if err := q.DeleteSAMLConnection(ctx, samlConnID); err != nil {
+	slog.InfoContext(ctx, "delete_saml_connection", "flows_count", flowsCount)
+
+	samlConnsCount, err := q.DeleteSAMLConnection(ctx, samlConnID)
+	if err != nil {
 		return nil, fmt.Errorf("delete saml connection: %w", err)
 	}
+
+	slog.InfoContext(ctx, "delete_saml_connection", "saml_conns_count", samlConnsCount)
 
 	if err := commit(); err != nil {
 		return nil, fmt.Errorf("commit: %w", err)

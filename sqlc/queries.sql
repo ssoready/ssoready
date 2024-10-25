@@ -451,12 +451,12 @@ update saml_connections
 set is_primary = (id = $1)
 where organization_id = $2;
 
--- name: DeleteSAMLConnection :exec
+-- name: DeleteSAMLConnection :execrows
 delete
 from saml_connections
 where id = $1;
 
--- name: DeleteSAMLFlowsBySAMLConnectionID :exec
+-- name: DeleteSAMLFlowsBySAMLConnectionID :execrows
 delete
 from saml_flows
 where saml_connection_id = $1;
