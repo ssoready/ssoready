@@ -226,6 +226,9 @@ const (
 	// SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure is the fully-qualified name of the
 	// SSOReadyService's AppRotateSCIMDirectoryBearerToken RPC.
 	SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure = "/ssoready.v1.SSOReadyService/AppRotateSCIMDirectoryBearerToken"
+	// SSOReadyServiceAppDeleteSCIMDirectoryProcedure is the fully-qualified name of the
+	// SSOReadyService's AppDeleteSCIMDirectory RPC.
+	SSOReadyServiceAppDeleteSCIMDirectoryProcedure = "/ssoready.v1.SSOReadyService/AppDeleteSCIMDirectory"
 	// SSOReadyServiceAppListSCIMUsersProcedure is the fully-qualified name of the SSOReadyService's
 	// AppListSCIMUsers RPC.
 	SSOReadyServiceAppListSCIMUsersProcedure = "/ssoready.v1.SSOReadyService/AppListSCIMUsers"
@@ -387,6 +390,7 @@ type SSOReadyServiceClient interface {
 	AppCreateSCIMDirectory(context.Context, *connect.Request[v1.AppCreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppUpdateSCIMDirectory(context.Context, *connect.Request[v1.AppUpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error)
+	AppDeleteSCIMDirectory(context.Context, *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppGetSCIMUser(context.Context, *connect.Request[v1.AppGetSCIMUserRequest]) (*connect.Response[v1.SCIMUser], error)
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
@@ -744,6 +748,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure,
 			opts...,
 		),
+		appDeleteSCIMDirectory: connect.NewClient[v1.AppDeleteSCIMDirectoryRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceAppDeleteSCIMDirectoryProcedure,
+			opts...,
+		),
 		appListSCIMUsers: connect.NewClient[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppListSCIMUsersProcedure,
@@ -914,6 +923,7 @@ type sSOReadyServiceClient struct {
 	appCreateSCIMDirectory                           *connect.Client[v1.AppCreateSCIMDirectoryRequest, v1.SCIMDirectory]
 	appUpdateSCIMDirectory                           *connect.Client[v1.AppUpdateSCIMDirectoryRequest, v1.SCIMDirectory]
 	appRotateSCIMDirectoryBearerToken                *connect.Client[v1.AppRotateSCIMDirectoryBearerTokenRequest, v1.AppRotateSCIMDirectoryBearerTokenResponse]
+	appDeleteSCIMDirectory                           *connect.Client[v1.AppDeleteSCIMDirectoryRequest, emptypb.Empty]
 	appListSCIMUsers                                 *connect.Client[v1.AppListSCIMUsersRequest, v1.AppListSCIMUsersResponse]
 	appGetSCIMUser                                   *connect.Client[v1.AppGetSCIMUserRequest, v1.SCIMUser]
 	appListSCIMGroups                                *connect.Client[v1.AppListSCIMGroupsRequest, v1.AppListSCIMGroupsResponse]
@@ -1265,6 +1275,11 @@ func (c *sSOReadyServiceClient) AppRotateSCIMDirectoryBearerToken(ctx context.Co
 	return c.appRotateSCIMDirectoryBearerToken.CallUnary(ctx, req)
 }
 
+// AppDeleteSCIMDirectory calls ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory.
+func (c *sSOReadyServiceClient) AppDeleteSCIMDirectory(ctx context.Context, req *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.appDeleteSCIMDirectory.CallUnary(ctx, req)
+}
+
 // AppListSCIMUsers calls ssoready.v1.SSOReadyService.AppListSCIMUsers.
 func (c *sSOReadyServiceClient) AppListSCIMUsers(ctx context.Context, req *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {
 	return c.appListSCIMUsers.CallUnary(ctx, req)
@@ -1465,6 +1480,7 @@ type SSOReadyServiceHandler interface {
 	AppCreateSCIMDirectory(context.Context, *connect.Request[v1.AppCreateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppUpdateSCIMDirectory(context.Context, *connect.Request[v1.AppUpdateSCIMDirectoryRequest]) (*connect.Response[v1.SCIMDirectory], error)
 	AppRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error)
+	AppDeleteSCIMDirectory(context.Context, *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error)
 	AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error)
 	AppGetSCIMUser(context.Context, *connect.Request[v1.AppGetSCIMUserRequest]) (*connect.Response[v1.SCIMUser], error)
 	AppListSCIMGroups(context.Context, *connect.Request[v1.AppListSCIMGroupsRequest]) (*connect.Response[v1.AppListSCIMGroupsResponse], error)
@@ -1818,6 +1834,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AppRotateSCIMDirectoryBearerToken,
 		opts...,
 	)
+	sSOReadyServiceAppDeleteSCIMDirectoryHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppDeleteSCIMDirectoryProcedure,
+		svc.AppDeleteSCIMDirectory,
+		opts...,
+	)
 	sSOReadyServiceAppListSCIMUsersHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppListSCIMUsersProcedure,
 		svc.AppListSCIMUsers,
@@ -2050,6 +2071,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppUpdateSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppRotateSCIMDirectoryBearerTokenProcedure:
 			sSOReadyServiceAppRotateSCIMDirectoryBearerTokenHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppDeleteSCIMDirectoryProcedure:
+			sSOReadyServiceAppDeleteSCIMDirectoryHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppListSCIMUsersProcedure:
 			sSOReadyServiceAppListSCIMUsersHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppGetSCIMUserProcedure:
@@ -2357,6 +2380,10 @@ func (UnimplementedSSOReadyServiceHandler) AppUpdateSCIMDirectory(context.Contex
 
 func (UnimplementedSSOReadyServiceHandler) AppRotateSCIMDirectoryBearerToken(context.Context, *connect.Request[v1.AppRotateSCIMDirectoryBearerTokenRequest]) (*connect.Response[v1.AppRotateSCIMDirectoryBearerTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppRotateSCIMDirectoryBearerToken is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppDeleteSCIMDirectory(context.Context, *connect.Request[v1.AppDeleteSCIMDirectoryRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppDeleteSCIMDirectory is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AppListSCIMUsers(context.Context, *connect.Request[v1.AppListSCIMUsersRequest]) (*connect.Response[v1.AppListSCIMUsersResponse], error) {

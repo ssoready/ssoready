@@ -10,6 +10,7 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *Store) AppListSCIMDirectories(ctx context.Context, req *ssoreadyv1.AppListSCIMDirectoriesRequest) (*ssoreadyv1.AppListSCIMDirectoriesResponse, error) {
@@ -228,6 +229,52 @@ func (s *Store) AppRotateSCIMDirectoryBearerToken(ctx context.Context, req *ssor
 	return &ssoreadyv1.AppRotateSCIMDirectoryBearerTokenResponse{
 		BearerToken: idformat.SCIMBearerToken.Format(bearerToken),
 	}, nil
+}
+
+func (s *Store) AppDeleteSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppDeleteSCIMDirectoryRequest) (*emptypb.Empty, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.ScimDirectoryId)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                scimDirID,
+	}); err != nil {
+		return nil, fmt.Errorf("get scim directory: %w", err)
+	}
+
+	if err := q.DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx, scimDirID); err != nil {
+		return nil, fmt.Errorf("delete user group memberships: %w", err)
+	}
+
+	if err := q.DeleteSCIMGroupsBySCIMDirectory(ctx, scimDirID); err != nil {
+		return nil, fmt.Errorf("delete groups: %w", err)
+	}
+
+	if err := q.DeleteSCIMUsersBySCIMDirectory(ctx, scimDirID); err != nil {
+		return nil, fmt.Errorf("delete users: %w", err)
+	}
+
+	if err := q.DeleteSCIMRequestsBySCIMDirectory(ctx, scimDirID); err != nil {
+		return nil, fmt.Errorf("delete scim requests: %w", err)
+	}
+
+	if err := q.DeleteSCIMDirectory(ctx, scimDirID); err != nil {
+		return nil, fmt.Errorf("delete scim directory: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func parseSCIMDirectory(qSCIMDirectory queries.ScimDirectory) *ssoreadyv1.SCIMDirectory {

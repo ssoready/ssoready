@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useMatch, useParams } from "react-router";
+import { useMatch, useNavigate, useParams } from "react-router";
 import {
   createConnectQueryKey,
   useInfiniteQuery,
@@ -7,6 +7,7 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  appDeleteSCIMDirectory,
   appGetOrganization,
   appGetSCIMDirectory,
   appListSCIMGroups,
@@ -80,6 +81,7 @@ import { Title } from "@/components/Title";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import moment from "moment";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 export function ViewSCIMDirectoryPage() {
   const { environmentId, organizationId, scimDirectoryId } = useParams();
@@ -89,10 +91,6 @@ export function ViewSCIMDirectoryPage() {
   const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
-
-  const groupsPathMatch = useMatch(
-    "/environments/:environmentId/organizations/:organizationId/scim-directories/:scimDirectoryId/groups",
-  );
 
   const [warnBearerTokenAlertOpen, setWarnBearerTokenAlertOpen] =
     useState(false);
@@ -285,34 +283,10 @@ export function ViewSCIMDirectoryPage() {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue={groupsPathMatch ? "groups" : "users"}>
-          <TabsList>
-            <TabsTrigger value="users" asChild>
-              <Link
-                to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}`}
-              >
-                Users
-              </Link>
-            </TabsTrigger>
-            <TabsTrigger value="groups" asChild>
-              <Link
-                to={`/environments/${environmentId}/organizations/${organizationId}/scim-directories/${scimDirectoryId}/groups`}
-              >
-                Groups
-              </Link>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="users">
-            <UsersTabContent />
-          </TabsContent>
-
-          <TabsContent value="groups">
-            <GroupsTabContent />
-          </TabsContent>
-        </Tabs>
-
+        <UsersTabContent />
+        <GroupsTabContent />
         <RequestsCard />
+        <DangerZoneCard />
       </div>
     </>
   );
@@ -650,5 +624,67 @@ function RequestsCard() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function DangerZoneCard() {
+  const { environmentId, organizationId, scimDirectoryId } = useParams();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const handleDelete = () => {
+    setConfirmDeleteOpen(true);
+  };
+
+  const deleteSCIMDirectoryMutation = useMutation(appDeleteSCIMDirectory);
+  const navigate = useNavigate();
+  const handleConfirmDelete = async () => {
+    await deleteSCIMDirectoryMutation.mutateAsync({
+      scimDirectoryId,
+    });
+
+    toast.success("SCIM Directory deleted");
+    navigate(`/environments/${environmentId}/organizations/${organizationId}`);
+  };
+
+  return (
+    <>
+      <AlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete SCIM Directory?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deleting a SCIM directory cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Permanently Delete SCIM Directory
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Card className="border-destructive">
+        <CardHeader>
+          <CardTitle>Danger Zone</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-sm font-semibold">Delete SCIM Directory</div>
+              <p className="text-sm">
+                Delete this SCIM directory. This cannot be undone.
+              </p>
+            </div>
+
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete SCIM Directory
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

@@ -226,6 +226,7 @@ service SSOReadyService {
   rpc AppCreateSCIMDirectory(AppCreateSCIMDirectoryRequest) returns (SCIMDirectory);
   rpc AppUpdateSCIMDirectory(AppUpdateSCIMDirectoryRequest) returns (SCIMDirectory);
   rpc AppRotateSCIMDirectoryBearerToken(AppRotateSCIMDirectoryBearerTokenRequest) returns (AppRotateSCIMDirectoryBearerTokenResponse);
+  rpc AppDeleteSCIMDirectory(AppDeleteSCIMDirectoryRequest) returns (google.protobuf.Empty);
 
   rpc AppListSCIMUsers(AppListSCIMUsersRequest) returns (AppListSCIMUsersResponse);
   rpc AppGetSCIMUser(AppGetSCIMUserRequest) returns (SCIMUser);
@@ -1057,6 +1058,10 @@ message AppUpdateSCIMDirectoryRequest {
 }
 
 message AppRotateSCIMDirectoryBearerTokenRequest {
+  string scim_directory_id = 1;
+}
+
+message AppDeleteSCIMDirectoryRequest {
   string scim_directory_id = 1;
 }
 

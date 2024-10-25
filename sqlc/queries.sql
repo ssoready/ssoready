@@ -28,7 +28,8 @@ from onboarding_states
 where app_organization_id = $1;
 
 -- name: UpdateOnboardingState :one
-insert into onboarding_states (app_organization_id, dummyidp_app_id, onboarding_environment_id,
+insert into onboarding_states (app_organization_id, dummyidp_app_id,
+                               onboarding_environment_id,
                                onboarding_organization_id,
                                onboarding_saml_connection_id)
 values ($1, $2, $3, $4, $5)
@@ -50,29 +51,38 @@ select saml_connections.sp_entity_id,
        environments.redirect_url,
        environments.oauth_redirect_uri
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where saml_connections.id = $1;
 
 -- name: AuthCheckAssertionAlreadyProcessed :one
-select exists(select * from saml_flows where id = $1 and access_code_sha256 is not null);
+select exists(select *
+              from saml_flows
+              where id = $1
+                and access_code_sha256 is not null);
 
 -- name: AuthGetSAMLConnectionDomains :many
 select organization_domains.domain
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
-         join organization_domains on organizations.id = organization_domains.organization_id
+         join organizations
+              on saml_connections.organization_id = organizations.id
+         join organization_domains
+              on organizations.id = organization_domains.organization_id
 where saml_connections.id = $1;
 
 -- name: CreateSAMLFlowGetRedirect :one
-insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
-                        auth_redirect_url, get_redirect_time, status, error_saml_connection_not_configured,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time,
+                        update_time,
+                        auth_redirect_url, get_redirect_time, status,
+                        error_saml_connection_not_configured,
                         error_environment_oauth_redirect_uri_not_configured)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one
-insert into saml_flows (id, saml_connection_id, expire_time, state, create_time, update_time,
+insert into saml_flows (id, saml_connection_id, expire_time, state, create_time,
+                        update_time,
                         initiate_request, initiate_time, status, is_oauth)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 on conflict (id) do update set update_time      = excluded.update_time,
@@ -82,12 +92,17 @@ on conflict (id) do update set update_time      = excluded.update_time,
 returning *;
 
 -- name: UpsertSAMLFlowReceiveAssertion :one
-insert into saml_flows (id, saml_connection_id, assertion_id, access_code_sha256, expire_time, state, create_time,
-                        update_time, assertion, receive_assertion_time, error_saml_connection_not_configured,
-                        error_unsigned_assertion, error_bad_issuer, error_bad_audience, error_bad_signature_algorithm,
-                        error_bad_digest_algorithm, error_bad_x509_certificate, error_bad_subject_id,
+insert into saml_flows (id, saml_connection_id, assertion_id,
+                        access_code_sha256, expire_time, state, create_time,
+                        update_time, assertion, receive_assertion_time,
+                        error_saml_connection_not_configured,
+                        error_unsigned_assertion, error_bad_issuer,
+                        error_bad_audience, error_bad_signature_algorithm,
+                        error_bad_digest_algorithm, error_bad_x509_certificate,
+                        error_bad_subject_id,
                         error_email_outside_organization_domains, status)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
+        $17, $18, $19, $20)
 on conflict (id) do update set assertion_id                             = excluded.assertion_id,
                                access_code_sha256                       = excluded.access_code_sha256,
                                update_time                              = excluded.update_time,
@@ -130,7 +145,8 @@ returning *;
 -- name: GetPrimarySAMLConnectionIDByOrganizationID :one
 select saml_connections.id
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.id = $2
   and saml_connections.is_primary = true;
@@ -138,7 +154,8 @@ where organizations.environment_id = $1
 -- name: GetPrimarySAMLConnectionIDByOrganizationExternalID :one
 select saml_connections.id
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.external_id = $2
   and saml_connections.is_primary = true;
@@ -149,7 +166,8 @@ select environments.auth_url as environment_auth_url,
        saml_connections.idp_redirect_url,
        saml_connections.idp_x509_certificate
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and environments.id = @environment_id
@@ -185,8 +203,10 @@ select saml_flows.id             as saml_flow_id,
        organizations.external_id as organization_external_id,
        environments.id           as environment_id
 from saml_flows
-         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
-         join organizations on saml_connections.organization_id = organizations.id
+         join saml_connections
+              on saml_flows.saml_connection_id = saml_connections.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and environments.id = @environment_id
@@ -234,7 +254,8 @@ values ($1, $2, $3, $4)
 returning *;
 
 -- name: CreateAppSession :one
-insert into app_sessions (id, app_user_id, create_time, expire_time, token, token_sha256, revoked)
+insert into app_sessions (id, app_user_id, create_time, expire_time, token,
+                          token_sha256, revoked)
 values ($1, $2, $3, $4, '', $5, $6)
 returning *;
 
@@ -271,7 +292,8 @@ where app_organization_id = $1
   and id = $2;
 
 -- name: CreateEnvironment :one
-insert into environments (id, redirect_url, oauth_redirect_uri, app_organization_id, display_name, auth_url)
+insert into environments (id, redirect_url, oauth_redirect_uri,
+                          app_organization_id, display_name, auth_url)
 values ($1, $2, $3, $4, $5, $6)
 returning *;
 
@@ -324,7 +346,8 @@ where environments.app_organization_id = $1
   and api_keys.id = $2;
 
 -- name: CreateAPIKey :one
-insert into api_keys (id, secret_value, secret_value_sha256, environment_id, has_management_api_access)
+insert into api_keys (id, secret_value, secret_value_sha256, environment_id,
+                      has_management_api_access)
 values ($1, '', $2, $3, $4)
 returning *;
 
@@ -392,7 +415,8 @@ limit $3;
 -- name: GetSAMLConnection :one
 select saml_connections.*
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_connections.id = $2;
@@ -400,12 +424,14 @@ where environments.app_organization_id = $1
 -- name: ManagementGetSAMLConnection :one
 select saml_connections.*
 from saml_connections
-         join organizations on saml_connections.organization_id = organizations.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
 where organizations.environment_id = $1
   and saml_connections.id = $2;
 
 -- name: CreateSAMLConnection :one
-insert into saml_connections (id, organization_id, sp_entity_id, sp_acs_url, idp_entity_id, idp_redirect_url,
+insert into saml_connections (id, organization_id, sp_entity_id, sp_acs_url,
+                              idp_entity_id, idp_redirect_url,
                               idp_x509_certificate,
                               is_primary)
 values ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -443,8 +469,10 @@ limit $2;
 -- name: GetSAMLFlow :one
 select saml_flows.*
 from saml_flows
-         join saml_connections on saml_flows.saml_connection_id = saml_connections.id
-         join organizations on saml_connections.organization_id = organizations.id
+         join saml_connections
+              on saml_flows.saml_connection_id = saml_connections.id
+         join organizations
+              on saml_connections.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_flows.id = $2;
@@ -465,7 +493,8 @@ limit $3;
 -- name: GetSAMLOAuthClient :one
 select saml_oauth_clients.*
 from saml_oauth_clients
-         join environments on saml_oauth_clients.environment_id = environments.id
+         join environments
+              on saml_oauth_clients.environment_id = environments.id
 where environments.app_organization_id = $1
   and saml_oauth_clients.id = $2;
 
@@ -482,13 +511,15 @@ where id = $1;
 -- name: AuthGetSAMLOAuthClient :one
 select saml_oauth_clients.*, environments.app_organization_id
 from saml_oauth_clients
-         join environments on saml_oauth_clients.environment_id = environments.id
+         join environments
+              on saml_oauth_clients.environment_id = environments.id
 where saml_oauth_clients.id = $1;
 
 -- name: AuthGetSAMLOAuthClientWithSecret :one
 select saml_oauth_clients.*, environments.app_organization_id
 from saml_oauth_clients
-         join environments on saml_oauth_clients.environment_id = environments.id
+         join environments
+              on saml_oauth_clients.environment_id = environments.id
 where saml_oauth_clients.id = $1
   and saml_oauth_clients.client_secret_sha256 = $2;
 
@@ -506,7 +537,8 @@ where id = $2
 returning *;
 
 -- name: CreateAdminAccessToken :one
-insert into admin_access_tokens (id, organization_id, one_time_token_sha256, create_time, expire_time, can_manage_saml,
+insert into admin_access_tokens (id, organization_id, one_time_token_sha256,
+                                 create_time, expire_time, can_manage_saml,
                                  can_manage_scim)
 values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
@@ -554,8 +586,10 @@ where id = $1;
 -- name: AuthGetSCIMDirectoryOrganizationDomains :many
 select organization_domains.domain
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
-         join organization_domains on organizations.id = organization_domains.organization_id
+         join organizations
+              on scim_directories.organization_id = organizations.id
+         join organization_domains
+              on organizations.id = organization_domains.organization_id
 where scim_directories.id = $1;
 
 -- name: AuthGetSCIMDirectoryByIDAndBearerToken :one
@@ -648,7 +682,8 @@ where scim_directory_id = $1
   and id = $2;
 
 -- name: AuthCreateSCIMGroup :one
-insert into scim_groups (id, scim_directory_id, display_name, attributes, deleted)
+insert into scim_groups (id, scim_directory_id, display_name, attributes,
+                         deleted)
 values ($1, $2, $3, $4, $5)
 returning *;
 
@@ -677,14 +712,17 @@ where id = $1
 returning *;
 
 -- name: AuthUpsertSCIMUserGroupMembership :exec
-insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id, scim_group_id)
+insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id,
+                                         scim_group_id)
 values ($1, $2, $3, $4)
 on conflict (scim_user_id, scim_group_id) do nothing;
 
 -- name: AuthCreateSCIMRequest :one
-insert into scim_requests (id, scim_directory_id, timestamp, http_request_url, http_request_method,
+insert into scim_requests (id, scim_directory_id, timestamp, http_request_url,
+                           http_request_method,
                            http_request_body, http_response_status,
-                           http_response_body, error_bad_bearer_token, error_bad_username,
+                           http_response_body, error_bad_bearer_token,
+                           error_bad_username,
                            error_email_outside_organization_domains)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 returning *;
@@ -700,8 +738,10 @@ limit $3;
 -- name: AppGetSCIMRequest :one
 select scim_requests.*
 from scim_requests
-         join scim_directories on scim_requests.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_requests.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_requests.id = $2;
@@ -709,14 +749,16 @@ where environments.app_organization_id = $1
 -- name: GetSCIMDirectoryByIDAndEnvironmentID :one
 select scim_directories.id
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_directories.id = $2;
 
 -- name: GetPrimarySCIMDirectoryIDByOrganizationID :one
 select scim_directories.id
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.id = $2
   and scim_directories.is_primary = true;
@@ -724,7 +766,8 @@ where organizations.environment_id = $1
 -- name: GetPrimarySCIMDirectoryIDByOrganizationExternalID :one
 select scim_directories.id
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and organizations.external_id = $2
   and scim_directories.is_primary = true;
@@ -742,15 +785,20 @@ select *
 from scim_users
 where scim_users.scim_directory_id = $1
   and scim_users.id >= $2
-  and exists(select * from scim_user_group_memberships where scim_group_id = $4 and scim_user_id = scim_users.id)
+  and exists(select *
+             from scim_user_group_memberships
+             where scim_group_id = $4
+               and scim_user_id = scim_users.id)
 order by scim_users.id
 limit $3;
 
 -- name: GetSCIMUser :one
 select scim_users.*
 from scim_users
-         join scim_directories on scim_users.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_users.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_users.id = $2;
 
@@ -777,13 +825,16 @@ limit $4;
 -- name: GetSCIMGroup :one
 select scim_groups.*
 from scim_groups
-         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_groups.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_groups.id = $2;
 
 -- name: CreateSCIMDirectory :one
-insert into scim_directories (id, organization_id, bearer_token_sha256, is_primary, scim_base_url)
+insert into scim_directories (id, organization_id, bearer_token_sha256,
+                              is_primary, scim_base_url)
 values ($1, $2, $3, $4, $5)
 returning *;
 
@@ -809,7 +860,8 @@ limit $3;
 -- name: GetSCIMDirectory :one
 select scim_directories.*
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_directories.id = $2;
@@ -817,15 +869,18 @@ where environments.app_organization_id = $1
 -- name: ManagementGetSCIMDirectory :one
 select scim_directories.*
 from scim_directories
-         join organizations on scim_directories.organization_id = organizations.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
 where organizations.environment_id = $1
   and scim_directories.id = $2;
 
 -- name: AppGetSCIMUser :one
 select scim_users.*
 from scim_users
-         join scim_directories on scim_users.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_users.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_users.id = $2;
@@ -833,8 +888,10 @@ where environments.app_organization_id = $1
 -- name: AppGetSCIMGroup :one
 select scim_groups.*
 from scim_groups
-         join scim_directories on scim_groups.scim_directory_id = scim_directories.id
-         join organizations on scim_directories.organization_id = organizations.id
+         join scim_directories
+              on scim_groups.scim_directory_id = scim_directories.id
+         join organizations
+              on scim_directories.organization_id = organizations.id
          join environments on organizations.environment_id = environments.id
 where environments.app_organization_id = $1
   and scim_groups.id = $2;
@@ -844,3 +901,28 @@ update scim_directories
 set bearer_token_sha256 = $1
 where id = $2
 returning *;
+
+-- name: DeleteSCIMDirectory :exec
+delete
+from scim_directories
+where id = $1;
+
+-- name: DeleteSCIMUsersBySCIMDirectory :exec
+delete
+from scim_users
+where scim_directory_id = $1;
+
+-- name: DeleteSCIMGroupsBySCIMDirectory :exec
+delete
+from scim_groups
+where scim_directory_id = $1;
+
+-- name: DeleteSCIMUserGroupMembershipsBySCIMDirectory :exec
+delete
+from scim_user_group_memberships
+where scim_directory_id = $1;
+
+-- name: DeleteSCIMRequestsBySCIMDirectory :exec
+delete
+from scim_requests
+where scim_directory_id = $1;
