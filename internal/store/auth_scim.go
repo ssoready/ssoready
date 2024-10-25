@@ -730,6 +730,63 @@ func (s *Store) AuthAddSCIMGroupMember(ctx context.Context, req *AuthAddSCIMGrou
 	return nil
 }
 
+type AuthRemoveSCIMGroupMemberRequest struct {
+	SCIMGroup  *ssoreadyv1.SCIMGroup
+	SCIMUserID string
+}
+
+func (s *Store) AuthRemoveSCIMGroupMember(ctx context.Context, req *AuthRemoveSCIMGroupMemberRequest) error {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return fmt.Errorf("tx: %w", err)
+	}
+	defer rollback()
+
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMGroup.ScimDirectoryId)
+	if err != nil {
+		return fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	scimGroupID, err := idformat.SCIMGroup.Parse(req.SCIMGroup.Id)
+	if err != nil {
+		return fmt.Errorf("parse scim group id: %w", err)
+	}
+
+	// authz check
+	if _, err := q.AuthGetSCIMGroup(ctx, queries.AuthGetSCIMGroupParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimGroupID,
+	}); err != nil {
+		return fmt.Errorf("get scim group: %w", err)
+	}
+
+	// check member user belongs to same directory as group does
+	scimUserID, err := idformat.SCIMUser.Parse(req.SCIMUserID)
+	if err != nil {
+		return fmt.Errorf("parse scim user id: %w", err)
+	}
+
+	if _, err := q.AuthGetSCIMUserIncludeDeleted(ctx, queries.AuthGetSCIMUserIncludeDeletedParams{
+		ScimDirectoryID: scimDirID,
+		ID:              scimUserID,
+	}); err != nil {
+		return fmt.Errorf("get scim user: %w", err)
+	}
+
+	if err := q.AuthDeleteSCIMUserGroupMembership(ctx, queries.AuthDeleteSCIMUserGroupMembershipParams{
+		ScimDirectoryID: scimDirID,
+		ScimUserID:      scimUserID,
+		ScimGroupID:     scimGroupID,
+	}); err != nil {
+		return fmt.Errorf("delete scim group membership: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return fmt.Errorf("commit: %w", err)
+	}
+	return nil
+}
+
 type AuthDeleteSCIMGroupRequest struct {
 	SCIMDirectoryID string
 	SCIMGroupID     string

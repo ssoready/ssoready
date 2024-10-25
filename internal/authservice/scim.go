@@ -743,6 +743,25 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
+	// entra removes members via a `remove` on members with a value
+	if len(patch.Operations) == 1 && (patch.Operations[0].Op == "remove" || patch.Operations[0].Op == "Remove") && patch.Operations[0].Path == "members" {
+		value := patch.Operations[0].Value.([]any)
+		scimUserID := value[0].(map[string]any)["value"].(string)
+
+		if err := s.Store.AuthRemoveSCIMGroupMember(ctx, &store.AuthRemoveSCIMGroupMemberRequest{
+			SCIMGroup: &ssoreadyv1.SCIMGroup{
+				Id:              scimGroupID,
+				ScimDirectoryId: scimDirectoryID,
+			},
+			SCIMUserID: scimUserID,
+		}); err != nil {
+			panic(fmt.Errorf("store: %w", err))
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+		return nil
+	}
+
 	panic("unsupported group PATCH operation type")
 }
 
