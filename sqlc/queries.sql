@@ -727,6 +727,13 @@ insert into scim_user_group_memberships (id, scim_directory_id, scim_user_id,
 values ($1, $2, $3, $4)
 on conflict (scim_user_id, scim_group_id) do nothing;
 
+-- name: AuthDeleteSCIMUserGroupMembership :exec
+delete
+from scim_user_group_memberships
+where scim_directory_id = $1
+  and scim_user_id = $2
+  and scim_group_id = $3;
+
 -- name: AuthCreateSCIMRequest :one
 insert into scim_requests (id, scim_directory_id, timestamp, http_request_url,
                            http_request_method,

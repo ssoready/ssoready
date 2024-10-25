@@ -430,6 +430,25 @@ func (q *Queries) AuthCreateSCIMRequest(ctx context.Context, arg AuthCreateSCIMR
 	return i, err
 }
 
+const authDeleteSCIMUserGroupMembership = `-- name: AuthDeleteSCIMUserGroupMembership :exec
+delete
+from scim_user_group_memberships
+where scim_directory_id = $1
+  and scim_user_id = $2
+  and scim_group_id = $3
+`
+
+type AuthDeleteSCIMUserGroupMembershipParams struct {
+	ScimDirectoryID uuid.UUID
+	ScimUserID      uuid.UUID
+	ScimGroupID     uuid.UUID
+}
+
+func (q *Queries) AuthDeleteSCIMUserGroupMembership(ctx context.Context, arg AuthDeleteSCIMUserGroupMembershipParams) error {
+	_, err := q.db.Exec(ctx, authDeleteSCIMUserGroupMembership, arg.ScimDirectoryID, arg.ScimUserID, arg.ScimGroupID)
+	return err
+}
+
 const authGetInitData = `-- name: AuthGetInitData :one
 select idp_redirect_url, sp_entity_id
 from saml_connections
