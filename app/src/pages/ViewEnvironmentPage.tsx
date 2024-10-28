@@ -396,7 +396,9 @@ function EditEnvironmentAlertDialog({
 
 const OrgFormSchema = z.object({
   displayName: z.string(),
-  externalId: z.string(),
+  externalId: z.string().refine((value) => value.trim() === value, {
+    message: "External ID must not have leading or trailing whitespace.",
+  }),
   domains: z.array(z.string()).min(1, {
     message: "At least one domain is required.",
   }),
