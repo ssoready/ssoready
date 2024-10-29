@@ -5,7 +5,7 @@ import {
   appGetSAMLConnection,
   appGetSAMLFlow,
 } from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -50,6 +50,28 @@ export function ViewSAMLFlowPage() {
   const { data: organization } = useQuery(appGetOrganization, {
     id: organizationId,
   });
+
+  const redeemResponse = useMemo(() => {
+    if (!samlFlow?.redeemResponse) {
+      return;
+    }
+
+    const {
+      email,
+      attributes,
+      saml_flow_id,
+      organization_id,
+      organization_external_id,
+    } = JSON.parse(samlFlow.redeemResponse);
+
+    return {
+      email,
+      attributes,
+      samlFlowId: saml_flow_id,
+      organizationId: organization_id,
+      organizationExternalId: organization_external_id,
+    };
+  }, [samlFlow]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -522,11 +544,7 @@ export function ViewSAMLFlowPage() {
                     <pre
                       dangerouslySetInnerHTML={{
                         __html: hljs.highlight(
-                          JSON.stringify(
-                            JSON.parse(samlFlow.redeemResponse),
-                            null,
-                            4,
-                          ),
+                          JSON.stringify(redeemResponse, null, 4),
                           {
                             language: "json",
                           },
