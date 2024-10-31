@@ -1,7 +1,6 @@
 package authservice
 
 import (
-	"connectrpc.com/connect"
 	"crypto/rsa"
 	"crypto/x509"
 	"embed"
@@ -16,6 +15,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"connectrpc.com/connect"
 
 	"github.com/gorilla/mux"
 	"github.com/ssoready/ssoready/internal/emailaddr"
@@ -76,8 +77,8 @@ func (s *Service) NewHandler() http.Handler {
 	r := mux.NewRouter()
 
 	r.PathPrefix("/internal/static/").Handler(http.StripPrefix("/internal/static/", http.FileServer(http.FS(staticFS))))
-	r.HandleFunc("/v1/saml/{saml_conn_id}/init", s.samlInit).Methods("GET")
-	r.HandleFunc("/v1/saml/{saml_conn_id}/acs", s.samlAcs).Methods("POST")
+	r.Handle("/v1/saml/{saml_conn_id}/init", logHandlerNoRespHeaders(http.HandlerFunc(s.samlInit))).Methods("GET")
+	r.Handle("/v1/saml/{saml_conn_id}/acs", logHandlerNoRespHeaders(http.HandlerFunc(s.samlAcs))).Methods("POST")
 
 	r.HandleFunc("/v1/oauth/.well-known/openid-configuration", s.oauthOpenIDConfiguration).Methods("GET")
 	r.HandleFunc("/v1/oauth/authorize", s.oauthAuthorize).Methods("GET")
@@ -85,18 +86,18 @@ func (s *Service) NewHandler() http.Handler {
 	r.HandleFunc("/v1/oauth/userinfo", s.oauthUserinfo).Methods("GET")
 	r.HandleFunc("/v1/oauth/jwks", s.oauthJWKS).Methods("GET")
 
-	r.Handle("/v1/scim/{scim_directory_id}/Users", logHandler(s.scimMiddleware(s.scimListUsers))).Methods(http.MethodGet)
-	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandler(s.scimMiddleware(s.scimGetUser))).Methods(http.MethodGet)
-	r.Handle("/v1/scim/{scim_directory_id}/Users", logHandler(s.scimMiddleware(s.scimCreateUser))).Methods(http.MethodPost)
-	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandler(s.scimMiddleware(s.scimUpdateUser))).Methods(http.MethodPut)
-	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandler(s.scimMiddleware(s.scimPatchUser))).Methods(http.MethodPatch)
-	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandler(s.scimMiddleware(s.scimDeleteUser))).Methods(http.MethodDelete)
-	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(s.scimMiddleware(s.scimGetGroup))).Methods(http.MethodGet)
-	r.Handle("/v1/scim/{scim_directory_id}/Groups", logHandler(s.scimMiddleware(s.scimListGroups))).Methods(http.MethodGet)
-	r.Handle("/v1/scim/{scim_directory_id}/Groups", logHandler(s.scimMiddleware(s.scimCreateGroup))).Methods(http.MethodPost)
-	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(s.scimMiddleware(s.scimUpdateGroup))).Methods(http.MethodPut)
-	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(s.scimMiddleware(s.scimPatchGroup))).Methods(http.MethodPatch)
-	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandler(s.scimMiddleware(s.scimDeleteGroup))).Methods(http.MethodDelete)
+	r.Handle("/v1/scim/{scim_directory_id}/Users", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimListUsers))).Methods(http.MethodGet)
+	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimGetUser))).Methods(http.MethodGet)
+	r.Handle("/v1/scim/{scim_directory_id}/Users", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimCreateUser))).Methods(http.MethodPost)
+	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimUpdateUser))).Methods(http.MethodPut)
+	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimPatchUser))).Methods(http.MethodPatch)
+	r.Handle("/v1/scim/{scim_directory_id}/Users/{scim_user_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimDeleteUser))).Methods(http.MethodDelete)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimGetGroup))).Methods(http.MethodGet)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimListGroups))).Methods(http.MethodGet)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimCreateGroup))).Methods(http.MethodPost)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimUpdateGroup))).Methods(http.MethodPut)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimPatchGroup))).Methods(http.MethodPatch)
+	r.Handle("/v1/scim/{scim_directory_id}/Groups/{scim_group_id}", logHandlerIncludeRespHeaders(s.scimMiddleware(s.scimDeleteGroup))).Methods(http.MethodDelete)
 
 	return r
 }
@@ -400,6 +401,10 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+
+	// this log must happen before we put the sensitive the saml access code
+	// into the url
+	slog.InfoContext(ctx, "redirect_saml_acs_success", "redirect_url", redirectURL.String())
 
 	redirectQuery := url.Values{}
 	redirectQuery.Set("saml_access_code", createSAMLLoginRes.Token)
