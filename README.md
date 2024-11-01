@@ -4,6 +4,7 @@
   <h1>SSOReady</h1>
   <a href="https://github.com/ssoready/ssoready-typescript"><img src="https://img.shields.io/npm/v/ssoready.svg?style=flat&color=ECDC68" /></a>
   <a href="https://github.com/ssoready/ssoready-python"><img src="https://img.shields.io/pypi/v/ssoready.svg?style=flat" /></a>
+  <a href="https://github.com/ssoready/ssoready-go"><img src="https://img.shields.io/github/v/tag/ssoready/ssoready-go?label=golang&color=%23007D9C" /></a>
   <a href="https://github.com/ssoready/ssoready/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <a href="https://github.com/ssoready/ssoready/stargazers"><img src="https://img.shields.io/github/stars/ssoready/ssoready?style=flat&logo=github&color=white" /></a>
   <br />
@@ -35,9 +36,13 @@ straightforward** way to add SAML and SCIM support to your product:
 
 **With SSOReady, you're in control:**
 
-* SSOReady can be used in *any* application, regardless of what stack you use. We provide
-  [TypeScript](https://github.com/ssoready/ssoready-typescript) and [Python](https://github.com/ssoready/ssoready-python)
-  packages as thin wrappers over a [straightforward HTTP API](https://ssoready.com/docs/api-reference/saml/redeem-saml-access-code). 
+* SSOReady can be used in *any* application, regardless of what stack you use.
+  We provide language-specific SDKs as thin wrappers over a [straightforward
+  HTTP
+  API](https://ssoready.com/docs/api-reference/saml/redeem-saml-access-code):
+  * [SSOReady-TypeScript](https://github.com/ssoready/ssoready-typescript)
+  * [SSOReady-Python](https://github.com/ssoready/ssoready-python)
+  * [SSOReady-Go](https://github.com/ssoready/ssoready-go)
 * SSOReady is just an authentication middleware layer. SSOReady doesn’t "own" your users or require any changes to your users database.
 * You can use our cloud-hosted instance or [self-host yourself](https://ssoready.com/docs/self-hosting-ssoready), with the Enterprise plan giving you SLA'd support either way. 
 
