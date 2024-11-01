@@ -1,4 +1,4 @@
-![](https://i.imgur.com/W5POwyc.png)
+![](https://i.imgur.com/OhtkhbJ.png)
 
 <div align="center">
   <h1>SSOReady</h1>
