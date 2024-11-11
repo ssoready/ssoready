@@ -35,6 +35,15 @@ func TestParse(t *testing.T) {
 			in:  "john-doe.foo@example.com",
 			out: "example.com",
 		},
+		/**
+		 * In order to test for user group invites in Microsoft Entra, 
+		 * we need to account for the addition of the #EXT# tag in invite emails.
+		 * - https://github.com/ssoready/ssoready/issues/185
+		 */
+		{
+			in: "john-doe#EXT#@example.com",
+			out: "example.com",
+		},
 	}
 
 	for _, tt := range testCases {
