@@ -61,6 +61,22 @@
           "value": "https://app.ssoready.com/verify-email"
         },
         {
+          "name": "API_CUSTOM_AUTH_DOMAIN_CLOUDFLARE_ZONE_ID",
+          "value": "3e90a97b7ec6ee3f1c5a942348dac1e5"
+        },
+        {
+          "name": "API_CUSTOM_AUTH_DOMAIN_CLOUDFLARE_CNAME_VALUE",
+          "value": "cname.ssoready-custom-auth-domains.com"
+        },
+        {
+          "name": "API_CUSTOM_ADMIN_DOMAIN_CLOUDFLARE_ZONE_ID",
+          "value": "a2aa2f862551a380186a1595ccd22920"
+        },
+        {
+          "name": "API_CUSTOM_ADMIN_DOMAIN_CLOUDFLARE_CNAME_VALUE",
+          "value": "cname.ssoready-custom-admin-domains.com"
+        },
+        {
           "name": "API_FLYIO_AUTHPROXY_APP_ID",
           "value": "ssoready-auth-custom-domain"
         },
