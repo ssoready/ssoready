@@ -51,7 +51,7 @@ func (s *Service) GetEnvironmentCustomDomainSettings(ctx context.Context, req *c
 	}
 
 	res.CustomAuthDomainCnameValue = s.CustomAuthDomainCloudflareCNAMEValue
-	res.CustomAdminDomainCnameValue = s.FlyioAdminProxyAppCNAMEValue
+	res.CustomAdminDomainCnameValue = s.CustomAdminDomainCloudflareCNAMEValue
 	return connect.NewResponse(res), nil
 }
 
