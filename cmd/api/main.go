@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/vanguard"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cyrusaf/ctxlog"
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
@@ -42,28 +43,33 @@ func main() {
 	}
 
 	config := struct {
-		SentryDSN                    string `conf:"sentry-dsn,noredact"`
-		SentryEnvironment            string `conf:"sentry-environment,noredact"`
-		ServeAddr                    string `conf:"serve-addr,noredact"`
-		DB                           string `conf:"db"`
-		DefaultAuthURL               string `conf:"default-auth-url,noredact"`
-		DefaultAdminSetupURL         string `conf:"default-admin-setup-url,noredact"`
-		PageEncodingValue            string `conf:"page-encoding-value"`
-		SAMLStateSigningKey          string `conf:"saml-state-signing-key"`
-		GoogleOAuthClientID          string `conf:"google-oauth-client-id,noredact"`
-		MicrosoftOAuthClientID       string `conf:"microsoft-oauth-client-id,noredact"`
-		MicrosoftOAuthClientSecret   string `conf:"microsoft-oauth-client-secret"`
-		MicrosoftOAuthRedirectURI    string `conf:"microsoft-oauth-redirect-uri,noredact"`
-		ResendAPIKey                 string `conf:"resend-api-key"`
-		EmailChallengeFrom           string `conf:"email-challenge-from,noredact"`
-		EmailVerificationEndpoint    string `conf:"email-verification-endpoint,noredact"`
-		SegmentWriteKey              string `conf:"segment-write-key"`
-		FlyioAPIKey                  string `conf:"flyio-api-key"`
-		FlyioAuthProxyAppID          string `conf:"flyio-authproxy-app-id,noredact"`
-		FlyioAuthProxyAppCNAMEValue  string `conf:"flyio-authproxy-app-cname-value,noredact"`
-		FlyioAdminProxyAppID         string `conf:"flyio-adminproxy-app-id,noredact"`
-		FlyioAdminProxyAppCNAMEValue string `conf:"flyio-adminproxy-app-cname-value,noredact"`
-		AdminLogosS3BucketName       string `conf:"admin-logos-s3-bucket-name,noredact"`
+		SentryDSN                             string `conf:"sentry-dsn,noredact"`
+		SentryEnvironment                     string `conf:"sentry-environment,noredact"`
+		ServeAddr                             string `conf:"serve-addr,noredact"`
+		DB                                    string `conf:"db"`
+		DefaultAuthURL                        string `conf:"default-auth-url,noredact"`
+		DefaultAdminSetupURL                  string `conf:"default-admin-setup-url,noredact"`
+		PageEncodingValue                     string `conf:"page-encoding-value"`
+		SAMLStateSigningKey                   string `conf:"saml-state-signing-key"`
+		GoogleOAuthClientID                   string `conf:"google-oauth-client-id,noredact"`
+		MicrosoftOAuthClientID                string `conf:"microsoft-oauth-client-id,noredact"`
+		MicrosoftOAuthClientSecret            string `conf:"microsoft-oauth-client-secret"`
+		MicrosoftOAuthRedirectURI             string `conf:"microsoft-oauth-redirect-uri,noredact"`
+		ResendAPIKey                          string `conf:"resend-api-key"`
+		EmailChallengeFrom                    string `conf:"email-challenge-from,noredact"`
+		EmailVerificationEndpoint             string `conf:"email-verification-endpoint,noredact"`
+		SegmentWriteKey                       string `conf:"segment-write-key"`
+		CloudflareAPIKey                      string `conf:"cloudflare-api-key"`
+		CustomAuthDomainCloudflareZoneID      string `conf:"custom-auth-domain-cloudflare-zone-id,noredact"`
+		CustomAuthDomainCloudflareCNameValue  string `conf:"custom-auth-domain-cloudflare-cname-value,noredact"`
+		CustomAdminDomainCloudflareZoneID     string `conf:"custom-admin-domain-cloudflare-zone-id,noredact"`
+		CustomAdminDomainCloudflareCNameValue string `conf:"custom-admin-domain-cloudflare-cname-value,noredact"`
+		FlyioAPIKey                           string `conf:"flyio-api-key"`
+		FlyioAuthProxyAppID                   string `conf:"flyio-authproxy-app-id,noredact"`
+		FlyioAuthProxyAppCNAMEValue           string `conf:"flyio-authproxy-app-cname-value,noredact"`
+		FlyioAdminProxyAppID                  string `conf:"flyio-adminproxy-app-id,noredact"`
+		FlyioAdminProxyAppCNAMEValue          string `conf:"flyio-adminproxy-app-cname-value,noredact"`
+		AdminLogosS3BucketName                string `conf:"admin-logos-s3-bucket-name,noredact"`
 	}{
 		PageEncodingValue: "0000000000000000000000000000000000000000000000000000000000000000",
 	}
@@ -112,6 +118,11 @@ func main() {
 		analyticsClient = analytics.New(config.SegmentWriteKey)
 	}
 
+	cloudflareClient, err := cloudflare.NewWithAPIToken(config.CloudflareAPIKey)
+	if err != nil {
+		panic(err)
+	}
+
 	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
 		&apiservice.Service{
 			Store: store_,
@@ -133,14 +144,19 @@ func main() {
 				HTTPClient: http.DefaultClient,
 				APIKey:     config.FlyioAPIKey,
 			},
-			FlyioAuthProxyAppID:                 config.FlyioAuthProxyAppID,
-			FlyioAuthProxyAppCNAMEValue:         config.FlyioAuthProxyAppCNAMEValue,
-			FlyioAdminProxyAppID:                config.FlyioAdminProxyAppID,
-			FlyioAdminProxyAppCNAMEValue:        config.FlyioAdminProxyAppCNAMEValue,
-			S3Client:                            s3.NewFromConfig(awsSDKConfig),
-			S3PresignClient:                     s3.NewPresignClient(s3.NewFromConfig(awsSDKConfig)),
-			AdminLogosS3BucketName:              config.AdminLogosS3BucketName,
-			UnimplementedSSOReadyServiceHandler: ssoreadyv1connect.UnimplementedSSOReadyServiceHandler{},
+			CloudflareClient:                      cloudflareClient,
+			CustomAuthDomainCloudflareZoneID:      config.CustomAuthDomainCloudflareZoneID,
+			CustomAuthDomainCloudflareCNAMEValue:  config.CustomAuthDomainCloudflareCNameValue,
+			CustomAdminDomainCloudflareZoneID:     config.CustomAdminDomainCloudflareZoneID,
+			CustomAdminDomainCloudflareCNAMEValue: config.CustomAdminDomainCloudflareCNameValue,
+			FlyioAuthProxyAppID:                   config.FlyioAuthProxyAppID,
+			FlyioAuthProxyAppCNAMEValue:           config.FlyioAuthProxyAppCNAMEValue,
+			FlyioAdminProxyAppID:                  config.FlyioAdminProxyAppID,
+			FlyioAdminProxyAppCNAMEValue:          config.FlyioAdminProxyAppCNAMEValue,
+			S3Client:                              s3.NewFromConfig(awsSDKConfig),
+			S3PresignClient:                       s3.NewPresignClient(s3.NewFromConfig(awsSDKConfig)),
+			AdminLogosS3BucketName:                config.AdminLogosS3BucketName,
+			UnimplementedSSOReadyServiceHandler:   ssoreadyv1connect.UnimplementedSSOReadyServiceHandler{},
 		},
 		connect.WithInterceptors(
 			sentryinterceptor.NewPreAuthentication(),
