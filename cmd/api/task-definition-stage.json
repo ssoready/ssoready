@@ -61,6 +61,22 @@
           "value": "https://stage--ssoready.netlify.app/verify-email"
         },
         {
+          "name": "API_CUSTOM_AUTH_DOMAIN_CLOUDFLARE_ZONE_ID",
+          "value": "e3970d0478bdb064ccbb9f7172085b5e"
+        },
+        {
+          "name": "API_CUSTOM_AUTH_DOMAIN_CLOUDFLARE_CNAME_VALUE",
+          "value": "cname.stage-ssoready-custom-auth-domains.com"
+        },
+        {
+          "name": "API_CUSTOM_ADMIN_DOMAIN_CLOUDFLARE_ZONE_ID",
+          "value": "ad26d10ae3b35a8914428d3343a641eb"
+        },
+        {
+          "name": "API_CUSTOM_ADMIN_DOMAIN_CLOUDFLARE_CNAME_VALUE",
+          "value": "cname.stage-ssoready-custom-admin-domains.com"
+        },
+        {
           "name": "API_FLYIO_AUTHPROXY_APP_ID",
           "value": "authproxy-sparkling-leaf-3672"
         },
