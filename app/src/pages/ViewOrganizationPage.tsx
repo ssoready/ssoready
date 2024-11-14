@@ -10,6 +10,8 @@ import {
   appCreateAdminSetupURL,
   appCreateSAMLConnection,
   appCreateSCIMDirectory,
+  appDeleteOrganization,
+  appDeleteSCIMDirectory,
   appGetOrganization,
   appListSAMLConnections,
   appListSCIMDirectories,
@@ -269,6 +271,7 @@ export function ViewOrganizationPage() {
       </Card>
 
       <OrganizationSCIMDirectoriesPage />
+      <DangerZoneCard />
     </div>
   );
 }
@@ -674,5 +677,69 @@ function OrganizationSCIMDirectoriesPage() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function DangerZoneCard() {
+  const { environmentId, organizationId } = useParams();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const handleDelete = () => {
+    setConfirmDeleteOpen(true);
+  };
+
+  const deleteOrganizationMutation = useMutation(appDeleteOrganization);
+  const navigate = useNavigate();
+  const handleConfirmDelete = async () => {
+    await deleteOrganizationMutation.mutateAsync({
+      organizationId,
+    });
+
+    toast.success("Organization deleted");
+    navigate(`/environments/${environmentId}`);
+  };
+
+  return (
+    <>
+      <AlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete organization?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deleting an organization cannot be undone. All SAML connections
+              and SCIM directories inside the organization will be permanently
+              deleted as well.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Permanently Delete Organization
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Card className="border-destructive">
+        <CardHeader>
+          <CardTitle>Danger Zone</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-sm font-semibold">Delete Organization</div>
+              <p className="text-sm">
+                Delete this organization. This cannot be undone.
+              </p>
+            </div>
+
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete organization
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

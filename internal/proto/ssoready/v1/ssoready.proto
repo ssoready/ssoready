@@ -205,6 +205,7 @@ service SSOReadyService {
   rpc AppGetOrganization(AppGetOrganizationRequest) returns (Organization);
   rpc AppCreateOrganization(AppCreateOrganizationRequest) returns (Organization);
   rpc AppUpdateOrganization(AppUpdateOrganizationRequest) returns (Organization);
+  rpc AppDeleteOrganization(AppDeleteOrganizationRequest) returns (google.protobuf.Empty);
 
   rpc AppGetAdminSettings(AppGetAdminSettingsRequest) returns (AppGetAdminSettingsResponse);
   rpc AppUpdateAdminSettings(AppUpdateAdminSettingsRequest) returns (AppUpdateAdminSettingsResponse);
@@ -952,6 +953,10 @@ message AppCreateOrganizationRequest {
 
 message AppUpdateOrganizationRequest {
   Organization organization = 1;
+}
+
+message AppDeleteOrganizationRequest {
+  string organization_id = 1;
 }
 
 message AppGetAdminSettingsRequest {

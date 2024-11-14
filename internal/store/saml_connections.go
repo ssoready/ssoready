@@ -242,33 +242,40 @@ func (s *Store) AppDeleteSAMLConnection(ctx context.Context, req *ssoreadyv1.App
 		return nil, fmt.Errorf("parse saml connection id: %w", err)
 	}
 
-	// idor check
-	if _, err = q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                samlConnID,
-	}); err != nil {
-		return nil, fmt.Errorf("get saml connection: %w", err)
-	}
-
-	flowsCount, err := q.DeleteSAMLFlowsBySAMLConnectionID(ctx, samlConnID)
-	if err != nil {
-		return nil, fmt.Errorf("delete saml flows: %w", err)
-	}
-
-	slog.InfoContext(ctx, "delete_saml_connection", "flows_count", flowsCount)
-
-	samlConnsCount, err := q.DeleteSAMLConnection(ctx, samlConnID)
-	if err != nil {
+	if err := s.deleteSAMLConnection(ctx, q, samlConnID); err != nil {
 		return nil, fmt.Errorf("delete saml connection: %w", err)
 	}
-
-	slog.InfoContext(ctx, "delete_saml_connection", "saml_conns_count", samlConnsCount)
 
 	if err := commit(); err != nil {
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (s *Store) deleteSAMLConnection(ctx context.Context, q *queries.Queries, id uuid.UUID) error {
+	// idor check
+	if _, err := q.GetSAMLConnection(ctx, queries.GetSAMLConnectionParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                id,
+	}); err != nil {
+		return fmt.Errorf("get saml connection: %w", err)
+	}
+
+	flowsCount, err := q.DeleteSAMLFlowsBySAMLConnectionID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete saml flows: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_saml_connection", "flows_count", flowsCount)
+
+	samlConnsCount, err := q.DeleteSAMLConnection(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete saml connection: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_saml_connection", "saml_conns_count", samlConnsCount)
+	return nil
 }
 
 func parseSAMLConnection(qSAMLConn queries.SamlConnection) *ssoreadyv1.SAMLConnection {

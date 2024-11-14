@@ -246,53 +246,61 @@ func (s *Store) AppDeleteSCIMDirectory(ctx context.Context, req *ssoreadyv1.AppD
 		return nil, fmt.Errorf("parse scim directory id: %w", err)
 	}
 
-	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
-		AppOrganizationID: authn.AppOrgID(ctx),
-		ID:                scimDirID,
-	}); err != nil {
-		return nil, fmt.Errorf("get scim directory: %w", err)
-	}
-
-	scimUserGroupMembershipsCount, err := q.DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx, scimDirID)
-	if err != nil {
-		return nil, fmt.Errorf("delete user group memberships: %w", err)
-	}
-
-	slog.InfoContext(ctx, "delete_scim_directory", "scim_user_group_memberships_count", scimUserGroupMembershipsCount)
-
-	scimGroupsCount, err := q.DeleteSCIMGroupsBySCIMDirectory(ctx, scimDirID)
-	if err != nil {
-		return nil, fmt.Errorf("delete groups: %w", err)
-	}
-
-	slog.InfoContext(ctx, "delete_scim_directory", "scim_groups_count", scimGroupsCount)
-
-	scimUsersCount, err := q.DeleteSCIMUsersBySCIMDirectory(ctx, scimDirID)
-	if err != nil {
-		return nil, fmt.Errorf("delete users: %w", err)
-	}
-
-	slog.InfoContext(ctx, "delete_scim_directory", "scim_user_count", scimUsersCount)
-
-	scimRequestsCount, err := q.DeleteSCIMRequestsBySCIMDirectory(ctx, scimDirID)
-	if err != nil {
-		return nil, fmt.Errorf("delete scim requests: %w", err)
-	}
-
-	slog.InfoContext(ctx, "delete_scim_directory", "scim_request_count", scimRequestsCount)
-
-	scimDirectoriesCount, err := q.DeleteSCIMDirectory(ctx, scimDirID)
-	if err != nil {
+	if err := s.deleteSCIMDirectory(ctx, q, scimDirID); err != nil {
 		return nil, fmt.Errorf("delete scim directory: %w", err)
 	}
-
-	slog.InfoContext(ctx, "delete_scim_directory", "scim_directories_count", scimDirectoriesCount)
 
 	if err := commit(); err != nil {
 		return nil, fmt.Errorf("commit: %w", err)
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (s *Store) deleteSCIMDirectory(ctx context.Context, q *queries.Queries, id uuid.UUID) error {
+	// idor check
+	if _, err := q.GetSCIMDirectory(ctx, queries.GetSCIMDirectoryParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                id,
+	}); err != nil {
+		return fmt.Errorf("get scim directory: %w", err)
+	}
+
+	scimUserGroupMembershipsCount, err := q.DeleteSCIMUserGroupMembershipsBySCIMDirectory(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete user group memberships: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_user_group_memberships_count", scimUserGroupMembershipsCount)
+
+	scimGroupsCount, err := q.DeleteSCIMGroupsBySCIMDirectory(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete groups: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_groups_count", scimGroupsCount)
+
+	scimUsersCount, err := q.DeleteSCIMUsersBySCIMDirectory(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete users: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_user_count", scimUsersCount)
+
+	scimRequestsCount, err := q.DeleteSCIMRequestsBySCIMDirectory(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete scim requests: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_request_count", scimRequestsCount)
+
+	scimDirectoriesCount, err := q.DeleteSCIMDirectory(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete scim directory: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_scim_directory", "scim_directories_count", scimDirectoriesCount)
+	return nil
 }
 
 func parseSCIMDirectory(qSCIMDirectory queries.ScimDirectory) *ssoreadyv1.SCIMDirectory {

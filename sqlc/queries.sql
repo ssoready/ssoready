@@ -399,9 +399,29 @@ set external_id  = $1,
 where id = $3
 returning *;
 
+-- name: DeleteOrganization :execrows
+delete
+from organizations
+where id = $1;
+
 -- name: DeleteOrganizationDomains :exec
 delete
 from organization_domains
+where organization_id = $1;
+
+-- name: DeleteOrganizationAdminAccessTokens :execrows
+delete
+from admin_access_tokens
+where organization_id = $1;
+
+-- name: ListAllSAMLConnectionIDs :many
+select id
+from saml_connections
+where organization_id = $1;
+
+-- name: ListAllSCIMDirectoryIDs :many
+select id
+from scim_directories
 where organization_id = $1;
 
 -- name: ListSAMLConnections :many

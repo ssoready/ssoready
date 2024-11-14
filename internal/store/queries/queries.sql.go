@@ -1606,6 +1606,34 @@ func (q *Queries) DeleteAPIKey(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const deleteOrganization = `-- name: DeleteOrganization :execrows
+delete
+from organizations
+where id = $1
+`
+
+func (q *Queries) DeleteOrganization(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteOrganization, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const deleteOrganizationAdminAccessTokens = `-- name: DeleteOrganizationAdminAccessTokens :execrows
+delete
+from admin_access_tokens
+where organization_id = $1
+`
+
+func (q *Queries) DeleteOrganizationAdminAccessTokens(ctx context.Context, organizationID uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteOrganizationAdminAccessTokens, organizationID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const deleteOrganizationDomains = `-- name: DeleteOrganizationDomains :exec
 delete
 from organization_domains
@@ -2582,6 +2610,58 @@ func (q *Queries) ListAPIKeys(ctx context.Context, arg ListAPIKeysParams) ([]Api
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAllSAMLConnectionIDs = `-- name: ListAllSAMLConnectionIDs :many
+select id
+from saml_connections
+where organization_id = $1
+`
+
+func (q *Queries) ListAllSAMLConnectionIDs(ctx context.Context, organizationID uuid.UUID) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, listAllSAMLConnectionIDs, organizationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAllSCIMDirectoryIDs = `-- name: ListAllSCIMDirectoryIDs :many
+select id
+from scim_directories
+where organization_id = $1
+`
+
+func (q *Queries) ListAllSCIMDirectoryIDs(ctx context.Context, organizationID uuid.UUID) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, listAllSCIMDirectoryIDs, organizationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

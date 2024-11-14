@@ -2,6 +2,8 @@ package store
 
 import (
 	"context"
+	"fmt"
+	"log/slog"
 	"sort"
 
 	"github.com/google/uuid"
@@ -9,6 +11,7 @@ import (
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *Store) AppListOrganizations(ctx context.Context, req *ssoreadyv1.AppListOrganizationsRequest) (*ssoreadyv1.AppListOrganizationsResponse, error) {
@@ -222,6 +225,75 @@ func (s *Store) AppUpdateOrganization(ctx context.Context, req *ssoreadyv1.AppUp
 	}
 
 	return parseOrganization(qOrg, qOrgDomains), nil
+}
+
+func (s *Store) AppDeleteOrganization(ctx context.Context, req *ssoreadyv1.AppDeleteOrganizationRequest) (*emptypb.Empty, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	id, err := idformat.Organization.Parse(req.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	// authz check
+	if _, err = q.GetOrganization(ctx, queries.GetOrganizationParams{
+		AppOrganizationID: authn.AppOrgID(ctx),
+		ID:                id,
+	}); err != nil {
+		return nil, err
+	}
+
+	slog.InfoContext(ctx, "delete_organization", "organization_id", req.OrganizationId)
+
+	// delete each saml connection
+	samlConnectionIDs, err := q.ListAllSAMLConnectionIDs(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("list all saml connection ids: %w", err)
+	}
+
+	for _, samlConnID := range samlConnectionIDs {
+		if err := s.deleteSAMLConnection(ctx, q, samlConnID); err != nil {
+			return nil, fmt.Errorf("delete saml connection: %w", err)
+		}
+	}
+
+	// delete each scim directory
+	scimDirectoryIDs, err := q.ListAllSCIMDirectoryIDs(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("list all scim directory ids: %w", err)
+	}
+
+	for _, scimDirID := range scimDirectoryIDs {
+		if err := s.deleteSCIMDirectory(ctx, q, scimDirID); err != nil {
+			return nil, fmt.Errorf("delete scim directory: %w", err)
+		}
+	}
+
+	if err := q.DeleteOrganizationDomains(ctx, id); err != nil {
+		return nil, fmt.Errorf("delete organization domains: %w", err)
+	}
+
+	// delete admin access tokens
+	adminAccessTokenCount, err := q.DeleteOrganizationAdminAccessTokens(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("delete organization admin access tokens: %w", err)
+	}
+
+	slog.InfoContext(ctx, "delete_organization", "admin_access_token_count", adminAccessTokenCount)
+
+	if _, err := q.DeleteOrganization(ctx, id); err != nil {
+		return nil, fmt.Errorf("delete organization: %w", err)
+	}
+
+	if err := commit(); err != nil {
+		return nil, fmt.Errorf("commit: %w", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func parseOrganization(qOrg queries.Organization, qOrgDomains []queries.OrganizationDomain) *ssoreadyv1.Organization {

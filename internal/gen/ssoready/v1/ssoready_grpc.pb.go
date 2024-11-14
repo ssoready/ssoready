@@ -69,6 +69,7 @@ const (
 	SSOReadyService_AppGetOrganization_FullMethodName                               = "/ssoready.v1.SSOReadyService/AppGetOrganization"
 	SSOReadyService_AppCreateOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppCreateOrganization"
 	SSOReadyService_AppUpdateOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppUpdateOrganization"
+	SSOReadyService_AppDeleteOrganization_FullMethodName                            = "/ssoready.v1.SSOReadyService/AppDeleteOrganization"
 	SSOReadyService_AppGetAdminSettings_FullMethodName                              = "/ssoready.v1.SSOReadyService/AppGetAdminSettings"
 	SSOReadyService_AppUpdateAdminSettings_FullMethodName                           = "/ssoready.v1.SSOReadyService/AppUpdateAdminSettings"
 	SSOReadyService_AppUpdateAdminSettingsLogo_FullMethodName                       = "/ssoready.v1.SSOReadyService/AppUpdateAdminSettingsLogo"
@@ -194,6 +195,7 @@ type SSOReadyServiceClient interface {
 	AppGetOrganization(ctx context.Context, in *AppGetOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
 	AppCreateOrganization(ctx context.Context, in *AppCreateOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
 	AppUpdateOrganization(ctx context.Context, in *AppUpdateOrganizationRequest, opts ...grpc.CallOption) (*Organization, error)
+	AppDeleteOrganization(ctx context.Context, in *AppDeleteOrganizationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AppGetAdminSettings(ctx context.Context, in *AppGetAdminSettingsRequest, opts ...grpc.CallOption) (*AppGetAdminSettingsResponse, error)
 	AppUpdateAdminSettings(ctx context.Context, in *AppUpdateAdminSettingsRequest, opts ...grpc.CallOption) (*AppUpdateAdminSettingsResponse, error)
 	AppUpdateAdminSettingsLogo(ctx context.Context, in *AppUpdateAdminSettingsLogoRequest, opts ...grpc.CallOption) (*AppUpdateAdminSettingsLogoResponse, error)
@@ -732,6 +734,16 @@ func (c *sSOReadyServiceClient) AppUpdateOrganization(ctx context.Context, in *A
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AppDeleteOrganization(ctx context.Context, in *AppDeleteOrganizationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SSOReadyService_AppDeleteOrganization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AppGetAdminSettings(ctx context.Context, in *AppGetAdminSettingsRequest, opts ...grpc.CallOption) (*AppGetAdminSettingsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppGetAdminSettingsResponse)
@@ -1197,6 +1209,7 @@ type SSOReadyServiceServer interface {
 	AppGetOrganization(context.Context, *AppGetOrganizationRequest) (*Organization, error)
 	AppCreateOrganization(context.Context, *AppCreateOrganizationRequest) (*Organization, error)
 	AppUpdateOrganization(context.Context, *AppUpdateOrganizationRequest) (*Organization, error)
+	AppDeleteOrganization(context.Context, *AppDeleteOrganizationRequest) (*emptypb.Empty, error)
 	AppGetAdminSettings(context.Context, *AppGetAdminSettingsRequest) (*AppGetAdminSettingsResponse, error)
 	AppUpdateAdminSettings(context.Context, *AppUpdateAdminSettingsRequest) (*AppUpdateAdminSettingsResponse, error)
 	AppUpdateAdminSettingsLogo(context.Context, *AppUpdateAdminSettingsLogoRequest) (*AppUpdateAdminSettingsLogoResponse, error)
@@ -1391,6 +1404,9 @@ func (UnimplementedSSOReadyServiceServer) AppCreateOrganization(context.Context,
 }
 func (UnimplementedSSOReadyServiceServer) AppUpdateOrganization(context.Context, *AppUpdateOrganizationRequest) (*Organization, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppUpdateOrganization not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AppDeleteOrganization(context.Context, *AppDeleteOrganizationRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppDeleteOrganization not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AppGetAdminSettings(context.Context, *AppGetAdminSettingsRequest) (*AppGetAdminSettingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppGetAdminSettings not implemented")
@@ -2409,6 +2425,24 @@ func _SSOReadyService_AppUpdateOrganization_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AppDeleteOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppDeleteOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AppDeleteOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AppDeleteOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AppDeleteOrganization(ctx, req.(*AppDeleteOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AppGetAdminSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AppGetAdminSettingsRequest)
 	if err := dec(in); err != nil {
@@ -3295,6 +3329,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppUpdateOrganization",
 			Handler:    _SSOReadyService_AppUpdateOrganization_Handler,
+		},
+		{
+			MethodName: "AppDeleteOrganization",
+			Handler:    _SSOReadyService_AppDeleteOrganization_Handler,
 		},
 		{
 			MethodName: "AppGetAdminSettings",
