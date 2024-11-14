@@ -4574,6 +4574,43 @@ export class AppUpdateOrganizationRequest extends Message<AppUpdateOrganizationR
 }
 
 /**
+ * @generated from message ssoready.v1.AppDeleteOrganizationRequest
+ */
+export class AppDeleteOrganizationRequest extends Message<AppDeleteOrganizationRequest> {
+  /**
+   * @generated from field: string organization_id = 1;
+   */
+  organizationId = "";
+
+  constructor(data?: PartialMessage<AppDeleteOrganizationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AppDeleteOrganizationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "organization_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AppDeleteOrganizationRequest {
+    return new AppDeleteOrganizationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AppDeleteOrganizationRequest {
+    return new AppDeleteOrganizationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AppDeleteOrganizationRequest {
+    return new AppDeleteOrganizationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AppDeleteOrganizationRequest | PlainMessage<AppDeleteOrganizationRequest> | undefined, b: AppDeleteOrganizationRequest | PlainMessage<AppDeleteOrganizationRequest> | undefined): boolean {
+    return proto3.util.equals(AppDeleteOrganizationRequest, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AppGetAdminSettingsRequest
  */
 export class AppGetAdminSettingsRequest extends Message<AppGetAdminSettingsRequest> {

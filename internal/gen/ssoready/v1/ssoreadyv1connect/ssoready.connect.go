@@ -178,6 +178,9 @@ const (
 	// SSOReadyServiceAppUpdateOrganizationProcedure is the fully-qualified name of the
 	// SSOReadyService's AppUpdateOrganization RPC.
 	SSOReadyServiceAppUpdateOrganizationProcedure = "/ssoready.v1.SSOReadyService/AppUpdateOrganization"
+	// SSOReadyServiceAppDeleteOrganizationProcedure is the fully-qualified name of the
+	// SSOReadyService's AppDeleteOrganization RPC.
+	SSOReadyServiceAppDeleteOrganizationProcedure = "/ssoready.v1.SSOReadyService/AppDeleteOrganization"
 	// SSOReadyServiceAppGetAdminSettingsProcedure is the fully-qualified name of the SSOReadyService's
 	// AppGetAdminSettings RPC.
 	SSOReadyServiceAppGetAdminSettingsProcedure = "/ssoready.v1.SSOReadyService/AppGetAdminSettings"
@@ -377,6 +380,7 @@ type SSOReadyServiceClient interface {
 	AppGetOrganization(context.Context, *connect.Request[v1.AppGetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppCreateOrganization(context.Context, *connect.Request[v1.AppCreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppUpdateOrganization(context.Context, *connect.Request[v1.AppUpdateOrganizationRequest]) (*connect.Response[v1.Organization], error)
+	AppDeleteOrganization(context.Context, *connect.Request[v1.AppDeleteOrganizationRequest]) (*connect.Response[emptypb.Empty], error)
 	AppGetAdminSettings(context.Context, *connect.Request[v1.AppGetAdminSettingsRequest]) (*connect.Response[v1.AppGetAdminSettingsResponse], error)
 	AppUpdateAdminSettings(context.Context, *connect.Request[v1.AppUpdateAdminSettingsRequest]) (*connect.Response[v1.AppUpdateAdminSettingsResponse], error)
 	AppUpdateAdminSettingsLogo(context.Context, *connect.Request[v1.AppUpdateAdminSettingsLogoRequest]) (*connect.Response[v1.AppUpdateAdminSettingsLogoResponse], error)
@@ -672,6 +676,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAppUpdateOrganizationProcedure,
 			opts...,
 		),
+		appDeleteOrganization: connect.NewClient[v1.AppDeleteOrganizationRequest, emptypb.Empty](
+			httpClient,
+			baseURL+SSOReadyServiceAppDeleteOrganizationProcedure,
+			opts...,
+		),
 		appGetAdminSettings: connect.NewClient[v1.AppGetAdminSettingsRequest, v1.AppGetAdminSettingsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAppGetAdminSettingsProcedure,
@@ -916,6 +925,7 @@ type sSOReadyServiceClient struct {
 	appGetOrganization                               *connect.Client[v1.AppGetOrganizationRequest, v1.Organization]
 	appCreateOrganization                            *connect.Client[v1.AppCreateOrganizationRequest, v1.Organization]
 	appUpdateOrganization                            *connect.Client[v1.AppUpdateOrganizationRequest, v1.Organization]
+	appDeleteOrganization                            *connect.Client[v1.AppDeleteOrganizationRequest, emptypb.Empty]
 	appGetAdminSettings                              *connect.Client[v1.AppGetAdminSettingsRequest, v1.AppGetAdminSettingsResponse]
 	appUpdateAdminSettings                           *connect.Client[v1.AppUpdateAdminSettingsRequest, v1.AppUpdateAdminSettingsResponse]
 	appUpdateAdminSettingsLogo                       *connect.Client[v1.AppUpdateAdminSettingsLogoRequest, v1.AppUpdateAdminSettingsLogoResponse]
@@ -1204,6 +1214,11 @@ func (c *sSOReadyServiceClient) AppUpdateOrganization(ctx context.Context, req *
 	return c.appUpdateOrganization.CallUnary(ctx, req)
 }
 
+// AppDeleteOrganization calls ssoready.v1.SSOReadyService.AppDeleteOrganization.
+func (c *sSOReadyServiceClient) AppDeleteOrganization(ctx context.Context, req *connect.Request[v1.AppDeleteOrganizationRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.appDeleteOrganization.CallUnary(ctx, req)
+}
+
 // AppGetAdminSettings calls ssoready.v1.SSOReadyService.AppGetAdminSettings.
 func (c *sSOReadyServiceClient) AppGetAdminSettings(ctx context.Context, req *connect.Request[v1.AppGetAdminSettingsRequest]) (*connect.Response[v1.AppGetAdminSettingsResponse], error) {
 	return c.appGetAdminSettings.CallUnary(ctx, req)
@@ -1479,6 +1494,7 @@ type SSOReadyServiceHandler interface {
 	AppGetOrganization(context.Context, *connect.Request[v1.AppGetOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppCreateOrganization(context.Context, *connect.Request[v1.AppCreateOrganizationRequest]) (*connect.Response[v1.Organization], error)
 	AppUpdateOrganization(context.Context, *connect.Request[v1.AppUpdateOrganizationRequest]) (*connect.Response[v1.Organization], error)
+	AppDeleteOrganization(context.Context, *connect.Request[v1.AppDeleteOrganizationRequest]) (*connect.Response[emptypb.Empty], error)
 	AppGetAdminSettings(context.Context, *connect.Request[v1.AppGetAdminSettingsRequest]) (*connect.Response[v1.AppGetAdminSettingsResponse], error)
 	AppUpdateAdminSettings(context.Context, *connect.Request[v1.AppUpdateAdminSettingsRequest]) (*connect.Response[v1.AppUpdateAdminSettingsResponse], error)
 	AppUpdateAdminSettingsLogo(context.Context, *connect.Request[v1.AppUpdateAdminSettingsLogoRequest]) (*connect.Response[v1.AppUpdateAdminSettingsLogoResponse], error)
@@ -1768,6 +1784,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 	sSOReadyServiceAppUpdateOrganizationHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAppUpdateOrganizationProcedure,
 		svc.AppUpdateOrganization,
+		opts...,
+	)
+	sSOReadyServiceAppDeleteOrganizationHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAppDeleteOrganizationProcedure,
+		svc.AppDeleteOrganization,
 		opts...,
 	)
 	sSOReadyServiceAppGetAdminSettingsHandler := connect.NewUnaryHandler(
@@ -2060,6 +2081,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAppCreateOrganizationHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppUpdateOrganizationProcedure:
 			sSOReadyServiceAppUpdateOrganizationHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAppDeleteOrganizationProcedure:
+			sSOReadyServiceAppDeleteOrganizationHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppGetAdminSettingsProcedure:
 			sSOReadyServiceAppGetAdminSettingsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAppUpdateAdminSettingsProcedure:
@@ -2339,6 +2362,10 @@ func (UnimplementedSSOReadyServiceHandler) AppCreateOrganization(context.Context
 
 func (UnimplementedSSOReadyServiceHandler) AppUpdateOrganization(context.Context, *connect.Request[v1.AppUpdateOrganizationRequest]) (*connect.Response[v1.Organization], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppUpdateOrganization is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AppDeleteOrganization(context.Context, *connect.Request[v1.AppDeleteOrganizationRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AppDeleteOrganization is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AppGetAdminSettings(context.Context, *connect.Request[v1.AppGetAdminSettingsRequest]) (*connect.Response[v1.AppGetAdminSettingsResponse], error) {
