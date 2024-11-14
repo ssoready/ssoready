@@ -785,7 +785,8 @@ select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
        saml_connections.idp_x509_certificate,
        environments.redirect_url,
-       environments.oauth_redirect_uri
+       environments.oauth_redirect_uri,
+       environments.admin_url
 from saml_connections
          join organizations
               on saml_connections.organization_id = organizations.id
@@ -799,6 +800,7 @@ type AuthGetValidateDataRow struct {
 	IdpX509Certificate []byte
 	RedirectUrl        *string
 	OauthRedirectUri   *string
+	AdminUrl           *string
 }
 
 func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGetValidateDataRow, error) {
@@ -810,6 +812,7 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 		&i.IdpX509Certificate,
 		&i.RedirectUrl,
 		&i.OauthRedirectUri,
+		&i.AdminUrl,
 	)
 	return i, err
 }

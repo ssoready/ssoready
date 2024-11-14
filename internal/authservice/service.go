@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"embed"
 	_ "embed"
+	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
@@ -390,6 +391,30 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		redirectQuery := url.Values{}
 		redirectQuery.Set("code", createSAMLLoginRes.Token)
 		redirectQuery.Set("state", createSAMLLoginRes.State)
+		redirectURL.RawQuery = redirectQuery.Encode()
+		redirect := redirectURL.String()
+
+		http.Redirect(w, r, redirect, http.StatusSeeOther)
+		return
+	}
+
+	// if the saml flow was created as part of the admin test mode, then
+	// redirect to the admin ui
+	if createSAMLLoginRes.SAMLFlowTestModeIDP != "" {
+		redirectURL, err := url.Parse(dataRes.EnvironmentAdminTestModeURL)
+		if err != nil {
+			panic(err)
+		}
+
+		attributes, err := json.Marshal(validateRes.SubjectAttributes)
+		if err != nil {
+			panic(err)
+		}
+
+		redirectQuery := url.Values{}
+		redirectQuery.Set("idp", createSAMLLoginRes.SAMLFlowTestModeIDP)
+		redirectQuery.Set("email", email)
+		redirectQuery.Set("attributes", string(attributes))
 		redirectURL.RawQuery = redirectQuery.Encode()
 		redirect := redirectURL.String()
 

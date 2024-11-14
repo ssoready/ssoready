@@ -126,6 +126,7 @@ type AuthGetValidateDataResponse struct {
 	OrganizationDomains         []string
 	EnvironmentRedirectURL      string
 	EnvironmentOAuthRedirectURI string
+	EnvironmentAdminTestModeURL string
 }
 
 func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDataRequest) (*AuthGetValidateDataResponse, error) {
@@ -154,6 +155,13 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-connections#not-yet-configured"))
 	}
 
+	var adminTestModeURL string
+	if res.AdminUrl != nil {
+		adminTestModeURL = fmt.Sprintf("%s/test-mode", *res.AdminUrl)
+	} else {
+		adminTestModeURL = s.defaultAdminTestModeURL
+	}
+
 	return &AuthGetValidateDataResponse{
 		SPEntityID:                  res.SpEntityID,
 		IDPEntityID:                 *res.IdpEntityID,
@@ -161,6 +169,7 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 		OrganizationDomains:         domains,
 		EnvironmentRedirectURL:      *res.RedirectUrl,
 		EnvironmentOAuthRedirectURI: derefOrEmpty(res.OauthRedirectUri),
+		EnvironmentAdminTestModeURL: adminTestModeURL,
 	}, nil
 }
 
@@ -201,10 +210,11 @@ type AuthUpsertSAMLLoginEventRequest struct {
 }
 
 type AuthUpsertSAMLLoginEventResponse struct {
-	SAMLFlowID      string
-	SAMLFlowIsOAuth bool
-	Token           string
-	State           string // only useful for oauth flow, where state must be returned at same time as code
+	SAMLFlowID          string
+	SAMLFlowIsOAuth     bool
+	SAMLFlowTestModeIDP string
+	Token               string
+	State               string // only useful for oauth flow, where state must be returned at same time as code
 }
 
 func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUpsertSAMLLoginEventRequest) (*AuthUpsertSAMLLoginEventResponse, error) {
@@ -323,10 +333,11 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	return &AuthUpsertSAMLLoginEventResponse{
-		SAMLFlowID:      idformat.SAMLFlow.Format(qSAMLFlow.ID),
-		SAMLFlowIsOAuth: qSAMLFlow.IsOauth != nil && *qSAMLFlow.IsOauth,
-		Token:           token,
-		State:           qSAMLFlow.State,
+		SAMLFlowID:          idformat.SAMLFlow.Format(qSAMLFlow.ID),
+		SAMLFlowIsOAuth:     qSAMLFlow.IsOauth != nil && *qSAMLFlow.IsOauth,
+		SAMLFlowTestModeIDP: derefOrEmpty(qSAMLFlow.TestModeIdp),
+		Token:               token,
+		State:               qSAMLFlow.State,
 	}, nil
 }
 
