@@ -13,9 +13,7 @@ import { TransportProvider } from "@connectrpc/connect-query";
 import { IndexPage } from "@/pages/IndexPage";
 import { Layout } from "@/components/Layout";
 import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
-import { ListSCIMDirectoriesPage } from "@/pages/ListSCIMDirectoriesPage";
 import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
-import { ListSAMLConnectionsPage } from "@/pages/ListSAMLConnectionsPage";
 import { SetupSAMLConnectionPage } from "@/pages/SetupSAMLConnectionPage";
 import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
 
@@ -44,7 +42,6 @@ function AppRoutes() {
       />
       <Route path="" element={<Layout />}>
         <Route path="/" element={<IndexPage />} />
-        <Route path="/saml" element={<ListSAMLConnectionsPage />} />
         <Route
           path="/saml/saml-connections/:samlConnectionId"
           element={<ViewSAMLConnectionPage />}
@@ -53,7 +50,6 @@ function AppRoutes() {
           path="/saml/saml-connections/:samlConnectionId/flows/:samlFlowId"
           element={<ViewSAMLFlowPage />}
         />
-        <Route path="/scim" element={<ListSCIMDirectoriesPage />} />
         <Route
           path="/scim/scim-directories/:scimDirectoryId"
           element={<ViewSCIMDirectoryPage />}
