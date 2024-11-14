@@ -135,6 +135,14 @@ func (s *Service) AdminWhoami(ctx context.Context, req *connect.Request[ssoready
 	}), nil
 }
 
+func (s *Service) AdminCreateTestModeSAMLFlow(ctx context.Context, req *connect.Request[ssoreadyv1.AdminCreateTestModeSAMLFlowRequest]) (*connect.Response[ssoreadyv1.AdminCreateTestModeSAMLFlowResponse], error) {
+	res, err := s.Store.AdminCreateTestModeSAMLFlow(ctx, req.Msg)
+	if err != nil {
+		return nil, fmt.Errorf("store: %w", err)
+	}
+	return connect.NewResponse(res), nil
+}
+
 func (s *Service) AdminListSAMLConnections(ctx context.Context, req *connect.Request[ssoreadyv1.AdminListSAMLConnectionsRequest]) (*connect.Response[ssoreadyv1.AdminListSAMLConnectionsResponse], error) {
 	res, err := s.Store.AdminListSAMLConnections(ctx, req.Msg)
 	if err != nil {

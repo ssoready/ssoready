@@ -28,6 +28,7 @@ var nonManagementAPIRPCs = []string{
 
 var adminRPCs = []string{
 	"/ssoready.v1.SSOReadyService/AdminWhoami",
+	"/ssoready.v1.SSOReadyService/AdminCreateTestModeSAMLFlow",
 	"/ssoready.v1.SSOReadyService/AdminListSAMLConnections",
 	"/ssoready.v1.SSOReadyService/AdminGetSAMLConnection",
 	"/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection",

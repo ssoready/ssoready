@@ -279,6 +279,7 @@ type SamlFlow struct {
 	ErrorSamlConnectionNotConfigured              bool
 	ErrorEnvironmentOauthRedirectUriNotConfigured bool
 	AssertionID                                   *string
+	TestModeIdp                                   *string
 }
 
 type SamlOauthClient struct {

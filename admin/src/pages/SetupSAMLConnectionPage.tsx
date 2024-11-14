@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 // import { Steps } from "@/components/Steps";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -29,6 +29,7 @@ import {
   useQuery,
 } from "@connectrpc/connect-query";
 import {
+  adminCreateTestModeSAMLFlow,
   adminGetSAMLConnection,
   adminParseSAMLMetadata,
   adminUpdateSAMLConnection,
@@ -823,7 +824,20 @@ function OktaCopyMetadataURLStep() {
 }
 
 function OktaAssignUsersStep() {
+  const { samlConnectionId } = useParams();
   const next = useSubStepUrl("okta-complete");
+  const navigate = useNavigate();
+
+  const createTestFlowUrl = useMutation(adminCreateTestModeSAMLFlow);
+
+  const handleTest = async () => {
+    const { redirectUrl } = await createTestFlowUrl.mutateAsync({
+      samlConnectionId: samlConnectionId,
+      testModeIdp: "okta",
+    });
+
+    location.href = redirectUrl;
+  };
 
   return (
     <Card>
@@ -854,6 +868,8 @@ function OktaAssignUsersStep() {
             Once you've assigned the appropriate users to the app, you're done
             setting up SAML.
           </p>
+
+          <button onClick={handleTest}>test</button>
         </div>
 
         <div className="mt-4 flex justify-end">

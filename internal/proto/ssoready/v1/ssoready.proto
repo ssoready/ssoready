@@ -240,6 +240,7 @@ service SSOReadyService {
 
   rpc AdminRedeemOneTimeToken(AdminRedeemOneTimeTokenRequest) returns (AdminRedeemOneTimeTokenResponse);
   rpc AdminWhoami(AdminWhoamiRequest) returns (AdminWhoamiResponse);
+  rpc AdminCreateTestModeSAMLFlow(AdminCreateTestModeSAMLFlowRequest) returns (AdminCreateTestModeSAMLFlowResponse);
   rpc AdminListSAMLConnections(AdminListSAMLConnectionsRequest) returns (AdminListSAMLConnectionsResponse);
   rpc AdminGetSAMLConnection(AdminGetSAMLConnectionRequest) returns (AdminGetSAMLConnectionResponse);
   rpc AdminCreateSAMLConnection(AdminCreateSAMLConnectionRequest) returns (AdminCreateSAMLConnectionResponse);
@@ -1143,6 +1144,15 @@ message AdminWhoamiResponse {
   string admin_application_name = 3;
   string admin_return_url = 4;
   string admin_logo_url = 5;
+}
+
+message AdminCreateTestModeSAMLFlowRequest {
+  string saml_connection_id = 1;
+  string test_mode_idp = 2;
+}
+
+message AdminCreateTestModeSAMLFlowResponse {
+  string redirect_url = 1;
 }
 
 message AdminListSAMLConnectionsRequest {
