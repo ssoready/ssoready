@@ -9,17 +9,27 @@ export function TestModePage() {
   const email = searchParams.get("email")!;
   const attributes = searchParams.get("attributes")!;
 
+  const search = new URLSearchParams({ email, attributes }).toString();
+
   useEffect(() => {
     if (idp === "okta") {
-      const search = new URLSearchParams({ email, attributes });
       navigate(
-        `/saml/saml-connections/${samlConnectionId}/setup/okta-test-success?${search.toString()}`,
+        `/saml/saml-connections/${samlConnectionId}/setup/okta-test-success?${search}`,
         {
           replace: true,
         },
       );
     }
-  }, [navigate, idp, samlConnectionId, email, attributes]);
+
+    if (idp === "google") {
+      navigate(
+        `/saml/saml-connections/${samlConnectionId}/setup/google-test-success?${search}`,
+        {
+          replace: true,
+        },
+      );
+    }
+  }, [navigate, samlConnectionId, idp, search]);
 
   return <></>;
 }
