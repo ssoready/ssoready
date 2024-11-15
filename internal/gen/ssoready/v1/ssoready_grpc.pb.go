@@ -96,6 +96,7 @@ const (
 	SSOReadyService_AppGetSCIMRequest_FullMethodName                                = "/ssoready.v1.SSOReadyService/AppGetSCIMRequest"
 	SSOReadyService_AdminRedeemOneTimeToken_FullMethodName                          = "/ssoready.v1.SSOReadyService/AdminRedeemOneTimeToken"
 	SSOReadyService_AdminWhoami_FullMethodName                                      = "/ssoready.v1.SSOReadyService/AdminWhoami"
+	SSOReadyService_AdminCreateTestModeSAMLFlow_FullMethodName                      = "/ssoready.v1.SSOReadyService/AdminCreateTestModeSAMLFlow"
 	SSOReadyService_AdminListSAMLConnections_FullMethodName                         = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
 	SSOReadyService_AdminGetSAMLConnection_FullMethodName                           = "/ssoready.v1.SSOReadyService/AdminGetSAMLConnection"
 	SSOReadyService_AdminCreateSAMLConnection_FullMethodName                        = "/ssoready.v1.SSOReadyService/AdminCreateSAMLConnection"
@@ -222,6 +223,7 @@ type SSOReadyServiceClient interface {
 	AppGetSCIMRequest(ctx context.Context, in *AppGetSCIMRequestRequest, opts ...grpc.CallOption) (*AppGetSCIMRequestResponse, error)
 	AdminRedeemOneTimeToken(ctx context.Context, in *AdminRedeemOneTimeTokenRequest, opts ...grpc.CallOption) (*AdminRedeemOneTimeTokenResponse, error)
 	AdminWhoami(ctx context.Context, in *AdminWhoamiRequest, opts ...grpc.CallOption) (*AdminWhoamiResponse, error)
+	AdminCreateTestModeSAMLFlow(ctx context.Context, in *AdminCreateTestModeSAMLFlowRequest, opts ...grpc.CallOption) (*AdminCreateTestModeSAMLFlowResponse, error)
 	AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(ctx context.Context, in *AdminGetSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminGetSAMLConnectionResponse, error)
 	AdminCreateSAMLConnection(ctx context.Context, in *AdminCreateSAMLConnectionRequest, opts ...grpc.CallOption) (*AdminCreateSAMLConnectionResponse, error)
@@ -1004,6 +1006,16 @@ func (c *sSOReadyServiceClient) AdminWhoami(ctx context.Context, in *AdminWhoami
 	return out, nil
 }
 
+func (c *sSOReadyServiceClient) AdminCreateTestModeSAMLFlow(ctx context.Context, in *AdminCreateTestModeSAMLFlowRequest, opts ...grpc.CallOption) (*AdminCreateTestModeSAMLFlowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCreateTestModeSAMLFlowResponse)
+	err := c.cc.Invoke(ctx, SSOReadyService_AdminCreateTestModeSAMLFlow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sSOReadyServiceClient) AdminListSAMLConnections(ctx context.Context, in *AdminListSAMLConnectionsRequest, opts ...grpc.CallOption) (*AdminListSAMLConnectionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminListSAMLConnectionsResponse)
@@ -1236,6 +1248,7 @@ type SSOReadyServiceServer interface {
 	AppGetSCIMRequest(context.Context, *AppGetSCIMRequestRequest) (*AppGetSCIMRequestResponse, error)
 	AdminRedeemOneTimeToken(context.Context, *AdminRedeemOneTimeTokenRequest) (*AdminRedeemOneTimeTokenResponse, error)
 	AdminWhoami(context.Context, *AdminWhoamiRequest) (*AdminWhoamiResponse, error)
+	AdminCreateTestModeSAMLFlow(context.Context, *AdminCreateTestModeSAMLFlowRequest) (*AdminCreateTestModeSAMLFlowResponse, error)
 	AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error)
 	AdminGetSAMLConnection(context.Context, *AdminGetSAMLConnectionRequest) (*AdminGetSAMLConnectionResponse, error)
 	AdminCreateSAMLConnection(context.Context, *AdminCreateSAMLConnectionRequest) (*AdminCreateSAMLConnectionResponse, error)
@@ -1485,6 +1498,9 @@ func (UnimplementedSSOReadyServiceServer) AdminRedeemOneTimeToken(context.Contex
 }
 func (UnimplementedSSOReadyServiceServer) AdminWhoami(context.Context, *AdminWhoamiRequest) (*AdminWhoamiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminWhoami not implemented")
+}
+func (UnimplementedSSOReadyServiceServer) AdminCreateTestModeSAMLFlow(context.Context, *AdminCreateTestModeSAMLFlowRequest) (*AdminCreateTestModeSAMLFlowResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminCreateTestModeSAMLFlow not implemented")
 }
 func (UnimplementedSSOReadyServiceServer) AdminListSAMLConnections(context.Context, *AdminListSAMLConnectionsRequest) (*AdminListSAMLConnectionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminListSAMLConnections not implemented")
@@ -2911,6 +2927,24 @@ func _SSOReadyService_AdminWhoami_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SSOReadyService_AdminCreateTestModeSAMLFlow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminCreateTestModeSAMLFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SSOReadyServiceServer).AdminCreateTestModeSAMLFlow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SSOReadyService_AdminCreateTestModeSAMLFlow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SSOReadyServiceServer).AdminCreateTestModeSAMLFlow(ctx, req.(*AdminCreateTestModeSAMLFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SSOReadyService_AdminListSAMLConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminListSAMLConnectionsRequest)
 	if err := dec(in); err != nil {
@@ -3437,6 +3471,10 @@ var SSOReadyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminWhoami",
 			Handler:    _SSOReadyService_AdminWhoami_Handler,
+		},
+		{
+			MethodName: "AdminCreateTestModeSAMLFlow",
+			Handler:    _SSOReadyService_AdminCreateTestModeSAMLFlow_Handler,
 		},
 		{
 			MethodName: "AdminListSAMLConnections",

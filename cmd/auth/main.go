@@ -40,6 +40,7 @@ func main() {
 		ServeAddr                    string `conf:"serve-addr,noredact"`
 		DB                           string `conf:"db"`
 		DefaultAuthURL               string `conf:"default-auth-url,noredact"`
+		DefaultAdminTestModeURL      string `conf:"default-admin-test-mode-url,noredact"`
 		BaseURL                      string `conf:"base-url,noredact"`
 		PageEncodingValue            string `conf:"page-encoding-value"`
 		SAMLStateSigningKey          string `conf:"saml-state-signing-key"`
@@ -75,10 +76,11 @@ func main() {
 	}
 
 	store_ := store.New(store.NewStoreParams{
-		DB:                  db,
-		PageEncoder:         pagetoken.Encoder{Secret: pageEncodingValue},
-		DefaultAuthURL:      config.DefaultAuthURL,
-		SAMLStateSigningKey: samlStateSigningKey,
+		DB:                      db,
+		PageEncoder:             pagetoken.Encoder{Secret: pageEncodingValue},
+		DefaultAuthURL:          config.DefaultAuthURL,
+		DefaultAdminTestModeURL: config.DefaultAdminTestModeURL,
+		SAMLStateSigningKey:     samlStateSigningKey,
 	})
 
 	idTokenPrivateKey, err := parseRSAPrivateKey(config.OAuthIDTokenPrivateKeyBase64)

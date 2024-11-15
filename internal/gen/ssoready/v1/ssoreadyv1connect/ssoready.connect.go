@@ -259,6 +259,9 @@ const (
 	// SSOReadyServiceAdminWhoamiProcedure is the fully-qualified name of the SSOReadyService's
 	// AdminWhoami RPC.
 	SSOReadyServiceAdminWhoamiProcedure = "/ssoready.v1.SSOReadyService/AdminWhoami"
+	// SSOReadyServiceAdminCreateTestModeSAMLFlowProcedure is the fully-qualified name of the
+	// SSOReadyService's AdminCreateTestModeSAMLFlow RPC.
+	SSOReadyServiceAdminCreateTestModeSAMLFlowProcedure = "/ssoready.v1.SSOReadyService/AdminCreateTestModeSAMLFlow"
 	// SSOReadyServiceAdminListSAMLConnectionsProcedure is the fully-qualified name of the
 	// SSOReadyService's AdminListSAMLConnections RPC.
 	SSOReadyServiceAdminListSAMLConnectionsProcedure = "/ssoready.v1.SSOReadyService/AdminListSAMLConnections"
@@ -407,6 +410,7 @@ type SSOReadyServiceClient interface {
 	AppGetSCIMRequest(context.Context, *connect.Request[v1.AppGetSCIMRequestRequest]) (*connect.Response[v1.AppGetSCIMRequestResponse], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 	AdminWhoami(context.Context, *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error)
+	AdminCreateTestModeSAMLFlow(context.Context, *connect.Request[v1.AdminCreateTestModeSAMLFlowRequest]) (*connect.Response[v1.AdminCreateTestModeSAMLFlowResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
 	AdminCreateSAMLConnection(context.Context, *connect.Request[v1.AdminCreateSAMLConnectionRequest]) (*connect.Response[v1.AdminCreateSAMLConnectionResponse], error)
@@ -811,6 +815,11 @@ func NewSSOReadyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			baseURL+SSOReadyServiceAdminWhoamiProcedure,
 			opts...,
 		),
+		adminCreateTestModeSAMLFlow: connect.NewClient[v1.AdminCreateTestModeSAMLFlowRequest, v1.AdminCreateTestModeSAMLFlowResponse](
+			httpClient,
+			baseURL+SSOReadyServiceAdminCreateTestModeSAMLFlowProcedure,
+			opts...,
+		),
 		adminListSAMLConnections: connect.NewClient[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse](
 			httpClient,
 			baseURL+SSOReadyServiceAdminListSAMLConnectionsProcedure,
@@ -952,6 +961,7 @@ type sSOReadyServiceClient struct {
 	appGetSCIMRequest                                *connect.Client[v1.AppGetSCIMRequestRequest, v1.AppGetSCIMRequestResponse]
 	adminRedeemOneTimeToken                          *connect.Client[v1.AdminRedeemOneTimeTokenRequest, v1.AdminRedeemOneTimeTokenResponse]
 	adminWhoami                                      *connect.Client[v1.AdminWhoamiRequest, v1.AdminWhoamiResponse]
+	adminCreateTestModeSAMLFlow                      *connect.Client[v1.AdminCreateTestModeSAMLFlowRequest, v1.AdminCreateTestModeSAMLFlowResponse]
 	adminListSAMLConnections                         *connect.Client[v1.AdminListSAMLConnectionsRequest, v1.AdminListSAMLConnectionsResponse]
 	adminGetSAMLConnection                           *connect.Client[v1.AdminGetSAMLConnectionRequest, v1.AdminGetSAMLConnectionResponse]
 	adminCreateSAMLConnection                        *connect.Client[v1.AdminCreateSAMLConnectionRequest, v1.AdminCreateSAMLConnectionResponse]
@@ -1350,6 +1360,11 @@ func (c *sSOReadyServiceClient) AdminWhoami(ctx context.Context, req *connect.Re
 	return c.adminWhoami.CallUnary(ctx, req)
 }
 
+// AdminCreateTestModeSAMLFlow calls ssoready.v1.SSOReadyService.AdminCreateTestModeSAMLFlow.
+func (c *sSOReadyServiceClient) AdminCreateTestModeSAMLFlow(ctx context.Context, req *connect.Request[v1.AdminCreateTestModeSAMLFlowRequest]) (*connect.Response[v1.AdminCreateTestModeSAMLFlowResponse], error) {
+	return c.adminCreateTestModeSAMLFlow.CallUnary(ctx, req)
+}
+
 // AdminListSAMLConnections calls ssoready.v1.SSOReadyService.AdminListSAMLConnections.
 func (c *sSOReadyServiceClient) AdminListSAMLConnections(ctx context.Context, req *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error) {
 	return c.adminListSAMLConnections.CallUnary(ctx, req)
@@ -1521,6 +1536,7 @@ type SSOReadyServiceHandler interface {
 	AppGetSCIMRequest(context.Context, *connect.Request[v1.AppGetSCIMRequestRequest]) (*connect.Response[v1.AppGetSCIMRequestResponse], error)
 	AdminRedeemOneTimeToken(context.Context, *connect.Request[v1.AdminRedeemOneTimeTokenRequest]) (*connect.Response[v1.AdminRedeemOneTimeTokenResponse], error)
 	AdminWhoami(context.Context, *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error)
+	AdminCreateTestModeSAMLFlow(context.Context, *connect.Request[v1.AdminCreateTestModeSAMLFlowRequest]) (*connect.Response[v1.AdminCreateTestModeSAMLFlowResponse], error)
 	AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error)
 	AdminGetSAMLConnection(context.Context, *connect.Request[v1.AdminGetSAMLConnectionRequest]) (*connect.Response[v1.AdminGetSAMLConnectionResponse], error)
 	AdminCreateSAMLConnection(context.Context, *connect.Request[v1.AdminCreateSAMLConnectionRequest]) (*connect.Response[v1.AdminCreateSAMLConnectionResponse], error)
@@ -1921,6 +1937,11 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 		svc.AdminWhoami,
 		opts...,
 	)
+	sSOReadyServiceAdminCreateTestModeSAMLFlowHandler := connect.NewUnaryHandler(
+		SSOReadyServiceAdminCreateTestModeSAMLFlowProcedure,
+		svc.AdminCreateTestModeSAMLFlow,
+		opts...,
+	)
 	sSOReadyServiceAdminListSAMLConnectionsHandler := connect.NewUnaryHandler(
 		SSOReadyServiceAdminListSAMLConnectionsProcedure,
 		svc.AdminListSAMLConnections,
@@ -2135,6 +2156,8 @@ func NewSSOReadyServiceHandler(svc SSOReadyServiceHandler, opts ...connect.Handl
 			sSOReadyServiceAdminRedeemOneTimeTokenHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminWhoamiProcedure:
 			sSOReadyServiceAdminWhoamiHandler.ServeHTTP(w, r)
+		case SSOReadyServiceAdminCreateTestModeSAMLFlowProcedure:
+			sSOReadyServiceAdminCreateTestModeSAMLFlowHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminListSAMLConnectionsProcedure:
 			sSOReadyServiceAdminListSAMLConnectionsHandler.ServeHTTP(w, r)
 		case SSOReadyServiceAdminGetSAMLConnectionProcedure:
@@ -2470,6 +2493,10 @@ func (UnimplementedSSOReadyServiceHandler) AdminRedeemOneTimeToken(context.Conte
 
 func (UnimplementedSSOReadyServiceHandler) AdminWhoami(context.Context, *connect.Request[v1.AdminWhoamiRequest]) (*connect.Response[v1.AdminWhoamiResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminWhoami is not implemented"))
+}
+
+func (UnimplementedSSOReadyServiceHandler) AdminCreateTestModeSAMLFlow(context.Context, *connect.Request[v1.AdminCreateTestModeSAMLFlowRequest]) (*connect.Response[v1.AdminCreateTestModeSAMLFlowResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ssoready.v1.SSOReadyService.AdminCreateTestModeSAMLFlow is not implemented"))
 }
 
 func (UnimplementedSSOReadyServiceHandler) AdminListSAMLConnections(context.Context, *connect.Request[v1.AdminListSAMLConnectionsRequest]) (*connect.Response[v1.AdminListSAMLConnectionsResponse], error) {

@@ -33,6 +33,10 @@
           "value": ":8080"
         },
         {
+          "name": "AUTH_DEFAULT_ADMIN_TEST_MODE_URL",
+          "value": "https://admin.ssoready.com/test-mode"
+        },
+        {
           "name": "AUTH_BASE_URL",
           "value": "https://auth.ssoready.com"
         }

@@ -288,7 +288,7 @@ func (q *Queries) AppListSCIMRequests(ctx context.Context, arg AppListSCIMReques
 }
 
 const authCheckAssertionAlreadyProcessed = `-- name: AuthCheckAssertionAlreadyProcessed :one
-select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+select exists(select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
               from saml_flows
               where id = $1
                 and access_code_sha256 is not null)
@@ -498,7 +498,7 @@ func (q *Queries) AuthGetSAMLConnectionDomains(ctx context.Context, id uuid.UUID
 }
 
 const authGetSAMLFlow = `-- name: AuthGetSAMLFlow :one
-select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 from saml_flows
 where id = $1
 `
@@ -539,6 +539,7 @@ func (q *Queries) AuthGetSAMLFlow(ctx context.Context, id uuid.UUID) (SamlFlow, 
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
@@ -784,7 +785,8 @@ select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
        saml_connections.idp_x509_certificate,
        environments.redirect_url,
-       environments.oauth_redirect_uri
+       environments.oauth_redirect_uri,
+       environments.admin_url
 from saml_connections
          join organizations
               on saml_connections.organization_id = organizations.id
@@ -798,6 +800,7 @@ type AuthGetValidateDataRow struct {
 	IdpX509Certificate []byte
 	RedirectUrl        *string
 	OauthRedirectUri   *string
+	AdminUrl           *string
 }
 
 func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGetValidateDataRow, error) {
@@ -809,6 +812,7 @@ func (q *Queries) AuthGetValidateData(ctx context.Context, id uuid.UUID) (AuthGe
 		&i.IdpX509Certificate,
 		&i.RedirectUrl,
 		&i.OauthRedirectUri,
+		&i.AdminUrl,
 	)
 	return i, err
 }
@@ -1470,10 +1474,11 @@ const createSAMLFlowGetRedirect = `-- name: CreateSAMLFlowGetRedirect :one
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time,
                         update_time,
                         auth_redirect_url, get_redirect_time, status,
+                        test_mode_idp,
                         error_saml_connection_not_configured,
                         error_environment_oauth_redirect_uri_not_configured)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 `
 
 type CreateSAMLFlowGetRedirectParams struct {
@@ -1486,6 +1491,7 @@ type CreateSAMLFlowGetRedirectParams struct {
 	AuthRedirectUrl                               *string
 	GetRedirectTime                               *time.Time
 	Status                                        SamlFlowStatus
+	TestModeIdp                                   *string
 	ErrorSamlConnectionNotConfigured              bool
 	ErrorEnvironmentOauthRedirectUriNotConfigured bool
 }
@@ -1501,6 +1507,7 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 		arg.AuthRedirectUrl,
 		arg.GetRedirectTime,
 		arg.Status,
+		arg.TestModeIdp,
 		arg.ErrorSamlConnectionNotConfigured,
 		arg.ErrorEnvironmentOauthRedirectUriNotConfigured,
 	)
@@ -1538,6 +1545,7 @@ func (q *Queries) CreateSAMLFlowGetRedirect(ctx context.Context, arg CreateSAMLF
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
@@ -2288,7 +2296,7 @@ func (q *Queries) GetSAMLConnectionByID(ctx context.Context, id uuid.UUID) (Saml
 }
 
 const getSAMLFlow = `-- name: GetSAMLFlow :one
-select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.email, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time, saml_flows.redeem_response, saml_flows.error_bad_issuer, saml_flows.error_bad_audience, saml_flows.error_bad_subject_id, saml_flows.error_email_outside_organization_domains, saml_flows.status, saml_flows.error_unsigned_assertion, saml_flows.access_code_sha256, saml_flows.is_oauth, saml_flows.error_bad_signature_algorithm, saml_flows.error_bad_digest_algorithm, saml_flows.error_bad_x509_certificate, saml_flows.error_saml_connection_not_configured, saml_flows.error_environment_oauth_redirect_uri_not_configured, saml_flows.assertion_id
+select saml_flows.id, saml_flows.saml_connection_id, saml_flows.access_code, saml_flows.state, saml_flows.create_time, saml_flows.expire_time, saml_flows.email, saml_flows.subject_idp_attributes, saml_flows.update_time, saml_flows.auth_redirect_url, saml_flows.get_redirect_time, saml_flows.initiate_request, saml_flows.initiate_time, saml_flows.assertion, saml_flows.app_redirect_url, saml_flows.receive_assertion_time, saml_flows.redeem_time, saml_flows.redeem_response, saml_flows.error_bad_issuer, saml_flows.error_bad_audience, saml_flows.error_bad_subject_id, saml_flows.error_email_outside_organization_domains, saml_flows.status, saml_flows.error_unsigned_assertion, saml_flows.access_code_sha256, saml_flows.is_oauth, saml_flows.error_bad_signature_algorithm, saml_flows.error_bad_digest_algorithm, saml_flows.error_bad_x509_certificate, saml_flows.error_saml_connection_not_configured, saml_flows.error_environment_oauth_redirect_uri_not_configured, saml_flows.assertion_id, saml_flows.test_mode_idp
 from saml_flows
          join saml_connections
               on saml_flows.saml_connection_id = saml_connections.id
@@ -2340,12 +2348,13 @@ func (q *Queries) GetSAMLFlow(ctx context.Context, arg GetSAMLFlowParams) (SamlF
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
 
 const getSAMLFlowByID = `-- name: GetSAMLFlowByID :one
-select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 from saml_flows
 where id = $1
 `
@@ -2386,6 +2395,7 @@ func (q *Queries) GetSAMLFlowByID(ctx context.Context, id uuid.UUID) (SamlFlow, 
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
@@ -2860,7 +2870,7 @@ func (q *Queries) ListSAMLConnections(ctx context.Context, arg ListSAMLConnectio
 }
 
 const listSAMLFlowsFirstPage = `-- name: ListSAMLFlowsFirstPage :many
-select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 from saml_flows
 where saml_connection_id = $1
 order by (create_time, id) desc
@@ -2914,6 +2924,7 @@ func (q *Queries) ListSAMLFlowsFirstPage(ctx context.Context, arg ListSAMLFlowsF
 			&i.ErrorSamlConnectionNotConfigured,
 			&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 			&i.AssertionID,
+			&i.TestModeIdp,
 		); err != nil {
 			return nil, err
 		}
@@ -2926,7 +2937,7 @@ func (q *Queries) ListSAMLFlowsFirstPage(ctx context.Context, arg ListSAMLFlowsF
 }
 
 const listSAMLFlowsNextPage = `-- name: ListSAMLFlowsNextPage :many
-select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+select id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 from saml_flows
 where saml_connection_id = $1
   and (create_time, id) <= ($3, $4::uuid)
@@ -2988,6 +2999,7 @@ func (q *Queries) ListSAMLFlowsNextPage(ctx context.Context, arg ListSAMLFlowsNe
 			&i.ErrorSamlConnectionNotConfigured,
 			&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 			&i.AssertionID,
+			&i.TestModeIdp,
 		); err != nil {
 			return nil, err
 		}
@@ -3771,7 +3783,7 @@ set update_time        = $1,
     status             = $4,
     access_code_sha256 = null
 where id = $5
-returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 `
 
 type UpdateSAMLFlowRedeemParams struct {
@@ -3824,6 +3836,7 @@ func (q *Queries) UpdateSAMLFlowRedeem(ctx context.Context, arg UpdateSAMLFlowRe
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
@@ -3833,7 +3846,7 @@ update saml_flows
 set email                  = $1,
     subject_idp_attributes = $2
 where id = $3
-returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 `
 
 type UpdateSAMLFlowSubjectDataParams struct {
@@ -3878,6 +3891,7 @@ func (q *Queries) UpdateSAMLFlowSubjectData(ctx context.Context, arg UpdateSAMLF
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
@@ -3941,7 +3955,7 @@ on conflict (id) do update set update_time      = excluded.update_time,
                                initiate_request = excluded.initiate_request,
                                initiate_time    = excluded.initiate_time,
                                status           = excluded.status
-returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 `
 
 type UpsertSAMLFlowInitiateParams struct {
@@ -4004,6 +4018,7 @@ func (q *Queries) UpsertSAMLFlowInitiate(ctx context.Context, arg UpsertSAMLFlow
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }
@@ -4035,7 +4050,7 @@ on conflict (id) do update set assertion_id                             = exclud
                                error_bad_subject_id                     = excluded.error_bad_subject_id,
                                error_email_outside_organization_domains = excluded.error_email_outside_organization_domains,
                                status                                   = excluded.status
-returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id
+returning id, saml_connection_id, access_code, state, create_time, expire_time, email, subject_idp_attributes, update_time, auth_redirect_url, get_redirect_time, initiate_request, initiate_time, assertion, app_redirect_url, receive_assertion_time, redeem_time, redeem_response, error_bad_issuer, error_bad_audience, error_bad_subject_id, error_email_outside_organization_domains, status, error_unsigned_assertion, access_code_sha256, is_oauth, error_bad_signature_algorithm, error_bad_digest_algorithm, error_bad_x509_certificate, error_saml_connection_not_configured, error_environment_oauth_redirect_uri_not_configured, assertion_id, test_mode_idp
 `
 
 type UpsertSAMLFlowReceiveAssertionParams struct {
@@ -4118,6 +4133,7 @@ func (q *Queries) UpsertSAMLFlowReceiveAssertion(ctx context.Context, arg Upsert
 		&i.ErrorSamlConnectionNotConfigured,
 		&i.ErrorEnvironmentOauthRedirectUriNotConfigured,
 		&i.AssertionID,
+		&i.TestModeIdp,
 	)
 	return i, err
 }

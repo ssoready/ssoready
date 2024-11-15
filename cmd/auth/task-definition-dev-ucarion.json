@@ -33,6 +33,10 @@
           "value": ":8080"
         },
         {
+          "name": "AUTH_DEFAULT_ADMIN_TEST_MODE_URL",
+          "value": "https://dev-ucarion--ssoready-admin.netlify.app/test-mode"
+        },
+        {
           "name": "AUTH_BASE_URL",
           "value": "https://auth.dev-ucarion.ssoready-nonprod.com"
         }

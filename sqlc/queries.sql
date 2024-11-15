@@ -49,7 +49,8 @@ select saml_connections.sp_entity_id,
        saml_connections.idp_entity_id,
        saml_connections.idp_x509_certificate,
        environments.redirect_url,
-       environments.oauth_redirect_uri
+       environments.oauth_redirect_uri,
+       environments.admin_url
 from saml_connections
          join organizations
               on saml_connections.organization_id = organizations.id
@@ -75,9 +76,10 @@ where saml_connections.id = $1;
 insert into saml_flows (id, saml_connection_id, expire_time, state, create_time,
                         update_time,
                         auth_redirect_url, get_redirect_time, status,
+                        test_mode_idp,
                         error_saml_connection_not_configured,
                         error_environment_oauth_redirect_uri_not_configured)
-values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 returning *;
 
 -- name: UpsertSAMLFlowInitiate :one

@@ -15,6 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/ssoready/ssoready/internal/authn"
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
+	"github.com/ssoready/ssoready/internal/statesign"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
 )
@@ -293,6 +294,102 @@ func (s *Store) AdminWhoami(ctx context.Context, req *ssoreadyv1.AdminWhoamiRequ
 		EnvironmentID:        idformat.Environment.Format(qEnv.ID),
 		AdminLogoConfigured:  qEnv.AdminLogoConfigured,
 	}, nil
+}
+
+func (s *Store) AdminCreateTestModeSAMLFlow(ctx context.Context, req *ssoreadyv1.AdminCreateTestModeSAMLFlowRequest) (*ssoreadyv1.AdminCreateTestModeSAMLFlowResponse, error) {
+	_, q, commit, rollback, err := s.tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback()
+
+	if !authn.FullContextData(ctx).AdminAccessToken.CanManageSAML {
+		return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("not authorized to manage saml"))
+	}
+
+	samlConnectionID, err := idformat.SAMLConnection.Parse(req.SamlConnectionId)
+	if err != nil {
+		return nil, err
+	}
+
+	orgID := authn.FullContextData(ctx).AdminAccessToken.OrganizationID
+
+	// authz check
+	qSAMLConn, err := q.AdminGetSAMLConnection(ctx, queries.AdminGetSAMLConnectionParams{
+		OrganizationID: orgID,
+		ID:             samlConnectionID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// from here we are good to create the saml flow
+
+	// GetSAMLRedirectURLData wants an environment and app organization ID. To
+	// avoid creating a new query for this test flow, we go out of our way to
+	// get the environment+app org on the organization that the user authed
+	// against, which at this point in the code we already know the user is
+	// allowed to access.
+	qOrg, err := q.GetOrganizationByID(ctx, orgID)
+	if err != nil {
+		return nil, err
+	}
+
+	qEnv, err := q.GetEnvironmentByID(ctx, qOrg.EnvironmentID)
+	if err != nil {
+		return nil, err
+	}
+
+	samlRedirectData, err := q.GetSAMLRedirectURLData(ctx, queries.GetSAMLRedirectURLDataParams{
+		AppOrganizationID: qEnv.AppOrganizationID,
+		EnvironmentID:     qOrg.EnvironmentID,
+		SamlConnectionID:  qSAMLConn.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	authURL := s.defaultAuthURL
+	if samlRedirectData.EnvironmentAuthUrl != nil {
+		authURL = *samlRedirectData.EnvironmentAuthUrl
+	}
+
+	samlFlowID := uuid.New()
+
+	redirectURLQuery := url.Values{}
+	redirectURLQuery.Set("state", s.statesigner.Encode(statesign.Data{
+		SAMLFlowID: idformat.SAMLFlow.Format(samlFlowID),
+	}))
+
+	redirectURL, err := url.Parse(authURL)
+	if err != nil {
+		return nil, err
+	}
+	redirectURL = redirectURL.JoinPath(fmt.Sprintf("/v1/saml/%s/init", idformat.SAMLConnection.Format(qSAMLConn.ID)))
+	redirectURL.RawQuery = redirectURLQuery.Encode()
+
+	redirect := redirectURL.String()
+
+	now := time.Now()
+	if _, err := q.CreateSAMLFlowGetRedirect(ctx, queries.CreateSAMLFlowGetRedirectParams{
+		ID:               samlFlowID,
+		SamlConnectionID: qSAMLConn.ID,
+		ExpireTime:       time.Now().Add(time.Hour),
+		CreateTime:       time.Now(),
+		UpdateTime:       time.Now(),
+		AuthRedirectUrl:  &redirect,
+		GetRedirectTime:  &now,
+		Status:           queries.SamlFlowStatusInProgress,
+		TestModeIdp:      &req.TestModeIdp,
+	}); err != nil {
+		return nil, err
+	}
+
+	if err := commit(); err != nil {
+		return nil, err
+	}
+
+	return &ssoreadyv1.AdminCreateTestModeSAMLFlowResponse{RedirectUrl: redirect}, nil
 }
 
 func (s *Store) AdminListSAMLConnections(ctx context.Context, req *ssoreadyv1.AdminListSAMLConnectionsRequest) (*ssoreadyv1.AdminListSAMLConnectionsResponse, error) {

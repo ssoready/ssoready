@@ -16,6 +16,7 @@ import { ViewSAMLConnectionPage } from "@/pages/ViewSAMLConnectionPage";
 import { ViewSCIMDirectoryPage } from "@/pages/ViewSCIMDirectoryPage";
 import { SetupSAMLConnectionPage } from "@/pages/SetupSAMLConnectionPage";
 import { ViewSAMLFlowPage } from "@/pages/ViewSAMLFlowPage";
+import { TestModePage } from "@/pages/TestModePage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/setup" element={<SetupPage />} />
+      <Route path="/test-mode" element={<TestModePage />} />
       <Route
         path="/saml/saml-connections/:samlConnectionId/setup/:subStepId?"
         element={<SetupSAMLConnectionPage />}

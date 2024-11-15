@@ -6272,6 +6272,86 @@ export class AdminWhoamiResponse extends Message<AdminWhoamiResponse> {
 }
 
 /**
+ * @generated from message ssoready.v1.AdminCreateTestModeSAMLFlowRequest
+ */
+export class AdminCreateTestModeSAMLFlowRequest extends Message<AdminCreateTestModeSAMLFlowRequest> {
+  /**
+   * @generated from field: string saml_connection_id = 1;
+   */
+  samlConnectionId = "";
+
+  /**
+   * @generated from field: string test_mode_idp = 2;
+   */
+  testModeIdp = "";
+
+  constructor(data?: PartialMessage<AdminCreateTestModeSAMLFlowRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminCreateTestModeSAMLFlowRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "saml_connection_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "test_mode_idp", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCreateTestModeSAMLFlowRequest {
+    return new AdminCreateTestModeSAMLFlowRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCreateTestModeSAMLFlowRequest {
+    return new AdminCreateTestModeSAMLFlowRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCreateTestModeSAMLFlowRequest {
+    return new AdminCreateTestModeSAMLFlowRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminCreateTestModeSAMLFlowRequest | PlainMessage<AdminCreateTestModeSAMLFlowRequest> | undefined, b: AdminCreateTestModeSAMLFlowRequest | PlainMessage<AdminCreateTestModeSAMLFlowRequest> | undefined): boolean {
+    return proto3.util.equals(AdminCreateTestModeSAMLFlowRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message ssoready.v1.AdminCreateTestModeSAMLFlowResponse
+ */
+export class AdminCreateTestModeSAMLFlowResponse extends Message<AdminCreateTestModeSAMLFlowResponse> {
+  /**
+   * @generated from field: string redirect_url = 1;
+   */
+  redirectUrl = "";
+
+  constructor(data?: PartialMessage<AdminCreateTestModeSAMLFlowResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ssoready.v1.AdminCreateTestModeSAMLFlowResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "redirect_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCreateTestModeSAMLFlowResponse {
+    return new AdminCreateTestModeSAMLFlowResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCreateTestModeSAMLFlowResponse {
+    return new AdminCreateTestModeSAMLFlowResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCreateTestModeSAMLFlowResponse {
+    return new AdminCreateTestModeSAMLFlowResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminCreateTestModeSAMLFlowResponse | PlainMessage<AdminCreateTestModeSAMLFlowResponse> | undefined, b: AdminCreateTestModeSAMLFlowResponse | PlainMessage<AdminCreateTestModeSAMLFlowResponse> | undefined): boolean {
+    return proto3.util.equals(AdminCreateTestModeSAMLFlowResponse, a, b);
+  }
+}
+
+/**
  * @generated from message ssoready.v1.AdminListSAMLConnectionsRequest
  */
 export class AdminListSAMLConnectionsRequest extends Message<AdminListSAMLConnectionsRequest> {
