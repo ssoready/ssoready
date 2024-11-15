@@ -29,6 +29,15 @@ export function TestModePage() {
         },
       );
     }
+
+    if (idp === "entra") {
+      navigate(
+        `/saml/saml-connections/${samlConnectionId}/setup/entra-test-success?${search}`,
+        {
+          replace: true,
+        },
+      );
+    }
   }, [navigate, samlConnectionId, idp, search]);
 
   return <></>;

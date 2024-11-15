@@ -247,9 +247,13 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "entra",
     step: 3,
   },
+  "entra-test-success": {
+    idpId: "entra",
+    step: 4,
+  },
   "entra-complete": {
     idpId: "entra",
-    step: 3,
+    step: 4,
   },
   "other-create-app": {
     idpId: "other",
@@ -383,6 +387,7 @@ export function SetupSAMLConnectionPage() {
           <EntraDownloadMetadataStep />
         )}
         {subStepId === "entra-assign-users" && <EntraAssignUsersStep />}
+        {subStepId === "entra-test-success" && <EntraTestSuccessPage />}
         {subStepId === "entra-complete" && <CompleteStep />}
 
         {subStepId === "other-create-app" && <OtherCreateAppStep />}
@@ -1622,6 +1627,20 @@ function EntraDownloadMetadataStep() {
 
 function EntraAssignUsersStep() {
   const next = useSubStepUrl("entra-complete");
+  const { samlConnectionId } = useParams();
+  const createTestModeSAMLFlowMutation = useMutation(
+    adminCreateTestModeSAMLFlow,
+  );
+
+  const handleTest = async () => {
+    const { redirectUrl } = await createTestModeSAMLFlowMutation.mutateAsync({
+      samlConnectionId: samlConnectionId,
+      testModeIdp: "entra",
+    });
+
+    location.href = redirectUrl;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -1658,9 +1677,58 @@ function EntraAssignUsersStep() {
           <p className="mt-2">Your application is now configured.</p>
         </div>
 
-        <div className="mt-4 flex justify-end">
-          <Button>
-            <Link to={next}>Setup complete!</Link>
+        <div className="mt-4 flex gap-x-2 justify-end">
+          <Button variant="secondary">
+            <Link to={next}>Skip testing</Link>
+          </Button>
+          <Button onClick={handleTest}>Test SAML connection</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EntraTestSuccessPage() {
+  const next = useSubStepUrl("entra-complete");
+  const edit = useSubStepUrl("entra-create-app");
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email")!;
+  const attributes = JSON.parse(searchParams.get("attributes")!) as Record<
+    string,
+    string
+  >;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SAML login successful</CardTitle>
+        <CardDescription>Here's what we received from Entra</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="text-sm">
+          <p className="font-semibold text-muted-foreground">
+            Email (Subject ID)
+          </p>
+          <p className="mt-1 font-medium">{email}</p>
+
+          <p className="mt-4 font-semibold text-muted-foreground">Attributes</p>
+          <div className="mt-2 flex flex-col gap-y-2">
+            {Object.entries(attributes).map(([key, value]) => (
+              <div key={key} className="bg-muted p-2 rounded-md">
+                <p className="font-medium text-muted-foreground">{key}</p>
+                <p className="font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 flex gap-x-2 justify-end">
+          <Button variant="secondary" asChild>
+            <Link to={edit}>Edit connection</Link>
+          </Button>
+          <Button asChild>
+            <Link to={next}>Setup compete!</Link>
           </Button>
         </div>
       </CardContent>
