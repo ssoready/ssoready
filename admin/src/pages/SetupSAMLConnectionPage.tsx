@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 // import { Steps } from "@/components/Steps";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -188,9 +188,13 @@ const SUB_STEPS: Record<string, SubStep> = {
     idpId: "okta",
     step: 4,
   },
+  "okta-test-success": {
+    idpId: "okta",
+    step: 5,
+  },
   "okta-complete": {
     idpId: "okta",
-    step: 4,
+    step: 5,
   },
   "google-create-app": {
     idpId: "google",
@@ -345,6 +349,7 @@ export function SetupSAMLConnectionPage() {
         )}
         {subStepId === "okta-copy-metadata-url" && <OktaCopyMetadataURLStep />}
         {subStepId === "okta-assign-users" && <OktaAssignUsersStep />}
+        {subStepId === "okta-test-success" && <OktaTestSuccessPage />}
         {subStepId === "okta-complete" && <CompleteStep />}
 
         {subStepId === "google-create-app" && <GoogleCreateAppStep />}
@@ -409,8 +414,8 @@ function Steps({ steps, currentStep }: { steps: Step[]; currentStep: number }) {
             {index < currentStep && (
               <div className="group flex w-full items-center">
                 <span className="flex items-center px-6 py-4 text-sm font-medium">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-indigo-600 group-hover:bg-indigo-800">
-                    <CheckIcon className="h-6 w-6 text-white" />
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-indigo-600">
+                    <CheckIcon className="h-6 w-6 text-indigo-600" />
                   </span>
                   <span className="ml-4 text-sm font-medium text-gray-900">
                     {step.displayName}
@@ -436,12 +441,10 @@ function Steps({ steps, currentStep }: { steps: Step[]; currentStep: number }) {
             {index > currentStep && (
               <div className="group flex items-center">
                 <span className="flex items-center px-6 py-4 text-sm font-medium">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 group-hover:border-gray-400">
-                    <span className="text-gray-500 group-hover:text-gray-900">
-                      {index + 1}
-                    </span>
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300">
+                    <span className="text-gray-500">{index + 1}</span>
                   </span>
-                  <span className="ml-4 text-sm font-medium text-gray-500 group-hover:text-gray-900">
+                  <span className="ml-4 text-sm font-medium text-gray-500">
                     {step.displayName}
                   </span>
                 </span>
@@ -826,12 +829,13 @@ function OktaCopyMetadataURLStep() {
 function OktaAssignUsersStep() {
   const { samlConnectionId } = useParams();
   const next = useSubStepUrl("okta-complete");
-  const navigate = useNavigate();
 
-  const createTestFlowUrl = useMutation(adminCreateTestModeSAMLFlow);
+  const createTestModeSAMLFlowMutation = useMutation(
+    adminCreateTestModeSAMLFlow,
+  );
 
   const handleTest = async () => {
-    const { redirectUrl } = await createTestFlowUrl.mutateAsync({
+    const { redirectUrl } = await createTestModeSAMLFlowMutation.mutateAsync({
       samlConnectionId: samlConnectionId,
       testModeIdp: "okta",
     });
@@ -868,13 +872,60 @@ function OktaAssignUsersStep() {
             Once you've assigned the appropriate users to the app, you're done
             setting up SAML.
           </p>
-
-          <button onClick={handleTest}>test</button>
         </div>
 
-        <div className="mt-4 flex justify-end">
-          <Button>
-            <Link to={next}>Setup complete!</Link>
+        <div className="mt-4 flex gap-x-2 justify-end">
+          <Button variant="secondary">
+            <Link to={next}>Skip testing</Link>
+          </Button>
+          <Button onClick={handleTest}>Test SAML connection</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OktaTestSuccessPage() {
+  const next = useSubStepUrl("okta-complete");
+  const edit = useSubStepUrl("okta-configure-sso-url");
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email")!;
+  const attributes = JSON.parse(searchParams.get("attributes")!) as Record<
+    string,
+    string
+  >;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SAML login successful</CardTitle>
+        <CardDescription>Here's what we received from Okta</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="text-sm">
+          <p className="font-semibold text-muted-foreground">
+            Email (Subject ID)
+          </p>
+          <p className="mt-1 font-medium">{email}</p>
+
+          <p className="mt-4 font-semibold text-muted-foreground">Attributes</p>
+          <div className="mt-2 flex flex-col gap-y-2">
+            {Object.entries(attributes).map(([key, value]) => (
+              <div key={key} className="bg-muted p-2 rounded-md">
+                <p className="font-medium text-muted-foreground">{key}</p>
+                <p className="font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 flex gap-x-2 justify-end">
+          <Button variant="secondary" asChild>
+            <Link to={edit}>Edit connection</Link>
+          </Button>
+          <Button asChild>
+            <Link to={next}>Setup compete!</Link>
           </Button>
         </div>
       </CardContent>

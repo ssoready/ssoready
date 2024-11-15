@@ -413,6 +413,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 		redirectQuery := url.Values{}
 		redirectQuery.Set("idp", createSAMLLoginRes.SAMLFlowTestModeIDP)
+		redirectQuery.Set("saml_connection_id", samlConnID)
 		redirectQuery.Set("email", email)
 		redirectQuery.Set("attributes", string(attributes))
 		redirectURL.RawQuery = redirectQuery.Encode()
