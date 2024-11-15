@@ -12,27 +12,9 @@ export function TestModePage() {
   const search = new URLSearchParams({ email, attributes }).toString();
 
   useEffect(() => {
-    if (idp === "okta") {
+    if (idp) {
       navigate(
-        `/saml/saml-connections/${samlConnectionId}/setup/okta-test-success?${search}`,
-        {
-          replace: true,
-        },
-      );
-    }
-
-    if (idp === "google") {
-      navigate(
-        `/saml/saml-connections/${samlConnectionId}/setup/google-test-success?${search}`,
-        {
-          replace: true,
-        },
-      );
-    }
-
-    if (idp === "entra") {
-      navigate(
-        `/saml/saml-connections/${samlConnectionId}/setup/entra-test-success?${search}`,
+        `/saml/saml-connections/${samlConnectionId}/setup/${idp}-test-success?${search}`,
         {
           replace: true,
         },
