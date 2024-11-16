@@ -221,7 +221,7 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	attributesJSON, err := json.Marshal(res.Attributes)
+	attributes, err := json.Marshal(res.Attributes)
 	if err != nil {
 		panic(err)
 	}
@@ -238,7 +238,7 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		},
 		OrganizationID:         res.OrganizationId,
 		OrganizationExternalID: res.OrganizationExternalId,
-		Attributes:             string(attributesJSON),
+		Attributes:             string(attributes),
 	}
 
 	idToken, err := jwt.Signed(signer).Claims(claims).Serialize()
