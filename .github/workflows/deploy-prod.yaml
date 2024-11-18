@@ -2,7 +2,7 @@ name: Deploy to prod
 on:
   push:
     branches:
-      - main
+      - prod
 env:
   AWS_REGION: us-east-2
   ECR_REGISTRY_URL: 381491982249.dkr.ecr.us-east-2.amazonaws.com
