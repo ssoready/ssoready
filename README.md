@@ -4,7 +4,10 @@
   <h1>SSOReady</h1>
   <a href="https://github.com/ssoready/ssoready-typescript"><img src="https://img.shields.io/npm/v/ssoready.svg?style=flat&color=ECDC68" /></a>
   <a href="https://github.com/ssoready/ssoready-python"><img src="https://img.shields.io/pypi/v/ssoready.svg?style=flat" /></a>
-  <a href="https://github.com/ssoready/ssoready-go"><img src="https://img.shields.io/github/v/tag/ssoready/ssoready-go?label=golang&color=%23007D9C" /></a>
+  <a href="https://github.com/ssoready/ssoready-go"><img src="https://img.shields.io/github/v/tag/ssoready/ssoready-go?style=flat&label=golang&color=%23007D9C" /></a>
+  <a href="https://github.com/ssoready/ssoready-csharp"><img src="https://img.shields.io/nuget/v/SSOReady.Client?style=flat&color=004880" /></a>
+  <a href="https://github.com/ssoready/ssoready-ruby"><img src="https://img.shields.io/gem/v/ssoready?style=flat&color=EE3F2D" /></a>
+  <a href="https://github.com/ssoready/ssoready-php"><img src="https://img.shields.io/packagist/v/ssoready/ssoready?style=flat&color=F28D1A" /></a>
   <a href="https://github.com/ssoready/ssoready/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <a href="https://github.com/ssoready/ssoready/stargazers"><img src="https://img.shields.io/github/stars/ssoready/ssoready?style=flat&logo=github&color=white" /></a>
   <br />
