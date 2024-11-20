@@ -46,6 +46,9 @@ straightforward** way to add SAML and SCIM support to your product:
   * [SSOReady-TypeScript](https://github.com/ssoready/ssoready-typescript)
   * [SSOReady-Python](https://github.com/ssoready/ssoready-python)
   * [SSOReady-Go](https://github.com/ssoready/ssoready-go)
+  * [SSOReady-C#](https://github.com/ssoready/ssoready-csharp)
+  * [SSOReady-Ruby](https://github.com/ssoready/ssoready-ruby)
+  * [SSOReady-PHP](https://github.com/ssoready/ssoready-php)
 * SSOReady is just an authentication middleware layer. SSOReady doesn’t "own" your users or require any changes to your users database.
 * You can use our cloud-hosted instance or [self-host yourself](https://ssoready.com/docs/self-hosting-ssoready), with the Enterprise plan giving you SLA'd support either way. 
 
