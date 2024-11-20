@@ -168,8 +168,9 @@ type tokenResponse struct {
 type idTokenClaims struct {
 	jwt.Claims
 
-	OrganizationID         string `json:"organizationId"`
-	OrganizationExternalID string `json:"organizationExternalId"`
+	OrganizationID         string            `json:"organizationId"`
+	OrganizationExternalID string            `json:"organizationExternalId"`
+	Attributes             map[string]string `json:"attributes"`
 }
 
 func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
@@ -232,6 +233,7 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		},
 		OrganizationID:         res.OrganizationId,
 		OrganizationExternalID: res.OrganizationExternalId,
+		Attributes:             res.Attributes,
 	}
 
 	idToken, err := jwt.Signed(signer).Claims(claims).Serialize()
