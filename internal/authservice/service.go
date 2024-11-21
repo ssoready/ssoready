@@ -116,6 +116,12 @@ func (s *Service) samlInit(w http.ResponseWriter, r *http.Request) {
 		State:            state,
 	})
 	if err != nil {
+		var badState *store.AuthGetInitDataBadStateError
+		if errors.As(err, &badState) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		panic(err)
 	}
 
