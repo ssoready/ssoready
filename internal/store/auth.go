@@ -30,6 +30,14 @@ type AuthGetInitDataResponse struct {
 	SPEntityID     string
 }
 
+type AuthGetInitDataBadStateError struct {
+	err error
+}
+
+func (e *AuthGetInitDataBadStateError) Error() string {
+	return fmt.Sprintf("bad state param: %s", e.err.Error())
+}
+
 func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest) (*AuthGetInitDataResponse, error) {
 	samlConnID, err := idformat.SAMLConnection.Parse(req.SAMLConnectionID)
 	if err != nil {
@@ -43,7 +51,7 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 
 	stateData, err := s.statesigner.Decode(req.State)
 	if err != nil {
-		return nil, err
+		return nil, &AuthGetInitDataBadStateError{err}
 	}
 
 	samlFlowID, err := idformat.SAMLFlow.Parse(stateData.SAMLFlowID)
