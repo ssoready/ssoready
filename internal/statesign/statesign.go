@@ -22,6 +22,10 @@ func (signer *Signer) Encode(d Data) string {
 }
 
 func (signer *Signer) Decode(s string) (*Data, error) {
+	if s == "" {
+		return nil, fmt.Errorf("invalid empty param")
+	}
+
 	payloadBase64, digestBase64, ok := strings.Cut(s, ".")
 	if !ok {
 		return nil, fmt.Errorf("invalid signature: missing '.'")
