@@ -118,9 +118,13 @@ func main() {
 		analyticsClient = analytics.New(config.SegmentWriteKey)
 	}
 
-	cloudflareClient, err := cloudflare.NewWithAPIToken(config.CloudflareAPIKey)
-	if err != nil {
-		panic(err)
+	var cloudflareClient *cloudflare.API
+	if config.CloudflareAPIKey != "" {
+		client, err := cloudflare.NewWithAPIToken(config.CloudflareAPIKey)
+		if err != nil {
+			panic(err)
+		}
+		cloudflareClient = client
 	}
 
 	connectPath, connectHandler := ssoreadyv1connect.NewSSOReadyServiceHandler(
