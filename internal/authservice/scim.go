@@ -363,6 +363,11 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 	// convert back to our representation
 	patchedSCIMUser := scimUserFromResource(scimDirectoryID, scimUserID, scimUserResource)
 
+	// do not allow patches to remove the user email address
+	if patchedSCIMUser.Email == "" {
+		patchedSCIMUser.Email = scimUser.Email
+	}
+
 	slog.InfoContext(ctx, "patched_user_fetch", "patched_scim_user_resource", scimUserResource, "patched_scim_user", patchedSCIMUser)
 
 	// validate email
