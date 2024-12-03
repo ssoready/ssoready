@@ -378,15 +378,6 @@ func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuth
 		return nil, err
 	}
 
-	qEnv, err := q.GetEnvironmentByID(ctx, envID)
-	if err != nil {
-		return nil, err
-	}
-
-	if derefOrEmpty(qEnv.OauthRedirectUri) == "" {
-		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("environment OAuth redirect URI not configured, see: https://ssoready.com/docs/ssoready-concepts/saml-login-flows#environment-oauth-redirect-uri-not-configured"))
-	}
-
 	var samlConnID uuid.UUID
 	if req.SAMLConnectionID != "" {
 		samlConnID, err = idformat.SAMLConnection.Parse(req.SAMLConnectionID)
@@ -426,8 +417,25 @@ func (s *Store) AuthGetOAuthAuthorizeData(ctx context.Context, req *AuthGetOAuth
 		return nil, err
 	}
 
+	qEnv, err := q.GetEnvironmentByID(ctx, envID)
+	if err != nil {
+		return nil, err
+	}
+
+	if derefOrEmpty(qEnv.OauthRedirectUri) == "" {
+		// even when we fail in this way, give the resolved saml connection id
+		// back for logging a failed saml flow
+		return &AuthGetOAuthAuthorizeDataResponse{
+			SAMLConnectionID: idformat.SAMLConnection.Format(samlConn.ID),
+		}, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("environment OAuth redirect URI not configured, see: https://ssoready.com/docs/ssoready-concepts/saml-login-flows#environment-oauth-redirect-uri-not-configured"))
+	}
+
 	if samlConn.IdpEntityID == nil || samlConn.IdpRedirectUrl == nil || samlConn.IdpX509Certificate == nil {
-		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-flows#saml-connection-not-fully-configured"))
+		// even when we fail in this way, give the resolved saml connection id
+		// back for logging a failed saml flow
+		return &AuthGetOAuthAuthorizeDataResponse{
+			SAMLConnectionID: idformat.SAMLConnection.Format(samlConn.ID),
+		}, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-flows#saml-connection-not-fully-configured"))
 	}
 
 	return &AuthGetOAuthAuthorizeDataResponse{
