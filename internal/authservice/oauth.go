@@ -104,7 +104,7 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeFailedPrecondition {
 			if connectErr.Message() == "environment OAuth redirect URI not configured, see: https://ssoready.com/docs/ssoready-concepts/saml-login-flows#environment-oauth-redirect-uri-not-configured" {
 				if _, err := s.Store.UpsertNotConfiguredSAMLFlow(ctx, &store.UpsertNotConfiguredSAMLFlowRequest{
-					SAMLConnectionID:                         samlConnID,
+					SAMLConnectionID:                         dataRes.SAMLConnectionID,
 					EnvironmentOAuthRedirectURINotConfigured: true,
 				}); err != nil {
 					panic(err)
@@ -116,7 +116,7 @@ func (s *Service) oauthAuthorize(w http.ResponseWriter, r *http.Request) {
 
 			if connectErr.Message() == "saml connection is not fully configured, see: https://ssoready.com/docs/ssoready-concepts/saml-flows#saml-connection-not-fully-configured" {
 				if _, err := s.Store.UpsertNotConfiguredSAMLFlow(ctx, &store.UpsertNotConfiguredSAMLFlowRequest{
-					SAMLConnectionID:            samlConnID,
+					SAMLConnectionID:            dataRes.SAMLConnectionID,
 					SAMLConnectionNotConfigured: true,
 				}); err != nil {
 					panic(err)
