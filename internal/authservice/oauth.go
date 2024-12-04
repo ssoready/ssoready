@@ -209,6 +209,11 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		SamlAccessCode: r.FormValue("code"),
 	})
 	if err != nil {
+		var samlAccessCodeNotFoundErr *store.SAMLAccessCodeNotFoundError
+		if errors.As(err, &samlAccessCodeNotFoundErr) {
+			http.Error(w, "saml access code not found, or already used", http.StatusNotFound)
+			return
+		}
 		panic(err)
 	}
 
