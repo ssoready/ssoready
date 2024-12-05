@@ -5,6 +5,7 @@
   <a href="https://github.com/ssoready/ssoready-typescript"><img src="https://img.shields.io/npm/v/ssoready.svg?style=flat&color=ECDC68" /></a>
   <a href="https://github.com/ssoready/ssoready-python"><img src="https://img.shields.io/pypi/v/ssoready.svg?style=flat" /></a>
   <a href="https://github.com/ssoready/ssoready-go"><img src="https://img.shields.io/github/v/tag/ssoready/ssoready-go?style=flat&label=golang&color=%23007D9C" /></a>
+  <a href="https://github.com/ssoready/ssoready-java"><img src="https://img.shields.io/maven-central/v/com.ssoready/ssoready-java?style=flat&label=maven&color=FD8100" /></a>
   <a href="https://github.com/ssoready/ssoready-csharp"><img src="https://img.shields.io/nuget/v/SSOReady.Client?style=flat&color=004880" /></a>
   <a href="https://github.com/ssoready/ssoready-ruby"><img src="https://img.shields.io/gem/v/ssoready?style=flat&color=EE3F2D" /></a>
   <a href="https://github.com/ssoready/ssoready-php"><img src="https://img.shields.io/packagist/v/ssoready/ssoready?style=flat&color=F28D1A" /></a>
@@ -46,6 +47,7 @@ straightforward** way to add SAML and SCIM support to your product:
   * [SSOReady-TypeScript](https://github.com/ssoready/ssoready-typescript)
   * [SSOReady-Python](https://github.com/ssoready/ssoready-python)
   * [SSOReady-Go](https://github.com/ssoready/ssoready-go)
+  * [SSOReady-Java](https://github.com/ssoready/ssoready-java)
   * [SSOReady-C#](https://github.com/ssoready/ssoready-csharp)
   * [SSOReady-Ruby](https://github.com/ssoready/ssoready-ruby)
   * [SSOReady-PHP](https://github.com/ssoready/ssoready-php)
