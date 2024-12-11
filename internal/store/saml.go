@@ -178,7 +178,7 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, &SAMLAccessCodeNotFoundError{err}
+			return nil, connect.NewError(connect.CodeInvalidArgument, &SAMLAccessCodeNotFoundError{err})
 		}
 		return nil, fmt.Errorf("get saml access code data: %w", err)
 	}
