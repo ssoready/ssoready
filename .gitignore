@@ -1,4 +1,5 @@
 /.env
+/.postgres
 /node_modules
 /admin/node_modules
 /admin/public/config.json
