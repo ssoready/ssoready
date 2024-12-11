@@ -40,12 +40,12 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 	if req.SamlConnectionId != "" {
 		samlConnID, err = idformat.SAMLConnection.Parse(req.SamlConnectionId)
 		if err != nil {
-			return nil, err
+			return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad saml_connection_id: %w", err))
 		}
 	} else if req.OrganizationId != "" {
 		orgID, err := idformat.Organization.Parse(req.OrganizationId)
 		if err != nil {
-			return nil, err
+			return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad organization_id: %w", err))
 		}
 
 		samlConnID, err = q.GetPrimarySAMLConnectionIDByOrganizationID(ctx, queries.GetPrimarySAMLConnectionIDByOrganizationIDParams{
@@ -53,6 +53,10 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 			ID:            orgID,
 		})
 		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("bad organization_id: organization not found, or organization does not have a primary SAML connection"))
+			}
+
 			return nil, err
 		}
 	} else if req.OrganizationExternalId != "" {
@@ -76,6 +80,9 @@ func (s *Store) GetSAMLRedirectURL(ctx context.Context, req *ssoreadyv1.GetSAMLR
 		SamlConnectionID:  samlConnID,
 	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("saml connection not found"))
+		}
 		return nil, err
 	}
 
