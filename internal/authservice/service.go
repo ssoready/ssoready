@@ -284,6 +284,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		ErrorEmailOutsideOrganizationDomains: domainMismatchEmail,
 	})
 	if err != nil {
+		if errors.Is(err, store.ErrDuplicateAssertionID) {
+			http.Error(w, "assertion previously processed", http.StatusBadRequest)
+			return
+		}
+
 		panic(err)
 	}
 
