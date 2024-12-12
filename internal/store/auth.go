@@ -12,6 +12,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/ssoready/ssoready/internal/authn"
 	"github.com/ssoready/ssoready/internal/store/idformat"
 	"github.com/ssoready/ssoready/internal/store/queries"
@@ -225,6 +226,8 @@ type AuthUpsertSAMLLoginEventResponse struct {
 	State               string // only useful for oauth flow, where state must be returned at same time as code
 }
 
+var ErrDuplicateAssertionID = errors.New("an assertion with this ID has already been processed")
+
 func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUpsertSAMLLoginEventRequest) (*AuthUpsertSAMLLoginEventResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
@@ -311,6 +314,13 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 		Status:                               status,
 	})
 	if err != nil {
+		var pgxErr *pgconn.PgError
+		if errors.As(err, &pgxErr) {
+			if pgxErr.Code == "23505" && pgxErr.ConstraintName == "saml_flows_saml_connection_id_assertion_id_key" {
+				return nil, ErrDuplicateAssertionID
+			}
+		}
+
 		return nil, err
 	}
 
