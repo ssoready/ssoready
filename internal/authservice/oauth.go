@@ -265,12 +265,14 @@ func (s *Service) oauthUserinfo(w http.ResponseWriter, r *http.Request) {
 
 	idToken, err := jwt.ParseSigned(accessToken, []jose.SignatureAlgorithm{jose.RS256})
 	if err != nil {
-		panic(err)
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
 	}
 
 	var claims idTokenClaims
 	if err := idToken.Claims(&s.OAuthIDTokenPrivateKey.PublicKey, &claims); err != nil {
-		panic(err)
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
 	}
 
 	userinfo := struct {
