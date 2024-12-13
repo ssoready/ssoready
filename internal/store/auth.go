@@ -227,6 +227,7 @@ type AuthUpsertSAMLLoginEventResponse struct {
 }
 
 var ErrDuplicateAssertionID = errors.New("an assertion with this ID has already been processed")
+var ErrSAMLConnectionIDMismatch = errors.New("saml connection id does not match saml flow id")
 
 func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUpsertSAMLLoginEventRequest) (*AuthUpsertSAMLLoginEventResponse, error) {
 	_, q, commit, rollback, err := s.tx(ctx)
@@ -325,7 +326,7 @@ func (s *Store) AuthUpsertReceiveAssertionData(ctx context.Context, req *AuthUps
 	}
 
 	if qSAMLFlow.SamlConnectionID != samlConnID {
-		return nil, fmt.Errorf("saml flow does not belong to given saml connection")
+		return nil, ErrSAMLConnectionIDMismatch
 	}
 
 	attrs, err := json.Marshal(req.SubjectIDPAttributes)

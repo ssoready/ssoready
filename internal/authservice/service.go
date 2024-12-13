@@ -289,6 +289,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if errors.Is(err, store.ErrSAMLConnectionIDMismatch) {
+			http.Error(w, "assertion not intended for this SAML connection", http.StatusBadRequest)
+			return
+		}
+
 		panic(err)
 	}
 
