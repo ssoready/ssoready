@@ -203,6 +203,8 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	slog.InfoContext(ctx, "acs_validate", "validate", validateRes, "problems", validateProblems)
+
 	alreadyProcessed, err := s.Store.AuthCheckAssertionAlreadyProcessed(ctx, validateRes.RequestID)
 	if err != nil {
 		panic(err)
