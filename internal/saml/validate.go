@@ -47,8 +47,18 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 		return nil, nil, fmt.Errorf("parse saml response: %w", err)
 	}
 
+	var unverifiedResponse samltypes.Response
+	if err := xml.Unmarshal(unverifiedData, &unverifiedResponse); err != nil {
+		return nil, nil, fmt.Errorf("parse saml response: %w", err)
+	}
+
 	res := ValidateResponse{
 		Assertion: string(unverifiedData),
+
+		// populate these fields on a preliminary basis, so we can report errors
+		// back to the user
+		RequestID:   unverifiedResponse.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo,
+		AssertionID: unverifiedResponse.Assertion.ID,
 	}
 
 	verifiedData, err := dsig.Verify(req.IDPCertificate, unverifiedData)
@@ -85,6 +95,9 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 		attrs[attr.Name] = attr.Value
 	}
 
+	// For purity's sake, when an assertion is considered legitimate, prefer the
+	// RequestID and AssertionID from the canonicalized assertion (in the
+	// variable assertion) over the initial input (in unverifiedResponse).
 	res.RequestID = assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo
 	res.AssertionID = assertion.ID
 	res.SubjectID = assertion.Subject.NameID.Value
