@@ -20,32 +20,7 @@ func TestValidate_KnownGoodAssertions(t *testing.T) {
 
 	for _, entry := range entries {
 		t.Run(entry.Name(), func(t *testing.T) {
-			assertion, err := os.ReadFile(fmt.Sprintf("testdata/assertions/%s/assertion.xml", entry.Name()))
-			require.NoError(t, err)
-
-			metadata, err := os.ReadFile(fmt.Sprintf("testdata/assertions/%s/metadata.xml", entry.Name()))
-			require.NoError(t, err)
-
-			params, err := os.ReadFile(fmt.Sprintf("testdata/assertions/%s/params.json", entry.Name()))
-			require.NoError(t, err)
-
-			parseMetadataRes, err := saml.ParseMetadata(metadata)
-			require.NoError(t, err)
-
-			var paramData struct {
-				SPEntityID string    `json:"sp_entity_id"`
-				Now        time.Time `json:"now"`
-			}
-			err = json.Unmarshal(params, &paramData)
-			require.NoError(t, err)
-
-			_, err = saml.Validate(&saml.ValidateRequest{
-				SAMLResponse:   base64.StdEncoding.EncodeToString(assertion),
-				IDPCertificate: parseMetadataRes.IDPCertificate,
-				IDPEntityID:    parseMetadataRes.IDPEntityID,
-				SPEntityID:     paramData.SPEntityID,
-				Now:            paramData.Now,
-			})
+			_, err := validateFromDir(fmt.Sprintf("testdata/assertions/%s", entry.Name()))
 			assert.NoError(t, err)
 		})
 	}
