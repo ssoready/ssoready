@@ -132,6 +132,8 @@ func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 	}
 
 	res := ValidateResponse{
+		Assertion: string(unverifiedData),
+
 		// For purity's sake, when an assertion is considered legitimate, prefer
 		// the RequestID and AssertionID from the canonicalized assertion (in
 		// the variable assertion) over the initial input (in
