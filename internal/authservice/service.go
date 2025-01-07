@@ -197,6 +197,8 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		Now:            time.Now(),
 	})
 
+	slog.InfoContext(ctx, "acs_validate", "validate_res", validateRes, "validate_err", err)
+
 	var validateFailed bool // used as a failsafe later
 
 	// populated even in the case of validate errors
@@ -215,6 +217,13 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		badDigestAlgorithm    *string
 		badCertificate        *x509.Certificate
 	)
+
+	// populate validateRes if present; we populate in the unhappy path below
+	if validateRes != nil {
+		requestID = validateRes.RequestID
+		assertionID = validateRes.AssertionID
+		assertion = validateRes.Assertion
+	}
 
 	// note: if err is a saml.ValidateError, then this method continues to flow
 	// through; we need to log such errors, which requires much of the same code
