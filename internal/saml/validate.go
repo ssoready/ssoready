@@ -20,15 +20,6 @@ type ValidateRequest struct {
 	Now            time.Time
 }
 
-type ValidateProblems struct {
-	UnsignedAssertion     bool
-	BadIDPEntityID        *string
-	BadSPEntityID         *string
-	BadSignatureAlgorithm *string
-	BadDigestAlgorithm    *string
-	BadCertificate        *x509.Certificate
-}
-
 type ValidateResponse struct {
 	RequestID         string
 	AssertionID       string
@@ -41,18 +32,59 @@ var (
 	errExpired = fmt.Errorf("saml response expired")
 )
 
-func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error) {
+type ValidateError struct {
+	RequestID   string
+	AssertionID string
+	Assertion   string
+
+	UnsignedAssertion     bool
+	BadIDPEntityID        *string
+	BadSPEntityID         *string
+	BadSignatureAlgorithm *string
+	BadDigestAlgorithm    *string
+	BadCertificate        *x509.Certificate
+}
+
+func (e *ValidateError) Error() string {
+	if e.UnsignedAssertion {
+		return "saml assertion is unsigned"
+	}
+
+	if e.BadIDPEntityID != nil {
+		return "bad idp entity id: " + *e.BadIDPEntityID
+	}
+
+	if e.BadSPEntityID != nil {
+		return "bad sp entity id: " + *e.BadSPEntityID
+	}
+
+	if e.BadSignatureAlgorithm != nil {
+		return "bad signature algorithm: " + *e.BadSignatureAlgorithm
+	}
+
+	if e.BadDigestAlgorithm != nil {
+		return "bad digest algorithm: " + *e.BadDigestAlgorithm
+	}
+
+	if e.BadCertificate != nil {
+		return "bad assertion certificate"
+	}
+
+	panic("unreachable")
+}
+
+func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 	unverifiedData, err := base64.StdEncoding.DecodeString(req.SAMLResponse)
 	if err != nil {
-		return nil, nil, fmt.Errorf("parse saml response: %w", err)
+		return nil, fmt.Errorf("parse saml response: %w", err)
 	}
 
 	var unverifiedResponse samltypes.Response
 	if err := xml.Unmarshal(unverifiedData, &unverifiedResponse); err != nil {
-		return nil, nil, fmt.Errorf("parse saml response: %w", err)
+		return nil, fmt.Errorf("parse saml response: %w", err)
 	}
 
-	res := ValidateResponse{
+	validateError := &ValidateError{
 		Assertion: string(unverifiedData),
 
 		// populate these fields on a preliminary basis, so we can report errors
@@ -64,25 +96,29 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 	verifiedData, err := dsig.Verify(req.IDPCertificate, unverifiedData)
 	if err != nil {
 		if errors.Is(err, dsig.ErrUnsigned) {
-			return &res, &ValidateProblems{UnsignedAssertion: true}, nil
+			validateError.UnsignedAssertion = true
+			return nil, validateError
 		}
 
 		var badSigAlgError dsig.BadSignatureAlgorithmError
 		if errors.As(err, &badSigAlgError) {
-			return &res, &ValidateProblems{BadSignatureAlgorithm: &badSigAlgError.BadAlgorithm}, nil
+			validateError.BadSignatureAlgorithm = &badSigAlgError.BadAlgorithm
+			return nil, validateError
 		}
 
 		var badDigestAlgError dsig.BadDigestAlgorithmError
 		if errors.As(err, &badDigestAlgError) {
-			return &res, &ValidateProblems{BadDigestAlgorithm: &badDigestAlgError.BadAlgorithm}, nil
+			validateError.BadDigestAlgorithm = &badDigestAlgError.BadAlgorithm
+			return nil, validateError
 		}
 
 		var badCertificateError dsig.BadCertificateError
 		if errors.As(err, &badCertificateError) {
-			return &res, &ValidateProblems{BadCertificate: badCertificateError.BadCertificate}, nil
+			validateError.BadCertificate = badCertificateError.BadCertificate
+			return nil, validateError
 		}
 
-		return &res, nil, fmt.Errorf("verify signature: %w", err)
+		return nil, fmt.Errorf("verify signature: %w", err)
 	}
 
 	var assertion samltypes.Assertion
@@ -95,29 +131,34 @@ func Validate(req *ValidateRequest) (*ValidateResponse, *ValidateProblems, error
 		attrs[attr.Name] = attr.Value
 	}
 
-	// For purity's sake, when an assertion is considered legitimate, prefer the
-	// RequestID and AssertionID from the canonicalized assertion (in the
-	// variable assertion) over the initial input (in unverifiedResponse).
-	res.RequestID = assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo
-	res.AssertionID = assertion.ID
-	res.SubjectID = assertion.Subject.NameID.Value
-	res.SubjectAttributes = attrs
+	res := ValidateResponse{
+		// For purity's sake, when an assertion is considered legitimate, prefer
+		// the RequestID and AssertionID from the canonicalized assertion (in
+		// the variable assertion) over the initial input (in
+		// unverifiedResponse).
+		RequestID:         assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo,
+		AssertionID:       assertion.ID,
+		SubjectID:         assertion.Subject.NameID.Value,
+		SubjectAttributes: attrs,
+	}
 
 	if assertion.Issuer.Name != req.IDPEntityID {
-		return &res, &ValidateProblems{BadIDPEntityID: &assertion.Issuer.Name}, nil
+		validateError.BadIDPEntityID = &assertion.Issuer.Name
+		return nil, validateError
 	}
 
 	if assertion.Conditions.AudienceRestriction.Audience.Name != req.SPEntityID {
-		return &res, &ValidateProblems{BadSPEntityID: &assertion.Conditions.AudienceRestriction.Audience.Name}, nil
+		validateError.BadSPEntityID = &assertion.Conditions.AudienceRestriction.Audience.Name
+		return nil, validateError
 	}
 
 	if req.Now.Before(assertion.Conditions.NotBefore) {
-		return &res, nil, errExpired
+		return nil, errExpired
 	}
 
 	if req.Now.After(assertion.Conditions.NotOnOrAfter) {
-		return &res, nil, errExpired
+		return nil, errExpired
 	}
 
-	return &res, nil, nil
+	return &res, nil
 }

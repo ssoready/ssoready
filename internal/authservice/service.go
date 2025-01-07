@@ -189,23 +189,66 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	// assess the validity of the response; note that invalid requests may still have a nil err; the problem details
-	// are stored in validateRes
-	// todo maybe split out validateRes, validateProblems, err as the signature instead?
-	validateRes, validateProblems, err := saml.Validate(&saml.ValidateRequest{
+	validateRes, err := saml.Validate(&saml.ValidateRequest{
 		SAMLResponse:   r.FormValue("SAMLResponse"),
 		IDPCertificate: cert,
 		IDPEntityID:    dataRes.IDPEntityID,
 		SPEntityID:     dataRes.SPEntityID,
 		Now:            time.Now(),
 	})
-	if err != nil {
-		panic(err)
+
+	slog.InfoContext(ctx, "acs_validate", "validate_res", validateRes, "validate_err", err)
+
+	var validateFailed bool // used as a failsafe later
+
+	// populated even in the case of validate errors
+	var (
+		requestID   string
+		assertionID string
+		assertion   string
+	)
+
+	// populated when there are validate errors
+	var (
+		unsignedAssertion     bool
+		badIssuer             *string
+		badAudience           *string
+		badSignatureAlgorithm *string
+		badDigestAlgorithm    *string
+		badCertificate        *x509.Certificate
+	)
+
+	// populate validateRes if present; we populate in the unhappy path below
+	if validateRes != nil {
+		requestID = validateRes.RequestID
+		assertionID = validateRes.AssertionID
+		assertion = validateRes.Assertion
 	}
 
-	slog.InfoContext(ctx, "acs_validate", "validate", validateRes, "problems", validateProblems)
+	// note: if err is a saml.ValidateError, then this method continues to flow
+	// through; we need to log such errors, which requires much of the same code
+	// as the happy path
+	if err != nil {
+		slog.InfoContext(ctx, "acs_validate_err", "err", err)
+		validateFailed = true
 
-	alreadyProcessed, err := s.Store.AuthCheckAssertionAlreadyProcessed(ctx, validateRes.RequestID)
+		var validateError *saml.ValidateError
+		if errors.As(err, &validateError) {
+			requestID = validateError.RequestID
+			assertionID = validateError.AssertionID
+			assertion = validateError.Assertion
+			unsignedAssertion = validateError.UnsignedAssertion
+			badIssuer = validateError.BadIDPEntityID
+			badAudience = validateError.BadSPEntityID
+			badSignatureAlgorithm = validateError.BadSignatureAlgorithm
+			badDigestAlgorithm = validateError.BadDigestAlgorithm
+			badCertificate = validateError.BadCertificate
+		} else {
+			panic(err)
+		}
+	}
+
+	alreadyProcessed, err := s.Store.AuthCheckAssertionAlreadyProcessed(ctx, requestID)
 	if err != nil {
 		panic(err)
 	}
@@ -213,36 +256,6 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	if alreadyProcessed {
 		http.Error(w, "assertion previously processed", http.StatusBadRequest)
 		return
-	}
-
-	var unsignedAssertion bool
-	if validateProblems != nil {
-		unsignedAssertion = validateProblems.UnsignedAssertion
-	}
-
-	var badIssuer *string
-	if validateProblems != nil {
-		badIssuer = validateProblems.BadIDPEntityID
-	}
-
-	var badAudience *string
-	if validateProblems != nil {
-		badAudience = validateProblems.BadSPEntityID
-	}
-
-	var badSignatureAlgorithm *string
-	if validateProblems != nil {
-		badSignatureAlgorithm = validateProblems.BadSignatureAlgorithm
-	}
-
-	var badDigestAlgorithm *string
-	if validateProblems != nil {
-		badDigestAlgorithm = validateProblems.BadDigestAlgorithm
-	}
-
-	var badCertificate *x509.Certificate
-	if validateProblems != nil {
-		badCertificate = validateProblems.BadCertificate
 	}
 
 	var badSubjectID *string
@@ -271,11 +284,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 	createSAMLLoginRes, err := s.Store.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
 		SAMLConnectionID:                     samlConnID,
-		SAMLAssertionID:                      &validateRes.AssertionID,
-		SAMLFlowID:                           validateRes.RequestID,
+		SAMLAssertionID:                      &assertionID,
+		SAMLFlowID:                           requestID,
 		Email:                                email,
 		SubjectIDPAttributes:                 validateRes.SubjectAttributes,
-		SAMLAssertion:                        validateRes.Assertion,
+		SAMLAssertion:                        assertion,
 		ErrorUnsignedAssertion:               unsignedAssertion,
 		ErrorBadIssuer:                       badIssuer,
 		ErrorBadAudience:                     badAudience,
@@ -395,8 +408,8 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// past this point, we will presume the request is valid; panic to ensure we haven't missed problems
-	if validateProblems != nil {
-		panic(fmt.Errorf("unhandled saml.ValidateProblems: %v", validateProblems))
+	if validateFailed {
+		panic("acs_validate_failed")
 	}
 
 	// if the saml flow was created as part of the oauth-style flow, then redirect in the OAuth way
