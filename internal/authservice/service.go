@@ -258,28 +258,42 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var badSubjectID *string
-	subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
-	if err != nil {
-		badSubjectID = &validateRes.SubjectID
-	}
+	// data that's only possible to validate if saml.Validate didn't return an
+	// error
+	var (
+		badSubjectID        *string
+		email               string
+		domainMismatchEmail *string
+	)
 
-	var email string
-	if badSubjectID == nil {
-		email = validateRes.SubjectID
-	}
+	if validateRes != nil {
+		// extract a domain from the subject ID
+		subjectEmailDomain, err := emailaddr.Parse(validateRes.SubjectID)
+		if err != nil {
+			// the subject ID isn't an email
+			badSubjectID = &validateRes.SubjectID
+		}
 
-	var domainMismatchEmail *string
-	if badSubjectID == nil {
-		var domainOk bool
-		for _, domain := range dataRes.OrganizationDomains {
-			if domain == subjectEmailDomain {
-				domainOk = true
+		// the subject ID is an email, validate that it's from the set of
+		// organization domains
+		if badSubjectID == nil {
+			email = validateRes.SubjectID
+
+			var domainOk bool
+			for _, domain := range dataRes.OrganizationDomains {
+				if domain == subjectEmailDomain {
+					domainOk = true
+				}
+			}
+			if !domainOk {
+				domainMismatchEmail = &subjectEmailDomain
 			}
 		}
-		if !domainOk {
-			domainMismatchEmail = &subjectEmailDomain
-		}
+	}
+
+	var subjectIDPAttributes map[string]string
+	if validateRes != nil {
+		subjectIDPAttributes = validateRes.SubjectAttributes
 	}
 
 	createSAMLLoginRes, err := s.Store.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
@@ -287,7 +301,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		SAMLAssertionID:                      &assertionID,
 		SAMLFlowID:                           requestID,
 		Email:                                email,
-		SubjectIDPAttributes:                 validateRes.SubjectAttributes,
+		SubjectIDPAttributes:                 subjectIDPAttributes,
 		SAMLAssertion:                        assertion,
 		ErrorUnsignedAssertion:               unsignedAssertion,
 		ErrorBadIssuer:                       badIssuer,
