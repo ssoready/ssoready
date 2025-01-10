@@ -152,12 +152,12 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 
 	res, err := q.AuthGetValidateData(ctx, samlConnID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get validate data: %w", err)
 	}
 
 	domains, err := q.AuthGetSAMLConnectionDomains(ctx, samlConnID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get domains: %w", err)
 	}
 
 	if res.IdpEntityID == nil || res.IdpX509Certificate == nil {
