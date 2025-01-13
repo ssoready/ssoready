@@ -37,6 +37,7 @@ type ValidateError struct {
 	AssertionID string
 	Assertion   string
 
+	MalformedAssertion    bool
 	UnsignedAssertion     bool
 	BadIDPEntityID        *string
 	BadSPEntityID         *string
@@ -46,6 +47,10 @@ type ValidateError struct {
 }
 
 func (e *ValidateError) Error() string {
+	if e.MalformedAssertion {
+		return "saml assertion is malformed"
+	}
+
 	if e.UnsignedAssertion {
 		return "saml assertion is unsigned"
 	}
@@ -76,12 +81,16 @@ func (e *ValidateError) Error() string {
 func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 	unverifiedData, err := base64.StdEncoding.DecodeString(req.SAMLResponse)
 	if err != nil {
-		return nil, fmt.Errorf("parse saml response: %w", err)
+		return nil, fmt.Errorf("parse saml response: %s: %w", err.Error(), &ValidateError{
+			MalformedAssertion: true,
+		})
 	}
 
 	var unverifiedResponse samltypes.Response
 	if err := xml.Unmarshal(unverifiedData, &unverifiedResponse); err != nil {
-		return nil, fmt.Errorf("parse saml response: %w", err)
+		return nil, fmt.Errorf("parse saml response: %s: %w", err.Error(), &ValidateError{
+			MalformedAssertion: true,
+		})
 	}
 
 	validateError := &ValidateError{

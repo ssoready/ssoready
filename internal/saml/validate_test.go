@@ -107,6 +107,17 @@ func TestValidate_BadCertificate(t *testing.T) {
 	require.NotEmpty(t, validateError.BadCertificate)
 }
 
+func TestValidate_BadAssertionUTF8(t *testing.T) {
+	// modified from okta, but assertion.xml is just \x00 (and a newline)
+	_, err := validateFromDir("testdata/bad-assertions/bad-assertion-utf8")
+	var validateError *saml.ValidateError
+	if !errors.As(err, &validateError) {
+		t.Fatalf("bad error: %v", err)
+	}
+
+	require.True(t, validateError.MalformedAssertion)
+}
+
 func validateFromDir(path string) (*saml.ValidateResponse, error) {
 	assertion, err := os.ReadFile(fmt.Sprintf("%s/assertion.xml", path))
 	if err != nil {

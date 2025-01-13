@@ -210,6 +210,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 	// populated when there are validate errors
 	var (
+		malformedAssertion    bool
 		unsignedAssertion     bool
 		badIssuer             *string
 		badAudience           *string
@@ -237,6 +238,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 			requestID = validateError.RequestID
 			assertionID = validateError.AssertionID
 			assertion = validateError.Assertion
+			malformedAssertion = validateError.MalformedAssertion
 			unsignedAssertion = validateError.UnsignedAssertion
 			badIssuer = validateError.BadIDPEntityID
 			badAudience = validateError.BadSPEntityID
@@ -246,6 +248,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		} else {
 			panic(err)
 		}
+	}
+
+	if malformedAssertion {
+		http.Error(w, "malformed assertion", http.StatusBadRequest)
+		return
 	}
 
 	alreadyProcessed, err := s.Store.AuthCheckAssertionAlreadyProcessed(ctx, requestID)
