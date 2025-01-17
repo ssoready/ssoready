@@ -356,7 +356,17 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 
 	// apply patches
 	if err := scimpatch.Patch(patch.Operations, &scimUserResource); err != nil {
-		http.Error(w, fmt.Sprintf("unsupported PATCH operation: %s", err.Error()), http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/scim+json")
+		w.WriteHeader(http.StatusBadRequest)
+		errorResponse := map[string]interface{}{
+			"schemas":  []string{"urn:ietf:params:scim:api:messages:2.0:Error"},
+			"status":   "400",
+			"scimType": "invalidPath",
+			"detail":   fmt.Sprintf("Unsupported PATCH operation: %s", err.Error()),
+		}
+		if err := json.NewEncoder(w).Encode(errorResponse); err != nil {
+			panic(fmt.Errorf("encode error response: %w", err))
+		}
 		return nil
 	}
 
