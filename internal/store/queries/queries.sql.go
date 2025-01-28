@@ -326,6 +326,26 @@ func (q *Queries) AuthCountSCIMGroups(ctx context.Context, scimDirectoryID uuid.
 	return count, err
 }
 
+const authCountSCIMGroupsByDisplayName = `-- name: AuthCountSCIMGroupsByDisplayName :one
+select count(*)
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+  and display_name = $2
+`
+
+type AuthCountSCIMGroupsByDisplayNameParams struct {
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+}
+
+func (q *Queries) AuthCountSCIMGroupsByDisplayName(ctx context.Context, arg AuthCountSCIMGroupsByDisplayNameParams) (int64, error) {
+	row := q.db.QueryRow(ctx, authCountSCIMGroupsByDisplayName, arg.ScimDirectoryID, arg.DisplayName)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const authCountSCIMUsers = `-- name: AuthCountSCIMUsers :one
 select count(*)
 from scim_users

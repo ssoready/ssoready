@@ -408,9 +408,24 @@ func (s *Store) AuthListSCIMGroups(ctx context.Context, req *AuthListSCIMGroupsR
 	}
 	defer rollback()
 
-	count, err := q.AuthCountSCIMGroups(ctx, scimDirID)
-	if err != nil {
-		return nil, fmt.Errorf("count scim groups: %w", err)
+	var count int64
+	if req.FilterDisplayName == "" {
+		c, err := q.AuthCountSCIMGroups(ctx, scimDirID)
+		if err != nil {
+			return nil, fmt.Errorf("count scim groups: %w", err)
+		}
+
+		count = c
+	} else {
+		c, err := q.AuthCountSCIMGroupsByDisplayName(ctx, queries.AuthCountSCIMGroupsByDisplayNameParams{
+			ScimDirectoryID: scimDirID,
+			DisplayName:     req.FilterDisplayName,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("count scim groups: %w", err)
+		}
+
+		count = c
 	}
 
 	var qSCIMGroups []queries.ScimGroup
