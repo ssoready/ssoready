@@ -50,6 +50,44 @@ func applyOp(op Operation, obj *map[string]any) error {
 
 	segments := splitPath(op.Path)
 
+	// Special handling for enterprise user schema
+	if len(segments) > 0 && segments[0].name == enterpriseUserPrefix {
+		// For Add operations, allow adding the entire schema at once
+		if len(segments) == 1 && opAdd {
+			schemaMap, ok := op.Value.(map[string]any)
+			if !ok {
+				return fmt.Errorf("enterprise user schema value must be an object")
+			}
+			(*obj)[enterpriseUserPrefix] = schemaMap
+			return nil
+		}
+
+		// For other operations, must have a field after the schema
+		if len(segments) == 1 {
+			return fmt.Errorf("invalid path: %q", op.Path)
+		}
+
+		// Create or get the enterprise user schema map
+		schemaMap, ok := (*obj)[enterpriseUserPrefix].(map[string]any)
+		if !ok {
+			schemaMap = make(map[string]any)
+			(*obj)[enterpriseUserPrefix] = schemaMap
+		}
+
+		// If there's a filter in the remaining path, handle it separately
+		if hasFilter(segments[1:]) {
+			return applyOpToFiltered(op, &schemaMap, segments[1:])
+		}
+
+		// Otherwise just apply the operation to the remaining path
+		return applyOp(Operation{
+			Op:    op.Op,
+			Path:  strings.Join(segmentsToStrings(segments[1:]), "."),
+			Value: op.Value,
+		}, &schemaMap)
+	}
+
+	// Regular path handling (non-enterprise user schema)
 	if len(segments) == 0 {
 		if opReplace {
 			val, ok := op.Value.(map[string]any)
@@ -59,7 +97,6 @@ func applyOp(op Operation, obj *map[string]any) error {
 			*obj = val
 			return nil
 		}
-
 		if opAdd {
 			return fmt.Errorf("unsupported 'add' operation on top-level object")
 		}
@@ -67,131 +104,11 @@ func applyOp(op Operation, obj *map[string]any) error {
 
 	current := obj
 	for i, segment := range segments {
-		isLast := i == len(segments)-1
-
 		if segment.filter != nil {
-			arr, ok := (*current)[segment.name].([]any)
-			if !ok {
-				return fmt.Errorf("invalid path: array not found at %q", segment.String())
-			}
-
-			modified := false
-			for j, item := range arr {
-				if m, ok := item.(map[string]any); ok {
-					if v, exists := m[segment.filter.attr]; exists {
-						matches := false
-						switch segment.filter.op {
-						case "eq":
-							matches = v == segment.filter.value
-						case "ne":
-							matches = v != segment.filter.value
-						case "co":
-							if str, ok := v.(string); ok {
-								matches = strings.Contains(str, segment.filter.value)
-							} else {
-								return fmt.Errorf("'co' operator can only be used with string values")
-							}
-						case "sw":
-							if str, ok := v.(string); ok {
-								matches = strings.HasPrefix(str, segment.filter.value)
-							} else {
-								return fmt.Errorf("'sw' operator can only be used with string values")
-							}
-						case "ew":
-							if str, ok := v.(string); ok {
-								matches = strings.HasSuffix(str, segment.filter.value)
-							} else {
-								return fmt.Errorf("'ew' operator can only be used with string values")
-							}
-						case "pr":
-							if str, ok := v.(string); ok {
-								matches = str != ""
-							} else {
-								matches = v != nil
-							}
-						case "gt", "ge", "lt", "le":
-							switch val := v.(type) {
-							case string:
-								// Try to parse as date first
-								if date, err := time.Parse(time.RFC3339, val); err == nil {
-									compareDate, err := time.Parse(time.RFC3339, segment.filter.value)
-									if err != nil {
-										return fmt.Errorf("invalid date format in comparison: %q", segment.filter.value)
-									}
-									matches = compareDates(date, compareDate, segment.filter.op)
-								} else {
-									matches = compare(val, segment.filter.value, segment.filter.op)
-								}
-							case float64:
-								num, err := strconv.ParseFloat(segment.filter.value, 64)
-								if err != nil {
-									return fmt.Errorf("invalid number in comparison: %q", segment.filter.value)
-								}
-								matches = compare(val, num, segment.filter.op)
-							case int:
-								num, err := strconv.ParseFloat(segment.filter.value, 64)
-								if err != nil {
-									return fmt.Errorf("invalid number in comparison: %q", segment.filter.value)
-								}
-								matches = compare(float64(val), num, segment.filter.op)
-							default:
-								return fmt.Errorf("comparison operators can only be used with string or numeric values")
-							}
-						default:
-							return fmt.Errorf("unsupported filter operator: %q", segment.filter.op)
-						}
-
-						if matches {
-							modified = true
-							if isLast {
-								if strings.Contains(op.Path, "].") {
-									// If we have a field after the filter, create a new operation for it
-									parts := strings.Split(op.Path, "].")
-									if len(parts) == 2 {
-										newMap := make(map[string]any)
-										for k, v := range m {
-											newMap[k] = v
-										}
-										arr[j] = newMap
-										if err := applyOp(Operation{
-											Op:    op.Op,
-											Path:  parts[1],
-											Value: op.Value,
-										}, &newMap); err != nil {
-											return err
-										}
-									}
-								} else {
-									// If no field after the filter, replace the entire object
-									arr[j] = op.Value
-								}
-							} else {
-								// Not the last segment, continue with the rest of the path
-								newMap := make(map[string]any)
-								for k, v := range m {
-									newMap[k] = v
-								}
-								arr[j] = newMap
-								if err := applyOp(Operation{
-									Op:    op.Op,
-									Path:  strings.Join(segmentsToStrings(segments[i+1:]), "."),
-									Value: op.Value,
-								}, &newMap); err != nil {
-									return err
-								}
-							}
-						}
-					}
-				}
-			}
-			if !modified {
-				return fmt.Errorf("no matching element found for filter %q", segment.String())
-			}
-			(*current)[segment.name] = arr
-			return nil
+			return applyOpToFiltered(op, current, segments[i:])
 		}
 
-		if isLast {
+		if i == len(segments)-1 {
 			if opReplace {
 				(*current)[segment.name] = op.Value
 				return nil
@@ -206,18 +123,145 @@ func applyOp(op Operation, obj *map[string]any) error {
 
 		subV, ok := (*current)[segment.name].(map[string]any)
 		if !ok {
-			// Only allow creating non-existent paths for enterprise user schema fields
-			if (opReplace || opAdd) && segment.name == enterpriseUserPrefix && strings.Contains(op.Path, ":") {
-				newMap := make(map[string]any)
-				(*current)[segment.name] = newMap
-				subV = newMap
-			} else {
-				return fmt.Errorf("invalid path: %q", segment.String())
-			}
+			return fmt.Errorf("invalid path: %q", segment.String())
 		}
 		current = &subV
 	}
 
+	return nil
+}
+
+// Helper function to check if any segment has a filter
+func hasFilter(segments []pathSegment) bool {
+	for _, seg := range segments {
+		if seg.filter != nil {
+			return true
+		}
+	}
+	return false
+}
+
+// Helper function to handle filtered operations
+func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment) error {
+	segment := segments[0]
+	arr, ok := (*obj)[segment.name].([]any)
+	if !ok {
+		return fmt.Errorf("invalid path: array not found at %q", segment.String())
+	}
+
+	modified := false
+	for j, item := range arr {
+		if m, ok := item.(map[string]any); ok {
+			if v, exists := m[segment.filter.attr]; exists {
+				matches := false
+				switch segment.filter.op {
+				case "eq":
+					matches = v == segment.filter.value
+				case "ne":
+					matches = v != segment.filter.value
+				case "co":
+					if str, ok := v.(string); ok {
+						matches = strings.Contains(str, segment.filter.value)
+					} else {
+						return fmt.Errorf("'co' operator can only be used with string values")
+					}
+				case "sw":
+					if str, ok := v.(string); ok {
+						matches = strings.HasPrefix(str, segment.filter.value)
+					} else {
+						return fmt.Errorf("'sw' operator can only be used with string values")
+					}
+				case "ew":
+					if str, ok := v.(string); ok {
+						matches = strings.HasSuffix(str, segment.filter.value)
+					} else {
+						return fmt.Errorf("'ew' operator can only be used with string values")
+					}
+				case "pr":
+					if str, ok := v.(string); ok {
+						matches = str != ""
+					} else {
+						matches = v != nil
+					}
+				case "gt", "ge", "lt", "le":
+					switch val := v.(type) {
+					case string:
+						// Try to parse as date first
+						if date, err := time.Parse(time.RFC3339, val); err == nil {
+							compareDate, err := time.Parse(time.RFC3339, segment.filter.value)
+							if err != nil {
+								return fmt.Errorf("invalid date format in comparison: %q", segment.filter.value)
+							}
+							matches = compareDates(date, compareDate, segment.filter.op)
+						} else {
+							matches = compare(val, segment.filter.value, segment.filter.op)
+						}
+					case float64:
+						num, err := strconv.ParseFloat(segment.filter.value, 64)
+						if err != nil {
+							return fmt.Errorf("invalid number in comparison: %q", segment.filter.value)
+						}
+						matches = compare(val, num, segment.filter.op)
+					case int:
+						num, err := strconv.ParseFloat(segment.filter.value, 64)
+						if err != nil {
+							return fmt.Errorf("invalid number in comparison: %q", segment.filter.value)
+						}
+						matches = compare(float64(val), num, segment.filter.op)
+					default:
+						return fmt.Errorf("comparison operators can only be used with string or numeric values")
+					}
+				default:
+					return fmt.Errorf("unsupported filter operator: %q", segment.filter.op)
+				}
+
+				if matches {
+					modified = true
+					if len(segments) == 1 {
+						if strings.Contains(op.Path, "].") {
+							// If we have a field after the filter, create a new operation for it
+							parts := strings.Split(op.Path, "].")
+							if len(parts) == 2 {
+								newMap := make(map[string]any)
+								for k, v := range m {
+									newMap[k] = v
+								}
+								arr[j] = newMap
+								if err := applyOp(Operation{
+									Op:    op.Op,
+									Path:  parts[1],
+									Value: op.Value,
+								}, &newMap); err != nil {
+									return err
+								}
+							}
+						} else {
+							// If no field after the filter, replace the entire object
+							arr[j] = op.Value
+						}
+					} else {
+						// Not the last segment, continue with the rest of the path
+						newMap := make(map[string]any)
+						for k, v := range m {
+							newMap[k] = v
+						}
+						arr[j] = newMap
+						if err := applyOp(Operation{
+							Op:    op.Op,
+							Path:  strings.Join(segmentsToStrings(segments[1:]), "."),
+							Value: op.Value,
+						}, &newMap); err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+	}
+	if !modified {
+		return fmt.Errorf("no matching element found for filter %q", segment.String())
+	}
+	(*obj)[segment.name] = arr
 	return nil
 }
 
