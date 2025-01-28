@@ -452,9 +452,27 @@ func (s *Service) scimListGroups(w http.ResponseWriter, r *http.Request) error {
 		startIndex = i - 1 // scim is 1-indexed, store is 0-indexed
 	}
 
+	var filterDisplayName string
+	if r.URL.Query().Has("filter") {
+		filterDisplayNamePat := regexp.MustCompile(`displayName eq "(.*)"`)
+		match := filterDisplayNamePat.FindStringSubmatch(r.URL.Query().Get("filter"))
+		if match == nil {
+			panic("unsupported filter param")
+		}
+
+		filterDisplayName = match[1]
+	}
+
 	scimGroups, err := s.Store.AuthListSCIMGroups(ctx, &store.AuthListSCIMGroupsRequest{
 		SCIMDirectoryID: scimDirectoryID,
 		StartIndex:      startIndex,
+
+		// Unlike ListUsers, which uses a separate query to list users by email
+		// (an operation that's guaranteed to return only one value), ListGroups
+		// here instead does a more traditional filter, because we do not
+		// enforce group uniqueness by displayName. Multiple values may be
+		// returned even if FilterDisplayName is set.
+		FilterDisplayName: filterDisplayName,
 	})
 	if err != nil {
 		panic(fmt.Errorf("store: %w", err))

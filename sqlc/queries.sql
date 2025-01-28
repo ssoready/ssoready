@@ -707,6 +707,15 @@ where scim_directory_id = $1
 order by id
 offset $2 limit $3;
 
+-- name: AuthListSCIMGroupsByDisplayName :many
+select *
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+  and display_name = $2
+order by id
+offset $3 limit $4;
+
 -- name: AuthGetSCIMGroup :one
 select *
 from scim_groups

@@ -858,6 +858,54 @@ func (q *Queries) AuthListSCIMGroups(ctx context.Context, arg AuthListSCIMGroups
 	return items, nil
 }
 
+const authListSCIMGroupsByDisplayName = `-- name: AuthListSCIMGroupsByDisplayName :many
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+  and display_name = $2
+order by id
+offset $3 limit $4
+`
+
+type AuthListSCIMGroupsByDisplayNameParams struct {
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+	Offset          int32
+	Limit           int32
+}
+
+func (q *Queries) AuthListSCIMGroupsByDisplayName(ctx context.Context, arg AuthListSCIMGroupsByDisplayNameParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, authListSCIMGroupsByDisplayName,
+		arg.ScimDirectoryID,
+		arg.DisplayName,
+		arg.Offset,
+		arg.Limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const authListSCIMUsers = `-- name: AuthListSCIMUsers :many
 select id, scim_directory_id, email, deleted, attributes
 from scim_users
