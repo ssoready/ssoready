@@ -326,6 +326,26 @@ func (q *Queries) AuthCountSCIMGroups(ctx context.Context, scimDirectoryID uuid.
 	return count, err
 }
 
+const authCountSCIMGroupsByDisplayName = `-- name: AuthCountSCIMGroupsByDisplayName :one
+select count(*)
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+  and display_name = $2
+`
+
+type AuthCountSCIMGroupsByDisplayNameParams struct {
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+}
+
+func (q *Queries) AuthCountSCIMGroupsByDisplayName(ctx context.Context, arg AuthCountSCIMGroupsByDisplayNameParams) (int64, error) {
+	row := q.db.QueryRow(ctx, authCountSCIMGroupsByDisplayName, arg.ScimDirectoryID, arg.DisplayName)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const authCountSCIMUsers = `-- name: AuthCountSCIMUsers :one
 select count(*)
 from scim_users
@@ -834,6 +854,54 @@ type AuthListSCIMGroupsParams struct {
 
 func (q *Queries) AuthListSCIMGroups(ctx context.Context, arg AuthListSCIMGroupsParams) ([]ScimGroup, error) {
 	rows, err := q.db.Query(ctx, authListSCIMGroups, arg.ScimDirectoryID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ScimGroup
+	for rows.Next() {
+		var i ScimGroup
+		if err := rows.Scan(
+			&i.ID,
+			&i.ScimDirectoryID,
+			&i.DisplayName,
+			&i.Deleted,
+			&i.Attributes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const authListSCIMGroupsByDisplayName = `-- name: AuthListSCIMGroupsByDisplayName :many
+select id, scim_directory_id, display_name, deleted, attributes
+from scim_groups
+where scim_directory_id = $1
+  and deleted = false
+  and display_name = $2
+order by id
+offset $3 limit $4
+`
+
+type AuthListSCIMGroupsByDisplayNameParams struct {
+	ScimDirectoryID uuid.UUID
+	DisplayName     string
+	Offset          int32
+	Limit           int32
+}
+
+func (q *Queries) AuthListSCIMGroupsByDisplayName(ctx context.Context, arg AuthListSCIMGroupsByDisplayNameParams) ([]ScimGroup, error) {
+	rows, err := q.db.Query(ctx, authListSCIMGroupsByDisplayName,
+		arg.ScimDirectoryID,
+		arg.DisplayName,
+		arg.Offset,
+		arg.Limit,
+	)
 	if err != nil {
 		return nil, err
 	}

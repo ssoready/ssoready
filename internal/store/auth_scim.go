@@ -386,8 +386,9 @@ func (s *Store) AuthDeleteSCIMUser(ctx context.Context, req *AuthDeleteSCIMUserR
 }
 
 type AuthListSCIMGroupsRequest struct {
-	SCIMDirectoryID string
-	StartIndex      int
+	SCIMDirectoryID   string
+	StartIndex        int
+	FilterDisplayName string
 }
 
 type AuthListSCIMGroupsResponse struct {
@@ -407,18 +408,50 @@ func (s *Store) AuthListSCIMGroups(ctx context.Context, req *AuthListSCIMGroupsR
 	}
 	defer rollback()
 
-	count, err := q.AuthCountSCIMGroups(ctx, scimDirID)
-	if err != nil {
-		return nil, fmt.Errorf("count scim groups: %w", err)
+	var count int64
+	if req.FilterDisplayName == "" {
+		c, err := q.AuthCountSCIMGroups(ctx, scimDirID)
+		if err != nil {
+			return nil, fmt.Errorf("count scim groups: %w", err)
+		}
+
+		count = c
+	} else {
+		c, err := q.AuthCountSCIMGroupsByDisplayName(ctx, queries.AuthCountSCIMGroupsByDisplayNameParams{
+			ScimDirectoryID: scimDirID,
+			DisplayName:     req.FilterDisplayName,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("count scim groups: %w", err)
+		}
+
+		count = c
 	}
 
-	qSCIMGroups, err := q.AuthListSCIMGroups(ctx, queries.AuthListSCIMGroupsParams{
-		ScimDirectoryID: scimDirID,
-		Offset:          int32(req.StartIndex),
-		Limit:           10,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("list scim groups: %w", err)
+	var qSCIMGroups []queries.ScimGroup
+	if req.FilterDisplayName == "" {
+		qGroups, err := q.AuthListSCIMGroups(ctx, queries.AuthListSCIMGroupsParams{
+			ScimDirectoryID: scimDirID,
+			Offset:          int32(req.StartIndex),
+			Limit:           10,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("list scim groups: %w", err)
+		}
+
+		qSCIMGroups = qGroups
+	} else {
+		qGroups, err := q.AuthListSCIMGroupsByDisplayName(ctx, queries.AuthListSCIMGroupsByDisplayNameParams{
+			ScimDirectoryID: scimDirID,
+			DisplayName:     req.FilterDisplayName,
+			Offset:          int32(req.StartIndex),
+			Limit:           10,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("list scim groups by display name: %w", err)
+		}
+
+		qSCIMGroups = qGroups
 	}
 
 	var scimGroups []*ssoreadyv1.SCIMGroup
