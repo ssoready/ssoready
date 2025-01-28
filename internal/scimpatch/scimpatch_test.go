@@ -693,6 +693,34 @@ func TestPatch(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "create enterprise user schema with department using Add when schema doesn't exist",
+			in:   map[string]any{},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department",
+					Value: "Engineering",
+				},
+			},
+			out: map[string]any{
+				"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": map[string]any{
+					"department": "Engineering",
+				},
+			},
+		},
+		{
+			name: "should fail when trying to replace enterprise user schema without a field",
+			in:   map[string]any{},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Replace",
+					Path:  "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
+					Value: map[string]any{},
+				},
+			},
+			err: "invalid path: \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"",
+		},
 	}
 
 	for _, tt := range testCases {

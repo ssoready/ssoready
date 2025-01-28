@@ -206,7 +206,14 @@ func applyOp(op Operation, obj *map[string]any) error {
 
 		subV, ok := (*current)[segment.name].(map[string]any)
 		if !ok {
-			return fmt.Errorf("invalid path: %q", segment.String())
+			// Only allow creating non-existent paths for enterprise user schema fields
+			if (opReplace || opAdd) && segment.name == enterpriseUserPrefix && strings.Contains(op.Path, ":") {
+				newMap := make(map[string]any)
+				(*current)[segment.name] = newMap
+				subV = newMap
+			} else {
+				return fmt.Errorf("invalid path: %q", segment.String())
+			}
 		}
 		current = &subV
 	}
