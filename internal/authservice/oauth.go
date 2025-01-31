@@ -276,9 +276,13 @@ func (s *Service) oauthUserinfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userinfo := struct {
-		Sub string `json:"sub"`
+		Sub           string `json:"sub"`
+		Email         string `json:"email"`
+		EmailVerified bool   `json:"email_verified"`
 	}{
-		Sub: claims.Subject,
+		Sub:           claims.Subject,
+		Email:         claims.Subject,
+		EmailVerified: true,
 	}
 
 	if err := json.NewEncoder(w).Encode(userinfo); err != nil {
