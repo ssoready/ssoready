@@ -811,6 +811,18 @@ func scimUserToResource(scimUser *ssoreadyv1.SCIMUser) map[string]any {
 		r["active"] = false
 	}
 
+	// convert simple manager id reference to complex manager reference for Entra compatibility
+	if r["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"] != nil {
+		enterpriseUser := r["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].(map[string]any)
+		if enterpriseUser["manager"] != nil {
+			if managerID, ok := enterpriseUser["manager"].(string); ok {
+				enterpriseUser["manager"] = map[string]any{
+					"value": managerID,
+				}
+			}
+		}
+	}
+
 	return r
 }
 
