@@ -570,9 +570,14 @@ function RequestsCard() {
                     {moment(scimRequest.timestamp!.toDate()).format()}
                   </TableCell>
                   <TableCell>
-                    {!scimRequest.error.case && (
-                      <Badge variant="outline">Success</Badge>
-                    )}
+                    {!scimRequest.error.case ? (
+                      scimRequest.httpResponseStatus >
+                      SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_204 ? (
+                        <Badge variant="destructive">Failed</Badge>
+                      ) : (
+                        <Badge variant="outline">Success</Badge>
+                      )
+                    ) : null}
                     {scimRequest?.error?.case === "badBearerToken" && (
                       <Badge variant="destructive">Bad bearer token</Badge>
                     )}
