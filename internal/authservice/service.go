@@ -257,6 +257,10 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 	alreadyProcessed, err := s.Store.AuthCheckAssertionAlreadyProcessed(ctx, requestID)
 	if err != nil {
+		if errors.Is(err, store.InvalidSAMLRequestID) {
+			http.Error(w, "invalid saml request id", http.StatusBadRequest)
+			return
+		}
 		panic(err)
 	}
 

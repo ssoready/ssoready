@@ -182,6 +182,8 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 	}, nil
 }
 
+var InvalidSAMLRequestID = errors.New("invalid saml request id")
+
 func (s *Store) AuthCheckAssertionAlreadyProcessed(ctx context.Context, samlFlowID string) (bool, error) {
 	if samlFlowID == "" {
 		return false, nil
@@ -189,7 +191,7 @@ func (s *Store) AuthCheckAssertionAlreadyProcessed(ctx context.Context, samlFlow
 
 	id, err := idformat.SAMLFlow.Parse(samlFlowID)
 	if err != nil {
-		return false, err
+		return false, InvalidSAMLRequestID
 	}
 
 	ok, err := s.q.AuthCheckAssertionAlreadyProcessed(ctx, id)
