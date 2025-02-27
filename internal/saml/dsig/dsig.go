@@ -90,7 +90,7 @@ func Verify(cert *x509.Certificate, data []byte) ([]byte, error) {
 		return nil, BadDigestAlgorithmError{digestMethodAlgorithm}
 	}
 
-	x509Certificate, _ := onlyPathHoistNames(path{
+	x509Certificate, ok := onlyPathHoistNames(path{
 		{URI: "urn:oasis:names:tc:SAML:2.0:protocol", Local: "Response"},
 		{URI: "urn:oasis:names:tc:SAML:2.0:assertion", Local: "Assertion"},
 		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "Signature"},
@@ -98,6 +98,10 @@ func Verify(cert *x509.Certificate, data []byte) ([]byte, error) {
 		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "X509Data"},
 		{URI: "http://www.w3.org/2000/09/xmldsig#", Local: "X509Certificate"},
 	}, unverifiedDoc.Root)
+
+	if !ok {
+		return nil, ErrUnsigned
+	}
 
 	resCertBase64 := *x509Certificate.Element.Children[0].Text
 	resCertBase64 = strings.ReplaceAll(resCertBase64, " ", "")

@@ -107,6 +107,17 @@ func TestValidate_BadCertificate(t *testing.T) {
 	require.NotEmpty(t, validateError.BadCertificate)
 }
 
+func TestValidate_NoCertificate(t *testing.T) {
+	// modified from okta, but no KeyInfo
+	_, err := validateFromDir("testdata/bad-assertions/no-certificate")
+	var validateError *saml.ValidateError
+	if !errors.As(err, &validateError) {
+		t.Fatalf("bad error: %v", err)
+	}
+
+	require.NotEmpty(t, validateError.UnsignedAssertion)
+}
+
 func TestValidate_BadAssertionUTF8(t *testing.T) {
 	// modified from okta, but assertion.xml is just \x00 (and a newline)
 	_, err := validateFromDir("testdata/bad-assertions/bad-assertion-utf8")
