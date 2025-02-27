@@ -157,7 +157,7 @@ export function ViewSCIMRequestPage() {
                 Your customer's identity provider set the SCIM{" "}
                 <code>userName</code> to be{" "}
                 <span className="font-semibold">
-                  {scimRequest.scimRequest.error.value}
+                  {scimRequest.scimRequest.error.value || "(No value)"}
                 </span>
                 , which is invalid. SSOReady requires that SCIM usernames be
                 email addresses.

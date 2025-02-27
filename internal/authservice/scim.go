@@ -256,8 +256,17 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	userName := resource["userName"].(string) // todo this may panic
-	active := true                            // may be omitted in request
+	if resource["userName"] == nil {
+		http.Error(w, "userName is required", http.StatusBadRequest)
+		return &badUsernameError{BadUsername: ""}
+	}
+	if _, ok := resource["userName"]; !ok {
+		http.Error(w, "userName is required", http.StatusBadRequest)
+		return &badUsernameError{BadUsername: ""}
+	}
+
+	userName := resource["userName"].(string)
+	active := true // may be omitted in request
 	if _, ok := resource["active"]; ok {
 		active = resource["active"].(bool)
 	}
