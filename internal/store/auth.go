@@ -138,6 +138,8 @@ type AuthGetValidateDataResponse struct {
 	EnvironmentAdminTestModeURL string
 }
 
+var ErrNoSuchSAMLConnection = errors.New("no such saml connection")
+
 func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDataRequest) (*AuthGetValidateDataResponse, error) {
 	samlConnID, err := idformat.SAMLConnection.Parse(req.SAMLConnectionID)
 	if err != nil {
@@ -152,6 +154,10 @@ func (s *Store) AuthGetValidateData(ctx context.Context, req *AuthGetValidateDat
 
 	res, err := q.AuthGetValidateData(ctx, samlConnID)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNoSuchSAMLConnection
+		}
+
 		return nil, fmt.Errorf("get validate data: %w", err)
 	}
 
