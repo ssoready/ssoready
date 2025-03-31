@@ -162,6 +162,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 		SAMLConnectionID: samlConnID,
 	})
 	if err != nil {
+		if errors.Is(err, store.ErrNoSuchSAMLConnection) {
+			http.Error(w, "saml connection not found", http.StatusNotFound)
+			return
+		}
+
 		var connectErr *connect.Error
 		if errors.As(err, &connectErr) && connectErr.Code() == connect.CodeFailedPrecondition {
 			createSAMLLoginRes, err := s.Store.AuthUpsertReceiveAssertionData(ctx, &store.AuthUpsertSAMLLoginEventRequest{
