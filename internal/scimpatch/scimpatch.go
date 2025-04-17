@@ -152,7 +152,6 @@ func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment
 		//
 		// then update obj[a] = { b: "c", d: e }
 		if opAdd && segment.filter.op == "eq" && len(segments) == 2 {
-			fmt.Println("doing top of method special case")
 			(*obj)[segment.name] = []any{
 				map[string]any{
 					segment.filter.attr: segment.filter.value,
@@ -248,7 +247,6 @@ func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment
 		// similar to the special case of the array not existing at all at the
 		// top of this function
 		if opAdd && segment.filter.op == "eq" && len(segments) == 2 {
-			fmt.Println("doing special case")
 			arr = append(arr, map[string]any{
 				segment.filter.attr: segment.filter.value,
 				segments[1].name:    op.Value,
