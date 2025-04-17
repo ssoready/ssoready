@@ -5,6 +5,7 @@ import (
 
 	"github.com/ssoready/ssoready/internal/scimpatch"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPatch(t *testing.T) {
@@ -20,6 +21,12 @@ func TestPatch(t *testing.T) {
 			in:   map[string]any{"foo": "xxx"},
 			ops:  []scimpatch.Operation{{Op: "replace", Path: "", Value: map[string]any{"bar": "yyy"}}},
 			out:  map[string]any{"bar": "yyy"},
+		},
+		{
+			name: "replace entire value with non-object",
+			in:   map[string]any{"foo": "xxx"},
+			ops:  []scimpatch.Operation{{Op: "replace", Path: "", Value: "notanobject"}},
+			err:  "top-level 'replace' operation must have an object value",
 		},
 		{
 			name: "replace top-level prop",
@@ -69,6 +76,18 @@ func TestPatch(t *testing.T) {
 			ops:  []scimpatch.Operation{{Op: "add", Path: "foo", Value: map[string]any{"baz": "yyy"}}},
 			out:  map[string]any{"foo": map[string]any{"bar": "xxx", "baz": "yyy"}},
 		},
+		{
+			name: "add to top-level-object",
+			in:   map[string]any{"foo": map[string]any{"bar": "xxx"}},
+			ops:  []scimpatch.Operation{{Op: "add", Path: "", Value: map[string]any{"baz": "yyy"}}},
+			err:  "unsupported 'add' operation on top-level object",
+		},
+		{
+			name: "invalid path",
+			in:   map[string]any{"foo": map[string]any{"bar": map[string]any{"baz": "xxx"}}},
+			ops:  []scimpatch.Operation{{Op: "add", Path: "foo.notbar.baz", Value: map[string]any{"baz": "yyy"}}},
+			err:  `invalid path: foo.notbar.baz`,
+		},
 
 		{
 			name: "uppercase Replace op",
@@ -81,6 +100,13 @@ func TestPatch(t *testing.T) {
 			in:   map[string]any{"foo": []any{"xxx"}},
 			ops:  []scimpatch.Operation{{Op: "Add", Path: "foo", Value: []any{"yyy"}}},
 			out:  map[string]any{"foo": []any{"xxx", "yyy"}},
+		},
+
+		{
+			name: "invalid op",
+			in:   map[string]any{"foo": []any{"xxx"}},
+			ops:  []scimpatch.Operation{{Op: "BadOp", Path: "foo", Value: []any{"yyy"}}},
+			err:  `unsupported SCIM PATCH operation: "BadOp"`,
 		},
 
 		{
@@ -122,6 +148,45 @@ func TestPatch(t *testing.T) {
 			},
 		},
 		{
+			name: "specific err for non-object Add to enterprise user",
+			in: map[string]any{
+				"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": map[string]any{
+					"foo": "xxx",
+				},
+			},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
+					Value: "notanobject",
+				},
+			},
+			err: "enterprise user schema value must be an object",
+		},
+
+		{
+			name: "filter expression on non-array",
+			in: map[string]any{
+				"items": "notanarray",
+			},
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[type eq \"bar\"]", Value: "zzz"}},
+			err: `invalid path: not an array: items[type eq "bar"]`,
+		},
+		{
+			name: "filter expression on array containing non-object",
+			in: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"str":  "xxx",
+					},
+					"notanobject",
+				},
+			},
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[type eq \"bar\"]", Value: "zzz"}},
+			err: `invalid path: applied filter on array containing non-object: items[type eq "bar"]`,
+		},
+		{
 			name: "replace with filter expression in path",
 			in: map[string]any{
 				"items": []any{
@@ -144,6 +209,37 @@ func TestPatch(t *testing.T) {
 					},
 					map[string]any{
 						"type": "bar",
+						"str":  "zzz",
+					},
+				},
+			},
+		},
+		{
+			name: "replace entire object with filter expression",
+			in: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"str":  "xxx",
+					},
+					map[string]any{
+						"type": "bar",
+						"str":  "yyy",
+					},
+				},
+			},
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[type eq \"bar\"]", Value: map[string]any{
+				"type": "baz",
+				"str":  "zzz",
+			}}},
+			out: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"str":  "xxx",
+					},
+					map[string]any{
+						"type": "baz",
 						"str":  "zzz",
 					},
 				},
@@ -292,6 +388,19 @@ func TestPatch(t *testing.T) {
 			},
 		},
 		{
+			name: "contain operator with non-string",
+			in: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"val":  true,
+					},
+				},
+			},
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[val co \"whatever\"].type", Value: "xxx"}},
+			err: "'co' operator can only be used with string values",
+		},
+		{
 			name: "replace with starts-with filter expression",
 			in: map[string]any{
 				"items": []any{
@@ -328,6 +437,19 @@ func TestPatch(t *testing.T) {
 			},
 		},
 		{
+			name: "starts-with operator with non-string",
+			in: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"val":  true,
+					},
+				},
+			},
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[val sw \"whatever\"].type", Value: "xxx"}},
+			err: "'sw' operator can only be used with string values",
+		},
+		{
 			name: "replace with ends-with filter expression",
 			in: map[string]any{
 				"items": []any{
@@ -362,6 +484,19 @@ func TestPatch(t *testing.T) {
 					},
 				},
 			},
+		},
+		{
+			name: "ends-with operator with non-string",
+			in: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"val":  true,
+					},
+				},
+			},
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[val ew \"whatever\"].type", Value: "xxx"}},
+			err: "'ew' operator can only be used with string values",
 		},
 		{
 			name: "replace with present filter expression",
@@ -563,15 +698,15 @@ func TestPatch(t *testing.T) {
 				"items": []any{
 					map[string]any{
 						"type": "foo",
-						"num":  10,
+						"num":  10.0,
 					},
 					map[string]any{
 						"type": "bar",
-						"num":  20,
+						"num":  20.0,
 					},
 					map[string]any{
 						"type": "baz",
-						"num":  30,
+						"num":  30.0,
 					},
 				},
 			},
@@ -583,18 +718,41 @@ func TestPatch(t *testing.T) {
 				"items": []any{
 					map[string]any{
 						"type": "yyy",
-						"num":  10,
+						"num":  10.0,
 					},
 					map[string]any{
 						"type": "bar",
-						"num":  20,
+						"num":  20.0,
 					},
 					map[string]any{
 						"type": "xxx",
-						"num":  30,
+						"num":  30.0,
 					},
 				},
 			},
+		},
+		{
+			name: "invalid number in comparison filter",
+			in: map[string]any{
+				"items": []any{
+					map[string]any{
+						"type": "foo",
+						"num":  10.0,
+					},
+					map[string]any{
+						"type": "bar",
+						"num":  20.0,
+					},
+					map[string]any{
+						"type": "baz",
+						"num":  30.0,
+					},
+				},
+			},
+			ops: []scimpatch.Operation{
+				{Op: "Replace", Path: "items[num gt \"badnumber\"].type", Value: "xxx"},
+			},
+			err: `invalid number in comparison: "badnumber"`,
 		},
 		{
 			name: "comparison operators with invalid types should fail",
@@ -649,17 +807,17 @@ func TestPatch(t *testing.T) {
 			},
 		},
 		{
-			name: "comparison operators with invalid date format should fail",
+			name: "unsupported filter operator",
 			in: map[string]any{
 				"items": []any{
 					map[string]any{
 						"type": "foo",
-						"date": "2024-01-01T00:00:00Z",
+						"val":  "whatever",
 					},
 				},
 			},
-			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[date gt \"invalid-date\"].type", Value: "xxx"}},
-			err: "invalid date format in comparison: \"invalid-date\"",
+			ops: []scimpatch.Operation{{Op: "Replace", Path: "items[val unknown \"alsowhatever\"].type", Value: "xxx"}},
+			err: `unsupported filter operator: "unknown"`,
 		},
 		{
 			name: "replace with filter in enterprise user path",
@@ -721,13 +879,74 @@ func TestPatch(t *testing.T) {
 			},
 			err: "invalid path: \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"",
 		},
+
+		{
+			name: "add filter with eq creates a new field",
+			in: map[string]any{
+				"foo": "bar",
+			},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  `emails[type eq "work"].value`,
+					Value: "aaa",
+				},
+				{
+					Op:    "Add",
+					Path:  `addresses[type eq "work"].region`,
+					Value: "bbb",
+				},
+				{
+					Op:    "Add",
+					Path:  `addresses[type eq "work"].country`,
+					Value: "ccc",
+				},
+				{
+					Op:    "Add",
+					Path:  `phoneNumbers[type eq "work"].value`,
+					Value: "ddd",
+				},
+				{
+					Op:    "Add",
+					Path:  `phoneNumbers[type eq "mobile"].value`,
+					Value: "eee",
+				},
+			},
+			out: map[string]any{
+				"foo": "bar",
+				"emails": []any{
+					map[string]any{
+						"type":  "work",
+						"value": "aaa",
+					},
+				},
+				"addresses": []any{
+					map[string]any{
+						"type":    "work",
+						"region":  "bbb",
+						"country": "ccc",
+					},
+				},
+				"phoneNumbers": []any{
+					map[string]any{
+						"type":  "work",
+						"value": "ddd",
+					},
+					map[string]any{
+						"type":  "mobile",
+						"value": "eee",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			err := scimpatch.Patch(tt.ops, &tt.in)
 			if tt.err != "" {
-				assert.Error(t, err, tt.err)
+				require.Error(t, err)
+				assert.Equal(t, tt.err, err.Error())
 			} else {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.out, tt.in)

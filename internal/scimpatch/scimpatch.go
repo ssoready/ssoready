@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Operation struct {
@@ -123,7 +122,7 @@ func applyOp(op Operation, obj *map[string]any) error {
 
 		subV, ok := (*current)[segment.name].(map[string]any)
 		if !ok {
-			return fmt.Errorf("invalid path: %q", segment.String())
+			return fmt.Errorf("invalid path: %s", op.Path)
 		}
 		current = &subV
 	}
@@ -143,10 +142,30 @@ func hasFilter(segments []pathSegment) bool {
 
 // Helper function to handle filtered operations
 func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment) error {
+	opAdd := op.Op == "add" || op.Op == "Add"
+
 	segment := segments[0]
+	if _, ok := (*obj)[segment.name]; !ok {
+		// special case: if this is an "add" with an `eq` filter of the form:
+		//
+		// a[b eq "c"].d = e
+		//
+		// then update obj[a] = { b: "c", d: e }
+		if opAdd && segment.filter.op == "eq" && len(segments) == 2 {
+			fmt.Println("doing top of method special case")
+			(*obj)[segment.name] = []any{
+				map[string]any{
+					segment.filter.attr: segment.filter.value,
+					segments[1].name:    op.Value,
+				},
+			}
+			return nil
+		}
+		return fmt.Errorf("invalid path: no matching element found for filter %q", segment.String())
+	}
 	arr, ok := (*obj)[segment.name].([]any)
 	if !ok {
-		return fmt.Errorf("invalid path: array not found at %q", segment.String())
+		return fmt.Errorf("invalid path: not an array: %s", op.Path)
 	}
 
 	modified := false
@@ -186,28 +205,13 @@ func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment
 				case "gt", "ge", "lt", "le":
 					switch val := v.(type) {
 					case string:
-						// Try to parse as date first
-						if date, err := time.Parse(time.RFC3339, val); err == nil {
-							compareDate, err := time.Parse(time.RFC3339, segment.filter.value)
-							if err != nil {
-								return fmt.Errorf("invalid date format in comparison: %q", segment.filter.value)
-							}
-							matches = compareDates(date, compareDate, segment.filter.op)
-						} else {
-							matches = compare(val, segment.filter.value, segment.filter.op)
-						}
+						matches = compare(val, segment.filter.value, segment.filter.op)
 					case float64:
 						num, err := strconv.ParseFloat(segment.filter.value, 64)
 						if err != nil {
 							return fmt.Errorf("invalid number in comparison: %q", segment.filter.value)
 						}
 						matches = compare(val, num, segment.filter.op)
-					case int:
-						num, err := strconv.ParseFloat(segment.filter.value, 64)
-						if err != nil {
-							return fmt.Errorf("invalid number in comparison: %q", segment.filter.value)
-						}
-						matches = compare(float64(val), num, segment.filter.op)
 					default:
 						return fmt.Errorf("comparison operators can only be used with string or numeric values")
 					}
@@ -217,48 +221,62 @@ func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment
 
 				if matches {
 					modified = true
-					if len(segments) == 1 {
-						if strings.Contains(op.Path, "].") {
-							// If we have a field after the filter, create a new operation for it
-							parts := strings.Split(op.Path, "].")
-							if len(parts) == 2 {
-								newMap := make(map[string]any)
-								for k, v := range m {
-									newMap[k] = v
-								}
-								arr[j] = newMap
-								if err := applyOp(Operation{
-									Op:    op.Op,
-									Path:  parts[1],
-									Value: op.Value,
-								}, &newMap); err != nil {
-									return err
-								}
-							}
-						} else {
-							// If no field after the filter, replace the entire object
-							arr[j] = op.Value
-						}
-					} else {
-						// Not the last segment, continue with the rest of the path
-						newMap := make(map[string]any)
-						for k, v := range m {
-							newMap[k] = v
-						}
-						arr[j] = newMap
-						if err := applyOp(Operation{
-							Op:    op.Op,
-							Path:  strings.Join(segmentsToStrings(segments[1:]), "."),
-							Value: op.Value,
-						}, &newMap); err != nil {
-							return err
-						}
+					//if len(segments) == 1 {
+					//	if strings.Contains(op.Path, "].") {
+					//		// If we have a field after the filter, create a new operation for it
+					//		parts := strings.Split(op.Path, "].")
+					//		if len(parts) == 2 {
+					//			newMap := make(map[string]any)
+					//			for k, v := range m {
+					//				newMap[k] = v
+					//			}
+					//			arr[j] = newMap
+					//			if err := applyOp(Operation{
+					//				Op:    op.Op,
+					//				Path:  parts[1],
+					//				Value: op.Value,
+					//			}, &newMap); err != nil {
+					//				return err
+					//			}
+					//		}
+					//	} else {
+					//		// If no field after the filter, replace the entire object
+					//		arr[j] = op.Value
+					//	}
+					//} else {
+					// Not the last segment, continue with the rest of the path
+					newMap := make(map[string]any)
+					for k, v := range m {
+						newMap[k] = v
+					}
+					arr[j] = newMap
+					if err := applyOp(Operation{
+						Op:    op.Op,
+						Path:  strings.Join(segmentsToStrings(segments[1:]), "."),
+						Value: op.Value,
+					}, &newMap); err != nil {
+						return err
+						//}
 					}
 				}
 			}
+		} else {
+			return fmt.Errorf("invalid path: applied filter on array containing non-object: %s", op.Path)
 		}
 	}
 	if !modified {
+		// similar to the special case of the array not existing at all at the
+		// top of this function
+		if opAdd && segment.filter.op == "eq" && len(segments) == 2 {
+			fmt.Println("doing special case")
+			arr = append(arr, map[string]any{
+				segment.filter.attr: segment.filter.value,
+				segments[1].name:    op.Value,
+			})
+			(*obj)[segment.name] = arr
+			return nil
+		}
+
 		return fmt.Errorf("no matching element found for filter %q", segment.String())
 	}
 	(*obj)[segment.name] = arr
@@ -382,21 +400,6 @@ func compare[T ordered](a, b T, op string) bool {
 		return a < b
 	case "le":
 		return a <= b
-	default:
-		return false
-	}
-}
-
-func compareDates(a, b time.Time, op string) bool {
-	switch op {
-	case "gt":
-		return a.After(b)
-	case "ge":
-		return a.After(b) || a.Equal(b)
-	case "lt":
-		return a.Before(b)
-	case "le":
-		return a.Before(b) || a.Equal(b)
 	default:
 		return false
 	}
