@@ -571,9 +571,11 @@ function RequestsCard() {
                   </TableCell>
                   <TableCell>
                     {!scimRequest.error.case ? (
-                      scimRequest.httpResponseStatus >
-                      SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_204 ? (
-                        <Badge variant="destructive">Failed</Badge>
+                      [
+                        SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_400,
+                        SCIMRequestHTTPStatus.SCIM_REQUEST_HTTP_STATUS_401,
+                      ].includes(scimRequest.httpResponseStatus) ? (
+                        <Badge variant="destructive">Bad request</Badge>
                       ) : (
                         <Badge variant="outline">Success</Badge>
                       )
