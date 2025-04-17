@@ -221,42 +221,22 @@ func applyOpToFiltered(op Operation, obj *map[string]any, segments []pathSegment
 
 				if matches {
 					modified = true
-					//if len(segments) == 1 {
-					//	if strings.Contains(op.Path, "].") {
-					//		// If we have a field after the filter, create a new operation for it
-					//		parts := strings.Split(op.Path, "].")
-					//		if len(parts) == 2 {
-					//			newMap := make(map[string]any)
-					//			for k, v := range m {
-					//				newMap[k] = v
-					//			}
-					//			arr[j] = newMap
-					//			if err := applyOp(Operation{
-					//				Op:    op.Op,
-					//				Path:  parts[1],
-					//				Value: op.Value,
-					//			}, &newMap); err != nil {
-					//				return err
-					//			}
-					//		}
-					//	} else {
-					//		// If no field after the filter, replace the entire object
-					//		arr[j] = op.Value
-					//	}
-					//} else {
-					// Not the last segment, continue with the rest of the path
-					newMap := make(map[string]any)
-					for k, v := range m {
-						newMap[k] = v
-					}
-					arr[j] = newMap
-					if err := applyOp(Operation{
-						Op:    op.Op,
-						Path:  strings.Join(segmentsToStrings(segments[1:]), "."),
-						Value: op.Value,
-					}, &newMap); err != nil {
-						return err
-						//}
+					if len(segments) == 1 {
+						arr[j] = op.Value
+					} else {
+						// Not the last segment, continue with the rest of the path
+						newMap := make(map[string]any)
+						for k, v := range m {
+							newMap[k] = v
+						}
+						arr[j] = newMap
+						if err := applyOp(Operation{
+							Op:    op.Op,
+							Path:  strings.Join(segmentsToStrings(segments[1:]), "."),
+							Value: op.Value,
+						}, &newMap); err != nil {
+							return err
+						}
 					}
 				}
 			}
