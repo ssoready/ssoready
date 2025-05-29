@@ -42,12 +42,12 @@ func (e *AuthGetInitDataBadStateError) Error() string {
 func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest) (*AuthGetInitDataResponse, error) {
 	samlConnID, err := idformat.SAMLConnection.Parse(req.SAMLConnectionID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse saml connection id: %w", err)
 	}
 
 	res, err := s.q.AuthGetInitData(ctx, samlConnID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get init data: %w", err)
 	}
 
 	stateData, err := s.statesigner.Decode(req.State)
@@ -57,12 +57,12 @@ func (s *Store) AuthGetInitData(ctx context.Context, req *AuthGetInitDataRequest
 
 	samlFlowID, err := idformat.SAMLFlow.Parse(stateData.SAMLFlowID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse saml flow id: %w", err)
 	}
 
 	qSAMLFlow, err := s.q.GetSAMLFlowByID(ctx, samlFlowID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get saml flow by id: %w", err)
 	}
 
 	if qSAMLFlow.SamlConnectionID != samlConnID {
