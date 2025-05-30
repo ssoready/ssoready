@@ -28,10 +28,6 @@ type ValidateResponse struct {
 	SubjectAttributes map[string]string
 }
 
-var (
-	errExpired = fmt.Errorf("saml response expired")
-)
-
 type ValidateError struct {
 	RequestID   string
 	AssertionID string
@@ -39,6 +35,7 @@ type ValidateError struct {
 
 	MalformedAssertion    bool
 	UnsignedAssertion     bool
+	ExpiredAssertion      bool
 	BadIDPEntityID        *string
 	BadSPEntityID         *string
 	BadSignatureAlgorithm *string
@@ -164,11 +161,13 @@ func Validate(req *ValidateRequest) (*ValidateResponse, error) {
 	}
 
 	if req.Now.Before(assertion.Conditions.NotBefore) {
-		return nil, errExpired
+		validateError.ExpiredAssertion = true
+		return nil, validateError
 	}
 
 	if req.Now.After(assertion.Conditions.NotOnOrAfter) {
-		return nil, errExpired
+		validateError.ExpiredAssertion = true
+		return nil, validateError
 	}
 
 	return &res, nil

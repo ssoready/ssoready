@@ -48,6 +48,28 @@ func TestValidate_UnsignedAssertion(t *testing.T) {
 	require.True(t, validateError.UnsignedAssertion)
 }
 
+func TestValidate_ExpiredAssertionEarly(t *testing.T) {
+	// modified from okta, but params.json has "now" moved back a year
+	_, err := validateFromDir("testdata/bad-assertions/bad-assertion-expired-early")
+	var validateError *saml.ValidateError
+	if !errors.As(err, &validateError) {
+		t.Fatalf("bad error: %v", err)
+	}
+
+	require.True(t, validateError.ExpiredAssertion)
+}
+
+func TestValidate_ExpiredAssertionLate(t *testing.T) {
+	// modified from okta, but params.json has "now" moved forward a year
+	_, err := validateFromDir("testdata/bad-assertions/bad-assertion-expired-late")
+	var validateError *saml.ValidateError
+	if !errors.As(err, &validateError) {
+		t.Fatalf("bad error: %v", err)
+	}
+
+	require.True(t, validateError.ExpiredAssertion)
+}
+
 func TestValidate_BadIDPEntityID(t *testing.T) {
 	// modified from okta, but metadata.xml has a different idp entity id
 	_, err := validateFromDir("testdata/bad-assertions/bad-idp-entity-id")
