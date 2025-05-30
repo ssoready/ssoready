@@ -217,6 +217,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 	var (
 		malformedAssertion    bool
 		unsignedAssertion     bool
+		expiredAssertion      bool
 		badIssuer             *string
 		badAudience           *string
 		badSignatureAlgorithm *string
@@ -245,6 +246,7 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 			assertion = validateError.Assertion
 			malformedAssertion = validateError.MalformedAssertion
 			unsignedAssertion = validateError.UnsignedAssertion
+			expiredAssertion = validateError.ExpiredAssertion
 			badIssuer = validateError.BadIDPEntityID
 			badAudience = validateError.BadSPEntityID
 			badSignatureAlgorithm = validateError.BadSignatureAlgorithm
@@ -257,6 +259,11 @@ func (s *Service) samlAcs(w http.ResponseWriter, r *http.Request) {
 
 	if malformedAssertion {
 		http.Error(w, "malformed assertion", http.StatusBadRequest)
+		return
+	}
+
+	if expiredAssertion {
+		http.Error(w, "expired assertion", http.StatusBadRequest)
 		return
 	}
 
