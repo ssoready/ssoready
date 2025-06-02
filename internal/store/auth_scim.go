@@ -710,6 +710,8 @@ type AuthAddSCIMGroupMemberRequest struct {
 	SCIMUserID string
 }
 
+var ErrBadSCIMUserID = errors.New("bad scim user id")
+
 func (s *Store) AuthAddSCIMGroupMember(ctx context.Context, req *AuthAddSCIMGroupMemberRequest) error {
 	_, q, commit, rollback, err := s.tx(ctx)
 	if err != nil {
@@ -738,7 +740,7 @@ func (s *Store) AuthAddSCIMGroupMember(ctx context.Context, req *AuthAddSCIMGrou
 	// check member user belongs to same directory as group does
 	scimUserID, err := idformat.SCIMUser.Parse(req.SCIMUserID)
 	if err != nil {
-		return fmt.Errorf("parse scim user id: %w", err)
+		return fmt.Errorf("parse scim user id: %w", ErrBadSCIMUserID)
 	}
 
 	if _, err := q.AuthGetSCIMUserIncludeDeleted(ctx, queries.AuthGetSCIMUserIncludeDeletedParams{
