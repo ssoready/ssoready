@@ -779,7 +779,7 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) error {
 			SCIMUserID: scimUserID,
 		}); err != nil {
 			if errors.Is(err, store.ErrBadSCIMUserID) {
-				http.Error(w, "bad scim user id", http.StatusUnauthorized)
+				http.Error(w, "bad scim user id", http.StatusBadRequest)
 				return nil
 			}
 
