@@ -52,6 +52,10 @@ func (e *ValidateError) Error() string {
 		return "saml assertion is unsigned"
 	}
 
+	if e.ExpiredAssertion {
+		return "saml assertion is expired"
+	}
+
 	if e.BadIDPEntityID != nil {
 		return "bad idp entity id: " + *e.BadIDPEntityID
 	}
