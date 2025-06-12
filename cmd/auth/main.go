@@ -103,9 +103,7 @@ func main() {
 
 	r.PathPrefix("/").Handler(service.NewHandler())
 
-	sentryHandler := sentryhttp.New(sentryhttp.Options{
-		Repanic: true,
-	})
+	sentryHandler := sentryhttp.New(sentryhttp.Options{})
 	sentryMux := sentryHandler.Handle(r)
 
 	logMux := logHTTP(sentryMux)
