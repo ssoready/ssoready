@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"time"
 
@@ -183,6 +184,8 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
+			slog.InfoContext(ctx, "saml_access_code_not_found", "saml_access_code", req.SamlAccessCode, "app_organization_id", authn.AppOrgID(ctx), "environment_id", environmentID)
+
 			return nil, connect.NewError(connect.CodeNotFound, &SAMLAccessCodeNotFoundError{})
 		}
 		return nil, fmt.Errorf("get saml access code data: %w", err)
