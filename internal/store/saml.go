@@ -225,6 +225,8 @@ func (s *Store) RedeemSAMLAccessCode(ctx context.Context, req *ssoreadyv1.Redeem
 		return nil, err
 	}
 
+	slog.InfoContext(ctx, "redeem_saml_access_code_success", "saml_access_code", req.SamlAccessCode, "app_organization_id", authn.AppOrgID(ctx), "environment_id", environmentID)
+
 	return res, nil
 }
 
