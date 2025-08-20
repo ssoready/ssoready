@@ -252,6 +252,7 @@ func (s *Service) oauthToken(w http.ResponseWriter, r *http.Request) {
 		TokenType:   "Bearer",
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(tokenRes); err != nil {
 		panic(err)
 	}
