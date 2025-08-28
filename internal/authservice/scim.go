@@ -50,14 +50,14 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) error {
 	slog.InfoContext(ctx, "scim_list_users", "scim_directory_id", scimDirectoryID, "filter", r.URL.Query().Get("filter"))
 
 	if r.URL.Query().Has("filter") {
-		filterEmailPat := regexp.MustCompile(`userName eq "(.*)"`)
+		filterEmailPat := regexp.MustCompile(`(userName|email\.value) eq "(.*)"`)
 		match := filterEmailPat.FindStringSubmatch(r.URL.Query().Get("filter"))
 		if match == nil {
 			panic("unsupported filter param")
 		}
 
 		// scimvalidator.microsoft.com sends url-encoded values; harmless to "normal" emails to url-parse them
-		email, err := url.QueryUnescape(match[1])
+		email, err := url.QueryUnescape(match[2])
 		if err != nil {
 			panic(err)
 		}

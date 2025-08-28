@@ -1,6 +1,7 @@
 package authservice
 
 import (
+	"regexp"
 	"testing"
 
 	ssoreadyv1 "github.com/ssoready/ssoready/internal/gen/ssoready/v1"
@@ -95,6 +96,68 @@ func TestSCIMUserToResource_ManagerReference(t *testing.T) {
 	}
 }
 
+func TestSCIMFilterRegex(t *testing.T) {
+	tests := []struct {
+		name        string
+		filter      string
+		expected    string
+		shouldMatch bool
+	}{
+		{
+			name:        "userName filter",
+			filter:      `userName eq "john@example.com"`,
+			expected:    "john@example.com",
+			shouldMatch: true,
+		},
+		{
+			name:        "email.value filter",
+			filter:      `email.value eq "jane@example.com"`,
+			expected:    "jane@example.com",
+			shouldMatch: true,
+		},
+		{
+			name:        "email.value filter with special characters",
+			filter:      `email.value eq "user+tag@example.com"`,
+			expected:    "user+tag@example.com",
+			shouldMatch: true,
+		},
+		{
+			name:        "unsupported filter - different attribute",
+			filter:      `displayName eq "John Doe"`,
+			expected:    "",
+			shouldMatch: false,
+		},
+		{
+			name:        "unsupported filter - different operator",
+			filter:      `userName ne "john@example.com"`,
+			expected:    "",
+			shouldMatch: false,
+		},
+		{
+			name:        "unsupported filter - malformed",
+			filter:      `userName eq john@example.com`,
+			expected:    "",
+			shouldMatch: false,
+		},
+	}
+
+	filterEmailPat := regexp.MustCompile(`(userName|email\.value) eq "(.*)"`)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			match := filterEmailPat.FindStringSubmatch(tt.filter)
+
+			if tt.shouldMatch {
+				assert.NotNil(t, match, "Expected filter to match but it didn't")
+				assert.Len(t, match, 3, "Expected 3 capture groups (full match, attribute, value)")
+				assert.Equal(t, tt.expected, match[2], "Expected email value to match")
+			} else {
+				assert.Nil(t, match, "Expected filter to not match but it did")
+			}
+		})
+	}
+}
+
 // Helper function to create structpb.Struct from map
 func mustNewStruct(m map[string]any) *structpb.Struct {
 	s, err := structpb.NewStruct(m)
@@ -102,4 +165,4 @@ func mustNewStruct(m map[string]any) *structpb.Struct {
 		panic(err)
 	}
 	return s
-} 
+}
