@@ -1,51 +1,8 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import {
-  createConnectQueryKey,
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-} from "@connectrpc/connect-query";
-import {
-  appCreateAdminSetupURL,
-  appCreateSAMLConnection,
-  appCreateSCIMDirectory,
-  appDeleteOrganization,
-  appDeleteSCIMDirectory,
-  appGetOrganization,
-  appListSAMLConnections,
-  appListSCIMDirectories,
-  appUpdateOrganization,
-} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Plus, PlusCircle } from "lucide-react";
-import { z } from "zod";
-import {
-  Environment,
-  Organization,
-  SAMLConnection,
-  SCIMDirectory,
-} from "@/gen/ssoready/v1/ssoready_pb";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { DocsLink } from "@/components/DocsLink";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { InputTags } from "@/components/InputTags";
+import { SecretCopier } from "@/components/SecretCopier";
+import { Title } from "@/components/Title";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,6 +14,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -67,22 +39,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { InputTags } from "@/components/InputTags";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { DocsLink } from "@/components/DocsLink";
 import { Switch } from "@/components/ui/switch";
-import { SecretCopier } from "@/components/SecretCopier";
-import { Title } from "@/components/Title";
-import { InfoTooltip } from "@/components/InfoTooltip";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  appCreateAdminSetupURL,
+  appCreateSAMLConnection,
+  appCreateSCIMDirectory,
+  appDeleteOrganization,
+  appGetOrganization,
+  appListSAMLConnections,
+  appListSCIMDirectories,
+  appUpdateOrganization,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import { Organization } from "@/gen/ssoready/v1/ssoready_pb";
+import {
+  createConnectQueryKey,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+} from "@connectrpc/connect-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 
 export function ViewOrganizationPage() {
   const { environmentId, organizationId } = useParams();
@@ -194,7 +185,7 @@ export function ViewOrganizationPage() {
             </div>
             <div className="text-sm col-span-3">
               {" "}
-              <div className="flex gap-1">
+              <div className="flex gap-1 flex-wrap">
                 {organization?.domains.map((domain, i) => (
                   <Badge key={i}>{domain}</Badge>
                 ))}
