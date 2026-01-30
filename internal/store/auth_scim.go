@@ -152,6 +152,41 @@ func (s *Store) AuthGetSCIMUserByEmail(ctx context.Context, req *AuthGetSCIMUser
 	return parseSCIMUser(qSCIMUser), nil
 }
 
+type AuthGetSCIMUserByUsernameRequest struct {
+	SCIMDirectoryID string
+	Username        string
+}
+
+func (s *Store) AuthGetSCIMUserByUsername(ctx context.Context, req *AuthGetSCIMUserByUsernameRequest) (*ssoreadyv1.SCIMUser, error) {
+	scimDirID, err := idformat.SCIMDirectory.Parse(req.SCIMDirectoryID)
+	if err != nil {
+		return nil, fmt.Errorf("parse scim directory id: %w", err)
+	}
+
+	qSCIMUsers, err := s.q.AuthListSCIMUsers(ctx, queries.AuthListSCIMUsersParams{
+		ScimDirectoryID: scimDirID,
+		Offset:          0,
+		Limit:           1000, // reasonable upper bound for searching
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list scim users: %w", err)
+	}
+
+	// Search for user with matching userName in attributes
+	for _, qSCIMUser := range qSCIMUsers {
+		var attrs map[string]any
+		if err := json.Unmarshal(qSCIMUser.Attributes, &attrs); err != nil {
+			continue
+		}
+
+		if userName, ok := attrs["userName"].(string); ok && userName == req.Username {
+			return parseSCIMUser(qSCIMUser), nil
+		}
+	}
+
+	return nil, ErrSCIMUserNotFound
+}
+
 type AuthGetSCIMUserRequest struct {
 	SCIMDirectoryID string
 	SCIMUserID      string

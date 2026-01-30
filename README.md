@@ -73,6 +73,147 @@ what you want to add support for:
 Most folks implement SAML and SCIM in an afternoon. It only takes two lines of
 code.
 
+## Local Development
+
+This section covers how to run SSOReady locally for development purposes.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (see `.nvmrc` for version) - For the frontend apps (App and Admin)
+- [Go](https://golang.org/) 1.21+ - For the backend services (API and Auth)
+- [Docker](https://www.docker.com/) & Docker Compose - For running PostgreSQL locally
+- [PostgreSQL](https://www.postgresql.org/) 15+ (via Docker)
+
+### Initial Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/ssoready/ssoready.git
+   cd ssoready
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   cd admin && npm install && cd ..
+   cd app && npm install && cd ..
+   ```
+
+3. **Set up environment variables**
+
+   Copy `.env.example` to `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   **Important:** A working `.env` configuration with all required credentials (Google OAuth, API keys, etc.) can be found in 1Password. Copy those values into your `.env` file.
+
+4. **Start PostgreSQL**
+
+   ```bash
+   docker compose up -d
+   ```
+
+   This starts PostgreSQL on the port specified in your `POSTGRES_PORT` env var (defaults to 5432).
+
+5. **Run database migrations**
+
+   ```bash
+   ./bin/migrate local up
+   ```
+
+   The migrate script automatically loads your `.env` file and uses the `API_DB` connection string to connect to your database.
+
+### Running the Services
+
+SSOReady consists of three main services that run in parallel:
+
+```bash
+# Terminal 1: API Service (port 8081)
+npm run dev:api
+
+# Terminal 2: Auth Service (port 8080)
+npm run dev:auth
+
+# Terminal 3: App (Customer-facing app, port 8082)
+npm run dev:app
+
+# Terminal 4: Admin (Self-service setup, port 8083)
+npm run dev:admin
+```
+
+Alternatively, you can run all services in parallel (requires a multiplexer like tmux):
+
+```bash
+npm run dev
+```
+
+### Service URLs
+
+Once running, the services are available at:
+
+- **API Service**: http://localhost:8081
+- **Auth Service**: http://localhost:8080
+- **App (Customer App)**: http://localhost:8082
+- **Admin (Self-service)**: http://localhost:8083
+
+### First-time Setup
+
+1. **Create a user account**
+
+   Visit http://localhost:8082 and sign in with Google OAuth (configured in your `.env`).
+
+2. **Create an organization**
+
+   Once logged in, create your first organization/environment.
+
+3. **Test the admin self-service**
+
+   - In the app, navigate to an organization
+   - Click "Create self-service setup link"
+   - Open the generated URL (e.g., http://localhost:8083/setup?one-time-token=...)
+   - Configure SAML and SCIM settings
+
+### Troubleshooting
+
+**CSS not loading in admin app:**
+
+If the admin app loads without styles, manually build the Tailwind CSS:
+
+```bash
+cd admin
+npx tailwindcss -i ./src/index.css -o ./public/index.css
+```
+
+The `tailwind-watch` process should rebuild this automatically when running `npm run dev:admin`.
+
+**Database connection errors:**
+
+- Ensure Docker is running: `docker ps`
+- Check the port in your connection string matches `POSTGRES_PORT`
+- Restart services after changing `.env`: Stop all running services and restart them
+
+**Google OAuth errors:**
+
+- Verify `GOOGLE_OAUTH_CLIENT_ID` is set in `.env`
+- Add authorized JavaScript origins: `http://localhost:8082`
+- Add authorized redirect URIs: `http://localhost:8081/internal/google-callback`
+
+**CORS errors:**
+
+- Ensure `APP_API_URL=http://localhost:8081/internal/connect` (note the `/internal/connect` path)
+- Regenerate config after changing `.env`: The dev scripts should do this automatically
+
+### Development Workflow
+
+1. Make your code changes
+2. The dev servers will automatically rebuild and reload
+3. Test your changes in the browser
+4. Check terminal output for any errors
+
 ## How SSOReady works
 
 This section provides a high-level overview of how SSOReady works, and how it's possible to implement SAML and SCIM in

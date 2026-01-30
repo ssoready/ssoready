@@ -50,22 +50,53 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) error {
 	slog.InfoContext(ctx, "scim_list_users", "scim_directory_id", scimDirectoryID, "filter", r.URL.Query().Get("filter"))
 
 	if r.URL.Query().Has("filter") {
-		filterEmailPat := regexp.MustCompile(`(userName|email\.value) eq "(.*)"`)
-		match := filterEmailPat.FindStringSubmatch(r.URL.Query().Get("filter"))
+		filterPat := regexp.MustCompile(`(userName|email\.value) eq "(.*)"`)
+		match := filterPat.FindStringSubmatch(r.URL.Query().Get("filter"))
 		if match == nil {
 			panic("unsupported filter param")
 		}
 
 		// scimvalidator.microsoft.com sends url-encoded values; harmless to "normal" emails to url-parse them
-		email, err := url.QueryUnescape(match[2])
+		filterField := match[1]
+		filterValue, err := url.QueryUnescape(match[2])
 		if err != nil {
 			panic(err)
 		}
 
-		scimUser, err := s.Store.AuthGetSCIMUserByEmail(ctx, &store.AuthGetSCIMUserByEmailRequest{
-			SCIMDirectoryID: scimDirectoryID,
-			Email:           email,
-		})
+		var scimUser *ssoreadyv1.SCIMUser
+
+		if filterField == "email.value" {
+			// For email.value filter, search by email column only
+			scimUser, err = s.Store.AuthGetSCIMUserByEmail(ctx, &store.AuthGetSCIMUserByEmailRequest{
+				SCIMDirectoryID: scimDirectoryID,
+				Email:           filterValue,
+			})
+		} else {
+			// For userName filter, check if filterValue looks like an email
+			_, isEmailFormat := emailaddr.Parse(filterValue)
+
+			if isEmailFormat == nil {
+				// filterValue is in email format - search email column first (for backward compatibility)
+				scimUser, err = s.Store.AuthGetSCIMUserByEmail(ctx, &store.AuthGetSCIMUserByEmailRequest{
+					SCIMDirectoryID: scimDirectoryID,
+					Email:           filterValue,
+				})
+				if errors.Is(err, store.ErrSCIMUserNotFound) {
+					// Fallback: search userName in attributes (edge case: userName in attributes is an email)
+					scimUser, err = s.Store.AuthGetSCIMUserByUsername(ctx, &store.AuthGetSCIMUserByUsernameRequest{
+						SCIMDirectoryID: scimDirectoryID,
+						Username:        filterValue,
+					})
+				}
+			} else {
+				// filterValue is NOT in email format - skip email column, search attributes directly
+				scimUser, err = s.Store.AuthGetSCIMUserByUsername(ctx, &store.AuthGetSCIMUserByUsernameRequest{
+					SCIMDirectoryID: scimDirectoryID,
+					Username:        filterValue,
+				})
+			}
+		}
+
 		if err != nil {
 			if errors.Is(err, store.ErrSCIMUserNotFound) {
 				w.Header().Set("Content-Type", "application/scim+json")
@@ -85,9 +116,7 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) error {
 			panic(err)
 		}
 
-		resource := scimUser.Attributes.AsMap()
-		resource["id"] = scimUser.Id
-		resource["userName"] = scimUser.Email
+		resource := scimUserToResource(scimUser)
 
 		w.Header().Set("Content-Type", "application/scim+json")
 		w.WriteHeader(http.StatusOK)
@@ -141,6 +170,45 @@ func (s *Service) scimListUsers(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// extractEmailFromResource extracts the email address from a SCIM resource's emails array.
+// It prefers an email marked as primary=true, otherwise returns the first email.
+// Returns an error if no emails are found.
+func extractEmailFromResource(resource map[string]any) (string, error) {
+	emailsRaw, ok := resource["emails"]
+	if !ok {
+		return "", fmt.Errorf("emails array is required")
+	}
+
+	emails, ok := emailsRaw.([]any)
+	if !ok || len(emails) == 0 {
+		return "", fmt.Errorf("emails array must contain at least one email")
+	}
+
+	// First, look for a primary email
+	for _, emailRaw := range emails {
+		emailObj, ok := emailRaw.(map[string]any)
+		if !ok {
+			continue
+		}
+
+		isPrimary, _ := emailObj["primary"].(bool)
+		if isPrimary {
+			if value, ok := emailObj["value"].(string); ok && value != "" {
+				return value, nil
+			}
+		}
+	}
+
+	// If no primary email found, use the first email
+	if firstEmail, ok := emails[0].(map[string]any); ok {
+		if value, ok := firstEmail["value"].(string); ok && value != "" {
+			return value, nil
+		}
+	}
+
+	return "", fmt.Errorf("no valid email found in emails array")
+}
+
 func (s *Service) scimGetUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	scimDirectoryID := mux.Vars(r)["scim_directory_id"]
@@ -180,13 +248,19 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 		panic(err)
 	}
 
-	userName := resource["userName"].(string) // todo this may panic
 	delete(resource, "schemas")
 
-	emailDomain, err := emailaddr.Parse(userName)
+	// Extract email from emails array
+	email, err := extractEmailFromResource(resource)
 	if err != nil {
-		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
-		return &badUsernameError{BadUsername: userName}
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return err
+	}
+
+	emailDomain, err := emailaddr.Parse(email)
+	if err != nil {
+		http.Error(w, "email is not a valid email address", http.StatusBadRequest)
+		return &badUsernameError{BadUsername: email}
 	}
 
 	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
@@ -196,7 +270,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 
 	var domainOk bool
 	for _, domain := range allowedDomains {
-		if emailDomain == domain {
+		if emailDomain == strings.ToLower(domain) {
 			domainOk = true
 		}
 	}
@@ -204,14 +278,14 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	if !domainOk {
 		msg, err := json.Marshal(map[string]any{
 			"status": http.StatusBadRequest,
-			"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
+			"detail": fmt.Sprintf("email is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
 		})
 		if err != nil {
 			panic(err)
 		}
 
 		http.Error(w, string(msg), http.StatusBadRequest)
-		return &emailOutsideOrgDomainsError{BadEmail: userName}
+		return &emailOutsideOrgDomainsError{BadEmail: email}
 	}
 
 	// at this point, all remaining properties are user attributes
@@ -223,7 +297,7 @@ func (s *Service) scimCreateUser(w http.ResponseWriter, r *http.Request) error {
 	scimUser, err := s.Store.AuthCreateSCIMUser(ctx, &store.AuthCreateSCIMUserRequest{
 		SCIMUser: &ssoreadyv1.SCIMUser{
 			ScimDirectoryId: scimDirectoryID,
-			Email:           userName,
+			Email:           email,
 			Deleted:         false,
 			Attributes:      attributes,
 		},
@@ -265,7 +339,6 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 		return &badUsernameError{BadUsername: ""}
 	}
 
-	userName := resource["userName"].(string)
 	active := true // may be omitted in request
 	if _, ok := resource["active"]; ok {
 		active = resource["active"].(bool)
@@ -273,16 +346,23 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 
 	delete(resource, "schemas")
 
+	// Extract email from emails array
+	email, err := extractEmailFromResource(resource)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return err
+	}
+
 	// at this point, all remaining properties are user attributes
 	attributes, err := structpb.NewStruct(resource)
 	if err != nil {
 		panic(fmt.Errorf("convert attributes to structpb: %w", err))
 	}
 
-	emailDomain, err := emailaddr.Parse(userName)
+	emailDomain, err := emailaddr.Parse(email)
 	if err != nil {
-		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
-		return &badUsernameError{BadUsername: userName}
+		http.Error(w, "email is not a valid email address", http.StatusBadRequest)
+		return &badUsernameError{BadUsername: email}
 	}
 
 	allowedDomains, err := s.Store.AuthGetSCIMDirectoryOrganizationDomains(ctx, scimDirectoryID)
@@ -292,7 +372,7 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 
 	var domainOk bool
 	for _, domain := range allowedDomains {
-		if emailDomain == domain {
+		if emailDomain == strings.ToLower(domain) {
 			domainOk = true
 		}
 	}
@@ -300,21 +380,21 @@ func (s *Service) scimUpdateUser(w http.ResponseWriter, r *http.Request) error {
 	if !domainOk {
 		msg, err := json.Marshal(map[string]any{
 			"status": http.StatusBadRequest,
-			"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
+			"detail": fmt.Sprintf("email is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
 		})
 		if err != nil {
 			panic(err)
 		}
 
 		http.Error(w, string(msg), http.StatusBadRequest)
-		return &emailOutsideOrgDomainsError{BadEmail: userName}
+		return &emailOutsideOrgDomainsError{BadEmail: email}
 	}
 
 	scimUser, err := s.Store.AuthUpdateSCIMUser(ctx, &store.AuthUpdateSCIMUserRequest{
 		SCIMUser: &ssoreadyv1.SCIMUser{
 			Id:              scimUserID,
 			ScimDirectoryId: scimDirectoryID,
-			Email:           userName,
+			Email:           email,
 			Deleted:         !active,
 			Attributes:      attributes,
 		},
@@ -392,7 +472,7 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 	// validate email
 	emailDomain, err := emailaddr.Parse(patchedSCIMUser.Email)
 	if err != nil {
-		http.Error(w, "userName is not a valid email address", http.StatusBadRequest)
+		http.Error(w, "email is not a valid email address", http.StatusBadRequest)
 		return &badUsernameError{BadUsername: patchedSCIMUser.Email}
 	}
 
@@ -403,7 +483,7 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 
 	var domainOk bool
 	for _, domain := range allowedDomains {
-		if emailDomain == domain {
+		if emailDomain == strings.ToLower(domain) {
 			domainOk = true
 		}
 	}
@@ -411,7 +491,7 @@ func (s *Service) scimPatchUser(w http.ResponseWriter, r *http.Request) error {
 	if !domainOk {
 		msg, err := json.Marshal(map[string]any{
 			"status": http.StatusBadRequest,
-			"detail": fmt.Sprintf("userName is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
+			"detail": fmt.Sprintf("email is not from the list of allowed domains: %s", strings.Join(allowedDomains, ", ")),
 		})
 		if err != nil {
 			panic(err)
@@ -816,7 +896,11 @@ func (s *Service) scimPatchGroup(w http.ResponseWriter, r *http.Request) error {
 func scimUserToResource(scimUser *ssoreadyv1.SCIMUser) map[string]any {
 	r := scimUser.Attributes.AsMap()
 	r["id"] = scimUser.Id
-	r["userName"] = scimUser.Email
+
+	// userName is stored in attributes. If not present, fallback to email for backward compatibility
+	if _, ok := r["userName"]; !ok {
+		r["userName"] = scimUser.Email
+	}
 
 	// normalize Entra-style "active" property
 	if r["active"] == "True" {
@@ -857,8 +941,12 @@ func scimUserFromResource(scimDirectoryID, scimUserID string, r map[string]any) 
 		panic(fmt.Errorf("convert attributes to structpb: %w", err))
 	}
 
-	// at this point, deliberately throw away non-well-typed values
-	email, _ := r["userName"].(string)
+	// Extract email from emails array, fallback to userName for backward compatibility
+	email, err := extractEmailFromResource(r)
+	if err != nil {
+		// If email extraction fails, try userName for backward compatibility
+		email, _ = r["userName"].(string)
+	}
 	active, _ := r["active"].(bool)
 
 	return &ssoreadyv1.SCIMUser{

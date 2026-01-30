@@ -83,10 +83,13 @@ func TestPatch(t *testing.T) {
 			err:  "unsupported 'add' operation on top-level object",
 		},
 		{
-			name: "invalid path",
+			name: "add creates intermediate object even when sibling exists",
 			in:   map[string]any{"foo": map[string]any{"bar": map[string]any{"baz": "xxx"}}},
 			ops:  []scimpatch.Operation{{Op: "add", Path: "foo.notbar.baz", Value: map[string]any{"baz": "yyy"}}},
-			err:  `invalid path: foo.notbar.baz`,
+			out: map[string]any{"foo": map[string]any{
+				"bar":    map[string]any{"baz": "xxx"},
+				"notbar": map[string]any{"baz": map[string]any{"baz": "yyy"}},
+			}},
 		},
 
 		{
@@ -938,6 +941,66 @@ func TestPatch(t *testing.T) {
 					},
 				},
 			},
+		},
+		{
+			name: "add to nested property creates parent objects automatically",
+			in:   map[string]any{},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  "name.givenName",
+					Value: "John",
+				},
+				{
+					Op:    "Add",
+					Path:  "name.familyName",
+					Value: "Doe",
+				},
+				{
+					Op:    "Add",
+					Path:  "name.formatted",
+					Value: "John Doe",
+				},
+			},
+			out: map[string]any{
+				"name": map[string]any{
+					"givenName":  "John",
+					"familyName": "Doe",
+					"formatted":  "John Doe",
+				},
+			},
+		},
+		{
+			name: "add to deeply nested property creates all parent objects",
+			in:   map[string]any{},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Add",
+					Path:  "level1.level2.level3.value",
+					Value: "deep",
+				},
+			},
+			out: map[string]any{
+				"level1": map[string]any{
+					"level2": map[string]any{
+						"level3": map[string]any{
+							"value": "deep",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "replace on nested property still requires parent to exist",
+			in:   map[string]any{},
+			ops: []scimpatch.Operation{
+				{
+					Op:    "Replace",
+					Path:  "name.givenName",
+					Value: "John",
+				},
+			},
+			err: `invalid path: "name.givenName"`,
 		},
 	}
 

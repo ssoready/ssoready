@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Get the first 7 characters of the current git commit SHA
+COMMIT_SHA=$(git rev-parse --short=7 HEAD)
+
+echo "Building Docker images with tag: $COMMIT_SHA"
+echo ""
+
+# Build admin
+echo "Building admin..."
+docker build --platform linux/amd64 -t omnifact/ssoready-admin:$COMMIT_SHA ./admin
+echo "✓ Built omnifact/ssoready-admin:$COMMIT_SHA"
+echo ""
+
+# Build app
+echo "Building app..."
+docker build --platform linux/amd64 -t omnifact/ssoready-app:$COMMIT_SHA ./app
+echo "✓ Built omnifact/ssoready-app:$COMMIT_SHA"
+echo ""
+
+# Build auth
+echo "Building auth..."
+docker build --platform linux/amd64 -f ./cmd/auth/Dockerfile -t omnifact/ssoready-auth:$COMMIT_SHA .
+echo "✓ Built omnifact/ssoready-auth:$COMMIT_SHA"
+echo ""
+
+# Build api
+echo "Building api..."
+docker build --platform linux/amd64 -f ./cmd/api/Dockerfile -t omnifact/ssoready-api:$COMMIT_SHA .
+echo "✓ Built omnifact/ssoready-api:$COMMIT_SHA"
+echo ""
+
+# Build migrate
+echo "Building migrate..."
+docker build --platform linux/amd64 -f ./cmd/migrate/Dockerfile -t omnifact/ssoready-migrate:$COMMIT_SHA .
+echo "✓ Built omnifact/ssoready-migrate:$COMMIT_SHA"
+echo ""
+
+echo "All images built successfully!"
+echo ""
+
+# Push all images
+echo "Pushing images..."
+echo ""
+
+echo "Pushing admin..."
+docker push omnifact/ssoready-admin:$COMMIT_SHA
+echo "✓ Pushed omnifact/ssoready-admin:$COMMIT_SHA"
+echo ""
+
+echo "Pushing app..."
+docker push omnifact/ssoready-app:$COMMIT_SHA
+echo "✓ Pushed omnifact/ssoready-app:$COMMIT_SHA"
+echo ""
+
+echo "Pushing auth..."
+docker push omnifact/ssoready-auth:$COMMIT_SHA
+echo "✓ Pushed omnifact/ssoready-auth:$COMMIT_SHA"
+echo ""
+
+echo "Pushing api..."
+docker push omnifact/ssoready-api:$COMMIT_SHA
+echo "✓ Pushed omnifact/ssoready-api:$COMMIT_SHA"
+echo ""
+
+echo "Pushing migrate..."
+docker push omnifact/ssoready-migrate:$COMMIT_SHA
+echo "✓ Pushed omnifact/ssoready-migrate:$COMMIT_SHA"
+echo ""
+
+echo "All images built and pushed successfully with tag: $COMMIT_SHA"

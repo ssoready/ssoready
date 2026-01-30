@@ -1,5 +1,6 @@
 import { LayoutMain } from "@/components/Layout";
-import React, { useCallback, useState } from "react";
+import { ValueCopier } from "@/components/ValueCopier";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CircleAlert } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -20,35 +20,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useParams } from "react-router";
 import {
-  createConnectQueryKey,
-  useMutation,
-  useQuery,
-} from "@connectrpc/connect-query";
-import {
-  adminGetSCIMDirectory,
-  adminRotateSCIMDirectoryBearerToken,
-  adminUpdateSCIMDirectory,
-} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
-import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { SCIMDirectory } from "@/gen/ssoready/v1/ssoready_pb";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
+  Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Form,
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
+import {
+  adminGetSCIMDirectory,
+  adminRotateSCIMDirectoryBearerToken,
+  adminUpdateSCIMDirectory,
+} from "@/gen/ssoready/v1/ssoready-SSOReadyService_connectquery";
+import { SCIMDirectory } from "@/gen/ssoready/v1/ssoready_pb";
 import { useTitle } from "@/useTitle";
+import {
+  createConnectQueryKey,
+  useMutation,
+  useQuery,
+} from "@connectrpc/connect-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { CircleAlert } from "lucide-react";
+import React, { useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router";
+import { z } from "zod";
 
 export function ViewSCIMDirectoryPage() {
   const { scimDirectoryId } = useParams();
@@ -135,9 +136,7 @@ export function ViewSCIMDirectoryPage() {
             SCIM Bearer Token
           </div>
 
-          <div className="text-xs font-mono bg-gray-100 py-2 px-4 rounded-sm border">
-            {bearerToken}
-          </div>
+          <ValueCopier value={bearerToken} />
 
           <AlertDialogFooter>
             <AlertDialogCancel>Close</AlertDialogCancel>
@@ -180,8 +179,12 @@ export function ViewSCIMDirectoryPage() {
               <div className="text-sm col-span-1 text-muted-foreground">
                 SCIM Base URL
               </div>
-              <div className="text-sm col-span-3">
-                {scimDirectory?.scimDirectory?.scimBaseUrl}
+              <div className="col-span-3">
+                {scimDirectory?.scimDirectory?.scimBaseUrl && (
+                  <ValueCopier
+                    value={scimDirectory.scimDirectory.scimBaseUrl}
+                  />
+                )}
               </div>
             </div>
           </CardContent>
